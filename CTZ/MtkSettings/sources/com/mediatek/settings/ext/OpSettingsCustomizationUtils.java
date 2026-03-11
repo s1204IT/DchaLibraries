@@ -1,0 +1,34 @@
+package com.mediatek.settings.ext;
+
+import android.content.Context;
+import com.mediatek.common.util.OperatorCustomizationFactoryLoader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class OpSettingsCustomizationUtils {
+    private static final List<OperatorCustomizationFactoryLoader.OperatorFactoryInfo> sOperatorFactoryInfoList = new ArrayList();
+    static OpSettingsCustomizationFactoryBase sFactory = null;
+
+    static {
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP01Settings.apk", "com.mediatek.settings.op01.Op01SettingsCustomizationFactory", "com.mediatek.settings.op01", "OP01"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP02Settings.apk", "com.mediatek.settings.op02.Op02SettingsCustomizationFactory", "com.mediatek.settings.op02", "OP02"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP03Settings.apk", "com.mediatek.op03.settings.OP03SettingsCustomizationFactory", "com.mediatek.op03.settings", "OP03", "SEGDEFAULT"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP06Settings.apk", "com.mediatek.op06.settings.Op06SettingsCustomizationFactory", "com.mediatek.op06.settings", "OP06", "SEGDEFAULT"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP07Settings.apk", "com.mediatek.op07.settings.OP07SettingsCustomizationFactory", "com.mediatek.op07.settings", "OP07", "SEGDEFAULT"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP08Settings.apk", "com.mediatek.op08.settings.Op08SettingsCustomizationFactory", "com.mediatek.op08.settings", "OP08", "SEGDEFAULT"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP09ClibSettings.apk", "com.mediatek.settings.op09clib.Op09ClibSettingsCustomizationFactory", "com.mediatek.settings.op09clib", "OP09", "SEGC"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP12Settings.apk", "com.mediatek.op12.settings.Op12SettingsCustomizationFactory", "com.mediatek.op12.settings", "OP12"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP16Settings.apk", "com.mediatek.op16.settings.Op16SettingsCustomizationFactory", "com.mediatek.op16.settings", "OP16", "SEGDEFAULT"));
+        sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP18Settings.apk", "com.mediatek.op18.settings.OP18SettingsCustomizationFactory", "com.mediatek.op18.settings", "OP18", "SEGDEFAULT"));
+    }
+
+    public static synchronized OpSettingsCustomizationFactoryBase getOpFactory(Context context) {
+        if (sFactory == null) {
+            sFactory = (OpSettingsCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOperatorFactoryInfoList);
+            if (sFactory == null) {
+                sFactory = new OpSettingsCustomizationFactoryBase(context);
+            }
+        }
+        return sFactory;
+    }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="text_enable">#333333</color>
+    <color name="text_disable">#acacac</color>
+    <color name="text_black">#000000</color>
+    <color name="text_gray_hc">#666</color>
+    <color name="text_red_hc">#e60000</color>
+    <color name="warning">#ff5621</color>
+</resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:id="@+id/quick_status_bar_system_icons"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:layout_width="match_parent"
+    android:layout_height="@android:dimen/emphasized_button_stroke_width"
+    android:paddingStart="@dimen/status_bar_padding_start"
+    android:paddingEnd="@dimen/status_bar_padding_end">
+    <com.android.systemui.statusbar.policy.Clock
+        android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+        android:gravity="start|center_vertical"
+        android:id="@+id/clock"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:minWidth="48dp"
+        android:singleLine="true"
+        android:paddingStart="@dimen/status_bar_left_clock_starting_padding"
+        android:paddingEnd="@dimen/status_bar_left_clock_end_padding"
+        systemui:showDark="false"/>
+    <android.widget.Space
+        android:gravity="center"
+        android:id="@+id/space"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+    <com.android.systemui.BatteryMeterView
+        android:gravity="end|center_vertical"
+        android:id="@+id/battery"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"/>
+</LinearLayout>

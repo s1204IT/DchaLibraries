@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="bookmarkThumbnailWidth">200dp</dimen>
+    <dimen name="bookmarkThumbnailHeight">130dp</dimen>
+    <dimen name="siteNavigationThumbnailWidth">360dp</dimen>
+    <dimen name="siteNavigationThumbnailHeight">360dp</dimen>
+    <dimen name="favicon_padded_size">28dp</dimen>
+    <dimen name="qc_radius_start">75dp</dimen>
+    <dimen name="qc_radius_increment">90dp</dimen>
+    <dimen name="qc_slop">15dp</dimen>
+    <dimen name="qc_touch_offset">15dp</dimen>
+    <dimen name="qc_tab_title_height">30dp</dimen>
+    <dimen name="qc_thumb_width">240dp</dimen>
+    <dimen name="qc_thumb_height">160dp</dimen>
+    <dimen name="qc_item_size">48dp</dimen>
+    <dimen name="mv_max_width">1010px</dimen>
+    <dimen name="mv_item_width">231px</dimen>
+    <dimen name="mv_item_width_portrait">231px</dimen>
+    <dimen name="mv_border_width">3px</dimen>
+    <dimen name="widgetThumbnailHeight">104dp</dimen>
+    <dimen name="widgetColumnWidth">130dp</dimen>
+    <dimen name="combo_paddingTop">50dp</dimen>
+    <dimen name="combo_horizontalSpacing">8dp</dimen>
+    <dimen name="toolbar_height">48dp</dimen>
+    <dimen name="tab_thumbnail_width">@dimen/qc_thumb_width</dimen>
+    <dimen name="tab_thumbnail_height">@dimen/qc_thumb_height</dimen>
+    <dimen name="suggest_item_padding">8dp</dimen>
+    <dimen name="add_bookmark_width">500dp</dimen>
+</resources>

@@ -1,0 +1,8 @@
+package com.android.systemui.statusbar;
+
+public interface InflationTask {
+    void abort();
+
+    default void supersedeTask(InflationTask inflationTask) {
+    }
+}

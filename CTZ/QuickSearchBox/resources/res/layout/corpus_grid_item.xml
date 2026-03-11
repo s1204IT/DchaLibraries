@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/corpus_grid_item_bg"
+    android:padding="4dp"
+    android:layout_width="76dp"
+    android:layout_height="76dp"
+    class="com.android.quicksearchbox.ui.CorpusView">
+    <ImageView
+        android:id="@+id/source_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginBottom="1dp"
+        android:scaleType="centerInside"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+    <TextView
+        android:textSize="13dp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:ellipsize="marquee"
+        android:id="@+id/source_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_below="@+id/source_icon"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"/>
+</view>

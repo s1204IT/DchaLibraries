@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BrowserTheme" parent="@android:style/Theme.Holo">
+        <item name="android:colorBackground">#ffffffff</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:textColor">@drawable/ctx_menu_custom_color</item>
+        <item name="android:windowActionBar">true</item>
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
+        <item name="android:actionBarSize">56dp</item>
+        <item name="android:colorPrimary">@android:color/system_error_50</item>
+    </style>
+</resources>
