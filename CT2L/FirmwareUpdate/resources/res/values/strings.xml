@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="UpdateMessege">SDカードのアップデートデータをインストールします。\n｢システムアップデートを開始します｣を押してください。</string>
+    <string name="app_name">オフラインアップデート</string>
+    <string name="UpdateStart">システムアップデートを開始します</string>
+</resources>

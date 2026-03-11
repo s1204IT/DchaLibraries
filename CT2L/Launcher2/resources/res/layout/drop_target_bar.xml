@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <FrameLayout
+        android:layout_weight="1"
+        style="@style/DropTargetButtonContainer">
+        <com.android.launcher2.DeleteDropTarget
+            android:id="@+id/delete_target_text"
+            android:text="@string/delete_zone_label_workspace"
+            android:drawableStart="@drawable/remove_target_selector"
+            style="@style/DropTargetButton"/>
+    </FrameLayout>
+    <FrameLayout
+        android:layout_weight="1"
+        style="@style/DropTargetButtonContainer">
+        <com.android.launcher2.InfoDropTarget
+            android:id="@+id/info_target_text"
+            android:text="@string/info_target_label"
+            android:drawableStart="@drawable/info_target_selector"
+            style="@style/DropTargetButton"/>
+    </FrameLayout>
+</merge>

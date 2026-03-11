@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:id="@+id/tabbarcontent"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize">
+    <com.android.browser.TabScrollView
+        android:orientation="horizontal"
+        android:id="@+id/tabs"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+    <ImageButton
+        android:id="@+id/newtab"
+        android:background="@drawable/add_tab_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_menu_new_window"
+        style="@style/HoloButton"/>
+</merge>
