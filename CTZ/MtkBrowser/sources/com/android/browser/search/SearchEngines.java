@@ -1,0 +1,27 @@
+package com.android.browser.search;
+
+import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
+import com.mediatek.search.SearchEngineManager;
+
+public class SearchEngines {
+    public static SearchEngine get(Context context, String str) {
+        com.mediatek.common.search.SearchEngine searchEngineInfo;
+        SearchEngine defaultSearchEngine = getDefaultSearchEngine(context);
+        return !TextUtils.isEmpty(str) ? ((defaultSearchEngine == null || !str.equals(defaultSearchEngine.getName())) && (searchEngineInfo = getSearchEngineInfo(context, str)) != null) ? new OpenSearchSearchEngine(context, searchEngineInfo) : defaultSearchEngine : defaultSearchEngine;
+    }
+
+    public static SearchEngine getDefaultSearchEngine(Context context) {
+        return DefaultSearchEngine.create(context);
+    }
+
+    public static com.mediatek.common.search.SearchEngine getSearchEngineInfo(Context context, String str) {
+        try {
+            return ((SearchEngineManager) context.getSystemService("search_engine_service")).getByName(str);
+        } catch (IllegalArgumentException e) {
+            Log.e("SearchEngines", "Cannot load search engine " + str, e);
+            return null;
+        }
+    }
+}
