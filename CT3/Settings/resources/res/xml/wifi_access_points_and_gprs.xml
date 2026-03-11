@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:settings="http://schemas.android.com/apk/res/com.android.settings" xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/wifi_settings_category">
+    <PreferenceCategory
+        android:title="@string/data_conn_category_title"
+        android:key="data_enabler_category">
+        <CheckBoxPreference
+            android:persistent="false"
+            android:title="@string/data_enabler_title"
+            android:key="data_enabler"
+            android:summary="@string/data_enabler_summary"/>
+        <Preference
+            android:persistent="false"
+            android:title="@string/data_enabler_title"
+            android:key="data_enabler_gemini"
+            android:summary="@string/data_enabler_summary"/>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/apn_list_category_title"
+        android:key="apn_list"/>
+</PreferenceScreen>

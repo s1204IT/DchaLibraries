@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.keyguard.AlphaOptimizedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:background="@drawable/btn_borderless_rect"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingEnd="@dimen/qs_panel_padding">
+    <ImageView
+        android:id="@android:id/accessibilitySystemActionBack"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:clickable="true"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="?android:attr/homeAsUpIndicator"
+        android:contentDescription="@android:string/httpErrorTimeout"
+        android:layout_marginEnd="16dp"/>
+    <TextView
+        android:textAppearance="@style/TextAppearance.QS.DetailHeader"
+        android:id="@android:id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textDirection="locale"/>
+    <Switch
+        android:textAppearance="@style/TextAppearance.QS.DetailHeader"
+        android:id="@android:id/toggle"
+        android:clickable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</com.android.keyguard.AlphaOptimizedLinearLayout>

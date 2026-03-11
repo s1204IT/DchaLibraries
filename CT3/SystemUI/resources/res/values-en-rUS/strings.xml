@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wfd_sink_summary">Discoverable by others</string>
+    <string name="mobile">Data connection</string>
+    <string name="data_usage">Data usage</string>
+    <string name="screen_pinning_description_physical_key">This keeps it in view until you unpin. Touch and hold Back key to unpin.</string>
+</resources>

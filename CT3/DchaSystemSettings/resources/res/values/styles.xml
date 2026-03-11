@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@style/AppBaseTheme">
+    </style>
+    <style name="TallTitleBarTheme" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    <style name="Theme.CreateShortCut" parent="@android:style/Theme.Holo.DialogWhenLarge">
+    </style>
+    <style name="wifi_item" parent="">
+        <item name="android:gravity">0x800003</item>
+        <item name="android:orientation">1</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+    <style name="wifi_item_label" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Body1</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:textAlignment">5</item>
+        <item name="android:paddingStart">8dp</item>
+    </style>
+    <style name="wifi_item_warning" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Body1</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/warning</item>
+        <item name="android:textAlignment">5</item>
+        <item name="android:paddingStart">8dp</item>
+    </style>
+    <style name="wifi_item_content" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Subhead</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textAlignment">5</item>
+    </style>
+    <style name="wifi_item_spinner" parent="@style/wifi_item_content">
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="wifi_advanced_toggle" parent="@style/wifi_item_content">
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@null</item>
+        <item name="android:button">@null</item>
+        <item name="android:drawableEnd">@drawable/ic_expand</item>
+        <item name="android:paddingStart">8dp</item>
+    </style>
+    <style name="wifi_item_advanced_togglebox" parent="">
+        <item name="android:gravity">0x800003</item>
+        <item name="android:orientation">1</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+    </style>
+    <style name="wifi_item_edit_content" parent="">
+        <item name="android:textSize">18sp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:layout_marginStart">4dp</item>
+    </style>
+    <style name="wifi_section" parent="">
+        <item name="android:orientation">1</item>
+    </style>
+    <style name="main_layout_area" parent="">
+        <item name="android:orientation">1</item>
+        <item name="android:layout_width">1200dp</item>
+        <item name="android:layout_height">600dp</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+    <style name="setting_contents_btn" parent="">
+        <item name="android:layout_width">120dp</item>
+        <item name="android:layout_height">120dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+    </style>
+    <style name="Theme.Transparent" parent="@android:style/Theme.Translucent">
+        <item name="android:windowBackground">@drawable/bg_black</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="fontFamily" parent="@android:style/Widget.Holo.Light.TextView">
+        <item name="android:fontFamily">gjsgm</item>
+    </style>
+    <style name="Theme.WifiDialog" parent="@android:style/Theme.Holo.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@style/DialogWindowTitleHolo</item>
+        <item name="android:spinnerDropDownItemStyle">@style/WifiSpinnerDropDownItemStyle</item>
+        <item name="android:windowSoftInputMode">0x10</item>
+        <item name="android:windowMinWidthMajor">@android:dimen/dialog_min_width_major</item>
+        <item name="android:windowMinWidthMinor">@android:dimen/dialog_min_width_minor</item>
+    </style>
+    <style name="DialogWindowTitleHolo" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Holo.DialogWindowTitle</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+    <style name="WifiSpinnerDropDownItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textColor">@android:color/primary_text_dark_nodisable</item>
+    </style>
+</resources>

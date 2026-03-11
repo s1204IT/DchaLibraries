@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="layoutManager" format="string">
+    </attr>
+    <attr name="spanCount" format="integer">
+    </attr>
+    <attr name="reverseLayout" format="boolean">
+    </attr>
+    <attr name="stackFromEnd" format="boolean">
+    </attr>
+    <attr name="layoutHorizontal" format="boolean">
+    </attr>
+    <attr name="iconSizeOverride" format="dimension">
+    </attr>
+    <attr name="iconDisplay" format="integer">
+        <enum name="all_apps" value="1" />
+        <enum name="widget_section" value="2" />
+        <enum name="workspace" value="0" />
+    </attr>
+    <attr name="deferShadowGeneration" format="boolean">
+    </attr>
+    <attr name="customShadows" format="boolean">
+    </attr>
+    <attr name="windowSize" format="integer">
+    </attr>
+    <attr name="defaultScreen" format="integer">
+    </attr>
+    <attr name="cellCountX" format="integer">
+    </attr>
+    <attr name="cellCountY" format="integer">
+    </attr>
+    <attr name="cellWidth" format="dimension">
+    </attr>
+    <attr name="cellHeight" format="dimension">
+    </attr>
+    <attr name="widthGap" format="dimension">
+    </attr>
+    <attr name="heightGap" format="dimension">
+    </attr>
+    <attr name="maxGap" format="dimension">
+    </attr>
+    <attr name="pageLayoutWidthGap" format="dimension">
+    </attr>
+    <attr name="pageLayoutHeightGap" format="dimension">
+    </attr>
+    <attr name="pageIndicator" format="reference">
+    </attr>
+    <attr name="revealBackground" format="reference">
+    </attr>
+    <attr name="className" format="string">
+    </attr>
+    <attr name="packageName" format="string">
+    </attr>
+    <attr name="container" format="string">
+    </attr>
+    <attr name="screen" format="string">
+    </attr>
+    <attr name="x" format="string">
+    </attr>
+    <attr name="y" format="string">
+    </attr>
+    <attr name="spanX" format="string">
+    </attr>
+    <attr name="spanY" format="string">
+    </attr>
+    <attr name="icon" format="reference">
+    </attr>
+    <attr name="title" format="string">
+    </attr>
+    <attr name="uri" format="string">
+    </attr>
+    <attr name="key" format="string">
+    </attr>
+    <attr name="value" format="string">
+    </attr>
+    <attr name="workspace" format="reference">
+    </attr>
+    <attr name="folderItems" format="reference">
+    </attr>
+    <attr name="background" format="reference">
+    </attr>
+    <attr name="ringOutset" format="dimension">
+    </attr>
+    <attr name="indicatorSize" format="dimension">
+    </attr>
+    <attr name="layout_ignoreInsets" format="boolean">
+    </attr>
+    <attr name="topPackageName" format="string">
+    </attr>
+    <attr name="topClassName" format="string">
+    </attr>
+    <attr name="topOrder" format="integer">
+    </attr>
+</resources>

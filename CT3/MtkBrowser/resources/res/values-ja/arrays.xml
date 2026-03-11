@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="pref_homepage_choices_site_navigation">
+        <item>現在のページ</item>
+        <item>空白ページ</item>
+        <item>デフォルトページ</item>
+        <item>よくアクセスするサイト</item>
+        <item>サイトナビゲーション</item>
+        <item>その他</item>
+    </array>
+    <array name="predefined_websites_default_optr">
+        <item>Hao123</item>
+        <item>http://www.hao123.com/</item>
+        <item>site_navigation_default_default1</item>
+        <item>Google</item>
+        <item>http://www.google.cn/</item>
+        <item>site_navigation_default_default2</item>
+        <item>Baidu</item>
+        <item>http://www.baidu.com/</item>
+        <item>site_navigation_default_default3</item>
+        <item>Sina</item>
+        <item>http://www.sina.com.cn/</item>
+        <item>site_navigation_default_default4</item>
+        <item>Sohu</item>
+        <item>http://www.sohu.com/</item>
+        <item>site_navigation_default_default5</item>
+        <item>Yahoo</item>
+        <item>http://www.yahoo.com/</item>
+        <item>site_navigation_default_default6</item>
+    </array>
+    <array name="pref_link_prefetch_choices">
+        <item>行わない</item>
+        <item>Wi-Fi接続時のみ</item>
+        <item>常時</item>
+    </array>
+    <array name="pref_content_plugins_choices">
+        <item>常にON</item>
+        <item>オンデマンド</item>
+        <item>OFF</item>
+    </array>
+    <array name="pref_homepage_choices">
+        <item>現在のページ</item>
+        <item>空白ページ</item>
+        <item>デフォルトページ</item>
+        <item>よくアクセスするサイト</item>
+        <item>その他</item>
+    </array>
+    <array name="pref_text_size_choices">
+        <item>最小</item>
+        <item>小</item>
+        <item>中</item>
+        <item>大</item>
+        <item>最大</item>
+    </array>
+    <array name="pref_default_zoom_choices">
+        <item>低</item>
+        <item>中</item>
+        <item>高</item>
+    </array>
+    <array name="pref_default_text_encoding_choices">
+        <item>自動検出</item>
+        <item>Latin-1 (ISO-8859-1)</item>
+        <item>Unicode (UTF-8)</item>
+        <item>中国語（GBK）</item>
+        <item>中国語（Big5）</item>
+        <item>日本語（ISO-2022-JP）</item>
+        <item>日本語（SHIFT_JIS）</item>
+        <item>日本語（EUC-JP）</item>
+        <item>韓国語（EUC-KR）</item>
+    </array>
+    <array name="pref_data_preload_choices">
+        <item>行わない</item>
+        <item>Wi-Fi使用時のみ</item>
+        <item>常時</item>
+    </array>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@drawable/qs_background_primary"
+    android:paddingBottom="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:background="@drawable/notification_header_bg"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
+        <ImageView
+            android:id="@android:id/icon"
+            android:layout_width="36dp"
+            android:layout_height="36dp"/>
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center_vertical"
+            android:id="@android:id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="10dp"/>
+    </LinearLayout>
+    <GridLayout
+        android:id="@+id/tile_grid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"/>
+</LinearLayout>

@@ -1,0 +1,93 @@
+package com.google.common.collect;
+
+import com.google.common.annotations.GwtCompatible;
+import com.google.common.base.Preconditions;
+import java.util.NoSuchElementException;
+
+@GwtCompatible
+public abstract class AbstractIterator<T> extends UnmodifiableIterator<T> {
+
+    private static final int[] f1comgooglecommoncollectAbstractIterator$StateSwitchesValues = null;
+    private T next;
+    private State state = State.NOT_READY;
+
+    private static int[] m30x50f87187() {
+        if (f1comgooglecommoncollectAbstractIterator$StateSwitchesValues != null) {
+            return f1comgooglecommoncollectAbstractIterator$StateSwitchesValues;
+        }
+        int[] iArr = new int[State.valuesCustom().length];
+        try {
+            iArr[State.DONE.ordinal()] = 1;
+        } catch (NoSuchFieldError e) {
+        }
+        try {
+            iArr[State.FAILED.ordinal()] = 3;
+        } catch (NoSuchFieldError e2) {
+        }
+        try {
+            iArr[State.NOT_READY.ordinal()] = 4;
+        } catch (NoSuchFieldError e3) {
+        }
+        try {
+            iArr[State.READY.ordinal()] = 2;
+        } catch (NoSuchFieldError e4) {
+        }
+        f1comgooglecommoncollectAbstractIterator$StateSwitchesValues = iArr;
+        return iArr;
+    }
+
+    protected abstract T computeNext();
+
+    protected AbstractIterator() {
+    }
+
+    private enum State {
+        READY,
+        NOT_READY,
+        DONE,
+        FAILED;
+
+        public static State[] valuesCustom() {
+            return values();
+        }
+    }
+
+    protected final T endOfData() {
+        this.state = State.DONE;
+        return null;
+    }
+
+    @Override
+    public final boolean hasNext() {
+        Preconditions.checkState(this.state != State.FAILED);
+        switch (m30x50f87187()[this.state.ordinal()]) {
+            case 1:
+                return false;
+            case 2:
+                return true;
+            default:
+                return tryToComputeNext();
+        }
+    }
+
+    private boolean tryToComputeNext() {
+        this.state = State.FAILED;
+        this.next = computeNext();
+        if (this.state != State.DONE) {
+            this.state = State.READY;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public final T next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
+        this.state = State.NOT_READY;
+        T result = this.next;
+        this.next = null;
+        return result;
+    }
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
+    <RadioButton
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/tts_engine_radiobutton"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"/>
+    <View
+        android:background="@android:drawable/divider_horizontal_dark"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+    <ImageView
+        android:id="@+id/tts_engine_settings"
+        android:background="?android:attr/selectableItemBackground"
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_sysbar_quicksettings"
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/tts_engine_settings_button"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"/>
+</LinearLayout>

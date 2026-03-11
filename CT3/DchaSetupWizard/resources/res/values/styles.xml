@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppBaseTheme" parent="@android:style/Theme.Light">
+    </style>
+    <style name="AppTheme" parent="@style/AppBaseTheme">
+    </style>
+    <style name="text_year" parent="">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textStyle">0x1</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+    </style>
+    <style name="text_grade" parent="">
+        <item name="android:textSize">50sp</item>
+        <item name="android:textStyle">0x1</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+    </style>
+    <style name="main_layout_area" parent="">
+        <item name="android:orientation">1</item>
+        <item name="android:layout_width">1200dp</item>
+        <item name="android:layout_height">600dp</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+    <style name="Theme.DisablePreview.NoTitleBar" parent="@android:style/Theme.NoTitleBar">
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+</resources>

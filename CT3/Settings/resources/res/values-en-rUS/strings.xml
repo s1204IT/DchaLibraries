@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="screensaver_settings_disabled_prompt">To control what happens when the tablet is docked and/or sleeping, turn Daydream on.</string>
+    <string name="activity_not_found">Application is not installed on your device.</string>
+    <string name="gemini_sim_tether_nocontacts">No available contacts on your tablet. Please add new contact or import contacts first</string>
+    <string name="wifi_ap_bandwidth_chart_summary">Measured by your tablet, your carrier\'s data speed accounting may differ.</string>
+</resources>
