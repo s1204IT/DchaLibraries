@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.tuner.PreviewNavInflater xmlns:android="http://schemas.android.com/apk/res/android" xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/black"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/navigation_bar_size">
+    <include
+        android:id="@+id/rot0"
+        layout="@layout/navigation_layout"/>
+    <include
+        android:id="@+id/rot90"
+        layout="@layout/navigation_layout_rot90"/>
+</com.android.systemui.tuner.PreviewNavInflater>

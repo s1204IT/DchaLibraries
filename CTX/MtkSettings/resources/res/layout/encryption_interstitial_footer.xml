@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/SuwGlifButtonBar">
+    <Button
+        android:id="@+id/encrypt_dont_require_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/encryption_interstitial_no"
+        style="@style/SuwGlifButton.Secondary"/>
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+    <Button
+        android:id="@+id/encrypt_require_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/encryption_interstitial_yes"
+        style="@style/SuwGlifButton.Primary"/>
+</LinearLayout>

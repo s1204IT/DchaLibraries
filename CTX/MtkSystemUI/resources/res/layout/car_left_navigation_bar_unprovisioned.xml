@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.statusbar.car.CarNavigationBarView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/system_bar_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:gravity="top"
+        android:orientation="vertical"
+        android:id="@+id/nav_buttons"
+        android:background="@drawable/system_bar_background"
+        android:paddingTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:animateLayoutChanges="true">
+        <com.android.systemui.statusbar.car.CarNavigationButton
+            android:id="@+id/home"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/car_ic_overview"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"/>
+        <com.android.systemui.statusbar.car.CarNavigationButton
+            android:id="@+id/hvac"
+            android:background="?android:attr/selectableItemBackground"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/car_ic_hvac"
+            systemui:broadcast="true"
+            systemui:intent="intent:#Intent;action=android.car.intent.action.TOGGLE_HVAC_CONTROLS;end"/>
+    </LinearLayout>
+</com.android.systemui.statusbar.car.CarNavigationBarView>

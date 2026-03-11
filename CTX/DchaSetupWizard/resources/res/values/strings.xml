@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DchaSetupWizard</string>
+    <string name="description_bg_02_232">インターネットエラーダイアログ 背景</string>
+    <string name="description_bg_black">背景(透明)</string>
+    <string name="description_cs00205170_base">サーバービジーエラーダイアログ 背景</string>
+    <string name="description_cs00205170_notice">サーバービジーエラーダイアログ 通知</string>
+    <string name="description_cs00205170_text">サーバービジーエラーダイアログ テキスト</string>
+    <string name="description_cs00205170_title">サーバービジーエラーダイアログ タイトル</string>
+    <string name="description_cs00301040_widget">まずは 最初に 押そう！</string>
+    <string name="description_main_231">Wi-Fiエラーダイアログ 背景</string>
+    <string name="description_ok_btn_common">わかったボタン</string>
+    <string name="description_text_231">Wi-Fiエラーダイアログ テキスト</string>
+    <string name="description_text_232">インターネットエラーダイアログ テキスト</string>
+    <string name="description_title_232">インターネットエラーダイアログ タイトル</string>
+    <string name="error_code_before_open">TE51-31U2-6035</string>
+    <string name="error_code_device_encryption">TE51-31U4-6033</string>
+    <string name="error_code_fail_download">TE51-31U2-6023</string>
+    <string name="error_code_fail_install">TE51-31U2-6025</string>
+    <string name="error_code_get_file_path">TE51-31U2-6021</string>
+    <string name="error_code_initialize">TE51-31U4-6003</string>
+    <string name="error_code_move_installed_apk">TE51-31U2-A002</string>
+    <string name="error_code_multi_users">TE51-31U4-6032</string>
+    <string name="error_code_remove_task">TE51-31U4-6004</string>
+    <string name="error_code_root">TE51-31U4-6002</string>
+    <string name="error_code_set_status">TE51-31U4-6005</string>
+    <string name="error_code_thread">TE51-31U4-6001</string>
+    <string name="msg_system_error_code">エラーコード：</string>
+    <string name="path_download_file">/tmp</string>
+    <string name="test_environment_format">%1$s(%2$s)</string>
+</resources>

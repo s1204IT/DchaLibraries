@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="jp.co.benesse.dcha.apps.shareduserid"
+    android:versionCode="2"
+    android:versionName="1.0.1"
+    package="jp.co.benesse.dcha.databox">
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="22"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="jp.co.benesse.dcha.permission.ACCESS_DATA"/>
+    <permission
+        android:name="jp.co.benesse.dcha.permission.ACCESS_DATA"
+        android:protectionLevel="signature"/>
+    <application
+        android:theme="@style/AppTheme"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher"
+        android:allowClearUserData="false"
+        android:allowBackup="false"
+        android:supportsRtl="false">
+        <service
+            android:name="jp.co.benesse.dcha.databox.Sbox"
+            android:permission="jp.co.benesse.dcha.permission.ACCESS_DATA"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="jp.co.benesse.dcha.databox.Sbox"/>
+            </intent-filter>
+        </service>
+        <provider
+            android:label="KVS"
+            android:name="jp.co.benesse.dcha.databox.db.KvsProvider"
+            android:permission="jp.co.benesse.dcha.permission.ACCESS_DATA"
+            android:exported="true"
+            android:authorities="jp.co.benesse.dcha.databox.db.KvsProvider"/>
+        <provider
+            android:label="FILE"
+            android:name="jp.co.benesse.dcha.databox.file.FileProvider"
+            android:permission="jp.co.benesse.dcha.permission.ACCESS_DATA"
+            android:exported="true"
+            android:authorities="jp.co.benesse.dcha.databox.file.FileProvider"/>
+        <service android:name="jp.co.benesse.dcha.databox.plugin.SignaturePlugin">
+            <intent-filter>
+                <action android:name="jp.co.benesse.dcha.signature.PLUGIN"/>
+            </intent-filter>
+        </service>
+        <provider
+            android:name="jp.co.benesse.dcha.databox.plugin.PackageSignatureProvider"
+            android:exported="true"
+            android:authorities="jp.co.benesse.dcha.databox.plugin.PackageSignatureProvider"/>
+        <receiver
+            android:name="jp.co.benesse.dcha.databox.CommandReceiver"
+            android:permission="jp.co.benesse.dcha.permission.ACCESS_DATA"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="jp.co.benesse.dcha.databox.intent.action.COMMAND"/>
+                <category android:name="jp.co.benesse.dcha.databox.intent.category.WIPE"/>
+                <category android:name="jp.co.benesse.dcha.databox.intent.category.IMPORT_ENVIRONMENT"/>
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

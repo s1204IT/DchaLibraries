@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="allAppsInterimScrimAlpha" format="integer">
+    </attr>
+    <attr name="allAppsNavBarScrimColor" format="color">
+    </attr>
+    <attr name="allAppsScrimColor" format="color">
+    </attr>
+    <attr name="ambientShadowBlur" format="dimension">
+    </attr>
+    <attr name="ambientShadowColor" format="color">
+    </attr>
+    <attr name="canThumbDetach" format="boolean">
+    </attr>
+    <attr name="centerVertically" format="boolean">
+    </attr>
+    <attr name="className" format="string">
+    </attr>
+    <attr name="container" format="string">
+    </attr>
+    <attr name="containerType" format="integer">
+        <enum name="folder" value="2" />
+        <enum name="hotseat" value="1" />
+        <enum name="workspace" value="0" />
+    </attr>
+    <attr name="coordinatorLayoutStyle" format="reference">
+    </attr>
+    <attr name="darkTintColor" format="color">
+    </attr>
+    <attr name="defaultLayoutId" format="reference">
+    </attr>
+    <attr name="demoModeLayoutId" format="reference">
+    </attr>
+    <attr name="fastScrollEnabled" format="boolean">
+    </attr>
+    <attr name="fastScrollHorizontalThumbDrawable" format="reference">
+    </attr>
+    <attr name="fastScrollHorizontalTrackDrawable" format="reference">
+    </attr>
+    <attr name="fastScrollVerticalThumbDrawable" format="reference">
+    </attr>
+    <attr name="fastScrollVerticalTrackDrawable" format="reference">
+    </attr>
+    <attr name="folderItems" format="reference">
+    </attr>
+    <attr name="font" format="reference">
+    </attr>
+    <attr name="fontProviderAuthority" format="string">
+    </attr>
+    <attr name="fontProviderCerts" format="reference">
+    </attr>
+    <attr name="fontProviderFetchStrategy">
+        <enum name="async" value="1" />
+        <enum name="blocking" value="0" />
+    </attr>
+    <attr name="fontProviderFetchTimeout" format="integer">
+        <enum name="forever" value="-1" />
+    </attr>
+    <attr name="fontProviderPackage" format="string">
+    </attr>
+    <attr name="fontProviderQuery" format="string">
+    </attr>
+    <attr name="fontStyle">
+        <enum name="italic" value="1" />
+        <enum name="normal" value="0" />
+    </attr>
+    <attr name="fontVariationSettings" format="string">
+    </attr>
+    <attr name="fontWeight" format="integer">
+    </attr>
+    <attr name="icon" format="reference">
+    </attr>
+    <attr name="iconDisplay" format="integer">
+        <enum name="all_apps" value="1" />
+        <enum name="folder" value="2" />
+        <enum name="shortcut_popup" value="4" />
+        <enum name="widget_section" value="3" />
+        <enum name="workspace" value="0" />
+    </attr>
+    <attr name="iconSize" format="float">
+    </attr>
+    <attr name="iconSizeOverride" format="dimension">
+    </attr>
+    <attr name="iconTextSize" format="float">
+    </attr>
+    <attr name="isMainColorDark" format="boolean">
+    </attr>
+    <attr name="isWorkspaceDarkText" format="boolean">
+    </attr>
+    <attr name="key" format="string">
+    </attr>
+    <attr name="keyShadowBlur" format="dimension">
+    </attr>
+    <attr name="keyShadowColor" format="color">
+    </attr>
+    <attr name="keyShadowOffset" format="dimension">
+    </attr>
+    <attr name="keylines" format="reference">
+    </attr>
+    <attr name="landscapeIconSize" format="float">
+    </attr>
+    <attr name="layoutHorizontal" format="boolean">
+    </attr>
+    <attr name="layoutManager" format="string">
+    </attr>
+    <attr name="layout_anchor" format="reference">
+    </attr>
+    <attr name="layout_anchorGravity">
+        <flag name="bottom" value="80" />
+        <flag name="center" value="17" />
+        <flag name="center_horizontal" value="1" />
+        <flag name="center_vertical" value="16" />
+        <flag name="clip_horizontal" value="8" />
+        <flag name="clip_vertical" value="128" />
+        <flag name="end" value="8388613" />
+        <flag name="fill" value="119" />
+        <flag name="fill_horizontal" value="7" />
+        <flag name="fill_vertical" value="112" />
+        <flag name="left" value="3" />
+        <flag name="right" value="5" />
+        <flag name="start" value="8388611" />
+        <flag name="top" value="48" />
+    </attr>
+    <attr name="layout_behavior" format="string">
+    </attr>
+    <attr name="layout_dodgeInsetEdges">
+        <flag name="all" value="119" />
+        <flag name="bottom" value="80" />
+        <flag name="end" value="8388613" />
+        <flag name="left" value="3" />
+        <flag name="none" value="0" />
+        <flag name="right" value="5" />
+        <flag name="start" value="8388611" />
+        <flag name="top" value="48" />
+    </attr>
+    <attr name="layout_ignoreInsets" format="boolean">
+    </attr>
+    <attr name="layout_insetEdge">
+        <enum name="bottom" value="80" />
+        <enum name="end" value="8388613" />
+        <enum name="left" value="3" />
+        <enum name="none" value="0" />
+        <enum name="right" value="5" />
+        <enum name="start" value="8388611" />
+        <enum name="top" value="48" />
+    </attr>
+    <attr name="layout_keyline" format="integer">
+    </attr>
+    <attr name="minHeightDps" format="float">
+    </attr>
+    <attr name="minWidthDps" format="float">
+    </attr>
+    <attr name="name" format="string">
+    </attr>
+    <attr name="numColumns" format="integer">
+    </attr>
+    <attr name="numFolderColumns" format="integer">
+    </attr>
+    <attr name="numFolderRows" format="integer">
+    </attr>
+    <attr name="numHotseatIcons" format="integer">
+    </attr>
+    <attr name="numMinColumns" format="integer">
+    </attr>
+    <attr name="numMinRows" format="integer">
+    </attr>
+    <attr name="numRows" format="integer">
+    </attr>
+    <attr name="packageName" format="string">
+    </attr>
+    <attr name="pageIndicator" format="reference">
+    </attr>
+    <attr name="popupColorPrimary" format="color">
+    </attr>
+    <attr name="popupColorSecondary" format="color">
+    </attr>
+    <attr name="popupColorTertiary" format="color">
+    </attr>
+    <attr name="providerId" format="integer">
+    </attr>
+    <attr name="reverseLayout" format="boolean">
+    </attr>
+    <attr name="screen" format="string">
+    </attr>
+    <attr name="spanCount" format="integer">
+    </attr>
+    <attr name="spanX" format="string">
+    </attr>
+    <attr name="spanY" format="string">
+    </attr>
+    <attr name="stackFromEnd" format="boolean">
+    </attr>
+    <attr name="statusBarBackground" format="reference|color">
+    </attr>
+    <attr name="title" format="string">
+    </attr>
+    <attr name="ttcIndex" format="integer">
+    </attr>
+    <attr name="uri" format="string">
+    </attr>
+    <attr name="value" format="string">
+    </attr>
+    <attr name="widgetsTheme" format="reference">
+    </attr>
+    <attr name="workspace" format="reference">
+    </attr>
+    <attr name="workspaceAmbientShadowColor" format="color">
+    </attr>
+    <attr name="workspaceKeyShadowColor" format="color">
+    </attr>
+    <attr name="workspaceShadowColor" format="color">
+    </attr>
+    <attr name="workspaceStatusBarScrim" format="reference">
+    </attr>
+    <attr name="workspaceTextColor" format="color">
+    </attr>
+    <attr name="x" format="string">
+    </attr>
+    <attr name="y" format="string">
+    </attr>
+</resources>
