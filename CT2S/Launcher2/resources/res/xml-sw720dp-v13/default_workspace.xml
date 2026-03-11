@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<favorites xmlns:launcher="http://schemas.android.com/apk/res/com.android.launcher">
+    <appwidget
+        launcher:className="jp.co.benesse.dcha.setupwizard.StartWidget"
+        launcher:packageName="jp.co.benesse.dcha.setupwizard"
+        launcher:screen="2"
+        launcher:x="1"
+        launcher:y="0"
+        launcher:spanX="6"
+        launcher:spanY="5"/>
+</favorites>

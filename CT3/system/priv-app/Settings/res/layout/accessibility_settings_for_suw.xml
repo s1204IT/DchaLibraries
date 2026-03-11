@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
-    <FrameLayout android:id="@+id/suw_main_content" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1"/>
-    <com.android.setupwizardlib.view.NavigationBar android:id="@+id/suw_navigation_bar" android:layout_width="match_parent" android:layout_height="@dimen/suw_navbar_height" android:accessibilityTraversalAfter="@+id/suw_main_content" style="@style/SuwNavBarTheme"/>
-</LinearLayout>

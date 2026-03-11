@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="setup_wizard_navbar_bg_color" format="color">
+    </attr>
+    <attr name="setup_wizard_navbar_text_color" format="color">
+    </attr>
+    <attr name="setup_wizard_navbar_theme" format="reference">
+    </attr>
+    <attr name="state_encrypted" format="boolean">
+    </attr>
+    <attr name="icon" format="reference">
+    </attr>
+    <attr name="aspectRatio" format="float">
+    </attr>
+    <attr name="headerAppearance" format="reference">
+    </attr>
+    <attr name="barPrimaryColor" format="reference|color">
+    </attr>
+    <attr name="barPredictionColor" format="reference|color">
+    </attr>
+    <attr name="chartMinHeight" format="reference|dimension">
+    </attr>
+    <attr name="emptyColor" format="color">
+    </attr>
+    <attr name="minTickWidth" format="dimension">
+    </attr>
+    <attr name="optimalWidth" format="dimension">
+    </attr>
+    <attr name="optimalWidthWeight" format="float">
+    </attr>
+    <attr name="sweepDrawable" format="reference">
+    </attr>
+    <attr name="followAxis">
+        <enum name="horizontal" value="0" />
+        <enum name="vertical" value="1" />
+    </attr>
+    <attr name="neighborMargin" format="dimension">
+    </attr>
+    <attr name="labelSize" format="dimension">
+    </attr>
+    <attr name="labelTemplate" format="reference">
+    </attr>
+    <attr name="labelColor" format="color">
+    </attr>
+    <attr name="safeRegion" format="dimension">
+    </attr>
+    <attr name="primaryDrawable" format="reference">
+    </attr>
+    <attr name="secondaryDrawable" format="reference">
+    </attr>
+    <attr name="borderDrawable" format="reference">
+    </attr>
+    <attr name="strokeColor" format="color">
+    </attr>
+    <attr name="fillColor" format="color">
+    </attr>
+    <attr name="fillColorSecondary" format="color">
+    </attr>
+    <attr name="apnPreferenceStyle" format="reference">
+    </attr>
+    <attr name="keywords" format="string">
+    </attr>
+    <attr name="switchBarTheme" format="reference">
+    </attr>
+    <attr name="switchBarMarginStart" format="dimension">
+    </attr>
+    <attr name="switchBarMarginEnd" format="dimension">
+    </attr>
+    <attr name="preferenceBackgroundColor" format="color">
+    </attr>
+    <attr name="ic_menu_add" format="reference">
+    </attr>
+    <attr name="ic_menu_moreoverflow" format="reference">
+    </attr>
+    <attr name="ic_wps" format="reference">
+    </attr>
+    <attr name="setup_divider_color" format="reference">
+    </attr>
+    <attr name="side_margin" format="reference|dimension">
+    </attr>
+    <attr name="wifi_signal_color" format="reference">
+    </attr>
+    <attr name="wifi_signal" format="reference">
+    </attr>
+</resources>

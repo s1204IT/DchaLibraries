@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:textSize="14sp"
-    android:textColor="#dd000000"
-    android:gravity="center_vertical"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:layout_marginStart="@android:dimen/datepicker_view_animator_height"
-    android:layout_marginEnd="@android:dimen/datepicker_selected_date_year_size"/>

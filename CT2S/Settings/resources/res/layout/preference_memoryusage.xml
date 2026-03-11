@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:settings="http://schemas.android.com/apk/res/com.android.settings" xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
+    <com.android.settings.deviceinfo.PercentageBarChart
+        android:gravity="center_vertical"
+        android:id="@+id/percentage_bar_chart"
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        settings:emptyColor="@color/material_empty_color_light"
+        settings:minTickWidth="6dp"/>
+</LinearLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_pressed="true"
+        android:drawable="@android:drawable/ic_media_route_connected_light_05_mtrl"/>
+    <item
+        android:state_pressed="false"
+        android:drawable="@drawable/clear"/>
+</selector>

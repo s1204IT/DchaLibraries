@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.android.systemui.statusbar.NotificationGuts xmlns:android="http://schemas.android.com/apk/res/android"
-    android:theme="@android:style/Theme.DeviceDefault.Light"
-    android:gravity="start|top"
-    android:id="@+id/notification_guts"
-    android:visibility="gone"
-    android:clickable="true"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>

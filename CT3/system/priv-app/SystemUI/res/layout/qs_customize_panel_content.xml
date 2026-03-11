@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
-    <Toolbar android:id="@android:id/pin_cancel_button" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:navigationContentDescription="@android:string/mediasize_japanese_jis_b2" style="?android:attr/toolbarStyle"/>
-    <android.support.v7.widget.RecyclerView android:id="@android:id/list" android:scrollbars="vertical" android:layout_width="@dimen/notification_panel_width" android:layout_height="0dp" android:layout_weight="1" android:importantForAccessibility="no" android:scrollIndicators="top"/>
-    <View android:layout_gravity="bottom" android:id="@+id/nav_bar_background" android:background="#ff000000" android:layout_width="match_parent" android:layout_height="@dimen/navigation_bar_size"/>
-</merge>

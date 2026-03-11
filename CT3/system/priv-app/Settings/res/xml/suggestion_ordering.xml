@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<optional-steps>
-    <step key="com.android.settings.suggested.category.LOCK_SCREEN"/>
-    <step key="com.android.settings.suggested.category.EMAIL"/>
-    <step key="com.android.settings.suggested.category.PARTNER_ACCOUNT" multiple="true"/>
-    <step key="com.android.settings.suggested.category.HOTWORD"/>
-    <step key="com.android.settings.suggested.category.DEFAULT" multiple="true"/>
-    <step key="com.android.settings.suggested.category.SETTINGS_ONLY" multiple="true"/>
-</optional-steps>

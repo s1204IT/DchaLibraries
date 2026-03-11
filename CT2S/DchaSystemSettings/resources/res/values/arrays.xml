@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="wifi_status">
+        <item />
+        <item>Scanning…</item>
+        <item>Connecting…</item>
+        <item>Authenticating…</item>
+        <item>Obtaining IP address…</item>
+        <item>Connected</item>
+        <item>Suspended</item>
+        <item>Disconnecting…</item>
+        <item>Disconnected</item>
+        <item>Unsuccessful</item>
+        <item>Blocked</item>
+        <item>Temporarily avoiding poor connection</item>
+    </array>
+    <array name="wifi_status_with_ssid">
+        <item />
+        <item>Scanning…</item>
+        <item>Connecting to %1$s…</item>
+        <item>Authenticating with %1$s…</item>
+        <item>Obtaining IP address from %1$s…</item>
+        <item>Connected to %1$s</item>
+        <item>Suspended</item>
+        <item>Disconnecting from %1$s…</item>
+        <item>Disconnected</item>
+        <item>Unsuccessful</item>
+        <item>Blocked</item>
+        <item>Temporarily avoiding poor connection</item>
+    </array>
+    <array name="wifi_security">
+        <item>@string/wifi_security_none</item>
+        <item>@string/wifi_security_wep</item>
+        <item>@string/wifi_security_psk_generic</item>
+    </array>
+    <array name="wifi_security_no_eap">
+        <item>@string/wifi_security_none</item>
+        <item>@string/wifi_security_wep</item>
+        <item>@string/wifi_security_psk_generic</item>
+    </array>
+    <array name="wifi_ap_security">
+        <item>Open</item>
+        <item>WPA PSK</item>
+        <item>WPA2 PSK</item>
+    </array>
+    <array name="wifi_eap_method">
+        <item>PEAP</item>
+        <item>TLS</item>
+        <item>TTLS</item>
+        <item>PWD</item>
+    </array>
+    <array name="wifi_p2p_wps_setup">
+        <item>Push button</item>
+        <item>PIN from peer device</item>
+        <item>PIN from this device</item>
+    </array>
+    <array name="wifi_p2p_status">
+        <item>Connected</item>
+        <item>Invited</item>
+        <item>Unsuccessful</item>
+        <item>Available</item>
+        <item>Out-of-range</item>
+    </array>
+    <array name="wifi_signal">
+        <item>Poor</item>
+        <item>Fair</item>
+        <item>Good</item>
+        <item>Excellent</item>
+    </array>
+    <array name="wifi_phase2_entries">
+        <item>None</item>
+        <item>PAP</item>
+        <item>MSCHAP</item>
+        <item>MSCHAPV2</item>
+        <item>GTC</item>
+    </array>
+    <array name="wifi_ip_settings">
+        <item>DHCP</item>
+        <item>Static</item>
+    </array>
+    <array name="wifi_proxy_settings">
+        <item>None</item>
+        <item>Manual</item>
+    </array>
+</resources>

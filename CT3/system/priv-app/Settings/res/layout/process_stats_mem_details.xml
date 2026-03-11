@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:scrollbarStyle="@integer/preference_scrollbar_style" android:clipToPadding="false" android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:orientation="vertical" android:id="@+id/all_details" android:paddingTop="5dp" android:paddingBottom="5dp" android:layout_width="match_parent" android:layout_height="match_parent">
-        <TextView android:text="@string/mem_state_subtitle" style="?android:attr/listSeparatorTextViewStyle"/>
-        <LinearLayout android:orientation="vertical" android:id="@+id/mem_state" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="6dp"/>
-        <TextView android:text="@string/mem_use_subtitle" style="?android:attr/listSeparatorTextViewStyle"/>
-        <LinearLayout android:orientation="vertical" android:id="@+id/mem_use" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="6dp"/>
-    </LinearLayout>
-</ScrollView>

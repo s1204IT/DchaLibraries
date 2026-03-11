@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android" android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="center_vertical" android:id="@+id/title" android:background="@drawable/qc_menu_selector" android:paddingLeft="8dp" android:paddingTop="4dp" android:paddingRight="8dp" android:paddingBottom="4dp" android:layout_width="@dimen/menu_width" android:layout_height="@dimen/menu_height" android:minHeight="44dp"/>

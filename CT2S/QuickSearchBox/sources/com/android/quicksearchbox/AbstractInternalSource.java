@@ -1,0 +1,35 @@
+package com.android.quicksearchbox;
+
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Handler;
+import com.android.quicksearchbox.util.NamedTaskExecutor;
+
+public abstract class AbstractInternalSource extends AbstractSource {
+    protected abstract int getSourceIconResource();
+
+    public AbstractInternalSource(Context context, Handler uiThread, NamedTaskExecutor iconLoader) {
+        super(context, uiThread, iconLoader);
+    }
+
+    @Override
+    public String getDefaultIntentData() {
+        return null;
+    }
+
+    @Override
+    protected String getIconPackage() {
+        return getContext().getPackageName();
+    }
+
+    @Override
+    public Drawable getSourceIcon() {
+        return getContext().getResources().getDrawable(getSourceIconResource());
+    }
+
+    @Override
+    public Uri getSourceIconUri() {
+        return Uri.parse("android.resource://" + getContext().getPackageName() + "/" + getSourceIconResource());
+    }
+}

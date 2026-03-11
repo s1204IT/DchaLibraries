@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="android.uid.system"
+    android:versionCode="4"
+    android:versionName="1.0.3"
+    package="jp.co.benesse.dcha.systemsettings"
+    platformBuildVersionCode="22"
+    platformBuildVersionName="5.1-01.16.000.20191209.162107">
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.DEVICE_POWER"/>
+    <uses-permission android:name="android.permission.MASTER_CLEAR"/>
+    <uses-permission android:name="android.permission.REBOOT"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="jp.co.benesse.dcha.permission.ACCESS_SYSTEM"/>
+    <uses-permission android:name="jp.co.benesse.dcha.permission.STOP_SERVICE"/>
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="22"/>
+    <application
+        android:theme="@android:style/Theme.NoTitleBar"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher"
+        android:allowBackup="false">
+        <activity
+            android:label="@string/app_name"
+            android:name="jp.co.benesse.dcha.systemsettings.WifiSettingActivity"
+            android:exported="true"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"/>
+        <activity
+            android:label="@string/app_name"
+            android:name="jp.co.benesse.dcha.systemsettings.NetworkSettingActivity"
+            android:exported="false"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"
+            android:windowSoftInputMode="adjustPan"
+            android:noHistory="true"/>
+        <activity
+            android:label="@string/app_name"
+            android:name="jp.co.benesse.dcha.systemsettings.LightSettingActivity"
+            android:exported="true"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"
+            android:noHistory="true"/>
+        <activity
+            android:label="@string/app_name"
+            android:name="jp.co.benesse.dcha.systemsettings.TabletInfoSettingActivity"
+            android:exported="true"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"/>
+        <activity
+            android:label="@string/app_name"
+            android:name="jp.co.benesse.dcha.systemsettings.SdUpdateActivity"
+            android:exported="true"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"
+            android:noHistory="true"/>
+        <activity
+            android:theme="@style/Theme.Transparent"
+            android:label="@string/app_name"
+            android:name="jp.co.benesse.dcha.systemsettings.AbandonSettingActivity"
+            android:exported="true"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"
+            android:noHistory="true"/>
+        <activity
+            android:label="@string/app_name"
+            android:name="jp.co.benesse.dcha.systemsettings.HealthCheckActivity"
+            android:exported="false"
+            android:clearTaskOnLaunch="true"
+            android:excludeFromRecents="true"
+            android:screenOrientation="landscape"
+            android:alwaysRetainTaskState="true"
+            android:noHistory="true"/>
+        <receiver
+            android:name="jp.co.benesse.dcha.systemsettings.StopServiceReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="jp.co.benesse.dcha.systemsettings.intent.action.STOP"/>
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

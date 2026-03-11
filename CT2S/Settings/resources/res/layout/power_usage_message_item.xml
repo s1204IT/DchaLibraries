@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:ellipsize="marquee"
+    android:id="@+id/message"
+    android:paddingBottom="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingStart="4dp"
+    android:paddingEnd="?android:attr/scrollbarSize"/>

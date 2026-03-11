@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:background="@drawable/background" android:layout_width="match_parent" android:layout_height="match_parent">
-    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="307dp" android:layout_marginTop="86dp" android:src="@drawable/bg_02_232" android:contentDescription="@string/description_bg_02_232"/>
-    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="370dp" android:layout_marginTop="121dp" android:src="@drawable/title_232" android:contentDescription="@string/description_title_232"/>
-    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="398dp" android:layout_marginTop="295dp" android:src="@drawable/text_232" android:contentDescription="@string/description_text_232"/>
-    <ImageView android:id="@+id/ok_btn" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="540dp" android:layout_marginTop="557dp" android:src="@drawable/ok_btn_common" android:contentDescription="@string/description_ok_btn_common"/>
-</RelativeLayout>

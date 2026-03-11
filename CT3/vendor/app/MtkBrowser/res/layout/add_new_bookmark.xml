@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:gravity="center_vertical" android:orientation="horizontal" android:paddingLeft="6dp" android:paddingTop="5dp" android:paddingRight="6dp" android:paddingBottom="5dp" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="?android:attr/listPreferredItemHeight">
-    <ImageView android:id="@+id/favicon" android:focusable="false" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="5dp" android:layout_marginRight="11dp" android:src="@drawable/ic_bookmark_on_holo_dark" android:scaleType="fitCenter"/>
-    <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content">
-        <TextView android:textAppearance="?android:attr/textAppearanceMedium" android:textStyle="bold" android:id="@+id/title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="2dp" android:text="@string/add_new_bookmark"/>
-        <TextView android:textAppearance="?android:attr/textAppearanceSmall" android:ellipsize="end" android:id="@+id/url" android:layout_width="wrap_content" android:layout_height="wrap_content" android:maxLines="1" android:singleLine="true"/>
-    </LinearLayout>
-</LinearLayout>

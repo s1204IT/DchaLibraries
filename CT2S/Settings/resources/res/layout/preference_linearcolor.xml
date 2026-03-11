@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+    android:paddingEnd="?android:attr/listPreferredItemPaddingEnd">
+    <com.android.settings.applications.LinearColorBar
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:gravity="center_vertical"
+        android:id="@+id/linear_color_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:shadowColor="?android:attr/colorBackground"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"/>
+</FrameLayout>
