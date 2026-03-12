@@ -1,0 +1,38 @@
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+ro.actionable_compatible_property.enabled=true
+ro.secure=1
+security.perf_harden=1
+ro.adb.secure=1
+ro.allow.mock.location=0
+ro.debuggable=0
+dalvik.vm.image-dex2oat-Xms=64m
+dalvik.vm.image-dex2oat-Xmx=64m
+dalvik.vm.dex2oat-Xms=64m
+dalvik.vm.dex2oat-Xmx=512m
+dalvik.vm.usejit=true
+dalvik.vm.usejitprofiles=true
+dalvik.vm.dexopt.secondary=true
+dalvik.vm.appimageformat=lz4
+pm.dexopt.first-boot=quicken
+pm.dexopt.boot=verify
+pm.dexopt.install=speed-profile
+pm.dexopt.bg-dexopt=speed-profile
+pm.dexopt.ab-ota=speed-profile
+pm.dexopt.inactive=verify
+pm.dexopt.shared=speed
+dalvik.vm.dex2oat-minidebuginfo=true
+debug.atrace.tags.enableflags=0
+ro.mediatek.platform=MT8168
+ro.mediatek.version.branch=alps-mp-p0.mp12
+ro.mediatek.version.release=alps-mp-p0.mp12-V2.60_sts.p0mp12.aiot8365p1.64.bsp_P25
+ro.com.android.mobiledata=true
+ro.base_build=noah
+#
+# BOOTIMAGE_BUILD_PROPERTIES
+#
+ro.bootimage.build.date=Thu Dec 8 17:10:41 JST 2022
+ro.bootimage.build.date.utc=1670487041
+ro.bootimage.build.fingerprint=Panasonic/TAB-A05-BA1/TAB-A05-BA1:9/01.03.000/01.03.000:user/release-keys
+persist.sys.usb.config=none
