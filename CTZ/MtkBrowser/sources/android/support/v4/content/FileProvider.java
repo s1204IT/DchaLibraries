@@ -105,8 +105,8 @@ public class FileProvider extends ContentProvider {
 
     private static File buildPath(File file, String... strArr) {
         int length = strArr.length;
-        File file2 = file;
         int i = 0;
+        File file2 = file;
         while (i < length) {
             String str = strArr[i];
             i++;

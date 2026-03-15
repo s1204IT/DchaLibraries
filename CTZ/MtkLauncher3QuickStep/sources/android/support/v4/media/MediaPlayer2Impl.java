@@ -118,7 +118,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         sStateMap.put(Integer.valueOf(MediaPlayer2.MEDIAPLAYER2_STATE_ERROR), 3);
     }
 
-    public void handleDataSourceError(final DataSourceError err) throws Throwable {
+    private void handleDataSourceError(final DataSourceError err) throws Throwable {
         if (err == null) {
             return;
         }
@@ -219,11 +219,11 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         return this.mPlayer.getMediaPlayer2State();
     }
 
-    public int getPlayerState() {
+    private int getPlayerState() {
         return this.mPlayer.getPlayerState();
     }
 
-    public int getBufferingState() {
+    private int getBufferingState() {
         return this.mPlayer.getBufferingState();
     }
 
@@ -323,7 +323,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         return 1.0f;
     }
 
-    public void registerPlayerEventCallback(@NonNull Executor e, @NonNull BaseMediaPlayer.PlayerEventCallback cb) {
+    private void registerPlayerEventCallback(@NonNull Executor e, @NonNull BaseMediaPlayer.PlayerEventCallback cb) {
         if (cb == null) {
             throw new IllegalArgumentException("Illegal null PlayerEventCallback");
         }
@@ -335,7 +335,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public void unregisterPlayerEventCallback(@NonNull BaseMediaPlayer.PlayerEventCallback cb) {
+    private void unregisterPlayerEventCallback(@NonNull BaseMediaPlayer.PlayerEventCallback cb) {
         if (cb == null) {
             throw new IllegalArgumentException("Illegal null PlayerEventCallback");
         }
@@ -384,7 +384,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
     }
 
     @GuardedBy("mTaskLock")
-    public void processPendingTask_l() {
+    private void processPendingTask_l() {
         if (this.mCurrentTask == null && !this.mPendingTasks.isEmpty()) {
             Task task = this.mPendingTasks.removeFirst();
             this.mCurrentTask = task;
@@ -392,7 +392,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public static void handleDataSource(MediaPlayerSource src) throws IOException {
+    private static void handleDataSource(MediaPlayerSource src) throws IOException {
         final DataSourceDesc dsd = src.getDSD();
         Preconditions.checkNotNull(dsd, "the DataSourceDesc cannot be null");
         MediaPlayer player = src.mPlayer;
@@ -741,7 +741,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public void setPlaybackParamsInternal(final PlaybackParams params) {
+    private void setPlaybackParamsInternal(final PlaybackParams params) {
         PlaybackParams current = this.mPlayer.getPlaybackParams();
         this.mPlayer.setPlaybackParams(params);
         if (current.getSpeed() != params.getSpeed()) {
@@ -754,7 +754,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public void notifyMediaPlayer2Event(final Mp2EventNotifier notifier) throws Throwable {
+    private void notifyMediaPlayer2Event(final Mp2EventNotifier notifier) throws Throwable {
         synchronized (this.mLock) {
             try {
                 try {
@@ -778,7 +778,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public void notifyPlayerEvent(final PlayerEventNotifier notifier) {
+    private void notifyPlayerEvent(final PlayerEventNotifier notifier) {
         ArrayMap<BaseMediaPlayer.PlayerEventCallback, Executor> map;
         synchronized (this.mLock) {
             map = new ArrayMap<>(this.mPlayerEventCallbackMap);
@@ -796,7 +796,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public void notifyDrmEvent(final DrmEventNotifier notifier) throws Throwable {
+    private void notifyDrmEvent(final DrmEventNotifier notifier) throws Throwable {
         synchronized (this.mLock) {
             try {
                 try {
@@ -820,7 +820,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public void setEndPositionTimerIfNeeded(final MediaPlayer.OnCompletionListener completionListener, final MediaPlayerSource src, MediaTimestamp timedsd) {
+    private void setEndPositionTimerIfNeeded(final MediaPlayer.OnCompletionListener completionListener, final MediaPlayerSource src, MediaTimestamp timedsd) {
         if (src == this.mPlayer.getFirst()) {
             this.mEndPositionHandler.removeCallbacksAndMessages(null);
             DataSourceDesc dsd = src.getDSD();
@@ -842,7 +842,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
         }
     }
 
-    public void setUpListeners(final MediaPlayerSource src) {
+    private void setUpListeners(final MediaPlayerSource src) {
         MediaPlayer p = src.mPlayer;
         final MediaPlayer.OnPreparedListener preparedListener = new MediaPlayer.OnPreparedListener() {
             @Override
@@ -1230,7 +1230,7 @@ public final class MediaPlayer2Impl extends MediaPlayer2 {
             }
         }
 
-        public void sendCompleteNotification(final int status) throws Throwable {
+        private void sendCompleteNotification(final int status) throws Throwable {
             if (this.mMediaCallType != 1003) {
                 MediaPlayer2Impl.this.notifyMediaPlayer2Event(new Mp2EventNotifier() {
                     @Override

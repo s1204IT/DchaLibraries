@@ -40,7 +40,7 @@ public class UrlHandler {
         }
 
         @Override
-        public String doInBackground(Void... voidArr) throws Throwable {
+        protected String doInBackground(Void... voidArr) throws Throwable {
             Cursor cursorQuery;
             String string;
             String string2 = this.mSiteUri.toString();
@@ -68,7 +68,7 @@ public class UrlHandler {
         }
 
         @Override
-        public void onPostExecute(String str) {
+        protected void onPostExecute(String str) {
             if (this.this$0.mController.isActivityPaused() || this.this$0.mController.getTabControl().getTabPosition(this.mTab) == -1 || this.this$0.startActivityForUrl(this.mTab, str) || this.this$0.handleMenuClick(this.mTab, str)) {
                 return;
             }
@@ -81,7 +81,7 @@ public class UrlHandler {
         this.mActivity = this.mController.getActivity();
     }
 
-    public Uri getRlzUri() {
+    private Uri getRlzUri() {
         if (this.mRlzUri == null) {
             this.mRlzUri = Uri.withAppendedPath(RLZ_PROVIDER_URI, this.mActivity.getResources().getString(2131493266));
         }

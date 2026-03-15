@@ -383,7 +383,7 @@ public class AudioAttributesCompat {
         }
     }
 
-    public static int usageForStreamType(int streamType) {
+    private static int usageForStreamType(int streamType) {
         switch (streamType) {
         }
         return 2;

@@ -120,7 +120,7 @@ public class AllAppsContainerView extends SpringRelativeLayout implements DragSo
         }
     }
 
-    public void onAppsUpdated() {
+    private void onAppsUpdated() {
         boolean z;
         Iterator<AppInfo> it = this.mAllAppsStore.getApps().iterator();
         while (true) {

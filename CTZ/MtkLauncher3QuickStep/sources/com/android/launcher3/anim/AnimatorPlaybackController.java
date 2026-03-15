@@ -224,7 +224,7 @@ public abstract class AnimatorPlaybackController implements ValueAnimator.Animat
         }
     }
 
-    public static <T> List<T> nonNullList(ArrayList<T> arrayList) {
+    private static <T> List<T> nonNullList(ArrayList<T> arrayList) {
         return arrayList == null ? Collections.emptyList() : arrayList;
     }
 }

@@ -107,14 +107,14 @@ public class BrowserActivity extends Activity {
         return controller;
     }
 
-    public void doResume() {
+    private void doResume() {
         if (DEBUG) {
             Log.v("browser", "BrowserActivity.onResume: this=" + this);
         }
         this.mController.onResume();
     }
 
-    public void handleSearchEngineChanged() {
+    private void handleSearchEngineChanged() {
         String searchEngineName = BrowserSettings.getInstance().getSearchEngineName();
         if (DEBUG) {
             Log.v("@M_browser", "ChangeSearchEngineReceiver (search): search_engine---" + searchEngineName);

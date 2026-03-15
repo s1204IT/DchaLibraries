@@ -1225,7 +1225,7 @@ class MediaSession2ImplBase implements MediaSession2.SupportLibraryImpl {
         }
     }
 
-    public void notifyPlaylistChangedOnExecutor(MediaPlaylistAgent playlistAgent, final List<MediaItem2> list, final MediaMetadata2 metadata) {
+    private void notifyPlaylistChangedOnExecutor(MediaPlaylistAgent playlistAgent, final List<MediaItem2> list, final MediaMetadata2 metadata) {
         synchronized (this.mLock) {
             if (playlistAgent != this.mPlaylistAgent) {
                 return;
@@ -1240,7 +1240,7 @@ class MediaSession2ImplBase implements MediaSession2.SupportLibraryImpl {
         }
     }
 
-    public void notifyPlaylistMetadataChangedOnExecutor(MediaPlaylistAgent playlistAgent, final MediaMetadata2 metadata) {
+    private void notifyPlaylistMetadataChangedOnExecutor(MediaPlaylistAgent playlistAgent, final MediaMetadata2 metadata) {
         synchronized (this.mLock) {
             if (playlistAgent != this.mPlaylistAgent) {
                 return;
@@ -1255,7 +1255,7 @@ class MediaSession2ImplBase implements MediaSession2.SupportLibraryImpl {
         }
     }
 
-    public void notifyRepeatModeChangedOnExecutor(MediaPlaylistAgent playlistAgent, final int repeatMode) {
+    private void notifyRepeatModeChangedOnExecutor(MediaPlaylistAgent playlistAgent, final int repeatMode) {
         synchronized (this.mLock) {
             if (playlistAgent != this.mPlaylistAgent) {
                 return;
@@ -1270,7 +1270,7 @@ class MediaSession2ImplBase implements MediaSession2.SupportLibraryImpl {
         }
     }
 
-    public void notifyShuffleModeChangedOnExecutor(MediaPlaylistAgent playlistAgent, final int shuffleMode) {
+    private void notifyShuffleModeChangedOnExecutor(MediaPlaylistAgent playlistAgent, final int shuffleMode) {
         synchronized (this.mLock) {
             if (playlistAgent != this.mPlaylistAgent) {
                 return;
@@ -1492,7 +1492,7 @@ class MediaSession2ImplBase implements MediaSession2.SupportLibraryImpl {
             return session;
         }
 
-        public MediaItem2 getMediaItem(MediaSession2ImplBase session, DataSourceDesc dsd) {
+        private MediaItem2 getMediaItem(MediaSession2ImplBase session, DataSourceDesc dsd) {
             MediaPlaylistAgent agent = session.getPlaylistAgent();
             if (agent == null) {
                 if (MediaSession2ImplBase.DEBUG) {

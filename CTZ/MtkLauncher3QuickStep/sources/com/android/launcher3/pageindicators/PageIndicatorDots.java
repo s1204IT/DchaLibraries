@@ -94,7 +94,7 @@ public class PageIndicatorDots extends View implements PageIndicator {
         }
     }
 
-    public void animateToPosition(float f) {
+    private void animateToPosition(float f) {
         this.mFinalPosition = f;
         if (Math.abs(this.mCurrentPosition - this.mFinalPosition) < 0.1f) {
             this.mCurrentPosition = this.mFinalPosition;
@@ -201,7 +201,7 @@ public class PageIndicatorDots extends View implements PageIndicator {
         canvas.drawRoundRect(getActiveRect(), this.mDotRadius, this.mDotRadius, this.mCirclePaint);
     }
 
-    public RectF getActiveRect() {
+    private RectF getActiveRect() {
         float f = (int) this.mCurrentPosition;
         float f2 = this.mCurrentPosition - f;
         float f3 = this.mDotRadius * 2.0f;

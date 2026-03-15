@@ -219,7 +219,7 @@ class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Serializabl
         }
 
         @Override
-        public ConcurrentMap<K, V> delegate() {
+        protected ConcurrentMap<K, V> delegate() {
             return this.delegate;
         }
 
@@ -511,7 +511,7 @@ class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Serializabl
                 }
 
                 @Override
-                public ReferenceEntry<K, V> computeNext(ReferenceEntry<K, V> referenceEntry) {
+                protected ReferenceEntry<K, V> computeNext(ReferenceEntry<K, V> referenceEntry) {
                     ReferenceEntry<K, V> nextEvictable = referenceEntry.getNextEvictable();
                     if (nextEvictable == this.this$0.head) {
                         return null;
@@ -643,7 +643,7 @@ class MapMakerInternalMap<K, V> extends AbstractMap<K, V> implements Serializabl
                 }
 
                 @Override
-                public ReferenceEntry<K, V> computeNext(ReferenceEntry<K, V> referenceEntry) {
+                protected ReferenceEntry<K, V> computeNext(ReferenceEntry<K, V> referenceEntry) {
                     ReferenceEntry<K, V> nextExpirable = referenceEntry.getNextExpirable();
                     if (nextExpirable == this.this$0.head) {
                         return null;

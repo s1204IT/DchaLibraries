@@ -404,7 +404,7 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         return z;
     }
 
-    public DataSourceDesc retrieveDataSourceDescLocked(MediaItem2 item) {
+    private DataSourceDesc retrieveDataSourceDescLocked(MediaItem2 item) {
         DataSourceDesc dsd = item.getDataSourceDesc();
         if (dsd != null) {
             this.mItemDsdMap.put(item, dsd);
@@ -421,7 +421,7 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         return dsd2;
     }
 
-    public PlayItem getNextValidPlayItemLocked(int curShuffledIdx, int direction) {
+    private PlayItem getNextValidPlayItemLocked(int curShuffledIdx, int direction) {
         int size = this.mPlaylist.size();
         if (curShuffledIdx == -1) {
             curShuffledIdx = direction <= 0 ? size : -1;
@@ -446,7 +446,7 @@ class SessionPlaylistAgentImplBase extends MediaPlaylistAgent {
         return null;
     }
 
-    public void updateCurrentIfNeededLocked() {
+    private void updateCurrentIfNeededLocked() {
         if (!hasValidItem() || this.mCurrent.isValid()) {
             return;
         }

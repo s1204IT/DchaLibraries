@@ -61,7 +61,7 @@ public class ModelWriter {
         }
     }
 
-    public void checkItemInfoLocked(long j, ItemInfo itemInfo, StackTraceElement[] stackTraceElementArr) {
+    private void checkItemInfoLocked(long j, ItemInfo itemInfo, StackTraceElement[] stackTraceElementArr) {
         ItemInfo itemInfo2 = this.mBgDataModel.itemsIdMap.get(j);
         if (itemInfo2 != null && itemInfo != itemInfo2) {
             if ((itemInfo2 instanceof ShortcutInfo) && (itemInfo instanceof ShortcutInfo)) {

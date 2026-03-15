@@ -47,7 +47,7 @@ public abstract class LiveData<T> {
         }
     }
 
-    public void dispatchingValue(@Nullable LiveData<T>.ObserverWrapper initiator) {
+    private void dispatchingValue(@Nullable LiveData<T>.ObserverWrapper initiator) {
         if (this.mDispatchingValue) {
             this.mDispatchInvalidated = true;
             return;

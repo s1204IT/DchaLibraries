@@ -373,11 +373,11 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         }
     }
 
-    public static String getIntentPackage(Intent intent) {
+    private static String getIntentPackage(Intent intent) {
         return intent.getComponent() == null ? intent.getPackage() : intent.getComponent().getPackageName();
     }
 
-    public static PendingInstallShortcutInfo decode(String str, Context context) {
+    private static PendingInstallShortcutInfo decode(String str, Context context) {
         try {
             Decoder decoder = new Decoder(str, context);
             if (decoder.optBoolean(APP_SHORTCUT_TYPE_KEY)) {
@@ -452,7 +452,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         return new PendingInstallShortcutInfo(launcherActivityInfoResolveActivity, pendingInstallShortcutInfo.mContext);
     }
 
-    public static ShortcutInfo createShortcutInfo(Intent intent, LauncherAppState launcherAppState) {
+    private static ShortcutInfo createShortcutInfo(Intent intent, LauncherAppState launcherAppState) {
         Intent intent2 = (Intent) intent.getParcelableExtra("android.intent.extra.shortcut.INTENT");
         String stringExtra = intent.getStringExtra("android.intent.extra.shortcut.NAME");
         Parcelable parcelableExtra = intent.getParcelableExtra("android.intent.extra.shortcut.ICON");

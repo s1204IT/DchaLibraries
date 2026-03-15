@@ -165,7 +165,7 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
     }
 
     @NonNull
-    public AccessibilityNodeInfoCompat obtainAccessibilityNodeInfo(int virtualViewId) {
+    private AccessibilityNodeInfoCompat obtainAccessibilityNodeInfo(int virtualViewId) {
         if (virtualViewId == -1) {
             return createNodeForHost();
         }
@@ -249,7 +249,7 @@ public abstract class ExploreByTouchHelper extends AccessibilityDelegateCompat {
         return node;
     }
 
-    public boolean performAction(int virtualViewId, int action, Bundle arguments) {
+    private boolean performAction(int virtualViewId, int action, Bundle arguments) {
         switch (virtualViewId) {
             case -1:
                 return performActionForHost(action, arguments);

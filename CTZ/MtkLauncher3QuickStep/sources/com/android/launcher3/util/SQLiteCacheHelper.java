@@ -87,7 +87,7 @@ public abstract class SQLiteCacheHelper {
             }
         }
 
-        public void clearDB(SQLiteDatabase sQLiteDatabase) {
+        private void clearDB(SQLiteDatabase sQLiteDatabase) {
             sQLiteDatabase.execSQL("DROP TABLE IF EXISTS " + SQLiteCacheHelper.this.mTableName);
             onCreate(sQLiteDatabase);
         }

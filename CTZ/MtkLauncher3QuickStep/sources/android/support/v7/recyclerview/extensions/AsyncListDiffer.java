@@ -116,7 +116,7 @@ public class AsyncListDiffer<T> {
         }
     }
 
-    public void latchList(@NonNull List<T> newList, @NonNull DiffUtil.DiffResult diffResult) {
+    private void latchList(@NonNull List<T> newList, @NonNull DiffUtil.DiffResult diffResult) {
         this.mList = newList;
         this.mReadOnlyList = Collections.unmodifiableList(newList);
         diffResult.dispatchUpdatesTo(this.mUpdateCallback);

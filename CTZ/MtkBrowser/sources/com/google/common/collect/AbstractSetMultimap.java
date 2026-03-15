@@ -13,7 +13,7 @@ abstract class AbstractSetMultimap<K, V> extends AbstractMapBasedMultimap<K, V> 
     }
 
     @Override
-    public abstract Set<V> createCollection();
+    abstract Set<V> createCollection();
 
     @Override
     public Set<Map.Entry<K, V>> entries() {

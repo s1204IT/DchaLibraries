@@ -117,8 +117,8 @@ class FetchUrlMimeType extends Thread {
                 }
                 headerField = httpURLConnection2.getHeaderField("Content-Disposition");
             } else {
-                contentType = null;
                 headerField = null;
+                contentType = null;
             }
             if (httpURLConnection2 == null) {
                 httpURLConnection2.disconnect();

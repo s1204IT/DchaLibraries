@@ -199,7 +199,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
         return true;
     }
 
-    public void animateAddImpl(final RecyclerView.ViewHolder holder) {
+    private void animateAddImpl(final RecyclerView.ViewHolder holder) {
         View view = holder.itemView;
         final ViewPropertyAnimatorCompat animation = ViewCompat.animate(view);
         this.mAddAnimations.add(holder);
@@ -250,7 +250,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
         return true;
     }
 
-    public void animateMoveImpl(final RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
+    private void animateMoveImpl(final RecyclerView.ViewHolder holder, int fromX, int fromY, int toX, int toY) {
         View view = holder.itemView;
         final int deltaX = toX - fromX;
         final int deltaY = toY - fromY;
@@ -317,7 +317,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
         return true;
     }
 
-    public void animateChangeImpl(final ChangeInfo changeInfo) {
+    private void animateChangeImpl(final ChangeInfo changeInfo) {
         RecyclerView.ViewHolder holder = changeInfo.oldHolder;
         View view = holder == null ? null : holder.itemView;
         RecyclerView.ViewHolder newHolder = changeInfo.newHolder;
@@ -493,7 +493,7 @@ public class DefaultItemAnimator extends SimpleItemAnimator {
         return (this.mPendingAdditions.isEmpty() && this.mPendingChanges.isEmpty() && this.mPendingMoves.isEmpty() && this.mPendingRemovals.isEmpty() && this.mMoveAnimations.isEmpty() && this.mRemoveAnimations.isEmpty() && this.mAddAnimations.isEmpty() && this.mChangeAnimations.isEmpty() && this.mMovesList.isEmpty() && this.mAdditionsList.isEmpty() && this.mChangesList.isEmpty()) ? false : true;
     }
 
-    public void dispatchFinishedWhenDone() {
+    private void dispatchFinishedWhenDone() {
         if (isRunning()) {
             return;
         }

@@ -105,7 +105,7 @@ public class LiveWallpaperListAdapter extends BaseAdapter implements ListAdapter
         }
 
         @Override
-        public Void doInBackground(List<ResolveInfo>... params) {
+        protected Void doInBackground(List<ResolveInfo>... params) {
             final PackageManager packageManager = this.mContext.getPackageManager();
             List<ResolveInfo> list = params[0];
             Collections.sort(list, new Comparator<ResolveInfo>() {
@@ -135,7 +135,7 @@ public class LiveWallpaperListAdapter extends BaseAdapter implements ListAdapter
         }
 
         @Override
-        public void onProgressUpdate(LiveWallpaperTile... infos) {
+        protected void onProgressUpdate(LiveWallpaperTile... infos) {
             for (LiveWallpaperTile info : infos) {
                 if (info == null) {
                     LiveWallpaperListAdapter.this.notifyDataSetChanged();

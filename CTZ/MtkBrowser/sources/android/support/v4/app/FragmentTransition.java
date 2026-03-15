@@ -197,7 +197,7 @@ class FragmentTransition {
         }
     }
 
-    public static void callSharedElementStartEnd(Fragment fragment, Fragment fragment2, boolean z, ArrayMap<String, View> arrayMap, boolean z2) {
+    private static void callSharedElementStartEnd(Fragment fragment, Fragment fragment2, boolean z, ArrayMap<String, View> arrayMap, boolean z2) {
         int size;
         int i;
         SharedElementCallback enterTransitionCallback = z ? fragment2.getEnterTransitionCallback() : fragment.getEnterTransitionCallback();
@@ -234,7 +234,7 @@ class FragmentTransition {
         return true;
     }
 
-    public static ArrayMap<String, View> captureInSharedElements(FragmentTransitionImpl fragmentTransitionImpl, ArrayMap<String, String> arrayMap, Object obj, FragmentContainerTransition fragmentContainerTransition) {
+    private static ArrayMap<String, View> captureInSharedElements(FragmentTransitionImpl fragmentTransitionImpl, ArrayMap<String, String> arrayMap, Object obj, FragmentContainerTransition fragmentContainerTransition) {
         SharedElementCallback enterTransitionCallback;
         ArrayList<String> arrayList;
         String strFindKeyForValue;
@@ -359,7 +359,7 @@ class FragmentTransition {
         throw new IllegalArgumentException("Invalid Transition types");
     }
 
-    public static ArrayList<View> configureEnteringExitingViews(FragmentTransitionImpl fragmentTransitionImpl, Object obj, Fragment fragment, ArrayList<View> arrayList, View view) {
+    private static ArrayList<View> configureEnteringExitingViews(FragmentTransitionImpl fragmentTransitionImpl, Object obj, Fragment fragment, ArrayList<View> arrayList, View view) {
         ArrayList<View> arrayList2 = null;
         if (obj != null) {
             arrayList2 = new ArrayList<>();
@@ -632,7 +632,7 @@ class FragmentTransition {
         return fragmentTransitionImpl.cloneTransition(z ? fragment.getReturnTransition() : fragment.getExitTransition());
     }
 
-    public static View getInEpicenterView(ArrayMap<String, View> arrayMap, FragmentContainerTransition fragmentContainerTransition, Object obj, boolean z) {
+    private static View getInEpicenterView(ArrayMap<String, View> arrayMap, FragmentContainerTransition fragmentContainerTransition, Object obj, boolean z) {
         BackStackRecord backStackRecord = fragmentContainerTransition.lastInTransaction;
         if (obj == null || arrayMap == null || backStackRecord.mSharedElementSourceNames == null || backStackRecord.mSharedElementSourceNames.isEmpty()) {
             return null;
@@ -742,7 +742,7 @@ class FragmentTransition {
         }
     }
 
-    public static void setViewVisibility(ArrayList<View> arrayList, int i) {
+    private static void setViewVisibility(ArrayList<View> arrayList, int i) {
         if (arrayList == null) {
             return;
         }

@@ -20,7 +20,7 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> {
         }
 
         @Override
-        public Collection<Range<C>> delegate() {
+        protected Collection<Range<C>> delegate() {
             return this.this$0.rangesByLowerBound.values();
         }
 
@@ -74,7 +74,7 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> {
                 }
 
                 @Override
-                public Map.Entry<Cut<C>, Range<C>> computeNext() {
+                protected Map.Entry<Cut<C>, Range<C>> computeNext() {
                     if (!this.val$backingItr.hasNext()) {
                         return (Map.Entry) endOfData();
                     }
@@ -98,7 +98,7 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> {
                 }
 
                 @Override
-                public Map.Entry<Cut<C>, Range<C>> computeNext() {
+                protected Map.Entry<Cut<C>, Range<C>> computeNext() {
                     if (!this.val$backingItr.hasNext()) {
                         return (Map.Entry) endOfData();
                     }

@@ -1353,7 +1353,7 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         }
     }
 
-    public void scheduleCommit() {
+    private void scheduleCommit() {
         synchronized (this) {
             boolean pendingReady = false;
             boolean postponeReady = (this.mPostponedTransactions == null || this.mPostponedTransactions.isEmpty()) ? false : true;
@@ -1662,7 +1662,7 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         return postponeIndex;
     }
 
-    public void completeExecute(BackStackRecord record, boolean isPop, boolean runTransitions, boolean moveToState) {
+    private void completeExecute(BackStackRecord record, boolean isPop, boolean runTransitions, boolean moveToState) {
         if (isPop) {
             record.executePopOps(moveToState);
         } else {

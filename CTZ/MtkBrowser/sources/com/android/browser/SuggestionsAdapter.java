@@ -140,7 +140,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
 
         @Override
-        public List<SuggestItem> doInBackground(CharSequence... charSequenceArr) {
+        protected List<SuggestItem> doInBackground(CharSequence... charSequenceArr) {
             SuggestCursor suggestCursor = new SuggestCursor(this.this$0);
             suggestCursor.runQuery(charSequenceArr[0]);
             ArrayList arrayList = new ArrayList();
@@ -154,7 +154,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
 
         @Override
-        public void onPostExecute(List<SuggestItem> list) {
+        protected void onPostExecute(List<SuggestItem> list) {
             this.this$0.mSuggestResults = list;
             this.this$0.mMixedResults = this.this$0.buildSuggestionResults();
             this.this$0.notifyDataSetChanged();
@@ -403,7 +403,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         view.findViewById(2131558519).setOnClickListener(this);
     }
 
-    public int getMaxLines() {
+    private int getMaxLines() {
         return (int) Math.ceil(((double) (this.mLandscapeMode ? this.mLinesLandscape : this.mLinesPortrait)) / 2.0d);
     }
 

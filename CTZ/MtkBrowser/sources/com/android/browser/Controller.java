@@ -437,7 +437,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         openIconDatabase();
     }
 
-    public void copy(CharSequence charSequence) {
+    private void copy(CharSequence charSequence) {
         ((ClipboardManager) this.mActivity.getSystemService("clipboard")).setText(charSequence);
     }
 
@@ -499,7 +499,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         return currentTab;
     }
 
-    public PendingIntent createSavePagePendingIntent() {
+    private PendingIntent createSavePagePendingIntent() {
         Intent intent = new Intent(this.mActivity, (Class<?>) ComboViewActivity.class);
         Bundle bundle = new Bundle();
         bundle.putLong("animate_id", 0L);
@@ -677,7 +677,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         return false;
     }
 
-    public static boolean isImageViewableUri(Uri uri) {
+    private static boolean isImageViewableUri(Uri uri) {
         String scheme = uri.getScheme();
         for (String str : IMAGE_VIEWABLE_SCHEMES) {
             if (str.equals(scheme)) {
@@ -702,7 +702,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         return str.equalsIgnoreCase("http://www.wo.com.cn/") || str.equalsIgnoreCase("http://www.wo.com.cn") || str2.equalsIgnoreCase("http://m.wo.cn/") || str2.equalsIgnoreCase("http://m.wo.cn");
     }
 
-    public void onPreloginFinished(Bundle bundle, Intent intent, long j, boolean z) {
+    private void onPreloginFinished(Bundle bundle, Intent intent, long j, boolean z) {
         int i;
         if (j == -1) {
             BackgroundHandler.execute(new PruneThumbnails(this.mActivity, null));
@@ -980,7 +980,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         };
     }
 
-    public void updateScreenshot(Tab tab) {
+    private void updateScreenshot(Tab tab) {
         Bitmap bitmapCreateScreenshot;
         String host;
         if (DEBUG) {
@@ -1021,7 +1021,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
                 }
 
                 @Override
-                public Void doInBackground(Void... voidArr) throws Throwable {
+                protected Void doInBackground(Void... voidArr) throws Throwable {
                     Cursor cursorQueryCombinedForUrl;
                     Cursor cursor;
                     Cursor cursor2 = null;
@@ -2490,12 +2490,11 @@ public class Controller implements ActivityController, UiController, WebViewCont
             str3 = null;
             str4 = null;
         } else {
-            String str5 = httpAuthUsernamePassword[0];
-            str3 = httpAuthUsernamePassword[1];
-            str4 = str5;
+            str3 = httpAuthUsernamePassword[0];
+            str4 = httpAuthUsernamePassword[1];
         }
-        if (str4 != null && str3 != null) {
-            httpAuthHandler.proceed(str4, str3);
+        if (str3 != null && str4 != null) {
+            httpAuthHandler.proceed(str3, str4);
         } else if (tab.inForeground()) {
             this.mPageDialogsHandler.showHttpAuthentication(tab, httpAuthHandler, str, str2);
         } else {

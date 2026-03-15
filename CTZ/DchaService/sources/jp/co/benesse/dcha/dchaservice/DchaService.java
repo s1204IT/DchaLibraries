@@ -62,6 +62,7 @@ import com.android.internal.widget.LockPatternUtils;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -87,8 +88,177 @@ public class DchaService extends Service {
         }
 
         @Override
-        public boolean copyUpdateImage(java.lang.String r11, java.lang.String r12) {
-            throw new UnsupportedOperationException("Method not decompiled: jp.co.benesse.dcha.dchaservice.DchaService.AnonymousClass1.copyUpdateImage(java.lang.String, java.lang.String):boolean");
+        public boolean copyUpdateImage(String str, String str2) throws Throwable {
+            FileChannel channel;
+            FileChannel channel2;
+            Log.d("DchaService", "copyUpdateImage 0001 srcFile:" + str + " dstFile:" + ((String) str2));
+            boolean z = false;
+            if (TextUtils.isEmpty(str) || TextUtils.isEmpty(str2)) {
+                Log.d("DchaService", "copyUpdateImage 0009");
+                return false;
+            }
+            if (!str2.startsWith("/cache")) {
+                Log.d("DchaService", "copyUpdateImage 0010");
+                return false;
+            }
+            ?? r0 = 0;
+            r0 = 0;
+            r0 = 0;
+            r0 = 0;
+            r0 = 0;
+            try {
+                try {
+                    try {
+                        File file = new File(str);
+                        File file2 = new File((String) str2);
+                        channel = new FileInputStream(file).getChannel();
+                        try {
+                            channel2 = new FileOutputStream(file2).getChannel();
+                        } catch (FileNotFoundException e) {
+                            e = e;
+                            r0 = channel;
+                            str2 = 0;
+                        } catch (IOException e2) {
+                            e = e2;
+                            r0 = channel;
+                            str2 = 0;
+                        } catch (Exception e3) {
+                            e = e3;
+                            r0 = channel;
+                            str2 = 0;
+                        } catch (Throwable th) {
+                            th = th;
+                            r0 = channel;
+                            str2 = 0;
+                        }
+                    } catch (IOException e4) {
+                    }
+                    try {
+                        channel.transferTo(0L, channel.size(), channel2);
+                        z = true;
+                        Log.d("DchaService", "copyUpdateImage 0005");
+                        if (channel != null) {
+                            Log.d("DchaService", "copyUpdateImage 0006");
+                            try {
+                                channel.close();
+                            } catch (IOException e5) {
+                            }
+                        }
+                    } catch (FileNotFoundException e6) {
+                        str2 = channel2;
+                        e = e6;
+                        r0 = channel;
+                        Log.e("DchaService", "copyUpdateImage 0002", e);
+                        Log.d("DchaService", "copyUpdateImage 0005");
+                        if (r0 != 0) {
+                            Log.d("DchaService", "copyUpdateImage 0006");
+                            try {
+                                r0.close();
+                            } catch (IOException e7) {
+                            }
+                        }
+                        if (str2 != 0) {
+                            String str3 = "copyUpdateImage 0007";
+                            Log.d("DchaService", "copyUpdateImage 0007");
+                            str2.close();
+                            r0 = str3;
+                            str2 = str2;
+                        }
+                        Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
+                        return z;
+                    } catch (IOException e8) {
+                        str2 = channel2;
+                        e = e8;
+                        r0 = channel;
+                        Log.e("DchaService", "copyUpdateImage 0003", e);
+                        Log.d("DchaService", "copyUpdateImage 0005");
+                        if (r0 != 0) {
+                            Log.d("DchaService", "copyUpdateImage 0006");
+                            try {
+                                r0.close();
+                            } catch (IOException e9) {
+                            }
+                        }
+                        if (str2 != 0) {
+                            String str4 = "copyUpdateImage 0007";
+                            Log.d("DchaService", "copyUpdateImage 0007");
+                            str2.close();
+                            r0 = str4;
+                            str2 = str2;
+                        }
+                        Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
+                        return z;
+                    } catch (Exception e10) {
+                        str2 = channel2;
+                        e = e10;
+                        r0 = channel;
+                        Log.e("DchaService", "copyUpdateImage 0004", e);
+                        Log.d("DchaService", "copyUpdateImage 0005");
+                        if (r0 != 0) {
+                            Log.d("DchaService", "copyUpdateImage 0006");
+                            try {
+                                r0.close();
+                            } catch (IOException e11) {
+                            }
+                        }
+                        if (str2 != 0) {
+                            String str5 = "copyUpdateImage 0007";
+                            Log.d("DchaService", "copyUpdateImage 0007");
+                            str2.close();
+                            r0 = str5;
+                            str2 = str2;
+                        }
+                        Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
+                        return z;
+                    } catch (Throwable th2) {
+                        str2 = channel2;
+                        th = th2;
+                        r0 = channel;
+                        Log.d("DchaService", "copyUpdateImage 0005");
+                        if (r0 != 0) {
+                            Log.d("DchaService", "copyUpdateImage 0006");
+                            try {
+                                r0.close();
+                            } catch (IOException e12) {
+                            }
+                        }
+                        if (str2 == 0) {
+                            throw th;
+                        }
+                        Log.d("DchaService", "copyUpdateImage 0007");
+                        try {
+                            str2.close();
+                            throw th;
+                        } catch (IOException e13) {
+                            throw th;
+                        }
+                    }
+                } catch (FileNotFoundException e14) {
+                    e = e14;
+                    str2 = 0;
+                } catch (IOException e15) {
+                    e = e15;
+                    str2 = 0;
+                } catch (Exception e16) {
+                    e = e16;
+                    str2 = 0;
+                } catch (Throwable th3) {
+                    th = th3;
+                    str2 = 0;
+                }
+                if (channel2 != null) {
+                    String str6 = "DchaService";
+                    String str7 = "copyUpdateImage 0007";
+                    Log.d("DchaService", "copyUpdateImage 0007");
+                    channel2.close();
+                    r0 = str7;
+                    str2 = str6;
+                }
+                Log.d("DchaService", "copyUpdateImage 0008 return:" + z);
+                return z;
+            } catch (Throwable th4) {
+                th = th4;
+            }
         }
 
         @Override
@@ -987,7 +1157,7 @@ public class DchaService extends Service {
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             Log.d("SystemPropPoker", "doInBackground 0001");
             for (String str : ServiceManager.listServices()) {
                 IBinder iBinderCheckService = ServiceManager.checkService(str);

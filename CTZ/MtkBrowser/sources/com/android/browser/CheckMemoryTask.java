@@ -14,7 +14,7 @@ public class CheckMemoryTask extends AsyncTask<Object, Void, Void> {
     }
 
     @Override
-    public Void doInBackground(Object... objArr) {
+    protected Void doInBackground(Object... objArr) {
         if (objArr.length != 6) {
             Log.d("browser", "Incorrect parameters to CheckMemoryTask doInBackground(): " + String.valueOf(objArr.length));
             return null;

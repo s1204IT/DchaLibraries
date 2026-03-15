@@ -487,7 +487,7 @@ class FragmentTransition {
         return outSharedElements;
     }
 
-    public static ArrayMap<String, View> captureInSharedElements(FragmentTransitionImpl fragmentTransitionImpl, ArrayMap<String, String> nameOverrides, Object sharedElementTransition, FragmentContainerTransition fragments) {
+    private static ArrayMap<String, View> captureInSharedElements(FragmentTransitionImpl fragmentTransitionImpl, ArrayMap<String, String> nameOverrides, Object sharedElementTransition, FragmentContainerTransition fragments) {
         SharedElementCallback sharedElementCallback;
         ArrayList<String> names;
         String key;
@@ -541,7 +541,7 @@ class FragmentTransition {
         return null;
     }
 
-    public static View getInEpicenterView(ArrayMap<String, View> inSharedElements, FragmentContainerTransition fragments, Object enterTransition, boolean inIsPop) {
+    private static View getInEpicenterView(ArrayMap<String, View> inSharedElements, FragmentContainerTransition fragments, Object enterTransition, boolean inIsPop) {
         String targetName;
         BackStackRecord inTransaction = fragments.lastInTransaction;
         if (enterTransition != null && inSharedElements != null && inTransaction.mSharedElementSourceNames != null && !inTransaction.mSharedElementSourceNames.isEmpty()) {
@@ -580,7 +580,7 @@ class FragmentTransition {
         }
     }
 
-    public static void callSharedElementStartEnd(Fragment inFragment, Fragment outFragment, boolean isPop, ArrayMap<String, View> sharedElements, boolean isStart) {
+    private static void callSharedElementStartEnd(Fragment inFragment, Fragment outFragment, boolean isPop, ArrayMap<String, View> sharedElements, boolean isStart) {
         SharedElementCallback sharedElementCallback;
         if (isPop) {
             sharedElementCallback = outFragment.getEnterTransitionCallback();
@@ -603,7 +603,7 @@ class FragmentTransition {
         }
     }
 
-    public static ArrayList<View> configureEnteringExitingViews(FragmentTransitionImpl impl, Object transition, Fragment fragment, ArrayList<View> sharedElements, View nonExistentView) {
+    private static ArrayList<View> configureEnteringExitingViews(FragmentTransitionImpl impl, Object transition, Fragment fragment, ArrayList<View> sharedElements, View nonExistentView) {
         ArrayList<View> viewList = null;
         if (transition != null) {
             viewList = new ArrayList<>();
@@ -622,7 +622,7 @@ class FragmentTransition {
         return viewList;
     }
 
-    public static void setViewVisibility(ArrayList<View> views, int visibility) {
+    private static void setViewVisibility(ArrayList<View> views, int visibility) {
         if (views == null) {
             return;
         }

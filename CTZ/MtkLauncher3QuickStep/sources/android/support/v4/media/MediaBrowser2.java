@@ -54,7 +54,7 @@ public class MediaBrowser2 extends MediaController2 {
     }
 
     @Override
-    public SupportLibraryImpl createImpl(@NonNull Context context, @NonNull SessionToken2 token, @NonNull Executor executor, @NonNull MediaController2.ControllerCallback callback) {
+    SupportLibraryImpl createImpl(@NonNull Context context, @NonNull SessionToken2 token, @NonNull Executor executor, @NonNull MediaController2.ControllerCallback callback) {
         if (token.isLegacySession()) {
             return new MediaBrowser2ImplLegacy(context, this, token, executor, (BrowserCallback) callback);
         }
@@ -62,12 +62,12 @@ public class MediaBrowser2 extends MediaController2 {
     }
 
     @Override
-    public SupportLibraryImpl getImpl() {
+    SupportLibraryImpl getImpl() {
         return (SupportLibraryImpl) super.getImpl();
     }
 
     @Override
-    public BrowserCallback getCallback() {
+    BrowserCallback getCallback() {
         return (BrowserCallback) super.getCallback();
     }
 

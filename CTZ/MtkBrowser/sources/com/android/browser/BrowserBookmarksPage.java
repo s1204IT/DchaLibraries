@@ -41,7 +41,7 @@ import org.json.JSONObject;
 public class BrowserBookmarksPage extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, View.OnCreateContextMenuListener, ExpandableListView.OnChildClickListener, BreadCrumbView.Controller {
     static ThreadLocal<BitmapFactory.Options> sOptions = new ThreadLocal<BitmapFactory.Options>() {
         @Override
-        public BitmapFactory.Options initialValue() {
+        protected BitmapFactory.Options initialValue() {
             return new BitmapFactory.Options();
         }
     };
@@ -109,7 +109,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public Integer doInBackground(Long... lArr) throws Throwable {
+        protected Integer doInBackground(Long... lArr) throws Throwable {
             Cursor cursorQuery;
             int count;
             if (lArr.length != 1) {
@@ -141,7 +141,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public void onPostExecute(Integer num) {
+        protected void onPostExecute(Integer num) {
             if (num.intValue() > 0) {
                 this.mHeader.setUrl(this.mContext.getString(2131493035, num));
             } else if (num.intValue() == 0) {
@@ -179,7 +179,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public ArrayList<String> doInBackground(Void... voidArr) {
+        protected ArrayList<String> doInBackground(Void... voidArr) {
             Activity activity = this.this$0.getActivity();
             if (activity == null) {
                 return null;
@@ -189,7 +189,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public void onPostExecute(ArrayList<String> arrayList) {
+        protected void onPostExecute(ArrayList<String> arrayList) {
             if (arrayList != null && arrayList.size() == 0) {
                 Activity activity = this.this$0.getActivity();
                 Toast.makeText(activity, activity.getString(2131493036), 1).show();

@@ -81,7 +81,7 @@ public class AutoInstallsLayout {
         long insertAndCheck(SQLiteDatabase sQLiteDatabase, ContentValues contentValues);
     }
 
-    public interface TagParser {
+    protected interface TagParser {
         long parseAndAdd(XmlResourceParser xmlResourceParser) throws XmlPullParserException, IOException;
     }
 

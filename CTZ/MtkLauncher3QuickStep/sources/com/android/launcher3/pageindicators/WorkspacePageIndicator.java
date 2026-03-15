@@ -173,7 +173,7 @@ public class WorkspacePageIndicator extends View implements Insettable, PageIndi
         }
     }
 
-    public void animateLineToAlpha(int i) {
+    private void animateLineToAlpha(int i) {
         if (i == this.mToAlpha) {
             return;
         }

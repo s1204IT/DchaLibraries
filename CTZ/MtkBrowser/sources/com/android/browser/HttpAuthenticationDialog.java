@@ -97,11 +97,11 @@ public class HttpAuthenticationDialog {
         this.mDialog.getWindow().setSoftInputMode(4);
     }
 
-    public String getPassword() {
+    private String getPassword() {
         return this.mPasswordView.getText().toString();
     }
 
-    public String getUsername() {
+    private String getUsername() {
         return this.mUsernameView.getText().toString();
     }
 

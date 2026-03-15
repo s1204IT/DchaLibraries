@@ -312,7 +312,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         rect.bottom = rect.top + iHeight;
     }
 
-    public void snapToWidget(boolean z) {
+    private void snapToWidget(boolean z) {
         getSnappedRectRelativeToDragLayer(sTmpRect);
         int iWidth = sTmpRect.width();
         int iHeight = sTmpRect.height();

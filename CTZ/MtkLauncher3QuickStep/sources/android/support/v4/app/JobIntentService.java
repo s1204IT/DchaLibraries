@@ -267,7 +267,7 @@ public abstract class JobIntentService extends Service {
         }
 
         @Override
-        public Void doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             while (true) {
                 GenericWorkItem work = JobIntentService.this.dequeueWork();
                 if (work != null) {
@@ -280,12 +280,12 @@ public abstract class JobIntentService extends Service {
         }
 
         @Override
-        public void onCancelled(Void aVoid) {
+        protected void onCancelled(Void aVoid) {
             JobIntentService.this.processorFinished();
         }
 
         @Override
-        public void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Void aVoid) {
             JobIntentService.this.processorFinished();
         }
     }

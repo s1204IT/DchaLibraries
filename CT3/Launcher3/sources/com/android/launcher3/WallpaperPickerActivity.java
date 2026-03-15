@@ -356,7 +356,7 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
             int i = -1;
             return new BitmapCropTask(wallpaperPickerActivity, null, 0 == true ? 1 : 0, i, i, i, true, false, onEndCropHandler) {
                 @Override
-                public Boolean doInBackground(Integer... params) {
+                protected Boolean doInBackground(Integer... params) {
                     int whichWallpaper = params[0].intValue();
                     boolean succeeded = true;
                     try {
@@ -867,7 +867,7 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
         final Context context = getContext();
         new AsyncTask<Void, Bitmap, Bitmap>() {
             @Override
-            public Bitmap doInBackground(Void... args) {
+            protected Bitmap doInBackground(Void... args) {
                 try {
                     int rotation = BitmapUtils.getRotationFromExif(context, uri);
                     return WallpaperPickerActivity.createThumbnail(defaultThumbnailSize, context, uri, null, null, 0, rotation, false);
@@ -881,7 +881,7 @@ public class WallpaperPickerActivity extends WallpaperCropActivity {
             }
 
             @Override
-            public void onPostExecute(Bitmap thumb) {
+            protected void onPostExecute(Bitmap thumb) {
                 if (!isCancelled() && thumb != null) {
                     imageView.setImageBitmap(thumb);
                     Drawable thumbDrawable = imageView.getDrawable();

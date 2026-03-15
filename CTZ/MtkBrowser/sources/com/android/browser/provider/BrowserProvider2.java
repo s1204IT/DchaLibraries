@@ -787,7 +787,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         }
     }
 
-    public long insertSettingsInTransaction(SQLiteDatabase sQLiteDatabase, ContentValues contentValues) throws Throwable {
+    private long insertSettingsInTransaction(SQLiteDatabase sQLiteDatabase, ContentValues contentValues) throws Throwable {
         Cursor cursor;
         Cursor cursorQuery;
         long jInsertOrThrow;

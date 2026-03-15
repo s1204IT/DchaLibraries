@@ -162,7 +162,7 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
         }
     }
 
-    public void setDragHandleAlpha(int i) {
+    private void setDragHandleAlpha(int i) {
         if (i != this.mDragHandleAlpha) {
             this.mDragHandleAlpha = i;
             if (this.mDragHandle != null) {
@@ -258,7 +258,7 @@ public class ScrimView extends View implements Insettable, WallpaperColorInfo.On
         updateDragHandleVisibility(null);
     }
 
-    public void updateDragHandleVisibility(Drawable drawable) {
+    private void updateDragHandleVisibility(Drawable drawable) {
         boolean z = this.mLauncher.getDeviceProfile().isVerticalBarLayout() || this.mAM.isEnabled();
         if (z != (this.mDragHandle != null)) {
             if (z) {

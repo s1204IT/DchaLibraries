@@ -83,7 +83,7 @@ class MediaSession2Stub extends IMediaSession2.Stub {
         }
     }
 
-    public boolean isAllowedCommand(MediaSession2.ControllerInfo controller, SessionCommand2 command) {
+    private boolean isAllowedCommand(MediaSession2.ControllerInfo controller, SessionCommand2 command) {
         SessionCommandGroup2 allowedCommands;
         synchronized (this.mLock) {
             allowedCommands = this.mAllowedCommandGroupMap.get(controller);
@@ -91,7 +91,7 @@ class MediaSession2Stub extends IMediaSession2.Stub {
         return allowedCommands != null && allowedCommands.hasCommand(command);
     }
 
-    public boolean isAllowedCommand(MediaSession2.ControllerInfo controller, int commandCode) {
+    private boolean isAllowedCommand(MediaSession2.ControllerInfo controller, int commandCode) {
         SessionCommandGroup2 allowedCommands;
         synchronized (this.mLock) {
             allowedCommands = this.mAllowedCommandGroupMap.get(controller);
@@ -625,7 +625,7 @@ class MediaSession2Stub extends IMediaSession2.Stub {
         });
     }
 
-    public MediaLibraryService2.MediaLibrarySession.SupportLibraryImpl getLibrarySession() {
+    private MediaLibraryService2.MediaLibrarySession.SupportLibraryImpl getLibrarySession() {
         if (!(this.mSession instanceof MediaLibraryService2.MediaLibrarySession.SupportLibraryImpl)) {
             throw new RuntimeException("Session cannot be casted to library session");
         }

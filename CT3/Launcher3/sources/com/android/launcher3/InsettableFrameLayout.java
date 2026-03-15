@@ -46,7 +46,7 @@ public class InsettableFrameLayout extends FrameLayout implements ViewGroup.OnHi
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-2, -2);
     }
 
@@ -56,7 +56,7 @@ public class InsettableFrameLayout extends FrameLayout implements ViewGroup.OnHi
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return new LayoutParams(p);
     }
 

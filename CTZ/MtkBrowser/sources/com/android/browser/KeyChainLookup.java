@@ -18,7 +18,7 @@ final class KeyChainLookup extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    public Void doInBackground(Void... voidArr) {
+    protected Void doInBackground(Void... voidArr) {
         try {
             this.mHandler.proceed(KeyChain.getPrivateKey(this.mContext, this.mAlias), KeyChain.getCertificateChain(this.mContext, this.mAlias));
         } catch (KeyChainException e) {

@@ -279,7 +279,7 @@ public class NotificationListener extends NotificationListenerService {
         return activeNotifications == null ? Collections.emptyList() : Arrays.asList(activeNotifications);
     }
 
-    public List<StatusBarNotification> filterNotifications(StatusBarNotification[] statusBarNotificationArr) {
+    private List<StatusBarNotification> filterNotifications(StatusBarNotification[] statusBarNotificationArr) {
         if (statusBarNotificationArr == null) {
             return null;
         }
@@ -298,7 +298,7 @@ public class NotificationListener extends NotificationListenerService {
         return arrayList;
     }
 
-    public boolean shouldBeFilteredOut(StatusBarNotification statusBarNotification) {
+    private boolean shouldBeFilteredOut(StatusBarNotification statusBarNotification) {
         Notification notification = statusBarNotification.getNotification();
         updateGroupKeyIfNecessary(statusBarNotification);
         getCurrentRanking().getRanking(statusBarNotification.getKey(), this.mTempRanking);

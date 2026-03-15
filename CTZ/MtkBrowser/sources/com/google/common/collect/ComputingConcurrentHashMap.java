@@ -353,7 +353,7 @@ class ComputingConcurrentHashMap<K, V> extends MapMakerInternalMap<K, V> {
     }
 
     @Override
-    public ComputingSegment<K, V> segmentFor(int i) {
+    ComputingSegment<K, V> segmentFor(int i) {
         return (ComputingSegment) super.segmentFor(i);
     }
 

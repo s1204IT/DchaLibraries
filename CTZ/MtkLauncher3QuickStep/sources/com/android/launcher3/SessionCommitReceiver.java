@@ -70,7 +70,7 @@ public class SessionCommitReceiver extends BroadcastReceiver {
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) throws Throwable {
+        protected Void doInBackground(Void... voidArr) throws Throwable {
             Utilities.getPrefs(this.mContext).edit().putBoolean(SessionCommitReceiver.ADD_ICON_PREFERENCE_KEY, readValueFromMarketApp()).putBoolean(SessionCommitReceiver.ADD_ICON_PREFERENCE_INITIALIZED_KEY, true).apply();
             return null;
         }

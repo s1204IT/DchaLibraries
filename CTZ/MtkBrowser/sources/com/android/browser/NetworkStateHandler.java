@@ -48,7 +48,7 @@ public class NetworkStateHandler {
         };
     }
 
-    public void sendNetworkType(String str, String str2) {
+    private void sendNetworkType(String str, String str2) {
         this.mController.getCurrentWebView();
     }
 

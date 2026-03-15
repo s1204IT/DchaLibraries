@@ -324,7 +324,7 @@ public class OtherActivityTouchConsumer extends ContextWrapper implements TouchC
         return this.mInteractionHandler != null;
     }
 
-    class RecentsAnimationState implements RecentsAnimationListener {
+    private class RecentsAnimationState implements RecentsAnimationListener {
         private final int id;
         private boolean mCancelled;
         private RecentsAnimationControllerCompat mController;

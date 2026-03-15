@@ -427,7 +427,7 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         this.mTmpRecords.clear();
     }
 
-    public void completeExecute(BackStackRecord backStackRecord, boolean z, boolean z2, boolean z3) {
+    private void completeExecute(BackStackRecord backStackRecord, boolean z, boolean z2, boolean z3) {
         if (z) {
             backStackRecord.executePopOps(z3);
         } else {
@@ -850,7 +850,7 @@ final class FragmentManagerImpl extends FragmentManager implements LayoutInflate
         return 4099;
     }
 
-    public void scheduleCommit() {
+    private void scheduleCommit() {
         boolean z = false;
         synchronized (this) {
             boolean z2 = (this.mPostponedTransactions == null || this.mPostponedTransactions.isEmpty()) ? false : true;

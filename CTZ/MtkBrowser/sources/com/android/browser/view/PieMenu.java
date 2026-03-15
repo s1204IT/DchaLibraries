@@ -158,7 +158,7 @@ public class PieMenu extends FrameLayout {
         init(context);
     }
 
-    public void animateIn(PieItem pieItem, Animator.AnimatorListener animatorListener) {
+    private void animateIn(PieItem pieItem, Animator.AnimatorListener animatorListener) {
         if (this.mCurrentItems == null || pieItem == null) {
             return;
         }
@@ -342,7 +342,7 @@ public class PieMenu extends FrameLayout {
         return ((float) pieItem.getInnerRadius()) - f < pointF.y && ((float) pieItem.getOuterRadius()) - f > pointF.y && pieItem.getStartAngle() < pointF.x && pieItem.getStartAngle() + pieItem.getSweep() > pointF.x;
     }
 
-    public void layoutPie() {
+    private void layoutPie() {
         float f;
         int i = 0;
         int i2 = this.mRadius + 2;

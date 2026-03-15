@@ -7,7 +7,7 @@ public abstract class ForwardingConcurrentMap<K, V> extends ForwardingMap<K, V> 
     }
 
     @Override
-    public abstract ConcurrentMap<K, V> delegate();
+    protected abstract ConcurrentMap<K, V> delegate();
 
     @Override
     public V putIfAbsent(K k, V v) {

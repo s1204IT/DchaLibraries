@@ -26,7 +26,7 @@ public class PermissionsPrompt extends RelativeLayout {
         super(context, attributeSet);
     }
 
-    public void handleButtonClick(boolean z) {
+    private void handleButtonClick(boolean z) {
         hide();
         if (z) {
             this.mRequest.grant(this.mRequest.getResources());

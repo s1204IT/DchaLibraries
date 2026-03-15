@@ -1191,7 +1191,7 @@ public class LinearLayoutManager extends RecyclerView.LayoutManager {
             return "AnchorInfo{mPosition=" + this.mPosition + ", mCoordinate=" + this.mCoordinate + ", mLayoutFromEnd=" + this.mLayoutFromEnd + ", mValid=" + this.mValid + '}';
         }
 
-        public boolean isViewValidAsAnchor(View child, RecyclerView.State state) {
+        private boolean isViewValidAsAnchor(View child, RecyclerView.State state) {
             RecyclerView.LayoutParams lp = (RecyclerView.LayoutParams) child.getLayoutParams();
             return !lp.isItemRemoved() && lp.getViewLayoutPosition() >= 0 && lp.getViewLayoutPosition() < state.getItemCount();
         }

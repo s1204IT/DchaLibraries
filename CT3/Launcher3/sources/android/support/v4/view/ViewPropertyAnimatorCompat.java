@@ -73,7 +73,7 @@ public final class ViewPropertyAnimatorCompat {
             view.setTag(2113929216, listener);
         }
 
-        public void startAnimation(ViewPropertyAnimatorCompat vpa, View view) {
+        private void startAnimation(ViewPropertyAnimatorCompat vpa, View view) {
             Object listenerTag = view.getTag(2113929216);
             ViewPropertyAnimatorListener listener = null;
             if (listenerTag instanceof ViewPropertyAnimatorListener) {

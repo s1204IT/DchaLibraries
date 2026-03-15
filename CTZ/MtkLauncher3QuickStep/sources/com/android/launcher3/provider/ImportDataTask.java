@@ -488,7 +488,7 @@ public class ImportDataTask {
         }
     }
 
-    public static String getPackage(Intent intent) {
+    private static String getPackage(Intent intent) {
         return intent.getComponent() != null ? intent.getComponent().getPackageName() : intent.getPackage();
     }
 
@@ -516,7 +516,7 @@ public class ImportDataTask {
         return false;
     }
 
-    public static int getMyHotseatLayoutId(Context context) {
+    private static int getMyHotseatLayoutId(Context context) {
         if (LauncherAppState.getIDP(context).numHotseatIcons <= 5) {
             return R.xml.dw_phone_hotseat;
         }

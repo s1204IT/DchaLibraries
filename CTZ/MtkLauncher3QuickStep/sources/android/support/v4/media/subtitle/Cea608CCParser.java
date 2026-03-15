@@ -536,7 +536,7 @@ class Cea608CCParser {
             this.mCol = clamp(this.mCol + col, 1, 32);
         }
 
-        public void moveBaselineTo(int baseRow, int windowSize) {
+        private void moveBaselineTo(int baseRow, int windowSize) {
             if (this.mRow == baseRow) {
                 return;
             }
@@ -654,7 +654,7 @@ class Cea608CCParser {
             return (this.mData1 == 17 || this.mData1 == 25) && this.mData2 >= 48 && this.mData2 <= 63;
         }
 
-        public boolean isExtendedChar() {
+        private boolean isExtendedChar() {
             return (this.mData1 == 18 || this.mData1 == 26 || this.mData1 == 19 || this.mData1 == 27) && this.mData2 >= 32 && this.mData2 <= 63;
         }
 

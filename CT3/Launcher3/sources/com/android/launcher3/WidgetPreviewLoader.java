@@ -449,7 +449,7 @@ public class WidgetPreviewLoader {
         }
 
         @Override
-        public Bitmap doInBackground(Void... params) {
+        protected Bitmap doInBackground(Void... params) {
             Bitmap unusedBitmap = null;
             if (isCancelled()) {
                 return null;
@@ -482,7 +482,7 @@ public class WidgetPreviewLoader {
         }
 
         @Override
-        public void onPostExecute(final Bitmap preview) {
+        protected void onPostExecute(final Bitmap preview) {
             this.mCaller.applyPreview(preview);
             if (this.mVersions != null) {
                 WidgetPreviewLoader.this.mWorkerHandler.post(new Runnable() {
@@ -504,7 +504,7 @@ public class WidgetPreviewLoader {
         }
 
         @Override
-        public void onCancelled(final Bitmap preview) {
+        protected void onCancelled(final Bitmap preview) {
             if (preview == null) {
                 return;
             }

@@ -123,7 +123,7 @@ public abstract class LiveData<T> {
         }
     }
 
-    public void dispatchingValue(ObserverWrapper observerWrapper) {
+    private void dispatchingValue(ObserverWrapper observerWrapper) {
         if (this.mDispatchingValue) {
             this.mDispatchInvalidated = true;
             return;

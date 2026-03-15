@@ -57,7 +57,7 @@ class AnimationHandler {
         this.mProvider = provider;
     }
 
-    public AnimationFrameCallbackProvider getProvider() {
+    private AnimationFrameCallbackProvider getProvider() {
         if (this.mProvider == null) {
             if (Build.VERSION.SDK_INT >= 16) {
                 this.mProvider = new FrameCallbackProvider16(this.mCallbackDispatcher);
@@ -89,7 +89,7 @@ class AnimationHandler {
         }
     }
 
-    public void doAnimationFrame(long frameTime) {
+    private void doAnimationFrame(long frameTime) {
         long currentTime = SystemClock.uptimeMillis();
         for (int i = 0; i < this.mAnimationCallbacks.size(); i++) {
             AnimationFrameCallback callback = this.mAnimationCallbacks.get(i);

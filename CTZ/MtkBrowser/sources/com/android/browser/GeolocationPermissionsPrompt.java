@@ -27,7 +27,7 @@ public class GeolocationPermissionsPrompt extends RelativeLayout {
         super(context, attributeSet);
     }
 
-    public void handleButtonClick(boolean z) {
+    private void handleButtonClick(boolean z) {
         hide();
         boolean zIsChecked = this.mRemember.isChecked();
         if (zIsChecked) {

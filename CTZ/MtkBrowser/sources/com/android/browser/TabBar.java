@@ -146,7 +146,7 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
             updateTabIcons();
         }
 
-        public void updateTabIcons() {
+        private void updateTabIcons() {
             this.mIncognito.setVisibility(this.mTab.isPrivateBrowsingEnabled() ? 0 : 8);
             this.mSnapshot.setVisibility(this.mTab.isSnapshot() ? 0 : 8);
         }
@@ -343,7 +343,7 @@ public class TabBar extends LinearLayout implements View.OnClickListener {
         return tabView;
     }
 
-    public static Bitmap getDrawableAsBitmap(Drawable drawable, int i, int i2) {
+    private static Bitmap getDrawableAsBitmap(Drawable drawable, int i, int i2) {
         Bitmap bitmapCreateBitmap = Bitmap.createBitmap(i, i2, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmapCreateBitmap);
         drawable.setBounds(0, 0, i, i2);

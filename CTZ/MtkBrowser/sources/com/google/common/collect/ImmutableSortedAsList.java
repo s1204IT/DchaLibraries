@@ -18,7 +18,7 @@ final class ImmutableSortedAsList<E> extends RegularImmutableAsList<E> implement
     }
 
     @Override
-    public ImmutableSortedSet<E> delegateCollection() {
+    ImmutableSortedSet<E> delegateCollection() {
         return (ImmutableSortedSet) super.delegateCollection();
     }
 

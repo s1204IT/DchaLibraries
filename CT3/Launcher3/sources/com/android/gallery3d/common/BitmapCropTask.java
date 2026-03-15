@@ -334,12 +334,12 @@ public class BitmapCropTask extends AsyncTask<Integer, Void, Boolean> {
     }
 
     @Override
-    public Boolean doInBackground(Integer... params) {
+    protected Boolean doInBackground(Integer... params) {
         return Boolean.valueOf(cropBitmap(params.length == 0 ? 1 : params[0].intValue()));
     }
 
     @Override
-    public void onPostExecute(Boolean cropSucceeded) {
+    protected void onPostExecute(Boolean cropSucceeded) {
         if (!cropSucceeded.booleanValue()) {
             Toast.makeText(this.mContext, R.string.wallpaper_set_fail, 0).show();
         }

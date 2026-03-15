@@ -34,7 +34,7 @@ public abstract class AsyncTaskLoader<D> extends Loader<D> {
         }
 
         @Override
-        public D doInBackground(Void... voidArr) {
+        protected D doInBackground(Void... voidArr) {
             try {
                 return (D) AsyncTaskLoader.this.onLoadInBackground();
             } catch (OperationCanceledException e) {

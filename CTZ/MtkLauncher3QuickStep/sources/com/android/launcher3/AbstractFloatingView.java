@@ -81,7 +81,7 @@ public abstract class AbstractFloatingView extends LinearLayout implements Touch
         return false;
     }
 
-    public void announceAccessibilityChanges() {
+    protected void announceAccessibilityChanges() {
         Pair<View, String> accessibilityTarget = getAccessibilityTarget();
         if (accessibilityTarget == null || !AccessibilityManagerCompat.isAccessibilityEnabled(getContext())) {
             return;

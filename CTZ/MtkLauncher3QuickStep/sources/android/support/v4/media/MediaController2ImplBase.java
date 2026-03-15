@@ -751,7 +751,7 @@ class MediaController2ImplBase implements MediaController2.SupportLibraryImpl {
         }
     }
 
-    public void connectToSession(IMediaSession2 sessionBinder) {
+    private void connectToSession(IMediaSession2 sessionBinder) {
         try {
             sessionBinder.connect(this.mControllerStub, this.mContext.getPackageName());
         } catch (RemoteException e) {

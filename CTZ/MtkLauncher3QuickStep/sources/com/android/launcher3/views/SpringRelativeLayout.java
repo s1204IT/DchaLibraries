@@ -71,7 +71,7 @@ public class SpringRelativeLayout extends RelativeLayout {
         return super.drawChild(canvas, view, j);
     }
 
-    public void setActiveEdge(SpringEdgeEffect springEdgeEffect) {
+    private void setActiveEdge(SpringEdgeEffect springEdgeEffect) {
         if (this.mActiveEdge != springEdgeEffect && this.mActiveEdge != null) {
             this.mActiveEdge.mDistance = 0.0f;
         }
@@ -85,7 +85,7 @@ public class SpringRelativeLayout extends RelativeLayout {
         }
     }
 
-    public void finishScrollWithVelocity(float f) {
+    private void finishScrollWithVelocity(float f) {
         this.mSpring.setStartVelocity(f);
         this.mSpring.setStartValue(this.mDampedScrollShift);
         this.mSpring.start();

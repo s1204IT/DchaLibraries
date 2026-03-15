@@ -137,12 +137,12 @@ public abstract class MediaLibraryService2 extends MediaSessionService2 {
         }
 
         @Override
-        public SupportLibraryImpl createImpl(Context context, String id, BaseMediaPlayer player, MediaPlaylistAgent playlistAgent, VolumeProviderCompat volumeProvider, PendingIntent sessionActivity, Executor callbackExecutor, MediaSession2.SessionCallback callback) {
+        SupportLibraryImpl createImpl(Context context, String id, BaseMediaPlayer player, MediaPlaylistAgent playlistAgent, VolumeProviderCompat volumeProvider, PendingIntent sessionActivity, Executor callbackExecutor, MediaSession2.SessionCallback callback) {
             return new MediaLibrarySessionImplBase(this, context, id, player, playlistAgent, volumeProvider, sessionActivity, callbackExecutor, callback);
         }
 
         @Override
-        public SupportLibraryImpl getImpl() {
+        SupportLibraryImpl getImpl() {
             return (SupportLibraryImpl) super.getImpl();
         }
 
@@ -159,7 +159,7 @@ public abstract class MediaLibraryService2 extends MediaSessionService2 {
         }
 
         @Override
-        public MediaLibrarySessionCallback getCallback() {
+        MediaLibrarySessionCallback getCallback() {
             return (MediaLibrarySessionCallback) super.getCallback();
         }
     }

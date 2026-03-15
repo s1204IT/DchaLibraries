@@ -122,7 +122,7 @@ public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
         return this.mLoadingObject;
     }
 
-    public void loadRowObject(int i, ThreadedCursorAdapter<T>.LoadContainer loadContainer) {
+    private void loadRowObject(int i, ThreadedCursorAdapter<T>.LoadContainer loadContainer) {
         if (loadContainer == null || loadContainer.position != i || loadContainer.owner != this || loadContainer.view.get() == null) {
             return;
         }

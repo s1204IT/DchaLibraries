@@ -83,7 +83,7 @@ public class PageDialogsHandler {
         return new AlertDialog.Builder(this.mContext).setTitle(android.R.string.mediasize_iso_b2).setIcon(i).setView(viewInflateCertificateView);
     }
 
-    public void showSSLCertificate(Tab tab) {
+    private void showSSLCertificate(Tab tab) {
         SslCertificate certificate = tab.getWebView().getCertificate();
         if (certificate == null) {
             return;

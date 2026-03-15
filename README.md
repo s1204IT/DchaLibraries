@@ -8,3 +8,7 @@ Source target:
 - TAB-A05-BA1 01.03.000
 
 Decompiler: [**jadx** v1.5.5](https://github.com/skylot/jadx/releases/tag/v1.5.5)
+
+```
+jadx --comments-level none --respect-bytecode-access-modifiers --use-dx --show-bad-code
+```

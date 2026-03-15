@@ -407,7 +407,7 @@ public final class MediaControllerCompat {
             }
         }
 
-        public void processPendingCallbacks() {
+        private void processPendingCallbacks() {
             if (this.mSessionToken.getExtraBinder() == null) {
                 return;
             }

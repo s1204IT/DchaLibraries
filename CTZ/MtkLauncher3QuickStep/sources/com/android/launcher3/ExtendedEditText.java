@@ -73,7 +73,7 @@ public class ExtendedEditText extends EditText {
         this.mShowImeAfterFirstLayout = !showSoftInput();
     }
 
-    public boolean showSoftInput() {
+    private boolean showSoftInput() {
         return requestFocus() && ((InputMethodManager) getContext().getSystemService("input_method")).showSoftInput(this, 1);
     }
 

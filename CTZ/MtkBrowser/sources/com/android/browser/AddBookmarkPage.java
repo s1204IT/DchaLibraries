@@ -414,7 +414,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
 
         @Override
-        public Void doInBackground(ContentValues... contentValuesArr) {
+        protected Void doInBackground(ContentValues... contentValuesArr) {
             if (contentValuesArr.length < 1) {
                 throw new IllegalArgumentException("No ContentValues provided!");
             }
@@ -429,7 +429,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
 
         @Override
-        public void onPostExecute(Void r9) {
+        protected void onPostExecute(Void r9) {
             Log.d("browser/AddBookmarkPage", "UpdateBookmarkTask onPostExecute mBookmarkCurrentId:" + this.mBookmarkCurrentId);
             if (this.mBookmarkCurrentId > 0) {
                 this.mContext.getContentResolver().delete(BrowserContract.Bookmarks.CONTENT_URI, "_id = ?", new String[]{String.valueOf(this.mBookmarkCurrentId)});
@@ -687,7 +687,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
     }
 
-    public void onCurrentFolderFound() {
+    private void onCurrentFolderFound() {
         LoaderManager loaderManager = getLoaderManager();
         if (!this.mSaveToHomeScreen) {
             if (this.mCurrentFolder == -1 || this.mCurrentFolder == this.mRootFolder) {
@@ -737,14 +737,14 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         this.mTopLevelLabel.setCompoundDrawablePadding(6);
     }
 
-    public void showRemoveButton() {
+    private void showRemoveButton() {
         findViewById(2131558450).setVisibility(0);
         this.mRemoveLink = findViewById(2131558451);
         this.mRemoveLink.setVisibility(0);
         this.mRemoveLink.setOnClickListener(this);
     }
 
-    public void showWarningDialog() {
+    private void showWarningDialog() {
         if (this.mWarningDialog == null || this.mWarningDialog.isShowing()) {
             return;
         }
@@ -1274,9 +1274,8 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             setResult(-1);
         } else {
             if (zEquals) {
-                Bitmap bitmap3 = (Bitmap) this.mMap.getParcelable("thumbnail");
-                bitmap = (Bitmap) this.mMap.getParcelable("favicon");
-                bitmap2 = bitmap3;
+                bitmap = (Bitmap) this.mMap.getParcelable("thumbnail");
+                bitmap2 = (Bitmap) this.mMap.getParcelable("favicon");
             } else {
                 bitmap = null;
                 bitmap2 = null;
@@ -1284,16 +1283,16 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
             Bundle bundle = new Bundle();
             bundle.putString("title", strTrim);
             bundle.putString("url", str);
-            bundle.putParcelable("favicon", bitmap);
+            bundle.putParcelable("favicon", bitmap2);
             if (!this.mSaveToHomeScreen) {
-                bundle.putParcelable("thumbnail", bitmap2);
+                bundle.putParcelable("thumbnail", bitmap);
                 bundle.putBoolean("remove_thumbnail", !zEquals);
                 bundle.putString("touch_icon_url", this.mTouchIconUrl);
                 Message messageObtain = Message.obtain(this.mHandler, 100);
                 messageObtain.setData(bundle);
                 new Thread(new SaveBookmarkRunnable(this, getApplicationContext(), messageObtain)).start();
             } else if (this.mTouchIconUrl == null || !zEquals) {
-                BookmarkUtils.createShortcutToHome(this, str, strTrim, null, bitmap);
+                BookmarkUtils.createShortcutToHome(this, str, strTrim, null, bitmap2);
             } else {
                 Message messageObtain2 = Message.obtain(this.mHandler, 101);
                 messageObtain2.setData(bundle);

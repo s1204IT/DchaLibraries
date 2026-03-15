@@ -1,6 +1,6 @@
 package com.android.launcher3.config;
 
-public abstract class BaseFlags {
+abstract class BaseFlags {
     public static final boolean ALL_APPS_TABS_ENABLED = true;
     public static final String AUTHORITY = "com.android.launcher3.settings".intern();
     public static final boolean ENABLE_CUSTOM_WIDGETS = false;

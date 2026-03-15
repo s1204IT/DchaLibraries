@@ -695,7 +695,7 @@ public class GridSizeMigrationTask {
         }
     }
 
-    public static ArrayList<DbEntry> deepCopy(ArrayList<DbEntry> arrayList) {
+    private static ArrayList<DbEntry> deepCopy(ArrayList<DbEntry> arrayList) {
         ArrayList<DbEntry> arrayList2 = new ArrayList<>(arrayList.size());
         Iterator<DbEntry> it = arrayList.iterator();
         while (it.hasNext()) {

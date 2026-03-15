@@ -92,7 +92,7 @@ public class FocusIndicatorView extends View implements View.OnFocusChangeListen
         this.mCurrentAnimation.setDuration(150L).start();
     }
 
-    public void endCurrentAnimation() {
+    private void endCurrentAnimation() {
         if (this.mCurrentAnimation != null) {
             this.mCurrentAnimation.cancel();
             this.mCurrentAnimation = null;

@@ -213,7 +213,7 @@ public final class PrintHelper {
                     }
 
                     @Override
-                    public Bitmap doInBackground(Uri... uris) {
+                    protected Bitmap doInBackground(Uri... uris) {
                         try {
                             return PrintHelper.this.loadConstrainedBitmap(PrintUriAdapter.this.mImageFile);
                         } catch (FileNotFoundException e) {
@@ -222,12 +222,12 @@ public final class PrintHelper {
                     }
 
                     @Override
-                    public void onPostExecute(android.graphics.Bitmap r12) throws java.lang.Throwable {
+                    protected void onPostExecute(android.graphics.Bitmap r12) throws java.lang.Throwable {
                         throw new UnsupportedOperationException("Method not decompiled: android.support.v4.print.PrintHelper.PrintUriAdapter.AnonymousClass1.onPostExecute(android.graphics.Bitmap):void");
                     }
 
                     @Override
-                    public void onCancelled(Bitmap result) {
+                    protected void onCancelled(Bitmap result) {
                         layoutResultCallback.onLayoutCancelled();
                         PrintUriAdapter.this.mLoadBitmap = null;
                     }
@@ -235,7 +235,7 @@ public final class PrintHelper {
             }
         }
 
-        public void cancelLoad() {
+        private void cancelLoad() {
             synchronized (PrintHelper.this.mLock) {
                 if (PrintHelper.this.mDecodeOptions != null) {
                     PrintHelper.this.mDecodeOptions.requestCancelDecode();
@@ -266,7 +266,7 @@ public final class PrintHelper {
         }
     }
 
-    public static boolean isPortrait(Bitmap bitmap) {
+    private static boolean isPortrait(Bitmap bitmap) {
         return bitmap.getWidth() <= bitmap.getHeight();
     }
 
@@ -282,7 +282,7 @@ public final class PrintHelper {
         return b;
     }
 
-    public static Matrix getMatrix(int imageWidth, int imageHeight, RectF content, int fittingMode) {
+    private static Matrix getMatrix(int imageWidth, int imageHeight, RectF content, int fittingMode) {
         float scale;
         Matrix matrix = new Matrix();
         float scale2 = content.width() / imageWidth;
@@ -299,7 +299,7 @@ public final class PrintHelper {
     }
 
     @RequiresApi(19)
-    public void writeBitmap(final PrintAttributes attributes, final int fittingMode, final Bitmap bitmap, final ParcelFileDescriptor fileDescriptor, final CancellationSignal cancellationSignal, final PrintDocumentAdapter.WriteResultCallback writeResultCallback) {
+    private void writeBitmap(final PrintAttributes attributes, final int fittingMode, final Bitmap bitmap, final ParcelFileDescriptor fileDescriptor, final CancellationSignal cancellationSignal, final PrintDocumentAdapter.WriteResultCallback writeResultCallback) {
         PrintAttributes printAttributesBuild;
         if (IS_MIN_MARGINS_HANDLING_CORRECT) {
             printAttributesBuild = attributes;
@@ -309,7 +309,7 @@ public final class PrintHelper {
         final PrintAttributes pdfAttributes = printAttributesBuild;
         new AsyncTask<Void, Void, Throwable>() {
             @Override
-            public Throwable doInBackground(Void... params) {
+            protected Throwable doInBackground(Void... params) {
                 RectF contentRect;
                 try {
                     if (cancellationSignal.isCanceled()) {
@@ -372,7 +372,7 @@ public final class PrintHelper {
             }
 
             @Override
-            public void onPostExecute(Throwable throwable) {
+            protected void onPostExecute(Throwable throwable) {
                 if (cancellationSignal.isCanceled()) {
                     writeResultCallback.onWriteCancelled();
                 } else if (throwable == null) {
@@ -385,7 +385,7 @@ public final class PrintHelper {
         }.execute(new Void[0]);
     }
 
-    public android.graphics.Bitmap loadConstrainedBitmap(android.net.Uri r11) throws java.io.FileNotFoundException {
+    private android.graphics.Bitmap loadConstrainedBitmap(android.net.Uri r11) throws java.io.FileNotFoundException {
         throw new UnsupportedOperationException("Method not decompiled: android.support.v4.print.PrintHelper.loadConstrainedBitmap(android.net.Uri):android.graphics.Bitmap");
     }
 
@@ -408,7 +408,7 @@ public final class PrintHelper {
         }
     }
 
-    public static Bitmap convertBitmapForColorMode(Bitmap original, int colorMode) {
+    private static Bitmap convertBitmapForColorMode(Bitmap original, int colorMode) {
         if (colorMode != 1) {
             return original;
         }

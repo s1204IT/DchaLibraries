@@ -123,7 +123,7 @@ public class AllAppsFastScrollHelper implements AllAppsGridAdapter.BindViewCallb
         }
     }
 
-    public void updateTrackedViewsFastScrollFocusState() {
+    private void updateTrackedViewsFastScrollFocusState() {
         for (BaseRecyclerViewFastScrollBar.FastScrollFocusableView fastScrollFocusableView : this.mTrackedFastScrollViews) {
             RecyclerView.ViewHolder viewHolder = this.mRv.getChildViewHolder((View) fastScrollFocusableView);
             int pos = viewHolder != null ? viewHolder.getPosition() : -1;

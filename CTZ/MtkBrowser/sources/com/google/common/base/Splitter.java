@@ -63,7 +63,7 @@ public final class Splitter {
         }
 
         @Override
-        public String computeNext() {
+        protected String computeNext() {
             int i = this.offset;
             while (this.offset != -1) {
                 int iSeparatorStart = separatorStart(this.offset);
@@ -130,7 +130,7 @@ public final class Splitter {
         return new Splitter(new AnonymousClass2(str));
     }
 
-    public Iterator<String> splittingIterator(CharSequence charSequence) {
+    private Iterator<String> splittingIterator(CharSequence charSequence) {
         return this.strategy.iterator(this, charSequence);
     }
 

@@ -88,7 +88,7 @@ public class CrashRecoveryHandler {
         return sInstance;
     }
 
-    public Bundle loadCrashState() {
+    private Bundle loadCrashState() {
         FileInputStream fileInputStream;
         Parcel parcelObtain;
         FileInputStream fileInputStream2;

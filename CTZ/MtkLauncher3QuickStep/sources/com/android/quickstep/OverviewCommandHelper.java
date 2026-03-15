@@ -73,7 +73,7 @@ public class OverviewCommandHelper {
         initOverviewTargets();
     }
 
-    public void initOverviewTargets() {
+    private void initOverviewTargets() {
         String str;
         ComponentName homeActivities = PackageManagerWrapper.getInstance().getHomeActivities(new ArrayList());
         if (homeActivities == null || this.mMyHomeComponent.equals(homeActivities)) {
@@ -148,7 +148,7 @@ public class OverviewCommandHelper {
         }
     }
 
-    class RecentsActivityCommand<T extends BaseDraggingActivity> implements Runnable {
+    private class RecentsActivityCommand<T extends BaseDraggingActivity> implements Runnable {
         private T mActivity;
         protected final ActivityControlHelper<T> mHelper;
         private ActivityControlHelper.ActivityInitListener mListener;
@@ -196,7 +196,7 @@ public class OverviewCommandHelper {
             return false;
         }
 
-        public boolean onActivityReady(T t, Boolean bool) {
+        private boolean onActivityReady(T t, Boolean bool) {
             ((RecentsView) t.getOverviewPanel()).setCurrentTask(this.mRunningTaskId);
             AbstractFloatingView.closeAllOpenViews(t, bool.booleanValue());
             ActivityControlHelper.AnimationFactory animationFactoryPrepareRecentsUI = this.mHelper.prepareRecentsUI(t, bool.booleanValue(), new Consumer() {
@@ -226,7 +226,7 @@ public class OverviewCommandHelper {
             duration.start();
         }
 
-        public AnimatorSet createWindowAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
+        private AnimatorSet createWindowAnimation(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
             if (LatencyTrackerCompat.isEnabled(OverviewCommandHelper.this.mContext)) {
                 LatencyTrackerCompat.logToggleRecents((int) (SystemClock.uptimeMillis() - this.mToggleClickedTime));
             }

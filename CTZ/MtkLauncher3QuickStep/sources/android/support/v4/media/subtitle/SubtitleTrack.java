@@ -320,7 +320,7 @@ public abstract class SubtitleTrack implements MediaTimeProvider.OnMediaTimeList
             return true;
         }
 
-        public void removeEvent(Cue cue, long timeMs) {
+        private void removeEvent(Cue cue, long timeMs) {
             ArrayList<Cue> cues = this.mCues.get(Long.valueOf(timeMs));
             if (cues != null) {
                 cues.remove(cue);

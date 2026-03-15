@@ -173,7 +173,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
                 }
 
                 @Override
-                public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+                void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                     ArrayList arrayList = null;
                     if (list != null) {
                         ArrayList arrayList2 = new ArrayList();
@@ -216,7 +216,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
                 }
 
                 @Override
-                public void onResultSent(MediaBrowserCompat.MediaItem mediaItem) {
+                void onResultSent(MediaBrowserCompat.MediaItem mediaItem) {
                     if (mediaItem == null) {
                         this.val$resultWrapper.sendResult(null);
                         return;
@@ -255,7 +255,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
                 }
 
                 @Override
-                public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+                void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                     ArrayList arrayList = null;
                     if (list != null) {
                         ArrayList arrayList2 = new ArrayList();
@@ -862,7 +862,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
             }
 
             @Override
-            public void onResultSent(Bundle bundle2) {
+            void onResultSent(Bundle bundle2) {
                 this.val$receiver.send(0, bundle2);
             }
         };
@@ -892,7 +892,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
             }
 
             @Override
-            public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+            void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                 if (this.this$0.mConnections.get(this.val$connection.callbacks.asBinder()) != this.val$connection) {
                     if (MediaBrowserServiceCompat.DEBUG) {
                         Log.d("MBServiceCompat", "Not sending onLoadChildren result for connection that has been disconnected. pkg=" + this.val$connection.pkg + " id=" + this.val$parentId);
@@ -934,7 +934,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
             }
 
             @Override
-            public void onResultSent(MediaBrowserCompat.MediaItem mediaItem) {
+            void onResultSent(MediaBrowserCompat.MediaItem mediaItem) {
                 if ((getFlags() & 2) != 0) {
                     this.val$receiver.send(-1, null);
                     return;
@@ -964,7 +964,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
             }
 
             @Override
-            public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+            void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                 if ((getFlags() & 4) != 0 || list == null) {
                     this.val$receiver.send(-1, null);
                     return;

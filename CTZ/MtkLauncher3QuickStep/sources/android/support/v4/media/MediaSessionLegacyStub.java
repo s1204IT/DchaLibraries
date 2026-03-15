@@ -143,7 +143,7 @@ class MediaSessionLegacyStub extends MediaSessionCompat.Callback {
         }
     }
 
-    public boolean isAllowedCommand(MediaSession2.ControllerInfo controller, SessionCommand2 command) {
+    private boolean isAllowedCommand(MediaSession2.ControllerInfo controller, SessionCommand2 command) {
         SessionCommandGroup2 allowedCommands;
         synchronized (this.mLock) {
             allowedCommands = this.mAllowedCommandGroupMap.get(controller);
@@ -151,7 +151,7 @@ class MediaSessionLegacyStub extends MediaSessionCompat.Callback {
         return allowedCommands != null && allowedCommands.hasCommand(command);
     }
 
-    public boolean isAllowedCommand(MediaSession2.ControllerInfo controller, int commandCode) {
+    private boolean isAllowedCommand(MediaSession2.ControllerInfo controller, int commandCode) {
         SessionCommandGroup2 allowedCommands;
         synchronized (this.mLock) {
             allowedCommands = this.mAllowedCommandGroupMap.get(controller);

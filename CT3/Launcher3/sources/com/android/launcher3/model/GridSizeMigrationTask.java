@@ -293,7 +293,7 @@ public class GridSizeMigrationTask {
         return finalItems;
     }
 
-    public void markCells(boolean[][] occupied, DbEntry item, boolean val) {
+    private void markCells(boolean[][] occupied, DbEntry item, boolean val) {
         for (int i = item.cellX; i < item.cellX + item.spanX; i++) {
             for (int j = item.cellY; j < item.cellY + item.spanY; j++) {
                 occupied[i][j] = val;
@@ -301,7 +301,7 @@ public class GridSizeMigrationTask {
         }
     }
 
-    public boolean isVacant(boolean[][] occupied, int x, int y, int w, int h) {
+    private boolean isVacant(boolean[][] occupied, int x, int y, int w, int h) {
         if (x + w > this.mTrgX || y + h > this.mTrgY) {
             return false;
         }
@@ -648,7 +648,7 @@ public class GridSizeMigrationTask {
         }
     }
 
-    public static ArrayList<DbEntry> deepCopy(ArrayList<DbEntry> src) {
+    private static ArrayList<DbEntry> deepCopy(ArrayList<DbEntry> src) {
         ArrayList<DbEntry> dup = new ArrayList<>(src.size());
         for (DbEntry e : src) {
             dup.add(e.copy());

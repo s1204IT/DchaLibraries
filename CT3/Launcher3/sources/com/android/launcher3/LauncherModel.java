@@ -2466,7 +2466,7 @@ public class LauncherModel extends BroadcastReceiver implements LauncherAppsComp
         }
     }
 
-    public void bindWidgetsModel(final Callbacks callbacks, final WidgetsModel model) {
+    private void bindWidgetsModel(final Callbacks callbacks, final WidgetsModel model) {
         this.mHandler.post(new Runnable() {
             @Override
             public void run() {

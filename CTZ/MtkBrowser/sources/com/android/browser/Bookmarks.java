@@ -196,7 +196,7 @@ public class Bookmarks {
             }
 
             @Override
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) {
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 this.val$favicon.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
                 ContentValues contentValues = new ContentValues();

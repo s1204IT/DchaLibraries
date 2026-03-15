@@ -729,7 +729,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
         }
     }
 
-    public void connectToSession(MediaSessionCompat.Token sessionCompatToken) throws Throwable {
+    private void connectToSession(MediaSessionCompat.Token sessionCompatToken) throws Throwable {
         MediaControllerCompat controllerCompat = null;
         try {
             controllerCompat = new MediaControllerCompat(this.mContext, sessionCompatToken);
@@ -794,7 +794,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
         sendCommand(command, null, null);
     }
 
-    public void sendCommand(String command, ResultReceiver receiver) throws Throwable {
+    private void sendCommand(String command, ResultReceiver receiver) throws Throwable {
         sendCommand(command, null, receiver);
     }
 

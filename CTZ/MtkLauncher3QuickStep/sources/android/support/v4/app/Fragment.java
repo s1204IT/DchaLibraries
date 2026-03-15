@@ -943,7 +943,7 @@ public class Fragment implements ComponentCallbacks, View.OnCreateContextMenuLis
         }
     }
 
-    public void callStartTransitionListener() {
+    private void callStartTransitionListener() {
         OnStartEnterTransitionListener listener;
         if (this.mAnimationInfo == null) {
             listener = null;

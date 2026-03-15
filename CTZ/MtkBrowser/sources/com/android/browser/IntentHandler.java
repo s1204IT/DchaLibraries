@@ -80,17 +80,17 @@ public class IntentHandler {
 
     protected static UrlData getUrlDataFromIntent(Intent intent) {
         String stringExtra;
-        HashMap map;
-        PreloadedTabControl preloadedTab;
         String str;
+        PreloadedTabControl preloadedTab;
+        HashMap map;
         HashMap map2;
         Bundle bundleExtra;
         String stringExtra2 = "";
         if (intent == null || (intent.getFlags() & 1048576) != 0) {
             stringExtra = null;
-            map = null;
-            preloadedTab = null;
             str = stringExtra2;
+            preloadedTab = null;
+            map = null;
         } else {
             String action = intent.getAction();
             if ("android.intent.action.VIEW".equals(action) || "android.nfc.action.NDEF_DISCOVERED".equals(action)) {
@@ -116,8 +116,8 @@ public class IntentHandler {
                     stringExtra = null;
                     preloadedTab = null;
                 }
-                map = map2;
                 str = string;
+                map = map2;
             } else {
                 if (("android.intent.action.SEARCH".equals(action) || "android.intent.action.MEDIA_SEARCH".equals(action) || "android.intent.action.WEB_SEARCH".equals(action)) && (stringExtra2 = intent.getStringExtra("query")) != null) {
                     String strSmartUrlFilter = UrlUtils.smartUrlFilter(UrlUtils.fixUrl(stringExtra2));
@@ -133,9 +133,9 @@ public class IntentHandler {
                     }
                 }
                 stringExtra = null;
-                map = null;
-                preloadedTab = null;
                 str = stringExtra2;
+                preloadedTab = null;
+                map = null;
             }
         }
         if (DEBUG) {
@@ -205,7 +205,7 @@ public class IntentHandler {
                 }
 
                 @Override
-                public Void doInBackground(Void... voidArr) {
+                protected Void doInBackground(Void... voidArr) {
                     com.android.browser.provider.Browser.addSearchUrl(this.val$cr, this.val$newUrl);
                     return null;
                 }

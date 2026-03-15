@@ -33,7 +33,7 @@ public abstract class ForwardingCollection<E> extends ForwardingObject implement
     }
 
     @Override
-    public abstract Collection<E> delegate();
+    protected abstract Collection<E> delegate();
 
     @Override
     public boolean isEmpty() {

@@ -448,7 +448,7 @@ public class SlidingPaneLayout extends ViewGroup {
                     i6 = i13;
                 }
                 if (zIsLayoutRtlSupport) {
-                    i8 = i5 + (i10 - i6);
+                    i8 = (i10 - i6) + i5;
                     i7 = i8 - measuredWidth;
                 } else {
                     i7 = i6 - i5;
@@ -535,8 +535,8 @@ public class SlidingPaneLayout extends ViewGroup {
         }
         this.mSlideableView = null;
         int i8 = 0;
-        int i9 = paddingLeft;
         int iMin = i7;
+        int i9 = paddingLeft;
         while (i8 < childCount) {
             View childAt = getChildAt(i8);
             LayoutParams layoutParams = (LayoutParams) childAt.getLayoutParams();

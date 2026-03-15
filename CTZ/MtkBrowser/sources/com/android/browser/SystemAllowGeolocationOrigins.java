@@ -57,19 +57,19 @@ class SystemAllowGeolocationOrigins {
         this.mContext = context.getApplicationContext();
     }
 
-    public void addOrigins(Set<String> set) {
+    private void addOrigins(Set<String> set) {
         Iterator<String> it = set.iterator();
         while (it.hasNext()) {
             GeolocationPermissions.getInstance().allow(it.next());
         }
     }
 
-    public String getSystemSetting() {
+    private String getSystemSetting() {
         String string = Settings.Secure.getString(this.mContext.getContentResolver(), "allowed_geolocation_origins");
         return string == null ? "" : string;
     }
 
-    public static HashSet<String> parseAllowGeolocationOrigins(String str) {
+    private static HashSet<String> parseAllowGeolocationOrigins(String str) {
         HashSet<String> hashSet = new HashSet<>();
         if (!TextUtils.isEmpty(str)) {
             for (String str2 : str.split("\\s+")) {
@@ -81,7 +81,7 @@ class SystemAllowGeolocationOrigins {
         return hashSet;
     }
 
-    public void removeOrigins(Set<String> set) {
+    private void removeOrigins(Set<String> set) {
         for (String str : set) {
             GeolocationPermissions.getInstance().getAllowed(str, new ValueCallback<Boolean>(this, str) {
                 final SystemAllowGeolocationOrigins this$0;
@@ -103,7 +103,7 @@ class SystemAllowGeolocationOrigins {
         }
     }
 
-    public <A> Set<A> setMinus(Set<A> set, Set<A> set2) {
+    private <A> Set<A> setMinus(Set<A> set, Set<A> set2) {
         HashSet hashSet = new HashSet(set.size());
         for (A a : set) {
             if (!set2.contains(a)) {

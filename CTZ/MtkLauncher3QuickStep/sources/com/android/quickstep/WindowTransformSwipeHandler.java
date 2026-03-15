@@ -284,7 +284,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    public void setStateOnUiThread(final int i) {
+    private void setStateOnUiThread(final int i) {
         if (Looper.myLooper() == this.mMainThreadHandler.getLooper()) {
             this.mStateCallback.setState(i);
         } else {
@@ -316,7 +316,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mActivityInitListener.register();
     }
 
-    public boolean onActivityInit(T t, Boolean bool) {
+    private boolean onActivityInit(T t, Boolean bool) {
         if (this.mActivity == t) {
             return true;
         }
@@ -350,7 +350,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         return true;
     }
 
-    public void onLauncherStart(T t) {
+    private void onLauncherStart(T t) {
         if (this.mActivity != t || this.mStateCallback.hasStates(128)) {
             return;
         }
@@ -406,7 +406,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mLauncherDrawnCallback = runnable;
     }
 
-    public void launcherFrameDrawn() {
+    private void launcherFrameDrawn() {
         MultiValueAlpha.AlphaProperty alphaProperty = this.mActivityControlHelper.getAlphaProperty(this.mActivity);
         if (alphaProperty.getValue() < 1.0f) {
             if (this.mGestureStarted) {
@@ -430,11 +430,11 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mLauncherFrameDrawnTime = SystemClock.uptimeMillis();
     }
 
-    public void sendRemoteAnimationsToAnimationFactory() {
+    private void sendRemoteAnimationsToAnimationFactory() {
         this.mAnimationFactory.onRemoteAnimationReceived(this.mRecentsAnimationWrapper.targetSet);
     }
 
-    public void initializeLauncherAnimationController() {
+    private void initializeLauncherAnimationController() {
         this.mLayoutListener.setHandler(this);
         buildAnimationController();
         if (LatencyTrackerCompat.isEnabled(this.mContext)) {
@@ -460,7 +460,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         animateToProgress(this.mCurrentShift.value, 1.0f, 240L, Interpolators.LINEAR);
     }
 
-    public void shiftAnimationDestinationForQuickscrub() {
+    private void shiftAnimationDestinationForQuickscrub() {
         float f;
         TransformedRect transformedRect = new TransformedRect();
         this.mActivityControlHelper.getSwipeUpDestinationAndLength(this.mDp, this.mContext, this.mInteractionType, transformedRect);
@@ -522,14 +522,14 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mAnimationFactory.createActivityController(this.mTransitionDragLength, this.mInteractionType);
     }
 
-    public void onAnimatorPlaybackControllerCreated(AnimatorPlaybackController animatorPlaybackController) {
+    private void onAnimatorPlaybackControllerCreated(AnimatorPlaybackController animatorPlaybackController) {
         this.mLauncherTransitionController = animatorPlaybackController;
         this.mLauncherTransitionController.dispatchOnStart();
         this.mLauncherTransitionController.setPlayFraction(this.mCurrentShift.value);
     }
 
     @WorkerThread
-    public void updateFinalShift() {
+    private void updateFinalShift() {
         boolean z;
         float f = this.mCurrentShift.value;
         if (this.mRecentsAnimationWrapper.getController() != null) {
@@ -552,7 +552,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         });
     }
 
-    public void updateFinalShiftUi() {
+    private void updateFinalShiftUi() {
         if (this.mLauncherTransitionController == null) {
             return;
         }
@@ -601,7 +601,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
     }
 
     @AnyThread
-    public void notifyGestureStartedAsync() {
+    private void notifyGestureStartedAsync() {
         if (this.mActivity != null) {
             this.mActivity.clearForceInvisibleFlag(1);
         }
@@ -687,14 +687,14 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
     }
 
     @UiThread
-    public void resumeLastTaskForQuickstep() {
+    private void resumeLastTaskForQuickstep() {
         setStateOnUiThread(65536);
         doLogGesture(false);
         reset();
     }
 
     @UiThread
-    public void resumeLastTask() {
+    private void resumeLastTask() {
         this.mRecentsAnimationWrapper.finish(false, null);
     }
 
@@ -704,7 +704,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    public void invalidateHandler() {
+    private void invalidateHandler() {
         this.mCurrentShift.finishAnimation();
         if (this.mGestureEndCallback != null) {
             this.mGestureEndCallback.run();
@@ -714,7 +714,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mTaskSnapshot = null;
     }
 
-    public void invalidateHandlerWithLauncher() {
+    private void invalidateHandlerWithLauncher() {
         this.mLauncherTransitionController = null;
         this.mLayoutListener.finish();
         this.mActivityControlHelper.getAlphaProperty(this.mActivity).setValue(1.0f);
@@ -723,11 +723,11 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mQuickScrubController.cancelActiveQuickscrub();
     }
 
-    public void notifyTransitionCancelled() {
+    private void notifyTransitionCancelled() {
         this.mAnimationFactory.onTransitionCancelled();
     }
 
-    public void resetStateForAnimationCancel() {
+    private void resetStateForAnimationCancel() {
         this.mActivityControlHelper.onTransitionCancelled(this.mActivity, this.mWasLauncherAlreadyVisible || this.mGestureStarted);
     }
 
@@ -737,7 +737,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    public void switchToScreenshot() {
+    private void switchToScreenshot() {
         RecentsAnimationControllerCompat controller = this.mRecentsAnimationWrapper.getController();
         boolean zAttach = false;
         if (controller != null) {
@@ -761,7 +761,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    public void finishCurrentTransitionToHome() {
+    private void finishCurrentTransitionToHome() {
         synchronized (this.mRecentsAnimationWrapper) {
             this.mRecentsAnimationWrapper.finish(true, new Runnable() {
                 @Override
@@ -772,7 +772,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    public void setupLauncherUiAfterSwipeUpAnimation() {
+    private void setupLauncherUiAfterSwipeUpAnimation() {
         if (this.mLauncherTransitionController != null) {
             this.mLauncherTransitionController.getAnimationPlayer().end();
             this.mLauncherTransitionController = null;
@@ -785,7 +785,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         reset();
     }
 
-    public void onQuickScrubStart() {
+    private void onQuickScrubStart() {
         if (!this.mQuickScrubController.prepareQuickScrub(TAG)) {
             this.mQuickScrubBlocked = true;
             setStateOnUiThread(65664);
@@ -799,7 +799,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         this.mQuickScrubController.onQuickScrubProgress(this.mCurrentQuickScrubProgress);
     }
 
-    public void onFinishedTransitionToQuickScrub() {
+    private void onFinishedTransitionToQuickScrub() {
         if (this.mQuickScrubBlocked) {
             return;
         }
@@ -818,7 +818,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         setStateOnUiThread(8192);
     }
 
-    public void switchToFinalAppAfterQuickScrub() {
+    private void switchToFinalAppAfterQuickScrub() {
         if (this.mQuickScrubBlocked) {
             return;
         }
@@ -826,20 +826,20 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         setStateOnUiThread(128);
     }
 
-    public void debugNewState(int i) {
+    private void debugNewState(int i) {
     }
 
     public void setGestureEndCallback(Runnable runnable) {
         this.mGestureEndCallback = runnable;
     }
 
-    public void onLongSwipeEnabledUi() {
+    private void onLongSwipeEnabledUi() {
         this.mUiLongSwipeMode = true;
         checkLongSwipeCanEnter();
         checkLongSwipeCanStart();
     }
 
-    public void onLongSwipeDisabledUi() {
+    private void onLongSwipeDisabledUi() {
         this.mUiLongSwipeMode = false;
         if (this.mLongSwipeController != null) {
             this.mLongSwipeController.destroy();
@@ -847,21 +847,21 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         }
     }
 
-    public void onLongSwipeDisplacementUpdated() {
+    private void onLongSwipeDisplacementUpdated() {
         if (!this.mUiLongSwipeMode || this.mLongSwipeController == null) {
             return;
         }
         this.mLongSwipeController.onMove(this.mLongSwipeDisplacement);
     }
 
-    public void checkLongSwipeCanEnter() {
+    private void checkLongSwipeCanEnter() {
         if (!this.mUiLongSwipeMode || !this.mStateCallback.hasStates(26) || !this.mActivityControlHelper.supportsLongSwipe(this.mActivity)) {
             return;
         }
         this.mStateCallback.setState(16384);
     }
 
-    public void checkLongSwipeCanStart() {
+    private void checkLongSwipeCanStart() {
         if (!this.mUiLongSwipeMode || !this.mStateCallback.hasStates(LONG_SWIPE_START_STATE) || !this.mActivityControlHelper.supportsLongSwipe(this.mActivity) || this.mRecentsAnimationWrapper.targetSet == null) {
             return;
         }
@@ -869,7 +869,7 @@ public class WindowTransformSwipeHandler<T extends BaseDraggingActivity> {
         onLongSwipeDisplacementUpdated();
     }
 
-    public void onLongSwipeGestureFinishUi(float f, boolean z) {
+    private void onLongSwipeGestureFinishUi(float f, boolean z) {
         if (!this.mUiLongSwipeMode || this.mLongSwipeController == null) {
             this.mUiLongSwipeMode = false;
             handleNormalGestureEnd(f, z);

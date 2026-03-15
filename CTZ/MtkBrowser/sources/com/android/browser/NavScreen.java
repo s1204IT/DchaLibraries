@@ -148,7 +148,7 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         updateBookMarkButton();
     }
 
-    public void onCloseTab(Tab tab) {
+    private void onCloseTab(Tab tab) {
         if (DEBUG) {
             Log.d("browser", "NavScreen.onCloseTab()--->tab : " + tab);
         }
@@ -196,13 +196,13 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         }
     }
 
-    public void switchToTab(Tab tab) {
+    private void switchToTab(Tab tab) {
         if (tab != this.mUi.getActiveTab()) {
             this.mUiController.setActiveTab(tab);
         }
     }
 
-    public void updateBookMarkButton() {
+    private void updateBookMarkButton() {
         if (this.mUiController.getTabControl().getTabCount() == 0) {
             this.mBookmarks.setVisibility(8);
             this.mNewTab.setVisibility(8);

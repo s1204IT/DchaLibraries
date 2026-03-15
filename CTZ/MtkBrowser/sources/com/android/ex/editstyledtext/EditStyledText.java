@@ -617,7 +617,9 @@ public class EditStyledText extends EditText {
             int iMin = Math.min(i, i4);
             int iMax = Math.max(i, i4);
             Object[] spans = editable.getSpans(iMin, iMin, Object.class);
-            for (Object obj : spans) {
+            int length = spans.length;
+            for (int i5 = 0; i5 < length; i5++) {
+                Object obj = spans[i5];
                 if ((obj instanceof ForegroundColorSpan) || (obj instanceof AbsoluteSizeSpan) || (obj instanceof EditStyledTextSpans.MarqueeSpan) || (obj instanceof AlignmentSpan)) {
                     int spanStart = editable.getSpanStart(obj);
                     int spanEnd = editable.getSpanEnd(obj);
@@ -710,7 +712,7 @@ public class EditStyledText extends EditText {
         }
     }
 
-    public void notifyStateChanged(int i, int i2) {
+    private void notifyStateChanged(int i, int i2) {
         if (this.mESTNotifiers != null) {
             Iterator<EditStyledTextNotifier> it = this.mESTNotifiers.iterator();
             while (it.hasNext()) {
@@ -732,7 +734,7 @@ public class EditStyledText extends EditText {
         }
     }
 
-    public static void stopSelecting(View view, Spannable spannable) {
+    private static void stopSelecting(View view, Spannable spannable) {
         spannable.removeSpan(SELECTING);
     }
 

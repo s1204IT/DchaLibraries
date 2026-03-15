@@ -74,7 +74,7 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
         return iHighestOneBit;
     }
 
-    public static <E> ImmutableSet<E> construct(int i, Object... objArr) {
+    private static <E> ImmutableSet<E> construct(int i, Object... objArr) {
         int i2;
         switch (i) {
             case 0:

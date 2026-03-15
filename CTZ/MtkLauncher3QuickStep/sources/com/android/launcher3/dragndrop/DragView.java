@@ -203,7 +203,7 @@ public class DragView extends View {
     }
 
     @TargetApi(26)
-    public void updateColorFilter() {
+    private void updateColorFilter() {
         if (this.mCurrentFilter == null) {
             this.mPaint.setColorFilter(null);
             if (this.mScaledMaskPath != null) {
@@ -229,7 +229,7 @@ public class DragView extends View {
         invalidate();
     }
 
-    public Drawable getFullDrawable(ItemInfo itemInfo, LauncherAppState launcherAppState, Object[] objArr) {
+    private Drawable getFullDrawable(ItemInfo itemInfo, LauncherAppState launcherAppState, Object[] objArr) {
         FolderAdaptiveIcon folderAdaptiveIconCreateFolderAdaptiveIcon;
         if (itemInfo.itemType == 0) {
             LauncherActivityInfo launcherActivityInfoResolveActivity = LauncherAppsCompat.getInstance(this.mLauncher).resolveActivity(itemInfo.getIntent(), itemInfo.user);
@@ -262,7 +262,7 @@ public class DragView extends View {
     }
 
     @TargetApi(26)
-    public Drawable getBadge(ItemInfo itemInfo, LauncherAppState launcherAppState, Object obj) {
+    private Drawable getBadge(ItemInfo itemInfo, LauncherAppState launcherAppState, Object obj) {
         int i = launcherAppState.getInvariantDeviceProfile().iconBitmapSize;
         if (itemInfo.itemType == 6) {
             boolean z = (itemInfo instanceof ItemInfoWithIcon) && (((ItemInfoWithIcon) itemInfo).runtimeStatusFlags & 512) > 0;
@@ -482,7 +482,7 @@ public class DragView extends View {
         });
     }
 
-    public void applyTranslation() {
+    private void applyTranslation() {
         setTranslationX((this.mLastTouchX - this.mRegistrationX) + this.mAnimatedShiftX);
         setTranslationY((this.mLastTouchY - this.mRegistrationY) + this.mAnimatedShiftY);
     }

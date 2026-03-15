@@ -89,7 +89,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         init(context);
     }
 
-    public void changeState(int i) {
+    private void changeState(int i) {
         if (DEBUG) {
             Log.d("browser", "UrlInputView.changeState()--->newState = " + i);
         }

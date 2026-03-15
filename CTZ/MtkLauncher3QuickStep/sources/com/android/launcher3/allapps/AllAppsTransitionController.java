@@ -50,7 +50,7 @@ public class AllAppsTransitionController implements LauncherStateManager.StateHa
         return this.mShiftRange;
     }
 
-    public void onProgressAnimationStart() {
+    private void onProgressAnimationStart() {
         this.mAppsView.setVisibility(0);
     }
 
@@ -161,7 +161,7 @@ public class AllAppsTransitionController implements LauncherStateManager.StateHa
         }
     }
 
-    public void onProgressAnimationEnd() {
+    private void onProgressAnimationEnd() {
         if (Float.compare(this.mProgress, 1.0f) == 0) {
             this.mAppsView.setVisibility(4);
             this.mAppsView.reset(false);

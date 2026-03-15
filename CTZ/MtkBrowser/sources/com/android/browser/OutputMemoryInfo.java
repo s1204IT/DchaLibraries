@@ -9,7 +9,7 @@ public class OutputMemoryInfo extends AsyncTask<TabControl, Void, Void> {
     private boolean logToFile = false;
 
     @Override
-    public Void doInBackground(TabControl... tabControlArr) {
+    protected Void doInBackground(TabControl... tabControlArr) {
         if (tabControlArr.length != 2) {
             Log.d("browser", "Incorrect parameters to OutputMemoryInfo's doInBackground(): " + String.valueOf(tabControlArr.length));
             return null;

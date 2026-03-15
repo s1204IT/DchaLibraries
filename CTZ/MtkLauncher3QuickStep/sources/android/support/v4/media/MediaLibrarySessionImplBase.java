@@ -191,7 +191,7 @@ class MediaLibrarySessionImplBase extends MediaSession2ImplBase implements Media
         });
     }
 
-    public boolean isSubscribed(MediaSession2.ControllerInfo controller, String parentId) {
+    private boolean isSubscribed(MediaSession2.ControllerInfo controller, String parentId) {
         synchronized (this.mLock) {
             Set<String> subscriptions = this.mSubscriptions.get(controller);
             if (subscriptions != null && subscriptions.contains(parentId)) {
@@ -201,7 +201,7 @@ class MediaLibrarySessionImplBase extends MediaSession2ImplBase implements Media
         }
     }
 
-    public void dumpSubscription() {
+    private void dumpSubscription() {
         if (!DEBUG) {
             return;
         }

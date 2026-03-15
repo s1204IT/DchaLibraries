@@ -165,7 +165,7 @@ public final class MediaControllerCompat {
         }
     }
 
-    public static void validateCustomAction(String action, Bundle args) {
+    private static void validateCustomAction(String action, Bundle args) {
         if (action == null) {
             return;
         }
@@ -1536,7 +1536,7 @@ public final class MediaControllerCompat {
             sendCommand(MediaControllerCompat.COMMAND_GET_EXTRA_BINDER, null, new ExtraBinderRequestResultReceiver(this));
         }
 
-        public void processPendingCallbacks() {
+        private void processPendingCallbacks() {
             if (this.mSessionToken.getExtraBinder() == null) {
                 return;
             }

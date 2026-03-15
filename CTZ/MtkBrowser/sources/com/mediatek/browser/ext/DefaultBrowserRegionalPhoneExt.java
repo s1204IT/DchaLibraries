@@ -164,7 +164,7 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             removeOperatorBookmarks(this.mContext);
             addOMBookmarks(this.mContext);
             return null;

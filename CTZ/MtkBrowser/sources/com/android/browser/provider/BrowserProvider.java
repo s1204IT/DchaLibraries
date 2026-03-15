@@ -499,7 +499,7 @@ public class BrowserProvider extends ContentProvider {
         return str;
     }
 
-    public static CharSequence replaceSystemPropertyInString(Context context, CharSequence charSequence) throws Throwable {
+    private static CharSequence replaceSystemPropertyInString(Context context, CharSequence charSequence) throws Throwable {
         int i;
         int i2 = 0;
         StringBuffer stringBuffer = new StringBuffer();
@@ -541,7 +541,7 @@ public class BrowserProvider extends ContentProvider {
         return stringBuffer;
     }
 
-    public static String stripUrl(String str) {
+    private static String stripUrl(String str) {
         if (str == null) {
             return null;
         }

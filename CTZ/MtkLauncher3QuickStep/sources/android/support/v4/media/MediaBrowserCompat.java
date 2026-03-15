@@ -387,7 +387,7 @@ public final class MediaBrowserCompat {
         public void onError(@NonNull String parentId, @NonNull Bundle options) {
         }
 
-        public void setSubscription(Subscription subscription) {
+        private void setSubscription(Subscription subscription) {
             this.mSubscriptionRef = new WeakReference<>(subscription);
         }
 

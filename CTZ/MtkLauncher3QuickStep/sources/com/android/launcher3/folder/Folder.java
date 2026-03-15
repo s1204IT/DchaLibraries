@@ -530,7 +530,7 @@ public class Folder extends AbstractFloatingView implements DragSource, View.OnL
         return Pair.create(this.mContent, this.mIsOpen ? this.mContent.getAccessibilityDescription() : getContext().getString(R.string.folder_closed));
     }
 
-    public void closeComplete(boolean z) {
+    private void closeComplete(boolean z) {
         DragLayer dragLayer = (DragLayer) getParent();
         if (dragLayer != null) {
             dragLayer.removeView(this);

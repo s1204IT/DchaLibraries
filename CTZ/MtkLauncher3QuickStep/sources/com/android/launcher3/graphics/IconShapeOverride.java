@@ -66,7 +66,7 @@ public class IconShapeOverride {
         return Resources.getSystem().getIdentifier("config_icon_mask", "string", "android");
     }
 
-    public static String getAppliedValue(Context context) {
+    private static String getAppliedValue(Context context) {
         return Utilities.getDevicePrefs(context).getString(KEY_PREFERENCE, "");
     }
 

@@ -24,7 +24,7 @@ public abstract class ForwardingMap<K, V> extends ForwardingObject implements Ma
     }
 
     @Override
-    public abstract Map<K, V> delegate();
+    protected abstract Map<K, V> delegate();
 
     @Override
     public Set<Map.Entry<K, V>> entrySet() {

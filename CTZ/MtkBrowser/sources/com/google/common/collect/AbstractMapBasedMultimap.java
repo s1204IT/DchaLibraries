@@ -305,7 +305,7 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
             return sortedMap().comparator();
         }
 
-        public SortedSet<K> createKeySet() {
+        SortedSet<K> createKeySet() {
             return new SortedKeySet(this.this$0, sortedMap());
         }
 
@@ -901,11 +901,11 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         return i2;
     }
 
-    public Iterator<V> iteratorOrListIterator(Collection<V> collection) {
+    private Iterator<V> iteratorOrListIterator(Collection<V> collection) {
         return collection instanceof List ? ((List) collection).listIterator() : collection.iterator();
     }
 
-    public int removeValuesForKey(Object obj) {
+    private int removeValuesForKey(Object obj) {
         Collection collection = (Collection) Maps.safeRemove(this.map, obj);
         if (collection == null) {
             return 0;
@@ -916,7 +916,7 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
         return size;
     }
 
-    public List<V> wrapList(K k, List<V> list, AbstractMapBasedMultimap<K, V>.WrappedCollection wrappedCollection) {
+    private List<V> wrapList(K k, List<V> list, AbstractMapBasedMultimap<K, V>.WrappedCollection wrappedCollection) {
         return list instanceof RandomAccess ? new RandomAccessWrappedList(this, k, list, wrappedCollection) : new WrappedList(this, k, list, wrappedCollection);
     }
 
@@ -960,7 +960,7 @@ abstract class AbstractMapBasedMultimap<K, V> extends AbstractMultimap<K, V> imp
                 this.this$0 = this;
             }
 
-            public Map.Entry<K, V> output(K k, V v) {
+            Map.Entry<K, V> output(K k, V v) {
                 return Maps.immutableEntry(k, v);
             }
         };

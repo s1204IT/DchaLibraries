@@ -63,7 +63,7 @@ public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, Dialo
         });
     }
 
-    public void done() {
+    private void done() {
         synchronized (this) {
             if (this.mRunnable != null) {
                 if (DEBUG) {

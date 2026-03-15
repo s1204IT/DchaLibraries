@@ -457,7 +457,7 @@ class Tab implements WebView.PictureListener {
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             if (Tab.DEBUG) {
                 Log.d("browser", "Tab()--->CancelSavePageTask()--->doInBackground()");
             }
@@ -487,7 +487,7 @@ class Tab implements WebView.PictureListener {
         }
 
         @Override
-        public void onPostExecute(Void r3) {
+        protected void onPostExecute(Void r3) {
             if (this.this$0.mSavePageJob != null) {
                 this.this$0.mSavePageJob.clear();
                 this.this$0.mSavePageJob = null;
@@ -1013,7 +1013,7 @@ class Tab implements WebView.PictureListener {
         };
     }
 
-    public static Bitmap getDefaultFavicon(Context context) {
+    private static Bitmap getDefaultFavicon(Context context) {
         Bitmap bitmap;
         synchronized (Tab.class) {
             try {
@@ -1028,7 +1028,7 @@ class Tab implements WebView.PictureListener {
         return bitmap;
     }
 
-    public void handleProceededAfterSslError(SslError sslError) {
+    private void handleProceededAfterSslError(SslError sslError) {
         if (sslError.getUrl().equals(this.mCurrentState.mUrl)) {
             setSecurityState(SecurityState.SECURITY_STATE_BAD_CERTIFICATE);
             this.mCurrentState.mSslCertificateError = sslError;
@@ -1044,7 +1044,7 @@ class Tab implements WebView.PictureListener {
         this.mHandler.sendEmptyMessageDelayed(42, 100L);
     }
 
-    public void processNextError() {
+    private void processNextError() {
         if (this.mQueuedErrors == null) {
             return;
         }
@@ -1056,7 +1056,7 @@ class Tab implements WebView.PictureListener {
         }
     }
 
-    public void queueError(int i, String str) {
+    private void queueError(int i, String str) {
         if (this.mQueuedErrors == null) {
             this.mQueuedErrors = new LinkedList<>();
         }
@@ -1106,7 +1106,7 @@ class Tab implements WebView.PictureListener {
         this.mSettings.toggleDesktopUseragent(this.mMainView);
     }
 
-    public void setSecurityState(SecurityState securityState) {
+    private void setSecurityState(SecurityState securityState) {
         this.mCurrentState.mSecurityState = securityState;
         this.mCurrentState.mSslCertificateError = null;
         this.mWebViewController.onUpdatedSecurityState(this);
@@ -1133,7 +1133,7 @@ class Tab implements WebView.PictureListener {
         this.mIsErrorDialogShown = true;
     }
 
-    public void syncCurrentState(WebView webView, String str) {
+    private void syncCurrentState(WebView webView, String str) {
         if (this.mWillBeClosed) {
             return;
         }

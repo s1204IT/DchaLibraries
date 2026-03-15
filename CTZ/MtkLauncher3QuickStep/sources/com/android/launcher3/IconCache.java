@@ -431,7 +431,7 @@ public class IconCache {
         }
     }
 
-    public void onIconRequestEnd() {
+    private void onIconRequestEnd() {
         this.mPendingIconRequestCount--;
         if (this.mPendingIconRequestCount <= 0) {
             LauncherModel.setWorkerPriority(10);

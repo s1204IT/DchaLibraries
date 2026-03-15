@@ -227,7 +227,7 @@ class MediaBrowser2ImplLegacy extends MediaController2ImplLegacy implements Medi
         return mediaBrowserCompat;
     }
 
-    public Bundle getExtrasWithoutPagination(Bundle extras) {
+    private Bundle getExtrasWithoutPagination(Bundle extras) {
         if (extras == null) {
             return null;
         }
