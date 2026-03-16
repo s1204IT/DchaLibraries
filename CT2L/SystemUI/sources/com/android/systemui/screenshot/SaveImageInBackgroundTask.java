@@ -92,7 +92,7 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
     }
 
     @Override
-    public SaveImageInBackgroundData doInBackground(SaveImageInBackgroundData... params) {
+    protected SaveImageInBackgroundData doInBackground(SaveImageInBackgroundData... params) {
         if (params.length != 1) {
             return null;
         }
@@ -150,7 +150,7 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
     }
 
     @Override
-    public void onPostExecute(SaveImageInBackgroundData params) {
+    protected void onPostExecute(SaveImageInBackgroundData params) {
         if (isCancelled()) {
             params.finisher.run();
             params.clearImage();

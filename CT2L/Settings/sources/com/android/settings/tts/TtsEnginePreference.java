@@ -123,7 +123,7 @@ public class TtsEnginePreference extends Preference {
         dialog.show();
     }
 
-    public void onRadioButtonClicked(final CompoundButton buttonView, boolean isChecked) {
+    private void onRadioButtonClicked(final CompoundButton buttonView, boolean isChecked) {
         if (!this.mPreventRadioButtonCallbacks && this.mSharedState.getCurrentChecked() != buttonView) {
             if (isChecked) {
                 if (shouldDisplayDataAlert()) {
@@ -148,7 +148,7 @@ public class TtsEnginePreference extends Preference {
         }
     }
 
-    public void makeCurrentEngine(Checkable current) {
+    private void makeCurrentEngine(Checkable current) {
         if (this.mSharedState.getCurrentChecked() != null) {
             this.mSharedState.getCurrentChecked().setChecked(false);
         }

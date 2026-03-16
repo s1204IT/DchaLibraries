@@ -90,7 +90,7 @@ public class SecureCameraLaunchManager {
         }
     }
 
-    public boolean areAllCamerasAvailable() {
+    private boolean areAllCamerasAvailable() {
         Iterator<Boolean> it = this.mCameraAvailabilityMap.values().iterator();
         while (it.hasNext()) {
             boolean cameraAvailable = it.next().booleanValue();

@@ -297,7 +297,7 @@ public class Index {
         return IndexDatabaseHelper.getInstance(this.mContext).getReadableDatabase();
     }
 
-    public SQLiteDatabase getWritableDatabase() {
+    private SQLiteDatabase getWritableDatabase() {
         return IndexDatabaseHelper.getInstance(this.mContext).getWritableDatabase();
     }
 
@@ -463,7 +463,7 @@ public class Index {
         return sb.toString();
     }
 
-    public void indexOneSearchIndexableData(SQLiteDatabase database, String localeStr, SearchIndexableData data, Map<String, List<String>> nonIndexableKeys) {
+    private void indexOneSearchIndexableData(SQLiteDatabase database, String localeStr, SearchIndexableData data, Map<String, List<String>> nonIndexableKeys) {
         if (data instanceof SearchIndexableResource) {
             indexOneResource(database, localeStr, (SearchIndexableResource) data, nonIndexableKeys);
         } else if (data instanceof SearchIndexableRaw) {
@@ -761,13 +761,13 @@ public class Index {
         }
 
         @Override
-        public void onPostExecute(Void aVoid) {
+        protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Index.this.mIsAvailable.set(true);
         }
 
         @Override
-        public Void doInBackground(UpdateData... params) {
+        protected Void doInBackground(UpdateData... params) {
             List<SearchIndexableData> dataToUpdate = params[0].dataToUpdate;
             List<SearchIndexableData> dataToDelete = params[0].dataToDelete;
             Map<String, List<String>> nonIndexableKeys = params[0].nonIndexableKeys;
@@ -861,7 +861,7 @@ public class Index {
         }
 
         @Override
-        public Long doInBackground(String... params) {
+        protected Long doInBackground(String... params) {
             long now = new Date().getTime();
             ContentValues values = new ContentValues();
             values.put("query", params[0]);

@@ -769,7 +769,7 @@ public class DrawerLayout extends ViewGroup {
         }
     }
 
-    public static boolean includeChildForAccessibility(View child) {
+    private static boolean includeChildForAccessibility(View child) {
         return (ViewCompat.getImportantForAccessibility(child) == 4 || ViewCompat.getImportantForAccessibility(child) == 2) ? false : true;
     }
 

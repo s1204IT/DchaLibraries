@@ -45,7 +45,7 @@ public class RecentsVerticalScrollView extends ScrollView implements SwipeHelper
         this.mSwipeHelper.setMinSwipeProgress(minAlpha);
     }
 
-    public int scrollPositionOfMostRecent() {
+    private int scrollPositionOfMostRecent() {
         return (this.mLinearLayout.getHeight() - getHeight()) + getPaddingTop();
     }
 
@@ -67,7 +67,7 @@ public class RecentsVerticalScrollView extends ScrollView implements SwipeHelper
         return null;
     }
 
-    public void update() {
+    private void update() {
         for (int i = 0; i < this.mLinearLayout.getChildCount(); i++) {
             View v = this.mLinearLayout.getChildAt(i);
             addToRecycledViews(v);

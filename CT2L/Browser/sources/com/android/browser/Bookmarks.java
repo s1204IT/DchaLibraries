@@ -121,7 +121,7 @@ public class Bookmarks {
     static void updateFavicon(final ContentResolver cr, final String originalUrl, final String url, final Bitmap favicon) {
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... unused) {
+            protected Void doInBackground(Void... unused) {
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 favicon.compress(Bitmap.CompressFormat.PNG, 100, os);
                 ContentValues values = new ContentValues();

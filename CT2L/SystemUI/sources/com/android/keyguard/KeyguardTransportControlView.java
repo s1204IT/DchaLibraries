@@ -109,7 +109,7 @@ public class KeyguardTransportControlView extends FrameLayout {
         }
     }
 
-    public static final boolean playbackPositionShouldMove(int playstate) {
+    private static final boolean playbackPositionShouldMove(int playstate) {
         switch (playstate) {
             case 1:
             case 2:
@@ -252,7 +252,7 @@ public class KeyguardTransportControlView extends FrameLayout {
         this.mMetadataChangeTransition = tg;
     }
 
-    public void updateTransportControls(int transportControlFlags) {
+    private void updateTransportControls(int transportControlFlags) {
         this.mTransportControlFlags = transportControlFlags;
         setSeekBarsEnabled((transportControlFlags & 256) != 0);
     }
@@ -272,7 +272,7 @@ public class KeyguardTransportControlView extends FrameLayout {
         this.mTransportControlCallback = transportControlCallback;
     }
 
-    public void setEnableMarquee(boolean enabled) {
+    private void setEnableMarquee(boolean enabled) {
         if (this.mTrackTitle != null) {
             this.mTrackTitle.setSelected(enabled);
         }
@@ -534,7 +534,7 @@ public class KeyguardTransportControlView extends FrameLayout {
         }
     }
 
-    public void updatePlayPauseState(int state) {
+    private void updatePlayPauseState(int state) {
         int imageResId;
         int imageDescId;
         if (state != this.mCurrentPlayState) {
@@ -620,7 +620,7 @@ public class KeyguardTransportControlView extends FrameLayout {
         }
     }
 
-    public void sendMediaButtonClick(int keyCode) {
+    private void sendMediaButtonClick(int keyCode) {
         this.mRemoteController.sendMediaKeyEvent(new KeyEvent(0, keyCode));
         this.mRemoteController.sendMediaKeyEvent(new KeyEvent(1, keyCode));
         this.mTransportControlCallback.userActivity();

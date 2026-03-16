@@ -112,7 +112,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
             this.listener = listener;
         }
 
-        public void setSettingsEnabled(boolean enable) {
+        private void setSettingsEnabled(boolean enable) {
             this.hasSettings = enable;
         }
 
@@ -233,7 +233,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    public void onPackageChanged(Intent intent) {
+    private void onPackageChanged(Intent intent) {
         String action = intent.getAction();
         String packageName = intent.getData().getSchemeSpecificPart();
         AppRestrictionsPreference pref = (AppRestrictionsPreference) findPreference(getKeyForPackage(packageName));
@@ -256,7 +256,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         return CircleFramedDrawable.getInstance(getActivity(), userIcon);
     }
 
-    public void applyUserAppsStates() {
+    private void applyUserAppsStates() {
         int userId = this.mUser.getIdentifier();
         if (!this.mUserManager.getUserInfo(userId).isRestricted() && userId != UserHandle.myUserId()) {
             Log.e(TAG, "Cannot apply application restrictions on another user!");
@@ -377,13 +377,13 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
 
         @Override
-        public Void doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             AppRestrictionsFragment.this.fetchAndMergeApps();
             return null;
         }
 
         @Override
-        public void onPostExecute(Void result) {
+        protected void onPostExecute(Void result) {
             AppRestrictionsFragment.this.populateApps();
         }
 
@@ -392,7 +392,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    public void fetchAndMergeApps() {
+    private void fetchAndMergeApps() {
         this.mAppList.setOrderingAsAdded(false);
         this.mVisibleApps = new ArrayList();
         Context context = getActivity();
@@ -478,7 +478,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         return (8388608 & flags) != 0 && (134217728 & flags) == 0;
     }
 
-    public void populateApps() {
+    private void populateApps() {
         Context context = getActivity();
         if (context != null) {
             PackageManager pm = this.mPackageManager;
@@ -741,7 +741,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    public void onRestrictionsReceived(AppRestrictionsPreference preference, String packageName, ArrayList<RestrictionEntry> restrictions) {
+    private void onRestrictionsReceived(AppRestrictionsPreference preference, String packageName, ArrayList<RestrictionEntry> restrictions) {
         removeRestrictionsForApp(preference);
         Context context = preference.getContext();
         int count = 1;
@@ -799,7 +799,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    public int generateCustomActivityRequestCode(AppRestrictionsPreference preference) {
+    private int generateCustomActivityRequestCode(AppRestrictionsPreference preference) {
         this.mCustomRequestCode++;
         this.mCustomRequestMap.put(Integer.valueOf(this.mCustomRequestCode), preference);
         return this.mCustomRequestCode;

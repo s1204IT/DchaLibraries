@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/input_view_base_layout_transparent_color"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@color/input_view_base_layout_transparent_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <AbsoluteLayout
+            android:id="@+id/input_view_base_layout_top"
+            android:background="@color/input_view_base_layout_transparent_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <AbsoluteLayout
+            android:id="@+id/input_view_base_layout_bottom"
+            android:background="@color/input_view_base_layout_opaque_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</FrameLayout>

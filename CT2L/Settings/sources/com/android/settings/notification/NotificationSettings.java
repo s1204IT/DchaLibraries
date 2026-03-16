@@ -180,7 +180,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         volumeSeekBarPreference.showIcon(i);
     }
 
-    public void updateRingerMode() {
+    private void updateRingerMode() {
         int ringerMode = this.mAudioManager.getRingerModeInternal();
         if (this.mRingerMode != ringerMode) {
             this.mRingerMode = ringerMode;
@@ -188,7 +188,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         }
     }
 
-    public void updateEffectsSuppressor() {
+    private void updateEffectsSuppressor() {
         ComponentName suppressor = NotificationManager.from(this.mContext).getEffectsSuppressor();
         if (!Objects.equals(suppressor, this.mSuppressor)) {
             this.mSuppressor = suppressor;
@@ -259,7 +259,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         AsyncTask.execute(this.mLookupRingtoneNames);
     }
 
-    public static CharSequence updateRingtoneName(Context context, int type) {
+    private static CharSequence updateRingtoneName(Context context, int type) {
         if (context == null) {
             Log.e("NotificationSettings", "Unable to update ringtone name, no context provided");
             return null;
@@ -326,7 +326,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         }
     }
 
-    public void updateVibrateWhenRinging() {
+    private void updateVibrateWhenRinging() {
         if (this.mVibrateWhenRinging != null) {
             this.mVibrateWhenRinging.setChecked(Settings.System.getInt(getContentResolver(), "vibrate_when_ringing", 0) != 0);
         }
@@ -350,7 +350,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         }
     }
 
-    public void updatePulse() {
+    private void updatePulse() {
         if (this.mNotificationPulse != null) {
             try {
                 this.mNotificationPulse.setChecked(Settings.System.getInt(getContentResolver(), "notification_light_pulse") == 1);
@@ -388,7 +388,7 @@ public class NotificationSettings extends SettingsPreferenceFragment implements 
         });
     }
 
-    public void updateLockscreenNotifications() {
+    private void updateLockscreenNotifications() {
         int i;
         if (this.mLockscreen != null) {
             boolean enabled = getLockscreenNotificationsEnabled();

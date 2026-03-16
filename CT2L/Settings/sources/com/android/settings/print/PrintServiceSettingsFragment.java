@@ -128,7 +128,7 @@ public class PrintServiceSettingsFragment extends SettingsPreferenceFragment imp
         this.mSwitchBar.hide();
     }
 
-    public void onPreferenceToggled(String preferenceKey, boolean enabled) {
+    private void onPreferenceToggled(String preferenceKey, boolean enabled) {
         ComponentName service = ComponentName.unflattenFromString(preferenceKey);
         List<ComponentName> services = PrintSettingsUtils.readEnabledPrintServices(getActivity());
         if (enabled) {
@@ -169,7 +169,7 @@ public class PrintServiceSettingsFragment extends SettingsPreferenceFragment imp
         }
     }
 
-    public void updateEmptyView() {
+    private void updateEmptyView() {
         ListView listView = getListView();
         ViewGroup contentRoot = (ViewGroup) listView.getParent();
         View emptyView = listView.getEmptyView();
@@ -220,7 +220,7 @@ public class PrintServiceSettingsFragment extends SettingsPreferenceFragment imp
         }
     }
 
-    public void updateUiForServiceState() {
+    private void updateUiForServiceState() {
         List<ComponentName> services = PrintSettingsUtils.readEnabledPrintServices(getActivity());
         this.mServiceEnabled = services.contains(this.mComponentName);
         if (this.mServiceEnabled) {

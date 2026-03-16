@@ -198,7 +198,7 @@ public class KeyguardFaceUnlockView extends LinearLayout implements KeyguardSecu
         Log.w("FULKeyguardFaceUnlockView", "Couldn't find biometric unlock view");
     }
 
-    public void maybeStartBiometricUnlock() {
+    private void maybeStartBiometricUnlock() {
         boolean isBouncerVisibleToUser;
         if (this.mBiometricUnlock != null) {
             KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(this.mContext);
@@ -223,7 +223,7 @@ public class KeyguardFaceUnlockView extends LinearLayout implements KeyguardSecu
         return updateMonitor.isKeyguardBouncer() && updateMonitor.isKeyguardVisible() && updateMonitor.isScreenOn();
     }
 
-    public void handleBouncerUserVisibilityChanged() {
+    private void handleBouncerUserVisibilityChanged() {
         boolean wasBouncerVisibleToUser;
         synchronized (this.mIsBouncerVisibleToUserLock) {
             wasBouncerVisibleToUser = this.mIsBouncerVisibleToUser;

@@ -374,7 +374,7 @@ public class LLand extends FrameLayout {
         return (int) lerp(frand(), a, b);
     }
 
-    public void step(long t_ms, long dt_ms) {
+    private void step(long t_ms, long dt_ms) {
         this.t = t_ms / 1000.0f;
         this.dt = dt_ms / 1000.0f;
         if (DEBUG) {

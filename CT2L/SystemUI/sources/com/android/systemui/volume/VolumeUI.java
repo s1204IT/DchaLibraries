@@ -85,7 +85,7 @@ public class VolumeUI extends SystemUI {
         }
     }
 
-    public void updateController() {
+    private void updateController() {
         if (Settings.Global.getInt(this.mContext.getContentResolver(), "systemui_volume_controller", 1) != 0) {
             Log.d("VolumeUI", "Registering volume controller");
             this.mAudioManager.setVolumeController(this.mVolumeController);

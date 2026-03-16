@@ -164,23 +164,23 @@ public class TetherService extends Service {
         return buffer.toString();
     }
 
-    public void enableWifiTetheringIfNeeded() {
+    private void enableWifiTetheringIfNeeded() {
         if (!isHotspotEnabled(this)) {
             new WifiApEnabler(this, null).setSoftapEnabled(true);
         }
     }
 
-    public void disableWifiTethering() {
+    private void disableWifiTethering() {
         WifiApEnabler enabler = new WifiApEnabler(this, null);
         enabler.setSoftapEnabled(false);
     }
 
-    public void disableUsbTethering() {
+    private void disableUsbTethering() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService("connectivity");
         cm.setUsbTethering(false);
     }
 
-    public void disableBtTethering() {
+    private void disableBtTethering() {
         final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         if (adapter != null) {
             adapter.getProfileProxy(this, new BluetoothProfile.ServiceListener() {
@@ -197,7 +197,7 @@ public class TetherService extends Service {
         }
     }
 
-    public void startProvisioning(int index) {
+    private void startProvisioning(int index) {
         String provisionAction = getResources().getString(android.R.string.paste_as_plain_text);
         if (DEBUG) {
             Log.d("TetherService", "Sending provisioning broadcast: " + provisionAction + " type: " + this.mCurrentTethers.get(index));

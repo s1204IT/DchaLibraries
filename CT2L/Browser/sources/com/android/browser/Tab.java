@@ -157,7 +157,7 @@ class Tab implements WebView.PictureListener {
         }
     }
 
-    public void processNextError() {
+    private void processNextError() {
         if (this.mQueuedErrors != null) {
             this.mQueuedErrors.removeFirst();
             if (this.mQueuedErrors.size() == 0) {
@@ -168,7 +168,7 @@ class Tab implements WebView.PictureListener {
         }
     }
 
-    public void queueError(int err, String desc) {
+    private void queueError(int err, String desc) {
         if (this.mQueuedErrors == null) {
             this.mQueuedErrors = new LinkedList<>();
         }
@@ -192,7 +192,7 @@ class Tab implements WebView.PictureListener {
         }
     }
 
-    public void syncCurrentState(WebView view, String url) {
+    private void syncCurrentState(WebView view, String url) {
         this.mCurrentState.mUrl = view.getUrl();
         if (this.mCurrentState.mUrl == null) {
             this.mCurrentState.mUrl = "";
@@ -544,7 +544,7 @@ class Tab implements WebView.PictureListener {
             }
         };
         this.mWebChromeClient = new WebChromeClient() {
-            public void createWindow(boolean dialog, Message msg) {
+            private void createWindow(boolean dialog, Message msg) {
                 WebView.WebViewTransport transport = (WebView.WebViewTransport) msg.obj;
                 if (dialog) {
                     Tab.this.createSubWindow();
@@ -1135,7 +1135,7 @@ class Tab implements WebView.PictureListener {
         return this.mErrorConsole;
     }
 
-    public void setSecurityState(SecurityState securityState) {
+    private void setSecurityState(SecurityState securityState) {
         this.mCurrentState.mSecurityState = securityState;
         this.mCurrentState.mSslCertificateError = null;
         this.mWebViewController.onUpdatedSecurityState(this);
@@ -1354,7 +1354,7 @@ class Tab implements WebView.PictureListener {
         return builder.toString();
     }
 
-    public void handleProceededAfterSslError(SslError error) {
+    private void handleProceededAfterSslError(SslError error) {
         if (error.getUrl().equals(this.mCurrentState.mUrl)) {
             setSecurityState(SecurityState.SECURITY_STATE_BAD_CERTIFICATE);
             this.mCurrentState.mSslCertificateError = error;

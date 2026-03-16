@@ -141,7 +141,7 @@ public abstract class ManagedServiceSettings extends ListFragment {
         }
     }
 
-    public void saveEnabledServices() {
+    private void saveEnabledServices() {
         StringBuilder sb = null;
         for (ComponentName cn : this.mEnabledServices) {
             if (sb == null) {
@@ -154,7 +154,7 @@ public abstract class ManagedServiceSettings extends ListFragment {
         Settings.Secure.putString(this.mCR, this.mConfig.setting, sb != null ? sb.toString() : "");
     }
 
-    public void updateList() {
+    private void updateList() {
         loadEnabledServices();
         getServices(this.mConfig, this.mListAdapter, this.mPM);
         this.mListAdapter.sort(new PackageItemInfo.DisplayNameComparator(this.mPM));
@@ -197,7 +197,7 @@ public abstract class ManagedServiceSettings extends ListFragment {
         return services;
     }
 
-    public boolean isServiceEnabled(ServiceInfo info) {
+    private boolean isServiceEnabled(ServiceInfo info) {
         ComponentName cn = new ComponentName(info.packageName, info.name);
         return this.mEnabledServices.contains(cn);
     }

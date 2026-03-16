@@ -181,7 +181,7 @@ public class WpsDialog extends AlertDialog implements View.OnClickListener {
         Logger.d("WpsDialog", "onStop 0005");
     }
 
-    public void updateDialog(final DialogState state, final String msg) {
+    private void updateDialog(final DialogState state, final String msg) {
         Logger.d("WpsDialog", "updateDialog 0001");
         if (this.mDialogState.ordinal() >= state.ordinal()) {
             Logger.d("WpsDialog", "updateDialog 0002");
@@ -238,7 +238,7 @@ public class WpsDialog extends AlertDialog implements View.OnClickListener {
         }
     }
 
-    public void handleEvent(Context context, Intent intent) {
+    private void handleEvent(Context context, Intent intent) {
         Logger.d("WpsDialog", "handleEvent 0001");
         String action = intent.getAction();
         if ("android.net.wifi.STATE_CHANGE".equals(action)) {

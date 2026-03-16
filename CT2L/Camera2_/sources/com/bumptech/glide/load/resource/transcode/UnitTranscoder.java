@@ -1,0 +1,21 @@
+package com.bumptech.glide.load.resource.transcode;
+
+import com.bumptech.glide.load.engine.Resource;
+
+public class UnitTranscoder implements ResourceTranscoder {
+    private static final UnitTranscoder UNIT_TRANSCODER = new UnitTranscoder();
+
+    public static <Z, R> ResourceTranscoder<Z, R> get() {
+        return UNIT_TRANSCODER;
+    }
+
+    @Override
+    public Resource transcode(Resource toTranscode) {
+        return toTranscode;
+    }
+
+    @Override
+    public String getId() {
+        return "";
+    }
+}

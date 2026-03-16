@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="modeHiragana">
+            <case iwnn:keyboardCondition="modeFullKatakana">
+                <Row-Key>
+                    <Key
+                        iwnn:codes="12540"
+                        iwnn:keyEdgeFlags=""
+                        iwnn:keyLabel="ー"
+                        iwnn:popupCharacters="@string/ti_alternates_tyouon_jajp_50key_ja_txt"
+                        iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                        iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                        iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                        iwnn:isSecondKey="true"
+                        iwnn:keyHintLabel="@string/ti_key_hint_ellipsis_txt"
+                        iwnn:description="@string/ti_description_key_tyouon"/>
+                </Row-Key>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="modeHalfKatakana">
+            <Row-Key>
+                <Key
+                    iwnn:codes="65392"
+                    iwnn:keyEdgeFlags=""
+                    iwnn:keyLabel="ー"
+                    iwnn:popupCharacters="@string/ti_alternates_tyouon_jajp_50key_ja_half_txt"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:keyHintLabel="@string/ti_key_hint_ellipsis_txt"
+                    iwnn:description="@string/ti_description_key_tyouon"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOn|modeFullAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="65312"
+                    iwnn:keyEdgeFlags=""
+                    iwnn:keyLabel="@"
+                    iwnn:popupCharacters="@string/ti_alternates_at_jajp_50key_en_full_alphabet_switch_ime_on_txt"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:keyHintLabel="@string/ti_key_hint_ellipsis_txt"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeFullAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="65312"
+                    iwnn:keyEdgeFlags=""
+                    iwnn:keyLabel="@"
+                    iwnn:popupCharacters="@string/ti_alternates_at_jajp_50key_en_full_alphabet_switch_ime_off_txt"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:keyHintLabel="@string/ti_key_hint_ellipsis_txt"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOn|modeHalfAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="64"
+                    iwnn:keyEdgeFlags=""
+                    iwnn:keyLabel="@"
+                    iwnn:popupCharacters="@string/ti_alternates_at_jajp_50key_en_switch_ime_on_txt"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:keyHintLabel="@string/ti_key_hint_ellipsis_txt"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeHalfAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="64"
+                    iwnn:keyEdgeFlags=""
+                    iwnn:keyLabel="@"
+                    iwnn:popupCharacters="@string/ti_alternates_at_jajp_50key_en_switch_ime_off_txt"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:keyHintLabel="@string/ti_key_hint_ellipsis_txt"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="modeFullNum">
+            <case iwnn:keyboardCondition="modeHalfNum">
+                <Row-Key>
+                    <Key
+                        iwnn:codes="-99999"
+                        iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                        iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"/>
+                </Row-Key>
+            </case>
+        </case>
+    </switch>
+</Keyboard>

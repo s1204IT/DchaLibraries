@@ -154,7 +154,7 @@ public class PieMenu extends FrameLayout {
         this.mCenter.y = y;
     }
 
-    public void layoutPie() {
+    private void layoutPie() {
         int x;
         int inner = this.mRadius + 2;
         int outer = (this.mRadius + this.mRadiusInc) - 2;
@@ -396,7 +396,7 @@ public class PieMenu extends FrameLayout {
         }
     }
 
-    public void animateIn(final PieItem fixed, Animator.AnimatorListener listener) {
+    private void animateIn(final PieItem fixed, Animator.AnimatorListener listener) {
         if (this.mCurrentItems != null && fixed != null) {
             final float target = fixed.getStartAngle();
             ValueAnimator anim = ValueAnimator.ofFloat(0.0f, 1.0f);

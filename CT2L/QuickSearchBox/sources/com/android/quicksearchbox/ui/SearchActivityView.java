@@ -398,7 +398,7 @@ public abstract class SearchActivityView extends RelativeLayout {
         }
     }
 
-    public boolean forwardKeyToQueryTextView(int keyCode, KeyEvent event) {
+    private boolean forwardKeyToQueryTextView(int keyCode, KeyEvent event) {
         if (!event.isSystem() && shouldForwardToQueryTextView(keyCode) && this.mQueryTextView.requestFocus()) {
             return this.mQueryTextView.dispatchKeyEvent(event);
         }

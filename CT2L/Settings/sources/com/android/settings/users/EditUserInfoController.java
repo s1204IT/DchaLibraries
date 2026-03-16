@@ -115,7 +115,7 @@ public class EditUserInfoController {
                         }
                         new AsyncTask<Void, Void, Void>() {
                             @Override
-                            public Void doInBackground(Void... params) {
+                            protected Void doInBackground(Void... params) {
                                 EditUserInfoController.this.mUserManager.setUserIcon(EditUserInfoController.this.mUser.getIdentifier(), EditUserInfoController.this.mEditUserPhotoController.getNewUserPhotoBitmap());
                                 return null;
                             }

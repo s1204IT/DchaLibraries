@@ -221,7 +221,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         return (!this.mLockPatternUtils.isSecure() || currentUserHasTrust) ? INSECURE_CAMERA_INTENT : SECURE_CAMERA_INTENT;
     }
 
-    public void updateCameraVisibility() {
+    private void updateCameraVisibility() {
         ResolveInfo resolved = this.mContext.getPackageManager().resolveActivityAsUser(getCameraIntent(), 65536, this.mLockPatternUtils.getCurrentUser());
         boolean visible = (isCameraDisabledByDpm() || resolved == null || !getResources().getBoolean(R.bool.config_keyguardShowCameraAffordance)) ? false : true;
         this.mCameraImageView.setVisibility(visible ? 0 : 8);
@@ -353,7 +353,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         this.mTrustDrawable.stop();
     }
 
-    public void updateLockIcon() {
+    private void updateLockIcon() {
         int iconRes;
         boolean visible = isShown() && KeyguardUpdateMonitor.getInstance(this.mContext).isScreenOn();
         if (visible) {

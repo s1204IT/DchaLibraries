@@ -114,7 +114,7 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Dialo
         super.onStop();
     }
 
-    public void showEraseBackupDialog() {
+    private void showEraseBackupDialog() {
         this.mDialogType = 2;
         CharSequence msg = getResources().getText(R.string.backup_erase_dialog_message);
         this.mConfirmDialog = new AlertDialog.Builder(getActivity()).setMessage(msg).setTitle(R.string.backup_erase_dialog_title).setPositiveButton(android.R.string.ok, this).setNegativeButton(android.R.string.cancel, this).show();
@@ -172,7 +172,7 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Dialo
         this.mDialogType = 0;
     }
 
-    public void setBackupEnabled(boolean enable) {
+    private void setBackupEnabled(boolean enable) {
         if (this.mBackupManager != null) {
             try {
                 this.mBackupManager.setBackupEnabled(enable);
@@ -216,7 +216,7 @@ public class PrivacySettings extends SettingsPreferenceFragment implements Dialo
         }
     }
 
-    public static ArrayList<String> getNonVisibleKeys(Context context) {
+    private static ArrayList<String> getNonVisibleKeys(Context context) {
         ArrayList<String> nonVisibleKeys = new ArrayList<>();
         IBackupManager backupManager = IBackupManager.Stub.asInterface(ServiceManager.getService("backup"));
         boolean isServiceActive = false;

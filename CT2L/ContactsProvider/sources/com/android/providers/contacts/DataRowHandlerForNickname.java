@@ -1,0 +1,66 @@
+package com.android.providers.contacts;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
+import com.android.providers.contacts.SearchIndexManager;
+import com.android.providers.contacts.aggregation.ContactAggregator;
+
+public class DataRowHandlerForNickname extends DataRowHandlerForCommonDataKind {
+    public DataRowHandlerForNickname(Context context, ContactsDatabaseHelper dbHelper, ContactAggregator aggregator) {
+        super(context, dbHelper, aggregator, "vnd.android.cursor.item/nickname", "data2", "data3");
+    }
+
+    @Override
+    public long insert(SQLiteDatabase db, TransactionContext txContext, long rawContactId, ContentValues values) {
+        String nickname = values.getAsString("data1");
+        long dataId = super.insert(db, txContext, rawContactId, values);
+        if (!TextUtils.isEmpty(nickname)) {
+            fixRawContactDisplayName(db, txContext, rawContactId);
+            this.mDbHelper.insertNameLookupForNickname(rawContactId, dataId, nickname);
+            triggerAggregation(txContext, rawContactId);
+        }
+        return dataId;
+    }
+
+    @Override
+    public boolean update(SQLiteDatabase db, TransactionContext txContext, ContentValues values, Cursor c, boolean callerIsSyncAdapter) {
+        long dataId = c.getLong(0);
+        long rawContactId = c.getLong(1);
+        if (!super.update(db, txContext, values, c, callerIsSyncAdapter)) {
+            return false;
+        }
+        if (values.containsKey("data1")) {
+            String nickname = values.getAsString("data1");
+            this.mDbHelper.deleteNameLookup(dataId);
+            this.mDbHelper.insertNameLookupForNickname(rawContactId, dataId, nickname);
+            fixRawContactDisplayName(db, txContext, rawContactId);
+            triggerAggregation(txContext, rawContactId);
+        }
+        return true;
+    }
+
+    @Override
+    public int delete(SQLiteDatabase db, TransactionContext txContext, Cursor c) {
+        long dataId = c.getLong(0);
+        long rawContactId = c.getLong(2);
+        int count = super.delete(db, txContext, c);
+        this.mDbHelper.deleteNameLookup(dataId);
+        fixRawContactDisplayName(db, txContext, rawContactId);
+        triggerAggregation(txContext, rawContactId);
+        return count;
+    }
+
+    @Override
+    public boolean containsSearchableColumns(ContentValues values) {
+        return values.containsKey("data1");
+    }
+
+    @Override
+    public void appendSearchableData(SearchIndexManager.IndexBuilder builder) {
+        builder.appendNameFromColumn("data1");
+        builder.appendContentFromColumn("data1");
+    }
+}

@@ -291,7 +291,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleFingerprintProcessed(int fingerprintId) {
+    private void handleFingerprintProcessed(int fingerprintId) {
         if (fingerprintId != 0) {
             try {
                 int userId = ActivityManagerNative.getDefault().getCurrentUser().id;
@@ -312,7 +312,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleFingerprintAcquired(int info) {
+    private void handleFingerprintAcquired(int info) {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = this.mCallbacks.get(i).get();
             if (cb != null) {
@@ -321,7 +321,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleFaceUnlockStateChanged(boolean running, int userId) {
+    private void handleFaceUnlockStateChanged(boolean running, int userId) {
         this.mUserFaceUnlockRunning.put(userId, running);
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = this.mCallbacks.get(i).get();
@@ -482,7 +482,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleUserInfoChanged(int userId) {
+    private void handleUserInfoChanged(int userId) {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = this.mCallbacks.get(i).get();
             if (cb != null) {
@@ -541,7 +541,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         fpm.startListening(this.mFingerprintManagerReceiver);
     }
 
-    public boolean isDeviceProvisionedInSettingsDb() {
+    private boolean isDeviceProvisionedInSettingsDb() {
         return Settings.Global.getInt(this.mContext.getContentResolver(), "device_provisioned", 0) != 0;
     }
 
@@ -665,7 +665,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleTimeUpdate() {
+    private void handleTimeUpdate() {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = this.mCallbacks.get(i).get();
             if (cb != null) {
@@ -674,7 +674,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleBatteryUpdate(BatteryStatus status) {
+    private void handleBatteryUpdate(BatteryStatus status) {
         boolean batteryUpdateInteresting = isBatteryUpdateInteresting(this.mBatteryStatus, status);
         this.mBatteryStatus = status;
         if (batteryUpdateInteresting) {
@@ -687,7 +687,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleSimStateChange(int subId, int slotId, IccCardConstants.State state) {
+    private void handleSimStateChange(int subId, int slotId, IccCardConstants.State state) {
         boolean changed;
         Log.d("KeyguardUpdateMonitor", "handleSimStateChange(subId=" + subId + ", slotId=" + slotId + ", state=" + state + ")");
         if (!SubscriptionManager.isValidSubscriptionId(subId)) {
@@ -714,7 +714,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleClockVisibilityChanged() {
+    private void handleClockVisibilityChanged() {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = this.mCallbacks.get(i).get();
             if (cb != null) {
@@ -723,7 +723,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleKeyguardVisibilityChanged(int showing) {
+    private void handleKeyguardVisibilityChanged(int showing) {
         boolean isShowing = showing == 1;
         this.mKeyguardIsVisible = isShowing;
         for (int i = 0; i < this.mCallbacks.size(); i++) {
@@ -734,7 +734,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleKeyguardBouncerChanged(int bouncer) {
+    private void handleKeyguardBouncerChanged(int bouncer) {
         boolean isBouncer = bouncer == 1;
         this.mBouncer = isBouncer;
         for (int i = 0; i < this.mCallbacks.size(); i++) {
@@ -745,7 +745,7 @@ public class KeyguardUpdateMonitor implements TrustManager.TrustListener {
         }
     }
 
-    public void handleReportEmergencyCallAction() {
+    private void handleReportEmergencyCallAction() {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             KeyguardUpdateMonitorCallback cb = this.mCallbacks.get(i).get();
             if (cb != null) {

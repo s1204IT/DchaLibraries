@@ -64,7 +64,7 @@ public final class BluetoothNameDialogFragment extends DialogFragment implements
         return this.mAlertDialog;
     }
 
-    public void setDeviceName(String deviceName) {
+    private void setDeviceName(String deviceName) {
         Log.d("BluetoothNameDialogFragment", "Setting device name to " + deviceName);
         this.mLocalAdapter.setName(deviceName);
     }

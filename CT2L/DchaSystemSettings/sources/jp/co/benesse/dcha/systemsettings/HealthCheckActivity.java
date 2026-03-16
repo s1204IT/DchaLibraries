@@ -180,7 +180,7 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         Logger.d("HealthCheckActivity", "showDetailDialog 0002");
     }
 
-    public void changeBtnClickable(boolean clickable) {
+    private void changeBtnClickable(boolean clickable) {
         Logger.d("HealthCheckActivity", "changeBtnClickable 0001");
         View v = findViewById(R.id.details_btn);
         if (v != null) {
@@ -314,7 +314,7 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         }
 
         @Override
-        public HealthCheckDto doInBackground(Void... params) throws Throwable {
+        protected HealthCheckDto doInBackground(Void... params) throws Throwable {
             Logger.d("CheckNetworkTask", "doInBackground 0001");
             if (isCancelled()) {
                 Logger.d("CheckNetworkTask", "doInBackground 0002");
@@ -413,7 +413,7 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         }
 
         @Override
-        public void onProgressUpdate(HealthCheckDto... item) {
+        protected void onProgressUpdate(HealthCheckDto... item) {
             Logger.d("CheckNetworkTask", "onProgressUpdate 0001");
             HealthCheckDto dto = item[0];
             HealthCheckActivity activity = (HealthCheckActivity) this.owner.get();
@@ -425,7 +425,7 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         }
 
         @Override
-        public void onPostExecute(HealthCheckDto result) {
+        protected void onPostExecute(HealthCheckDto result) {
             Logger.d("CheckNetworkTask", "onPostExecute 0001");
             HealthCheckActivity activity = (HealthCheckActivity) this.owner.get();
             if (activity != null) {
@@ -449,7 +449,7 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         }
 
         @Override
-        public Void doInBackground(Void... arg0) {
+        protected Void doInBackground(Void... arg0) {
             Logger.d("RotateAsyncTask", "doInBackground 0001");
             while (!isCancelled()) {
                 try {
@@ -463,7 +463,7 @@ public class HealthCheckActivity extends ParentSettingActivity implements View.O
         }
 
         @Override
-        public void onProgressUpdate(Void... values) {
+        protected void onProgressUpdate(Void... values) {
             Logger.d("RotateAsyncTask", "onProgressUpdate 0001");
             Activity activity = this.owner.get();
             if (activity != null && !isCancelled()) {

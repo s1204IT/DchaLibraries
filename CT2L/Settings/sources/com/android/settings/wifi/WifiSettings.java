@@ -541,7 +541,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements DialogIn
         getPreferenceScreen().removeAll();
     }
 
-    public static List<AccessPoint> constructAccessPoints(Context context, WifiManager wifiManager, android.net.wifi.WifiInfo lastInfo, NetworkInfo lastNetworkInfo) {
+    private static List<AccessPoint> constructAccessPoints(Context context, WifiManager wifiManager, android.net.wifi.WifiInfo lastInfo, NetworkInfo lastNetworkInfo) {
         ArrayList<AccessPoint> accessPoints = new ArrayList<>();
         Multimap<String, AccessPoint> apMap = new Multimap<>();
         List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();
@@ -589,7 +589,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements DialogIn
         return accessPoints;
     }
 
-    public void handleEvent(Context context, Intent intent) {
+    private void handleEvent(Context context, Intent intent) {
         String action = intent.getAction();
         if ("android.net.wifi.WIFI_STATE_CHANGED".equals(action)) {
             updateWifiState(intent.getIntExtra("wifi_state", 4));

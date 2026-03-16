@@ -293,7 +293,7 @@ public class Memory extends SettingsPreferenceFragment implements Indexable {
         }
     }
 
-    public void doUnmount() {
+    private void doUnmount() {
         Toast.makeText(getActivity(), R.string.unmount_inform_text, 0).show();
         IMountService mountService = getMountService();
         try {
@@ -344,7 +344,7 @@ public class Memory extends SettingsPreferenceFragment implements Indexable {
         }
     }
 
-    public void onCacheCleared() {
+    private void onCacheCleared() {
         for (StorageVolumePreferenceCategory category : this.mCategories) {
             category.onCacheCleared();
         }

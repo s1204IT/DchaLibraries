@@ -234,7 +234,7 @@ public class DozeService extends DreamService {
         }
     }
 
-    public void requestPulse(final int reason) {
+    private void requestPulse(final int reason) {
         if (this.mHost != null && this.mDreaming && !this.mPulsing) {
             this.mWakeLock.acquire();
             this.mPulsing = true;
@@ -270,7 +270,7 @@ public class DozeService extends DreamService {
         }
     }
 
-    public void continuePulsing(int reason) {
+    private void continuePulsing(int reason) {
         this.mHost.pulseWhileDozing(new DozeHost.PulseCallback() {
             @Override
             public void onPulseStarted() {
@@ -290,26 +290,26 @@ public class DozeService extends DreamService {
         }, reason);
     }
 
-    public void turnDisplayOff() {
+    private void turnDisplayOff() {
         if (DEBUG) {
             Log.d(this.mTag, "Display off");
         }
         setDozeScreenState(1);
     }
 
-    public void turnDisplayOn() {
+    private void turnDisplayOn() {
         if (DEBUG) {
             Log.d(this.mTag, "Display on");
         }
         setDozeScreenState(this.mDisplayStateSupported ? 3 : 2);
     }
 
-    public void finishToSavePower() {
+    private void finishToSavePower() {
         Log.w(this.mTag, "Exiting ambient mode due to low power battery saver");
         finish();
     }
 
-    public void finishForCarMode() {
+    private void finishForCarMode() {
         Log.w(this.mTag, "Exiting ambient mode, not allowed in car mode");
         finish();
     }
@@ -353,19 +353,19 @@ public class DozeService extends DreamService {
         this.mHost.removeCallback(this.mHostCallback);
     }
 
-    public void resetNotificationResets() {
+    private void resetNotificationResets() {
         if (DEBUG) {
             Log.d(this.mTag, "resetNotificationResets");
         }
         this.mScheduleResetsRemaining = this.mDozeParameters.getPulseScheduleResets();
     }
 
-    public void updateNotificationPulseDueToLight() {
+    private void updateNotificationPulseDueToLight() {
         long timeMs = System.currentTimeMillis();
         updateNotificationPulse(Math.max(timeMs, this.mEarliestPulseDueToLight));
     }
 
-    public void updateNotificationPulse(long notificationTimeMs) {
+    private void updateNotificationPulse(long notificationTimeMs) {
         if (DEBUG) {
             Log.d(this.mTag, "updateNotificationPulse notificationTimeMs=" + notificationTimeMs);
         }
@@ -397,7 +397,7 @@ public class DozeService extends DreamService {
         return PendingIntent.getBroadcast(this.mContext, 0, new Intent("com.android.systemui.doze.notification_pulse").setPackage(getPackageName()).putExtra("instance", instance).setFlags(268435456), 134217728);
     }
 
-    public void rescheduleNotificationPulse(boolean predicate) {
+    private void rescheduleNotificationPulse(boolean predicate) {
         if (DEBUG) {
             Log.d(this.mTag, "rescheduleNotificationPulse predicate=" + predicate);
         }
@@ -441,7 +441,7 @@ public class DozeService extends DreamService {
         }
     }
 
-    public static String triggerEventToString(TriggerEvent event) {
+    private static String triggerEventToString(TriggerEvent event) {
         if (event == null) {
             return null;
         }

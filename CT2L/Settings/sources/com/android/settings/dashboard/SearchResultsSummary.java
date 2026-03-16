@@ -47,12 +47,12 @@ public class SearchResultsSummary extends Fragment {
         }
 
         @Override
-        public Cursor doInBackground(String... params) {
+        protected Cursor doInBackground(String... params) {
             return Index.getInstance(SearchResultsSummary.this.getActivity()).search(params[0]);
         }
 
         @Override
-        public void onPostExecute(Cursor cursor) {
+        protected void onPostExecute(Cursor cursor) {
             if (!isCancelled()) {
                 SearchResultsSummary.this.setResultsCursor(cursor);
                 SearchResultsSummary.this.setResultsVisibility(cursor.getCount() > 0);
@@ -67,12 +67,12 @@ public class SearchResultsSummary extends Fragment {
         }
 
         @Override
-        public Cursor doInBackground(String... params) {
+        protected Cursor doInBackground(String... params) {
             return Index.getInstance(SearchResultsSummary.this.getActivity()).getSuggestions(params[0]);
         }
 
         @Override
-        public void onPostExecute(Cursor cursor) {
+        protected void onPostExecute(Cursor cursor) {
             if (!isCancelled()) {
                 SearchResultsSummary.this.setSuggestionsCursor(cursor);
                 SearchResultsSummary.this.setSuggestionsVisibility(cursor.getCount() > 0);
@@ -190,19 +190,19 @@ public class SearchResultsSummary extends Fragment {
         this.mSearchView = searchView;
     }
 
-    public void setSuggestionsVisibility(boolean visible) {
+    private void setSuggestionsVisibility(boolean visible) {
         if (this.mLayoutSuggestions != null) {
             this.mLayoutSuggestions.setVisibility(visible ? 0 : 8);
         }
     }
 
-    public void setResultsVisibility(boolean visible) {
+    private void setResultsVisibility(boolean visible) {
         if (this.mLayoutResults != null) {
             this.mLayoutResults.setVisibility(visible ? 0 : 8);
         }
     }
 
-    public void saveQueryToDatabase() {
+    private void saveQueryToDatabase() {
         Index.getInstance(getActivity()).addSavedQuery(this.mQuery);
     }
 
@@ -244,7 +244,7 @@ public class SearchResultsSummary extends Fragment {
         setSuggestionsCursor(null);
     }
 
-    public void setSuggestionsCursor(Cursor cursor) {
+    private void setSuggestionsCursor(Cursor cursor) {
         Cursor oldCursor;
         if (this.mSuggestionsAdapter != null && (oldCursor = this.mSuggestionsAdapter.swapCursor(cursor)) != null) {
             oldCursor.close();
@@ -259,7 +259,7 @@ public class SearchResultsSummary extends Fragment {
         setResultsCursor(null);
     }
 
-    public void setResultsCursor(Cursor cursor) {
+    private void setResultsCursor(Cursor cursor) {
         Cursor oldCursor;
         if (this.mResultsAdapter != null && (oldCursor = this.mResultsAdapter.swapCursor(cursor)) != null) {
             oldCursor.close();

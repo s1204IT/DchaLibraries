@@ -124,7 +124,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         refreshList();
     }
 
-    public void refreshList() {
+    private void refreshList() {
         List<HistoricalNotificationInfo> infos = loadNotifications();
         if (infos != null) {
             logd("adding %d infos", Integer.valueOf(infos.size()));
@@ -134,7 +134,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     }
 
-    public static void logd(String msg, Object... args) {
+    private static void logd(String msg, Object... args) {
     }
 
     private List<HistoricalNotificationInfo> loadNotifications() {
@@ -273,7 +273,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     }
 
-    public void startApplicationDetailsActivity(String packageName) {
+    private void startApplicationDetailsActivity(String packageName) {
         Intent intent = new Intent("android.settings.APPLICATION_DETAILS_SETTINGS", Uri.fromParts("package", packageName, null));
         intent.setComponent(intent.resolveActivity(this.mPm));
         startActivity(intent);

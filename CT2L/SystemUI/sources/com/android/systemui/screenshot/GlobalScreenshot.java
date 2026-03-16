@@ -86,7 +86,7 @@ class GlobalScreenshot {
         this.mCameraSound.load(0);
     }
 
-    public void saveScreenshotInWorkerThread(Runnable finisher) {
+    private void saveScreenshotInWorkerThread(Runnable finisher) {
         SaveImageInBackgroundData data = new SaveImageInBackgroundData();
         data.context = this.mContext;
         data.image = this.mScreenBitmap;

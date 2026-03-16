@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="modeHiragana">
+            <Row-Key>
+                <Key
+                    iwnn:codes="-305"
+                    iwnn:keyLabel="@string/ti_key_12key_eisu_kana_txt"
+                    iwnn:keyWidth="@fraction/keyboard_12key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:description="@string/ti_description_key_eisukana"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="modeFullKatakana">
+            <case iwnn:keyboardCondition="modeHalfKatakana">
+                <case iwnn:keyboardCondition="modeFullAlpha">
+                    <case iwnn:keyboardCondition="modeHalfAlpha">
+                        <Row-Key>
+                            <include iwnn:keyboardLayout="@xml/key_12key_jp_symbol"/>
+                        </Row-Key>
+                    </case>
+                </case>
+            </case>
+        </case>
+    </switch>
+</Keyboard>

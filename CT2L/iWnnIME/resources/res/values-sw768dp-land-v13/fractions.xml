@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <fraction name="minKeyboardHeight">45%p</fraction>
+    <fraction name="keyboard_qwerty_common_horizontal_gap">0.51%p</fraction>
+</resources>

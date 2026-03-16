@@ -7,7 +7,7 @@ class BitmapFactoryOptionsCache extends SoftReferenceThreadLocal<BitmapFactory.O
     }
 
     @Override
-    public BitmapFactory.Options initialValue() {
+    protected BitmapFactory.Options initialValue() {
         return new BitmapFactory.Options();
     }
 }

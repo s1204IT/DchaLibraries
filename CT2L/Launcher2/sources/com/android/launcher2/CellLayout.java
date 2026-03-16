@@ -1818,7 +1818,7 @@ public class CellLayout extends ViewGroup {
             }
         }
 
-        public void completeAnimationImmediately() {
+        private void completeAnimationImmediately() {
             if (this.a != null) {
                 this.a.cancel();
             }

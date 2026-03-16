@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:phone="http://schemas.android.com/apk/res/com.android.phone" android:title="@string/labelGSMMore">
+    <PreferenceScreen
+        android:persistent="false"
+        android:title="@string/labelCF"
+        android:key="call_forwarding_key"/>
+    <PreferenceScreen
+        android:persistent="false"
+        android:title="@string/additional_gsm_call_settings"
+        android:key="additional_gsm_call_settings_key"/>
+</PreferenceScreen>

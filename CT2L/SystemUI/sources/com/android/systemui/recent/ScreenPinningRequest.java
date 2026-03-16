@@ -150,7 +150,7 @@ public class ScreenPinningRequest implements View.OnClickListener {
             this.mContext.registerReceiver(this.mReceiver, filter);
         }
 
-        public boolean isLandscapePhone(Context context) {
+        private boolean isLandscapePhone(Context context) {
             Configuration config = this.mContext.getResources().getConfiguration();
             return config.orientation == 2 && config.smallestScreenWidthDp < 600;
         }

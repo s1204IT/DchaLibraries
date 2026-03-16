@@ -269,7 +269,7 @@ public class StackScrollAlgorithm {
         childViewState.yTranslation = Math.max(childViewState.yTranslation, this.mCollapsedSize - childHeight);
     }
 
-    public int getMaxAllowedChildHeight(View child) {
+    private int getMaxAllowedChildHeight(View child) {
         if (child instanceof ExpandableNotificationRow) {
             ExpandableNotificationRow row = (ExpandableNotificationRow) child;
             return row.getIntrinsicHeight();
@@ -436,7 +436,7 @@ public class StackScrollAlgorithm {
         updateFirstChildHeightWhileExpanding(hostView);
     }
 
-    public void updateFirstChildHeightWhileExpanding(ViewGroup hostView) {
+    private void updateFirstChildHeightWhileExpanding(ViewGroup hostView) {
         this.mFirstChildWhileExpanding = (ExpandableView) findFirstVisibleChild(hostView);
         if (this.mFirstChildWhileExpanding != null) {
             if (this.mExpandedOnStart) {

@@ -778,7 +778,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         return Math.max(0, pageDiff * 200);
     }
 
-    public void prepareLoadWidgetPreviewsTask(int page, ArrayList<Object> widgets, int cellWidth, int cellHeight, int cellCountX) {
+    private void prepareLoadWidgetPreviewsTask(int page, ArrayList<Object> widgets, int cellWidth, int cellHeight, int cellCountX) {
         Iterator<AppsCustomizeAsyncTask> iter = this.mRunningTasks.iterator();
         while (iter.hasNext()) {
             AppsCustomizeAsyncTask task = iter.next();
@@ -926,7 +926,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         }
     }
 
-    public void loadWidgetPreviewsInBackground(AppsCustomizeAsyncTask task, AsyncTaskPageData data) {
+    private void loadWidgetPreviewsInBackground(AppsCustomizeAsyncTask task, AsyncTaskPageData data) {
         if (task != null) {
             task.syncThreadPriority();
         }
@@ -945,7 +945,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         }
     }
 
-    public void onSyncWidgetPageItems(AsyncTaskPageData data) {
+    private void onSyncWidgetPageItems(AsyncTaskPageData data) {
         if (this.mInTransition) {
             this.mDeferredSyncWidgetPageItems.add(data);
             return;

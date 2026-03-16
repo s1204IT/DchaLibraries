@@ -184,7 +184,7 @@ public class SettingsActivity extends Activity implements FragmentManager.OnBack
         return false;
     }
 
-    public void invalidateCategories(boolean forceRefresh) {
+    private void invalidateCategories(boolean forceRefresh) {
         if (!this.mHandler.hasMessages(1)) {
             Message msg = new Message();
             msg.what = 1;
@@ -594,7 +594,7 @@ public class SettingsActivity extends Activity implements FragmentManager.OnBack
         return f;
     }
 
-    public void buildDashboardCategories(List<DashboardCategory> categories) {
+    private void buildDashboardCategories(List<DashboardCategory> categories) {
         categories.clear();
         loadCategoriesFromResource(R.xml.dashboard_categories, categories);
         updateTilesList(categories);

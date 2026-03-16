@@ -271,7 +271,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         showDialog(null, message);
     }
 
-    public void reportFailedUnlockAttempt() {
+    private void reportFailedUnlockAttempt() {
         KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(this.mContext);
         int failedAttempts = monitor.getFailedUnlockAttempts() + 1;
         KeyguardSecurityModel.SecurityMode mode = this.mSecurityModel.getSecurityMode();
@@ -325,7 +325,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         showSecurityScreen(securityMode);
     }
 
-    public void showBackupSecurityScreen() {
+    private void showBackupSecurityScreen() {
         KeyguardSecurityModel.SecurityMode backup = this.mSecurityModel.getBackupSecurityMode(this.mCurrentSecuritySelection);
         showSecurityScreen(backup);
     }

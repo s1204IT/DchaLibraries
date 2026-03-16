@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="2620"
+    android:versionName="2.6.2-Benesse-02"
+    coreApp="true"
+    package="jp.co.omronsoft.iwnnime.ml"
+    platformBuildVersionCode="21"
+    platformBuildVersionName="5.0.1-1624448">
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="21"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <application
+        android:label="iWnn IME"
+        android:icon="@drawable/iwnnime_icon"
+        android:hardwareAccelerated="true">
+        <service
+            android:label="@string/ti_ime_name_standard_txt"
+            android:name="jp.co.omronsoft.iwnnime.ml.standardcommon.IWnnLanguageSwitcher"
+            android:permission="android.permission.BIND_INPUT_METHOD">
+            <intent-filter>
+                <action android:name="android.view.InputMethod"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method_standard"/>
+        </service>
+        <activity
+            android:theme="@style/ControlPanel"
+            android:label="@string/ti_ime_name_setting_title_standard_txt"
+            android:name="jp.co.omronsoft.iwnnime.ml.controlpanel.ControlPanelStandard"
+            android:launchMode="singleTask"
+            android:configChanges="screenSize|orientation"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:theme="@style/SubControlPanel"
+            android:name="jp.co.omronsoft.iwnnime.ml.controlpanel.SubControlPanelStandard"
+            android:configChanges="screenSize|orientation"
+            android:parentActivityName="jp.co.omronsoft.iwnnime.ml.controlpanel.ControlPanelStandard"/>
+        <activity
+            android:theme="@style/MushroomDialog"
+            android:label="@string/ti_mushroom_launcher_title_txt"
+            android:name="jp.co.omronsoft.iwnnime.ml.MushroomPlus"
+            android:taskAffinity="jp.co.omronsoft.iwnnime.ml.MushroomPlus"
+            android:excludeFromRecents="true"/>
+        <activity
+            android:theme="@style/SubControlPanel"
+            android:label="@string/ti_preference_dictionary_menu_standard_txt"
+            android:name="jp.co.omronsoft.iwnnime.ml.controlpanel.UserDictionaryToolsList"
+            android:configChanges="screenSize|orientation|keyboardHidden|keyboard"/>
+        <activity
+            android:theme="@android:style/Theme.Translucent"
+            android:name="jp.co.omronsoft.iwnnime.ml.controlpanel.UserDictionaryToolsActivity"
+            android:taskAffinity="jp.co.omronsoft.iwnnime.ml.UserDictionaryToolsActivity"
+            android:excludeFromRecents="true"
+            android:configChanges="screenSize|orientation|keyboardHidden|keyboard"/>
+        <service android:name="jp.co.omronsoft.iwnnime.ml.IWnnMorphemeService">
+            <intent-filter>
+                <action android:name="jp.co.omronsoft.iwnnime.ml.IMorphemeService"/>
+            </intent-filter>
+        </service>
+        <service android:name="jp.co.omronsoft.iwnnime.ml.IWnnEngineService">
+            <intent-filter>
+                <action android:name="jp.co.omronsoft.iwnnime.ml.IEngineService"/>
+            </intent-filter>
+        </service>
+        <receiver android:name="DecoEmojiListener">
+            <intent-filter>
+                <action android:name="jp.co.omronsoft.iwnnime.ml"/>
+                <action android:name="jp.co.omronsoft.android.decoemojimanager"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:label="iWnn IME"
+            android:name=".InputDeviceReceiver">
+            <intent-filter>
+                <action android:name="android.hardware.input.action.QUERY_KEYBOARD_LAYOUTS"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.input.metadata.KEYBOARD_LAYOUTS"
+                android:resource="@xml/keyboard_layouts"/>
+        </receiver>
+    </application>
+</manifest>

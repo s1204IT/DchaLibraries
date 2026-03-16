@@ -115,7 +115,7 @@ public class KeyboardLayoutDialogFragment extends DialogFragment implements Load
         dismiss();
     }
 
-    public void onSetupLayoutsButtonClicked() {
+    private void onSetupLayoutsButtonClicked() {
         ((OnSetupKeyboardLayoutsListener) getTargetFragment()).onSetupKeyboardLayouts(this.mInputDeviceIdentifier);
     }
 
@@ -125,7 +125,7 @@ public class KeyboardLayoutDialogFragment extends DialogFragment implements Load
         show(getActivity().getFragmentManager(), "layout");
     }
 
-    public void onKeyboardLayoutClicked(int which) {
+    private void onKeyboardLayoutClicked(int which) {
         if (which >= 0 && which < this.mAdapter.getCount()) {
             KeyboardLayout keyboardLayout = this.mAdapter.getItem(which);
             if (keyboardLayout != null) {

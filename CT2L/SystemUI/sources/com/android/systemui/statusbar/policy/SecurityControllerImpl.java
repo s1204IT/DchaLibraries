@@ -152,7 +152,7 @@ public class SecurityControllerImpl implements SecurityController {
         fireCallbacks();
     }
 
-    public void setCurrentNetid(int netId) {
+    private void setCurrentNetid(int netId) {
         if (netId != this.mCurrentVpnNetworkId) {
             this.mCurrentVpnNetworkId = netId;
             updateState();

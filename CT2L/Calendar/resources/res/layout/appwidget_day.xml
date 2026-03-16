@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/appwidget_date"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    android:clickable="false"
+    android:addStatesFromChildren="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="2dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginRight="2dp">
+    <TextView
+        android:textSize="12sp"
+        android:textColor="@color/appwidget_date"
+        android:id="@+id/date"
+        android:paddingLeft="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:shadowColor="@color/text_shadow_color"
+        android:shadowRadius="1"
+        android:textAllCaps="true"/>
+</LinearLayout>

@@ -455,7 +455,7 @@ public class RunningServiceDetails extends Fragment implements RunningState.OnRe
         }
     }
 
-    public void finish() {
+    private void finish() {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -514,7 +514,7 @@ public class RunningServiceDetails extends Fragment implements RunningState.OnRe
         return null;
     }
 
-    public void showConfirmStopDialog(ComponentName comp) {
+    private void showConfirmStopDialog(ComponentName comp) {
         DialogFragment newFragment = MyAlertDialogFragment.newConfirmStop(1, comp);
         newFragment.setTargetFragment(this, 0);
         newFragment.show(getFragmentManager(), "confirmstop");

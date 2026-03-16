@@ -151,7 +151,7 @@ public class SimStatus extends PreferenceActivity {
         }
     }
 
-    public void updateNetworkType() {
+    private void updateNetworkType() {
         String networktype = null;
         this.mSir.getSubscriptionId();
         int actualDataNetworkType = this.mTelephonyManager.getDataNetworkType(this.mSir.getSubscriptionId());
@@ -166,7 +166,7 @@ public class SimStatus extends PreferenceActivity {
         setSummaryText("network_type", networktype);
     }
 
-    public void updateDataState() {
+    private void updateDataState() {
         int state = DefaultPhoneNotifier.convertDataState(this.mPhone.getDataConnectionState());
         String display = this.mRes.getString(R.string.radioInfo_unknown);
         switch (state) {
@@ -186,7 +186,7 @@ public class SimStatus extends PreferenceActivity {
         setSummaryText("data_state", display);
     }
 
-    public void updateServiceState(ServiceState serviceState) {
+    private void updateServiceState(ServiceState serviceState) {
         int state = serviceState.getState();
         String display = this.mRes.getString(R.string.radioInfo_unknown);
         switch (state) {
@@ -210,7 +210,7 @@ public class SimStatus extends PreferenceActivity {
         setSummaryText("operator_name", serviceState.getOperatorAlphaLong());
     }
 
-    public void updateAreaInfo(String areaInfo) {
+    private void updateAreaInfo(String areaInfo) {
         if (areaInfo != null) {
             setSummaryText("latest_area_info", areaInfo);
         }
@@ -235,7 +235,7 @@ public class SimStatus extends PreferenceActivity {
         }
     }
 
-    public void updatePreference() {
+    private void updatePreference() {
         if (this.mPhone.getPhoneType() != 2 && "br".equals(this.mTelephonyManager.getSimCountryIso(this.mSir.getSubscriptionId()))) {
             this.mShowLatestAreaInfo = true;
         }
@@ -253,7 +253,7 @@ public class SimStatus extends PreferenceActivity {
         }
     }
 
-    public void updatePhoneInfos() {
+    private void updatePhoneInfos() {
         if (this.mSir != null) {
             Phone phone = PhoneFactory.getPhone(SubscriptionManager.getPhoneId(this.mSir.getSubscriptionId()));
             if (UserHandle.myUserId() == 0 && SubscriptionManager.isValidSubscriptionId(this.mSir.getSubscriptionId())) {

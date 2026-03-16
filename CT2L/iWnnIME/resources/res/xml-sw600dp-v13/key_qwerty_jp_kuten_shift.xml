@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="modeFullAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="65311"
+                    iwnn:keyLabel="?"
+                    iwnn:popupCharacters="@string/ti_alternates_maru_jajp_qwerty_en_full_alphabet_shift_on_txt"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:keyPreviewLabel="?"
+                    iwnn:keyHintLabel="."/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="modeFullNum">
+            <Row-Key>
+                <Key
+                    iwnn:codes="12539"
+                    iwnn:keyLabel="・"
+                    iwnn:keyPreviewLabel="・"
+                    iwnn:description="@string/ti_description_key_nakaguro"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="modeHalfAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="63"
+                    iwnn:keyLabel="?"
+                    iwnn:popupCharacters="@string/ti_alternates_maru_jajp_qwerty_en_shift_on_txt"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:keyPreviewLabel="?"
+                    iwnn:keyHintLabel="."/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="modeHalfNum">
+            <Row-Key>
+                <Key
+                    iwnn:codes="63"
+                    iwnn:keyLabel="?"
+                    iwnn:keyPreviewLabel="?"/>
+            </Row-Key>
+        </case>
+    </switch>
+</Keyboard>

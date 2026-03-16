@@ -87,7 +87,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener {
         }
     }
 
-    public void startSound(Command cmd) {
+    private void startSound(Command cmd) {
         try {
             synchronized (this.mCompletionHandlingLock) {
                 if (this.mLooper != null && this.mLooper.getThread().getState() != Thread.State.TERMINATED) {
@@ -235,7 +235,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener {
         }
     }
 
-    public void releaseWakeLock() {
+    private void releaseWakeLock() {
         if (this.mWakeLock != null) {
             this.mWakeLock.release();
         }

@@ -88,7 +88,7 @@ public class CaptivePortalLoginActivity extends Activity {
         myWebView.loadData("", "text/html", null);
     }
 
-    public void setWebViewProxy() {
+    private void setWebViewProxy() {
         LoadedApk loadedApk = getApplication().mLoadedApk;
         try {
             Field receiversField = LoadedApk.class.getDeclaredField("mReceivers");
@@ -110,7 +110,7 @@ public class CaptivePortalLoginActivity extends Activity {
         }
     }
 
-    public void done(int result) {
+    private void done(int result) {
         if (this.mNetworkCallback != null) {
             ConnectivityManager.from(this).unregisterNetworkCallback(this.mNetworkCallback);
         }
@@ -152,7 +152,7 @@ public class CaptivePortalLoginActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void testForCaptivePortal() {
+    private void testForCaptivePortal() {
         new Thread(new Runnable() {
             @Override
             public void run() {

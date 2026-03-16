@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/ti_preference_keyboard_type_portrait_title_txt">
+        <jp.co.omronsoft.iwnnime.ml.controlpanel.KeyboardTypeListPreference
+            android:persistent="true"
+            android:entries="@array/input_mode_type_entry"
+            android:title="@string/ti_preference_keyboard_type_all_title_txt"
+            android:key="input_mode_type_all_portrait"
+            android:summary="@string/ti_preference_keyboard_type_all_summary_txt"
+            android:defaultValue="@string/portrait_input_mode_type_all_default_value"
+            android:negativeButtonText="@string/ti_dialog_button_cancel_txt"
+            android:entryValues="@array/input_mode_type_entry_value"/>
+        <PreferenceScreen
+            android:persistent="false"
+            android:title="@string/ti_preference_keyboard_type_diff_title_txt"
+            android:key="keyboard_mode_type_diff_setting_portrait"
+            android:summary="@string/ti_preference_keyboard_type_diff_summary_txt"
+            android:fragment="jp.co.omronsoft.iwnnime.ml.controlpanel.ControlPanelPrefFragment">
+            <extra
+                android:name="fragment"
+                android:value="iwnnime_pref_keytype1"/>
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/ti_preference_keyboard_type_landscape_title_txt">
+        <jp.co.omronsoft.iwnnime.ml.controlpanel.KeyboardTypeListPreference
+            android:persistent="true"
+            android:entries="@array/input_mode_type_entry"
+            android:title="@string/ti_preference_keyboard_type_all_title_txt"
+            android:key="input_mode_type_all_land"
+            android:summary="@string/ti_preference_keyboard_type_all_summary_txt"
+            android:defaultValue="@string/land_input_mode_type_all_default_value"
+            android:negativeButtonText="@string/ti_dialog_button_cancel_txt"
+            android:entryValues="@array/input_mode_type_entry_value"/>
+        <PreferenceScreen
+            android:persistent="false"
+            android:title="@string/ti_preference_keyboard_type_diff_title_txt"
+            android:key="keyboard_mode_type_diff_setting_land"
+            android:summary="@string/ti_preference_keyboard_type_diff_summary_txt"
+            android:fragment="jp.co.omronsoft.iwnnime.ml.controlpanel.ControlPanelPrefFragment">
+            <extra
+                android:name="fragment"
+                android:value="iwnnime_pref_keytype2"/>
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/ti_preference_keyboard_type_50key_title_txt">
+        <jp.co.omronsoft.iwnnime.ml.controlpanel.Keyboard50KeyTypeListPreference
+            android:persistent="true"
+            android:entries="@array/keyboard_50key_type_entry"
+            android:title="@string/ti_preference_50key_type_title_txt"
+            android:key="keyboard_50key_type"
+            android:defaultValue="@string/keyboard_50key_type_list_item_vertical_right"
+            android:negativeButtonText="@string/ti_dialog_button_cancel_txt"
+            android:entryValues="@array/keyboard_50key_type_entry_value"/>
+    </PreferenceCategory>
+</PreferenceScreen>

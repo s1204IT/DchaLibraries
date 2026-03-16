@@ -64,7 +64,7 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
         };
     }
 
-    public String getPukPasswordHitMessage(int attemptsRemaining) {
+    private String getPukPasswordHitMessage(int attemptsRemaining) {
         Resources rez = getResources();
         String displayMessage = rez.getString(R.string.kg_puk_enter_puk_hint);
         KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(this.mContext);
@@ -160,7 +160,7 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
         }
     }
 
-    public String getPukPasswordErrorMessage(int attemptsRemaining) {
+    private String getPukPasswordErrorMessage(int attemptsRemaining) {
         if (attemptsRemaining == 0) {
             String displayMessage = getContext().getString(R.string.kg_password_wrong_puk_code_dead);
             return displayMessage;
@@ -271,7 +271,7 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
         return this.mSimUnlockProgressDialog;
     }
 
-    public Dialog getPukRemainingAttemptsDialog(int remaining) {
+    private Dialog getPukRemainingAttemptsDialog(int remaining) {
         String msg = getPukPasswordErrorMessage(remaining);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -286,7 +286,7 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
         return this.mRemainingAttemptsDialog;
     }
 
-    public boolean checkPuk() {
+    private boolean checkPuk() {
         if (this.mPasswordEntry.getText().length() != 8) {
             return false;
         }
@@ -294,7 +294,7 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
         return true;
     }
 
-    public boolean checkPin() {
+    private boolean checkPin() {
         int length = this.mPasswordEntry.getText().length();
         if (length < 4 || length > 8) {
             return false;
@@ -307,7 +307,7 @@ public class KeyguardSimPukView extends KeyguardPinBasedInputView {
         return this.mPinText.equals(this.mPasswordEntry.getText());
     }
 
-    public void updateSim() {
+    private void updateSim() {
         getSimUnlockProgressDialog().show();
         if (this.mCheckSimPukThread == null) {
             this.mCheckSimPukThread = new CheckSimPuk(this.mPukText, this.mPinText, this.mSubId) {

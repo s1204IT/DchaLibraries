@@ -175,7 +175,7 @@ public class NotificationTemplateViewWrapper extends NotificationViewWrapper {
         updateIconColorFilter(target, dark ? 1.0f : 0.0f);
     }
 
-    public void updateIconColorFilter(ImageView target, float intensity) {
+    private void updateIconColorFilter(ImageView target, float intensity) {
         int color = interpolateColor(this.mIconBackgroundColor, this.mIconBackgroundDarkColor, intensity);
         this.mIconColorFilter.setColor(color);
         Drawable background = target.getBackground();
@@ -197,7 +197,7 @@ public class NotificationTemplateViewWrapper extends NotificationViewWrapper {
         }
     }
 
-    public void updateGrayscaleMatrix(float intensity) {
+    private void updateGrayscaleMatrix(float intensity) {
         this.mGrayscaleColorMatrix.setSaturation(1.0f - intensity);
     }
 

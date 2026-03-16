@@ -360,7 +360,7 @@ public class KeyguardWidgetFrame extends FrameLayout {
         performAppWidgetSizeCallbacksIfNecessary();
     }
 
-    public void performAppWidgetSizeCallbacksIfNecessary() {
+    private void performAppWidgetSizeCallbacksIfNecessary() {
         View content = getContent();
         if (content instanceof AppWidgetHostView) {
             if (!KeyguardUpdateMonitor.getInstance(this.mContext).hasBootCompleted()) {

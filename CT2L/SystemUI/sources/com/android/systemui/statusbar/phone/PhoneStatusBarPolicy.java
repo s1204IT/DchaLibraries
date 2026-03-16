@@ -131,16 +131,16 @@ public class PhoneStatusBarPolicy {
         updateVolumeZen();
     }
 
-    public void updateAlarm() {
+    private void updateAlarm() {
         AlarmManager alarmManager = (AlarmManager) this.mContext.getSystemService("alarm");
         boolean alarmSet = alarmManager.getNextAlarmClock(-2) != null;
         this.mService.setIconVisibility("alarm_clock", alarmSet);
     }
 
-    public final void updateSyncState(Intent intent) {
+    private final void updateSyncState(Intent intent) {
     }
 
-    public final void updateSimState(Intent intent) {
+    private final void updateSimState(Intent intent) {
         String stateExtra = intent.getStringExtra("ss");
         if ("ABSENT".equals(stateExtra)) {
             this.mSimState = IccCardConstants.State.ABSENT;
@@ -170,7 +170,7 @@ public class PhoneStatusBarPolicy {
         this.mSimState = IccCardConstants.State.UNKNOWN;
     }
 
-    public final void updateVolumeZen() {
+    private final void updateVolumeZen() {
         AudioManager audioManager = (AudioManager) this.mContext.getSystemService("audio");
         boolean zenVisible = false;
         int zenIconId = 0;
@@ -208,7 +208,7 @@ public class PhoneStatusBarPolicy {
         }
     }
 
-    public final void updateBluetooth() {
+    private final void updateBluetooth() {
         BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
         int iconId = R.drawable.stat_sys_data_bluetooth;
         String contentDescription = this.mContext.getString(R.string.accessibility_bluetooth_disconnected);
@@ -225,7 +225,7 @@ public class PhoneStatusBarPolicy {
         this.mService.setIconVisibility("bluetooth", this.mBluetoothEnabled);
     }
 
-    public final void updateTTY(Intent intent) {
+    private final void updateTTY(Intent intent) {
         int currentTtyMode = intent.getIntExtra("android.telecom.intent.extra.CURRENT_TTY_MODE", 0);
         boolean enabled = currentTtyMode != 0;
         if (DEBUG) {
@@ -245,7 +245,7 @@ public class PhoneStatusBarPolicy {
         this.mService.setIconVisibility("tty", false);
     }
 
-    public void updateCast() {
+    private void updateCast() {
         boolean isCasting = false;
         for (CastController.CastDevice device : this.mCast.getCastDevices()) {
             if (device.state == 1 || device.state == 2) {
@@ -268,7 +268,7 @@ public class PhoneStatusBarPolicy {
         }
     }
 
-    public final void updateTouchMode(Intent intent) {
+    private final void updateTouchMode(Intent intent) {
         boolean touch = intent.getBooleanExtra("pen_mode", false);
         this.mService.setIconVisibility("touch", touch);
         if (this.mToast != null) {

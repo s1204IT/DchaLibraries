@@ -296,7 +296,7 @@ public class SearchActivity extends Activity {
         }
     }
 
-    public boolean launchSuggestion(SuggestionsAdapter<?> adapter, long id) {
+    private boolean launchSuggestion(SuggestionsAdapter<?> adapter, long id) {
         SuggestionPosition suggestion = getCurrentSuggestions(adapter, id);
         if (suggestion == null) {
             return false;
@@ -327,7 +327,7 @@ public class SearchActivity extends Activity {
         }
     }
 
-    public void updateSuggestionsBuffered() {
+    private void updateSuggestionsBuffered() {
         this.mHandler.removeCallbacks(this.mUpdateSuggestionsTask);
         long delay = getConfig().getTypingUpdateSuggestionsDelayMillis();
         this.mHandler.postDelayed(this.mUpdateSuggestionsTask, delay);

@@ -41,13 +41,13 @@ public class MasterClearConfirm extends Fragment {
                 MasterClearConfirm.this.getActivity().setRequestedOrientation(14);
                 new AsyncTask<Void, Void, Void>() {
                     @Override
-                    public Void doInBackground(Void... params) {
+                    protected Void doInBackground(Void... params) {
                         pdbManager.wipe();
                         return null;
                     }
 
                     @Override
-                    public void onPostExecute(Void aVoid) {
+                    protected void onPostExecute(Void aVoid) {
                         progressDialog.hide();
                         MasterClearConfirm.this.getActivity().setRequestedOrientation(oldOrientation);
                         MasterClearConfirm.this.doMasterClear();
@@ -72,7 +72,7 @@ public class MasterClearConfirm extends Fragment {
         }
     };
 
-    public void doMasterClear() {
+    private void doMasterClear() {
         if (this.mEraseSdCard) {
             Intent intent = new Intent("com.android.internal.os.storage.FORMAT_AND_FACTORY_RESET");
             intent.putExtra("android.intent.extra.REASON", "MasterClearConfirm");
@@ -107,7 +107,7 @@ public class MasterClearConfirm extends Fragment {
         this.mEraseSdCard = args != null && args.getBoolean("erase_sd");
     }
 
-    public void showNeedToConnectAcDialog() {
+    private void showNeedToConnectAcDialog() {
         Resources res = getActivity().getResources();
         new AlertDialog.Builder(getActivity()).setTitle(res.getText(R.string.master_clear_title)).setMessage(res.getText(R.string.master_clear_need_ac_message)).setPositiveButton(res.getText(R.string.master_clear_need_ac_label), this.mNeedToConnectAcListener).show();
     }

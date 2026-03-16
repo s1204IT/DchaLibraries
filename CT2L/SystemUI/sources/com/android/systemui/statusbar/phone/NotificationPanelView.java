@@ -889,7 +889,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         this.mKeyguardStatusView.setAlpha(1.0f);
     }
 
-    public void updateQsState() {
+    private void updateQsState() {
         boolean expandVisually = this.mQsExpanded || this.mStackScrollerOverscrolling;
         this.mHeader.setVisibility((this.mQsExpanded || !this.mKeyguardShowing) ? 0 : 4);
         this.mHeader.setExpanded(this.mKeyguardShowing || (this.mQsExpanded && !this.mStackScrollerOverscrolling));
@@ -904,7 +904,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         }
     }
 
-    public void setQsExpansion(float height) {
+    private void setQsExpansion(float height) {
         float height2 = Math.min(Math.max(height, this.mQsMinExpansionHeight), this.mQsMaxExpansionHeight);
         this.mQsFullyExpanded = height2 == ((float) this.mQsMaxExpansionHeight);
         if (height2 > this.mQsMinExpansionHeight && !this.mQsExpanded && !this.mStackScrollerOverscrolling) {
@@ -975,7 +975,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         return this.mQsExpansionHeight;
     }
 
-    public void requestScrollerTopPaddingUpdate(boolean animate) {
+    private void requestScrollerTopPaddingUpdate(boolean animate) {
         boolean z = true;
         NotificationStackScrollLayout notificationStackScrollLayout = this.mNotificationStackScroller;
         float fCalculateQsTopPadding = calculateQsTopPadding();

@@ -93,7 +93,7 @@ public class BatteryInfo extends Activity {
         }
     };
 
-    public final String tenthsToFixedString(int x) {
+    private final String tenthsToFixedString(int x) {
         int tens = x / 10;
         return Integer.toString(tens) + "." + Math.abs(x - (tens * 10));
     }
@@ -131,7 +131,7 @@ public class BatteryInfo extends Activity {
         unregisterReceiver(this.mIntentReceiver);
     }
 
-    public void updateBatteryStats() {
+    private void updateBatteryStats() {
         long uptime = SystemClock.elapsedRealtime();
         this.mUptime.setText(DateUtils.formatElapsedTime(uptime / 1000));
     }

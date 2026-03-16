@@ -177,7 +177,7 @@ public class QSTileHost implements QSTile.Host {
         return this.mSecurity;
     }
 
-    public void recreateTiles() {
+    private void recreateTiles() {
         if (DEBUG) {
             Log.d("QSTileHost", "Recreating tiles");
         }

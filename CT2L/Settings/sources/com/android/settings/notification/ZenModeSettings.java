@@ -106,7 +106,7 @@ public class ZenModeSettings extends SettingsPreferenceFragment implements Index
     private final Handler mHandler = new Handler();
     private final SettingsObserver mSettingsObserver = new SettingsObserver();
 
-    public static SparseArray<String> allKeyTitles(Context context) {
+    private static SparseArray<String> allKeyTitles(Context context) {
         SparseArray<String> rt = new SparseArray<>();
         rt.put(R.string.zen_mode_important_category, "important");
         rt.put(R.string.zen_mode_calls, "calls");
@@ -339,7 +339,7 @@ public class ZenModeSettings extends SettingsPreferenceFragment implements Index
         updateControls();
     }
 
-    public void updateDays() {
+    private void updateDays() {
         int[] days;
         if (this.mConfig != null && (days = ZenModeConfig.tryParseDays(this.mConfig.sleepMode)) != null && days.length != 0) {
             StringBuilder sb = new StringBuilder();
@@ -411,7 +411,7 @@ public class ZenModeSettings extends SettingsPreferenceFragment implements Index
         this.mStarred.setEnabled(this.mConfig.allowCalls || this.mConfig.allowMessages);
     }
 
-    public void refreshAutomationSection() {
+    private void refreshAutomationSection() {
         if (this.mConditionProviders != null) {
             int total = ConditionProviderSettings.getProviderCount(this.mPM);
             if (total == 0) {
@@ -468,7 +468,7 @@ public class ZenModeSettings extends SettingsPreferenceFragment implements Index
         this.mSettingsObserver.unregister();
     }
 
-    public void updateZenModeConfig() {
+    private void updateZenModeConfig() {
         ZenModeConfig config = getZenModeConfig();
         if (!Objects.equals(config, this.mConfig)) {
             this.mConfig = config;
@@ -489,7 +489,7 @@ public class ZenModeSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    public boolean setZenModeConfig(ZenModeConfig config) {
+    private boolean setZenModeConfig(ZenModeConfig config) {
         INotificationManager nm = INotificationManager.Stub.asInterface(ServiceManager.getService("notification"));
         try {
             boolean success = nm.setZenModeConfig(config);
@@ -542,7 +542,7 @@ public class ZenModeSettings extends SettingsPreferenceFragment implements Index
         this.mDialog = null;
     }
 
-    public static boolean isDowntimeSupported(Context context) {
+    private static boolean isDowntimeSupported(Context context) {
         return NotificationManager.from(context).isSystemConditionProviderEnabled("downtime");
     }
 

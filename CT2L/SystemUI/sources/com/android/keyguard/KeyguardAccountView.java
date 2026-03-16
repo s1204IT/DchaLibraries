@@ -115,7 +115,7 @@ public class KeyguardAccountView extends LinearLayout implements TextWatcher, Vi
         }
     }
 
-    public void postOnCheckPasswordResult(final boolean success) {
+    private void postOnCheckPasswordResult(final boolean success) {
         this.mLogin.post(new Runnable() {
             @Override
             public void run() {
@@ -216,7 +216,7 @@ public class KeyguardAccountView extends LinearLayout implements TextWatcher, Vi
         }, null, new UserHandle(this.mLockPatternUtils.getCurrentUser()));
     }
 
-    public Dialog getProgressDialog() {
+    private Dialog getProgressDialog() {
         if (this.mCheckingDialog == null) {
             this.mCheckingDialog = new ProgressDialog(this.mContext);
             this.mCheckingDialog.setMessage(this.mContext.getString(R.string.kg_login_checking_password));

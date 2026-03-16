@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <Row-Key>
+        <Key
+            iwnn:codes="-219"
+            iwnn:keyEdgeFlags="left"
+            iwnn:keyIcon="@drawable/key_12key_reverse"
+            iwnn:keyWidth="@fraction/keyboard_12key_function_keywidth"
+            iwnn:isSecondKey="true"
+            iwnn:description="@string/ti_description_key_reverse"/>
+    </Row-Key>
+</Keyboard>

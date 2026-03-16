@@ -239,7 +239,7 @@ public abstract class Ticker {
         }
     }
 
-    public void scheduleAdvance() {
+    private void scheduleAdvance() {
         this.mHandler.postDelayed(this.mAdvanceTicker, 3000L);
     }
 }

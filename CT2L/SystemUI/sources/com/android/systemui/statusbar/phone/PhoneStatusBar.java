@@ -789,7 +789,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         return this.mStatusBarView;
     }
 
-    public void clearAllNotifications() {
+    private void clearAllNotifications() {
         int numChildren = this.mStackScroller.getChildCount();
         ArrayList<View> viewsToHide = new ArrayList<>(numChildren);
         for (int i = 0; i < numChildren; i++) {
@@ -921,7 +921,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         return this.mNaturalBarHeight;
     }
 
-    public void awakenDreams() {
+    private void awakenDreams() {
         if (this.mDreamManager != null) {
             try {
                 this.mDreamManager.awaken();
@@ -959,7 +959,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         }
     }
 
-    public void notifyNavigationBarScreenOn(boolean screenOn) {
+    private void notifyNavigationBarScreenOn(boolean screenOn) {
         if (this.mNavigationBarView != null) {
             this.mNavigationBarView.notifyScreenOn(screenOn);
         }
@@ -975,7 +975,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         return lp;
     }
 
-    public void addHeadsUpView() {
+    private void addHeadsUpView() {
         int headsUpHeight = this.mContext.getResources().getDimensionPixelSize(R.dimen.heads_up_window_height);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(-1, headsUpHeight, 2014, 8520488, -3);
         lp.flags |= 16777216;
@@ -986,7 +986,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         this.mWindowManager.addView(this.mHeadsUpNotificationView, lp);
     }
 
-    public void removeHeadsUpView() {
+    private void removeHeadsUpView() {
         this.mWindowManager.removeView(this.mHeadsUpNotificationView);
     }
 
@@ -1141,7 +1141,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         this.mShowSearchHoldoff = this.mContext.getResources().getInteger(R.integer.config_show_search_delay);
     }
 
-    public void updateNotificationShade() {
+    private void updateNotificationShade() {
         if (this.mStackScroller != null) {
             if (isCollapsing()) {
                 addPostCollapseAction(new Runnable() {
@@ -1689,7 +1689,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         }
     }
 
-    public void escalateHeadsUp() {
+    private void escalateHeadsUp() {
         if (this.mHeadsUpNotificationView.getEntry() != null) {
             StatusBarNotification sbn = this.mHeadsUpNotificationView.getEntry().notification;
             this.mHeadsUpNotificationView.release();
@@ -1967,7 +1967,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         return (vis & 1) != 0 ? 3 : 0;
     }
 
-    public void checkBarModes() {
+    private void checkBarModes() {
         if (!this.mDemoMode) {
             checkBarMode(this.mStatusBarMode, this.mStatusBarWindowState, this.mStatusBarView.getBarTransitions());
             if (this.mNavigationBarView != null) {
@@ -1985,7 +1985,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         transitions.transitionTo(mode, anim);
     }
 
-    public void finishBarAnimations() {
+    private void finishBarAnimations() {
         this.mStatusBarView.getBarTransitions().finishAnimations();
         if (this.mNavigationBarView != null) {
             this.mNavigationBarView.getBarTransitions().finishAnimations();
@@ -2030,7 +2030,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         this.mHandler.postDelayed(this.mAutohide, 3000L);
     }
 
-    public void checkUserAutohide(View v, MotionEvent event) {
+    private void checkUserAutohide(View v, MotionEvent event) {
         if ((this.mSystemUiVisibility & 201326592) != 0 && event.getAction() == 4 && event.getX() == 0.0f && event.getY() == 0.0f) {
             userAutohide();
         }
@@ -2054,7 +2054,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         }
     }
 
-    public void notifyUiVisibilityChanged(int vis) {
+    private void notifyUiVisibilityChanged(int vis) {
         try {
             this.mWindowManagerService.statusBarVisibilityChanged(vis);
         } catch (RemoteException e) {
@@ -2141,7 +2141,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         }
     }
 
-    public Animation loadAnim(int id, Animation.AnimationListener listener) {
+    private Animation loadAnim(int id, Animation.AnimationListener listener) {
         Animation anim = AnimationUtils.loadAnimation(this.mContext, id);
         if (listener != null) {
             anim.setAnimationListener(listener);
@@ -2328,7 +2328,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         }
     }
 
-    public void resetUserExpandedStates() {
+    private void resetUserExpandedStates() {
         ArrayList<NotificationData.Entry> activeNotifications = this.mNotificationData.getActiveNotifications();
         int notificationCount = activeNotifications.size();
         for (int i = 0; i < notificationCount; i++) {
@@ -2386,7 +2386,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         this.mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor("user_setup_complete"), true, this.mUserSetupObserver, this.mCurrentUserId);
     }
 
-    public void setHeadsUpVisibility(boolean vis) {
+    private void setHeadsUpVisibility(boolean vis) {
         if (DEBUG) {
             Log.v("PhoneStatusBar", (vis ? "showing" : "hiding") + " heads up window");
         }
@@ -2480,7 +2480,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         this.mNotificationLocationsChangedListener.onChildLocationsChanged(this.mStackScroller);
     }
 
-    public void logNotificationVisibilityChanges(Collection<String> newlyVisible, Collection<String> noLongerVisible) {
+    private void logNotificationVisibilityChanges(Collection<String> newlyVisible, Collection<String> noLongerVisible) {
         if (!newlyVisible.isEmpty() || !noLongerVisible.isEmpty()) {
             String[] newlyVisibleAr = (String[]) newlyVisible.toArray(new String[newlyVisible.size()]);
             String[] noLongerVisibleAr = (String[]) noLongerVisible.toArray(new String[noLongerVisible.size()]);
@@ -2534,7 +2534,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         }, delay);
     }
 
-    public void handleStartSettingsActivity(Intent intent, boolean onlyProvisioned) {
+    private void handleStartSettingsActivity(Intent intent, boolean onlyProvisioned) {
         startActivityDismissingKeyguard(intent, onlyProvisioned, true);
     }
 
@@ -2730,12 +2730,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         this.mHandler.sendEmptyMessageDelayed(1003, 5000L);
     }
 
-    public void onLaunchTransitionTimeout() {
+    private void onLaunchTransitionTimeout() {
         Log.w("PhoneStatusBar", "Launch transition: Timeout!");
         this.mNotificationPanel.resetViews();
     }
 
-    public void runLaunchTransitionEndRunnable() {
+    private void runLaunchTransitionEndRunnable() {
         if (this.mLaunchTransitionEndRunnable != null) {
             Runnable r = this.mLaunchTransitionEndRunnable;
             this.mLaunchTransitionEndRunnable = null;
@@ -2813,7 +2813,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         this.mKeyguardMonitor.notifyKeyguardState(this.mStatusBarKeyguardViewManager.isShowing(), this.mStatusBarKeyguardViewManager.isSecure());
     }
 
-    public void updateDozingState() {
+    private void updateDozingState() {
         if (this.mState == 1 || this.mNotificationPanel.isDozing()) {
             boolean animate = !this.mDozing && this.mDozeScrimController.isPulsing();
             this.mNotificationPanel.setDozing(this.mDozing, animate);
@@ -3052,7 +3052,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
         updateVisibleToUser();
     }
 
-    public void handleLongPressBackRecents(View v) {
+    private void handleLongPressBackRecents(View v) {
         boolean sendBackLongPress = false;
         try {
             IActivityManager activityManager = ActivityManagerNative.getDefault();
@@ -3240,7 +3240,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
             return this.mNotificationLightOn;
         }
 
-        public void handleStartDozing(Runnable ready) {
+        private void handleStartDozing(Runnable ready) {
             if (!PhoneStatusBar.this.mDozing) {
                 PhoneStatusBar.this.mDozing = true;
                 DozeLog.traceDozing(PhoneStatusBar.this.mContext, PhoneStatusBar.this.mDozing);
@@ -3249,11 +3249,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode, DragDownH
             ready.run();
         }
 
-        public void handlePulseWhileDozing(DozeHost.PulseCallback callback, int reason) {
+        private void handlePulseWhileDozing(DozeHost.PulseCallback callback, int reason) {
             PhoneStatusBar.this.mDozeScrimController.pulse(callback, reason);
         }
 
-        public void handleStopDozing() {
+        private void handleStopDozing() {
             if (PhoneStatusBar.this.mDozing) {
                 PhoneStatusBar.this.mDozing = false;
                 DozeLog.traceDozing(PhoneStatusBar.this.mContext, PhoneStatusBar.this.mDozing);

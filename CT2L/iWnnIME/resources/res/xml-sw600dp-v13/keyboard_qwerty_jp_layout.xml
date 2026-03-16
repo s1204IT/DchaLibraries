@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android"
+    iwnn:horizontalGap="@fraction/keyboard_qwerty_common_horizontal_gap"
+    iwnn:keyWidth="@fraction/keyboard_qwerty_common_keywidth">
+    <switch>
+        <case iwnn:keyboardCondition="keyNumberOn">
+            <Row>
+                <include iwnn:keyboardLayout="@xml/key_qwerty_jp_row_number"/>
+            </Row>
+        </case>
+    </switch>
+    <Row>
+        <include iwnn:keyboardLayout="@xml/key_qwerty_jp_row1_q_to_p"/>
+    </Row>
+    <Row>
+        <include iwnn:keyboardLayout="@xml/key_qwerty_jp_row2_a_to_l"/>
+    </Row>
+    <Row>
+        <include iwnn:keyboardLayout="@xml/key_qwerty_jp_row3_leftfunkkey"/>
+        <include iwnn:keyboardLayout="@xml/key_qwerty_jp_row3_z_to_m"/>
+        <include iwnn:keyboardLayout="@xml/key_qwerty_jp_tyouon"/>
+        <Key
+            iwnn:codes="-100"
+            iwnn:isRepeatable="true"
+            iwnn:keyEdgeFlags="right"
+            iwnn:keyIcon="@drawable/key_del"
+            iwnn:isSecondKey="true"
+            iwnn:description="@string/ti_description_key_backspace"/>
+    </Row>
+    <Row>
+        <include iwnn:keyboardLayout="@xml/row_qwerty_jp_4"/>
+    </Row>
+</Keyboard>

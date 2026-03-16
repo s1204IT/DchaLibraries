@@ -99,7 +99,7 @@ public final class UserInfoController {
             final int avatarSize = Math.max(res.getDimensionPixelSize(R.dimen.multi_user_avatar_expanded_size), res.getDimensionPixelSize(R.dimen.multi_user_avatar_keyguard_size));
             this.mUserInfoTask = new AsyncTask<Void, Void, Pair<String, Drawable>>() {
                 @Override
-                public Pair<String, Drawable> doInBackground(Void... params) {
+                protected Pair<String, Drawable> doInBackground(Void... params) {
                     Drawable avatar;
                     Cursor cursor;
                     UserManager um = UserManager.get(UserInfoController.this.mContext);
@@ -124,7 +124,7 @@ public final class UserInfoController {
                 }
 
                 @Override
-                public void onPostExecute(Pair<String, Drawable> result) {
+                protected void onPostExecute(Pair<String, Drawable> result) {
                     UserInfoController.this.mUserName = (String) result.first;
                     UserInfoController.this.mUserDrawable = (Drawable) result.second;
                     UserInfoController.this.mUserInfoTask = null;
@@ -141,7 +141,7 @@ public final class UserInfoController {
         }
     }
 
-    public void notifyChanged() {
+    private void notifyChanged() {
         for (OnUserInfoChangedListener listener : this.mCallbacks) {
             listener.onUserInfoChanged(this.mUserName, this.mUserDrawable);
         }

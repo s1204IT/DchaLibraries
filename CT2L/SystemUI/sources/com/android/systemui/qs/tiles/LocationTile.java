@@ -22,7 +22,7 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public QSTile.BooleanState newTileState() {
+    protected QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
     }
 
@@ -46,7 +46,7 @@ public class LocationTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState state, Object arg) {
+    protected void handleUpdateState(QSTile.BooleanState state, Object arg) {
         boolean locationEnabled = this.mController.isLocationEnabled();
         state.visible = !this.mKeyguard.isShowing();
         state.value = locationEnabled;

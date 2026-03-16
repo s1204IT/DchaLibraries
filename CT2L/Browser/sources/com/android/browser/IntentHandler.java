@@ -190,7 +190,7 @@ public class IntentHandler {
         if (controller == null || controller.getTabControl() == null || controller.getTabControl().getCurrentWebView() == null || !controller.getTabControl().getCurrentWebView().isPrivateBrowsingEnabled()) {
             new AsyncTask<Void, Void, Void>() {
                 @Override
-                public Void doInBackground(Void... unused) {
+                protected Void doInBackground(Void... unused) {
                     android.provider.Browser.addSearchUrl(cr, url);
                     return null;
                 }

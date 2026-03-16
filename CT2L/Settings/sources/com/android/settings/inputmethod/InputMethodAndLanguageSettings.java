@@ -362,7 +362,7 @@ public class InputMethodAndLanguageSettings extends SettingsPreferenceFragment i
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
 
-    public static String getLocaleName(Context context) {
+    private static String getLocaleName(Context context) {
         Locale currentLocale = context.getResources().getConfiguration().locale;
         List<LocalePicker.LocaleInfo> locales = LocalePicker.getAllAssetLocales(context, true);
         for (LocalePicker.LocaleInfo locale : locales) {
@@ -466,7 +466,7 @@ public class InputMethodAndLanguageSettings extends SettingsPreferenceFragment i
         prefs.edit().putString("previously_enabled_subtypes", imesAndSubtypesString).apply();
     }
 
-    public void updateCurrentImeName() {
+    private void updateCurrentImeName() {
         Preference curPref;
         Context context = getActivity();
         if (context != null && this.mImm != null && (curPref = getPreferenceScreen().findPreference("current_input_method")) != null) {
@@ -536,7 +536,7 @@ public class InputMethodAndLanguageSettings extends SettingsPreferenceFragment i
         getPreferenceScreen().removePreference(this.mHardKeyboardCategory);
     }
 
-    public void showKeyboardLayoutDialog(InputDeviceIdentifier inputDeviceIdentifier) {
+    private void showKeyboardLayoutDialog(InputDeviceIdentifier inputDeviceIdentifier) {
         KeyboardLayoutDialogFragment fragment = new KeyboardLayoutDialogFragment(inputDeviceIdentifier);
         fragment.setTargetFragment(this, 0);
         fragment.show(getActivity().getFragmentManager(), "keyboardLayout");
@@ -571,7 +571,7 @@ public class InputMethodAndLanguageSettings extends SettingsPreferenceFragment i
         getPreferenceScreen().removePreference(this.mGameControllerCategory);
     }
 
-    public static boolean haveInputDeviceWithVibrator() {
+    private static boolean haveInputDeviceWithVibrator() {
         int[] devices = InputDevice.getDeviceIds();
         for (int i : devices) {
             InputDevice device = InputDevice.getDevice(i);

@@ -34,7 +34,7 @@ public class FlashlightTile extends QSTile<QSTile.BooleanState> implements Flash
     }
 
     @Override
-    public QSTile.BooleanState newTileState() {
+    protected QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
     }
 
@@ -56,7 +56,7 @@ public class FlashlightTile extends QSTile<QSTile.BooleanState> implements Flash
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState state, Object arg) {
+    protected void handleUpdateState(QSTile.BooleanState state, Object arg) {
         if (state.value) {
             this.mWasLastOn = SystemClock.uptimeMillis();
         }

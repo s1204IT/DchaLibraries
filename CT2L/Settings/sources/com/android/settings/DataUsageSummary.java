@@ -478,7 +478,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         });
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... params) {
+            protected Void doInBackground(Void... params) {
                 try {
                     Thread.sleep(2000L);
                     DataUsageSummary.this.mStatsService.forceUpdate();
@@ -491,7 +491,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
             }
 
             @Override
-            public void onPostExecute(Void result) {
+            protected void onPostExecute(Void result) {
                 if (DataUsageSummary.this.isAdded()) {
                     DataUsageSummary.this.updateBody();
                 }
@@ -669,7 +669,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         return this.mTabHost.newTabSpec(tag).setIndicator(title).setContent(this.mEmptyTabContent);
     }
 
-    public void updateBody() {
+    private void updateBody() {
         this.mBinding = true;
         if (isAdded()) {
             Context context = getActivity();
@@ -727,11 +727,11 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         }
     }
 
-    public boolean isAppDetailMode() {
+    private boolean isAppDetailMode() {
         return this.mCurrentApp != null;
     }
 
-    public void updateAppDetail() {
+    private void updateAppDetail() {
         Context context = getActivity();
         PackageManager pm = context.getPackageManager();
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -818,12 +818,12 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         this.mChart.bindDetailNetworkStats(null);
     }
 
-    public void setPolicyWarningBytes(long warningBytes) {
+    private void setPolicyWarningBytes(long warningBytes) {
         this.mPolicyEditor.setPolicyWarningBytes(this.mTemplate, warningBytes);
         updatePolicy(false);
     }
 
-    public void setPolicyLimitBytes(long limitBytes) {
+    private void setPolicyLimitBytes(long limitBytes) {
         this.mPolicyEditor.setPolicyLimitBytes(this.mTemplate, limitBytes);
         updatePolicy(false);
     }
@@ -841,7 +841,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         return isEnable2;
     }
 
-    public void setMobileDataEnabled(int subId, boolean enabled) {
+    private void setMobileDataEnabled(int subId, boolean enabled) {
         this.mTelephonyManager.setDataEnabled(subId, enabled);
         this.mMobileDataEnabled.put(String.valueOf(subId), Boolean.valueOf(enabled));
         updatePolicy(false);
@@ -871,13 +871,13 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         return (uidPolicy & 1) != 0;
     }
 
-    public void setAppRestrictBackground(boolean restrictBackground) {
+    private void setAppRestrictBackground(boolean restrictBackground) {
         int uid = this.mCurrentApp.key;
         this.mPolicyManager.setUidPolicy(uid, restrictBackground ? 1 : 0);
         this.mAppRestrict.setChecked(restrictBackground);
     }
 
-    public void updatePolicy(boolean refreshCycle) {
+    private void updatePolicy(boolean refreshCycle) {
         boolean dataEnabledVisible = this.mDataEnabledSupported;
         boolean disableAtLimitVisible = this.mDisableAtLimitSupported;
         if (isAppDetailMode()) {
@@ -959,7 +959,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         updateDetailData();
     }
 
-    public void disableDataForOtherSubscriptions(SubscriptionInfo currentSir) {
+    private void disableDataForOtherSubscriptions(SubscriptionInfo currentSir) {
         if (this.mSubInfoList != null) {
             for (SubscriptionInfo subInfo : this.mSubInfoList) {
                 if (subInfo.getSubscriptionId() != currentSir.getSubscriptionId()) {
@@ -969,7 +969,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         }
     }
 
-    public void handleMultiSimDataDialog() {
+    private void handleMultiSimDataDialog() {
         Context context = getActivity();
         final SubscriptionInfo currentSir = getCurrentTabSubInfo(context);
         if (currentSir != null) {
@@ -1002,7 +1002,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         }
     }
 
-    public void updateDetailData() {
+    private void updateDetailData() {
         long start = this.mChart.getInspectStart();
         long end = this.mChart.getInspectEnd();
         long now = System.currentTimeMillis();
@@ -1755,12 +1755,12 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         }
 
         @Override
-        public UidDetail doInBackground(Void... params) {
+        protected UidDetail doInBackground(Void... params) {
             return this.mProvider.getUidDetail(this.mItem.key, true);
         }
 
         @Override
-        public void onPostExecute(UidDetail result) {
+        protected void onPostExecute(UidDetail result) {
             bindView(result, this.mTarget);
         }
     }
@@ -1816,7 +1816,7 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         return view;
     }
 
-    public static View inflateCategoryHeader(LayoutInflater inflater, ViewGroup root) {
+    private static View inflateCategoryHeader(LayoutInflater inflater, ViewGroup root) {
         TypedArray a = inflater.getContext().obtainStyledAttributes(null, com.android.internal.R.styleable.Preference, android.R.attr.preferenceCategoryStyle, 0);
         int resId = a.getResourceId(3, 0);
         return inflater.inflate(resId, root, false);
@@ -1882,14 +1882,14 @@ public class DataUsageSummary extends HighlightingFragment implements Indexable 
         return map;
     }
 
-    public static boolean isMobileTab(String currentTab) {
+    private static boolean isMobileTab(String currentTab) {
         if (currentTab != null) {
             return currentTab.contains("mobile");
         }
         return false;
     }
 
-    public int getSubId(String currentTab) {
+    private int getSubId(String currentTab) {
         if (this.mMobileTagMap != null) {
             Set<Integer> set = this.mMobileTagMap.keySet();
             for (Integer subId : set) {

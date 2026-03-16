@@ -35,7 +35,7 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public QSTile.BooleanState newTileState() {
+    protected QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
     }
 
@@ -70,7 +70,7 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState state, Object arg) {
+    protected void handleUpdateState(QSTile.BooleanState state, Object arg) {
         state.visible = (this.mKeyguard.isSecure() && this.mKeyguard.isShowing()) ? false : true;
         state.label = this.mContext.getString(R.string.quick_settings_cast_title);
         state.value = false;
@@ -100,7 +100,7 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
         return this.mContext.getString(R.string.accessibility_casting_turned_off);
     }
 
-    public String getDeviceName(CastController.CastDevice device) {
+    private String getDeviceName(CastController.CastDevice device) {
         return device.name != null ? device.name : this.mContext.getString(R.string.quick_settings_cast_device_default_name);
     }
 
@@ -178,7 +178,7 @@ public class CastTile extends QSTile<QSTile.BooleanState> {
             return this.mItems;
         }
 
-        public void updateItems(Set<CastController.CastDevice> devices) {
+        private void updateItems(Set<CastController.CastDevice> devices) {
             if (this.mItems != null) {
                 QSDetailItems.Item[] items = null;
                 if (devices != null && !devices.isEmpty()) {

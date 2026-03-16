@@ -30,7 +30,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
     private int mSubId;
     KeyguardUpdateMonitorCallback mUpdateMonitorCallback;
 
-    public String getPinPasswordHitMessage(int attemptsRemaining) {
+    private String getPinPasswordHitMessage(int attemptsRemaining) {
         String displayMessage;
         KeyguardUpdateMonitor monitor = KeyguardUpdateMonitor.getInstance(this.mContext);
         int count = TelephonyManager.getDefault().getSimCount();
@@ -103,7 +103,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         }
     }
 
-    public String getPinPasswordErrorMessage(int attemptsRemaining) {
+    private String getPinPasswordErrorMessage(int attemptsRemaining) {
         String displayMessage;
         if (attemptsRemaining == 0) {
             displayMessage = getContext().getString(R.string.kg_password_wrong_pin_code_pukked);
@@ -206,7 +206,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         return this.mSimUnlockProgressDialog;
     }
 
-    public Dialog getSimRemainingAttemptsDialog(int remaining) {
+    private Dialog getSimRemainingAttemptsDialog(int remaining) {
         String msg = getPinPasswordErrorMessage(remaining);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);

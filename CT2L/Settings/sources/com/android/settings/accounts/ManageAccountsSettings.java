@@ -396,7 +396,7 @@ public class ManageAccountsSettings extends AccountPreferenceBase implements Aut
         }
     }
 
-    public boolean isSafeIntent(PackageManager pm, Intent intent) {
+    private boolean isSafeIntent(PackageManager pm, Intent intent) {
         AuthenticatorDescription authDesc = this.mAuthenticatorHelper.getAccountTypeDescription(this.mAccountType);
         ResolveInfo resolveInfo = pm.resolveActivityAsUser(intent, 0, this.mUserHandle.getIdentifier());
         if (resolveInfo == null) {

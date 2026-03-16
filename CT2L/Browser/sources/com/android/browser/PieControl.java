@@ -244,7 +244,7 @@ public class PieControl implements View.OnClickListener, PieMenu.PieController {
         }
     }
 
-    public void buildTabs() {
+    private void buildTabs() {
         List<Tab> tabs = this.mUiController.getTabs();
         this.mUi.getActiveTab().capture();
         this.mTabAdapter.setTabs(tabs);

@@ -132,13 +132,13 @@ public class DozeScrimController {
         }
     }
 
-    public void pulseStarted() {
+    private void pulseStarted() {
         if (this.mPulseCallback != null) {
             this.mPulseCallback.onPulseStarted();
         }
     }
 
-    public void pulseFinished() {
+    private void pulseFinished() {
         if (this.mPulseCallback != null) {
             this.mPulseCallback.onPulseFinished();
             this.mPulseCallback = null;
@@ -158,7 +158,7 @@ public class DozeScrimController {
         startScrimAnimation(inFront, target, duration, interpolator, 0L, null);
     }
 
-    public void startScrimAnimation(final boolean inFront, float target, long duration, Interpolator interpolator, long delay, final Runnable endRunnable) {
+    private void startScrimAnimation(final boolean inFront, float target, long duration, Interpolator interpolator, long delay, final Runnable endRunnable) {
         Animator current = getCurrentAnimator(inFront);
         if (current != null) {
             float currentTarget = getCurrentTarget(inFront);
@@ -209,7 +209,7 @@ public class DozeScrimController {
         return inFront ? this.mInFrontAnimator : this.mBehindAnimator;
     }
 
-    public void setCurrentAnimator(boolean inFront, Animator animator) {
+    private void setCurrentAnimator(boolean inFront, Animator animator) {
         if (inFront) {
             this.mInFrontAnimator = animator;
         } else {
@@ -217,7 +217,7 @@ public class DozeScrimController {
         }
     }
 
-    public void setDozeAlpha(boolean inFront, float alpha) {
+    private void setDozeAlpha(boolean inFront, float alpha) {
         if (inFront) {
             this.mScrimController.setDozeInFrontAlpha(alpha);
         } else {

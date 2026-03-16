@@ -907,7 +907,7 @@ public class ManageApplications extends Fragment implements DialogInterface.OnCl
             final Handler handler = new Handler(getActivity().getMainLooper());
             new AsyncTask<Void, Void, Void>() {
                 @Override
-                public Void doInBackground(Void... params) {
+                protected Void doInBackground(Void... params) {
                     List<ApplicationInfo> apps = pm.getInstalledApplications(512);
                     for (int i = 0; i < apps.size(); i++) {
                         ApplicationInfo app = apps.get(i);

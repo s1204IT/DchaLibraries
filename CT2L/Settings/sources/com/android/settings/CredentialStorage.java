@@ -55,7 +55,7 @@ public final class CredentialStorage extends Activity {
         finish();
     }
 
-    public void handleUnlockOrInstall() {
+    private void handleUnlockOrInstall() {
         AnonymousClass1 anonymousClass1 = null;
         if (!isFinishing()) {
             switch (AnonymousClass1.$SwitchMap$android$security$KeyStore$State[this.mKeyStore.state().ordinal()]) {
@@ -96,7 +96,7 @@ public final class CredentialStorage extends Activity {
         }
     }
 
-    public void ensureKeyGuard() {
+    private void ensureKeyGuard() {
         if (!checkKeyGuardQuality()) {
             new ConfigureKeyGuardDialog(this, null);
         } else if (!confirmKeyGuard()) {
@@ -211,7 +211,7 @@ public final class CredentialStorage extends Activity {
         }
 
         @Override
-        public Boolean doInBackground(Void... unused) {
+        protected Boolean doInBackground(Void... unused) {
             CredentialStorage.this.mKeyStore.reset();
             try {
                 KeyChain.KeyChainConnection keyChainConnection = KeyChain.bind(CredentialStorage.this);
@@ -229,7 +229,7 @@ public final class CredentialStorage extends Activity {
         }
 
         @Override
-        public void onPostExecute(Boolean success) {
+        protected void onPostExecute(Boolean success) {
             if (success.booleanValue()) {
                 Toast.makeText(CredentialStorage.this, R.string.credentials_erased, 0).show();
             } else {

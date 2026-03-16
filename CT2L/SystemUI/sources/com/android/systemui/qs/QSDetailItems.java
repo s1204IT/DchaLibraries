@@ -133,11 +133,11 @@ public class QSDetailItems extends FrameLayout {
         this.mHandler.obtainMessage(3, visible ? 1 : 0, 0).sendToTarget();
     }
 
-    public void handleSetCallback(Callback callback) {
+    private void handleSetCallback(Callback callback) {
         this.mCallback = callback;
     }
 
-    public void handleSetItems(Item[] items) {
+    private void handleSetItems(Item[] items) {
         int itemCount = items != null ? Math.min(items.length, this.mMaxItems) : 0;
         this.mEmpty.setVisibility(itemCount == 0 ? 0 : 8);
         this.mItems.setVisibility(itemCount != 0 ? 0 : 8);
@@ -149,7 +149,7 @@ public class QSDetailItems extends FrameLayout {
         }
     }
 
-    public void handleSetItemsVisible(boolean visible) {
+    private void handleSetItemsVisible(boolean visible) {
         if (this.mItemsVisible != visible) {
             this.mItemsVisible = visible;
             for (int i = 0; i < this.mItems.getChildCount(); i++) {

@@ -69,7 +69,7 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
     }
 
     @Override
-    public QSTile.SignalState newTileState() {
+    protected QSTile.SignalState newTileState() {
         return new QSTile.SignalState();
     }
 
@@ -114,7 +114,7 @@ public class WifiTile extends QSTile<QSTile.SignalState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.SignalState state, Object arg) {
+    protected void handleUpdateState(QSTile.SignalState state, Object arg) {
         String signalContentDescription;
         state.visible = true;
         if (DEBUG) {

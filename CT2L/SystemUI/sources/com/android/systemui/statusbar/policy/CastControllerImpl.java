@@ -229,7 +229,7 @@ public class CastControllerImpl implements CastController {
         this.mMediaRouter.getDefaultRoute().select();
     }
 
-    public void setProjection(MediaProjectionInfo projection, boolean started) {
+    private void setProjection(MediaProjectionInfo projection, boolean started) {
         boolean changed = false;
         MediaProjectionInfo oldProjection = this.mProjection;
         synchronized (this.mProjectionLock) {
@@ -268,7 +268,7 @@ public class CastControllerImpl implements CastController {
         return packageName;
     }
 
-    public void updateRemoteDisplays() {
+    private void updateRemoteDisplays() {
         synchronized (this.mRoutes) {
             this.mRoutes.clear();
             int n = this.mMediaRouter.getRouteCount();
@@ -304,7 +304,7 @@ public class CastControllerImpl implements CastController {
         callback.onCastDevicesChanged();
     }
 
-    public static String routeToString(MediaRouter.RouteInfo route) {
+    private static String routeToString(MediaRouter.RouteInfo route) {
         if (route == null) {
             return null;
         }

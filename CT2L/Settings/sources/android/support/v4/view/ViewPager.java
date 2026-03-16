@@ -213,7 +213,7 @@ public class ViewPager extends ViewGroup {
         super.onDetachedFromWindow();
     }
 
-    public void setScrollState(int newState) {
+    private void setScrollState(int newState) {
         if (this.mScrollState != newState) {
             this.mScrollState = newState;
             if (this.mPageTransformer != null) {

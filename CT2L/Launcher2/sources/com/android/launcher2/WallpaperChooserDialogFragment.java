@@ -112,7 +112,7 @@ public class WallpaperChooserDialogFragment extends DialogFragment implements Ad
         return view;
     }
 
-    public void selectWallpaper(int position) {
+    private void selectWallpaper(int position) {
         try {
             WallpaperManager wpm = (WallpaperManager) getActivity().getSystemService("wallpaper");
             wpm.setResource(this.mImages.get(position).intValue());
@@ -210,7 +210,7 @@ public class WallpaperChooserDialogFragment extends DialogFragment implements Ad
         }
 
         @Override
-        public Bitmap doInBackground(Integer... params) {
+        protected Bitmap doInBackground(Integer... params) {
             if (isCancelled()) {
                 return null;
             }
@@ -227,7 +227,7 @@ public class WallpaperChooserDialogFragment extends DialogFragment implements Ad
         }
 
         @Override
-        public void onPostExecute(Bitmap b) {
+        protected void onPostExecute(Bitmap b) {
             if (b != null) {
                 if (!isCancelled()) {
                     View v = WallpaperChooserDialogFragment.this.getView();

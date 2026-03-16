@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <fraction name="key_hint_letter_ratio">65%</fraction>
+    <fraction name="minKeyboardHeight">45%p</fraction>
+    <fraction name="keyboard_qwerty_common_keywidth">8.5%p</fraction>
+    <fraction name="keyboard_qwerty_common_horizontal_gap">0.54%p</fraction>
+    <fraction name="keyboard_qwerty_enter_keywidth">13.4%p</fraction>
+    <fraction name="keyboard_qwerty_voice_keywidth">17.5%p</fraction>
+    <fraction name="keyboard_12key_common_keywidth">20.625%p</fraction>
+    <fraction name="keyboard_12key_function_keywidth">16.406%p</fraction>
+    <fraction name="keyboard_phone_function_keywidth">8.203%</fraction>
+</resources>

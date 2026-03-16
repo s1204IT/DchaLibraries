@@ -118,7 +118,7 @@ public class LocationControllerImpl extends BroadcastReceiver implements Locatio
         }
     }
 
-    public void locationSettingsChanged() {
+    private void locationSettingsChanged() {
         boolean isEnabled = isLocationEnabled();
         for (LocationController.LocationSettingsChangeCallback cb : this.mSettingsChangeCallbacks) {
             cb.onLocationSettingsChanged(isEnabled);

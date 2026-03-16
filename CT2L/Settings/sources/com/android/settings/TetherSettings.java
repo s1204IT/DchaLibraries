@@ -246,7 +246,7 @@ public class TetherSettings extends SettingsPreferenceFragment implements Dialog
         }
     }
 
-    public void updateState() {
+    private void updateState() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService("connectivity");
         String[] available = cm.getTetherableIfaces();
         String[] tethered = cm.getTetheredIfaces();
@@ -254,7 +254,7 @@ public class TetherSettings extends SettingsPreferenceFragment implements Dialog
         updateState(available, tethered, errored);
     }
 
-    public void updateState(String[] available, String[] tethered, String[] errored) {
+    private void updateState(String[] available, String[] tethered, String[] errored) {
         updateUsbState(available, tethered, errored);
         updateBluetoothState(available, tethered, errored);
     }

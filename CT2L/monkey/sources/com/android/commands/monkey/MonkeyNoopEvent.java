@@ -1,0 +1,18 @@
+package com.android.commands.monkey;
+
+import android.app.IActivityManager;
+import android.view.IWindowManager;
+
+public class MonkeyNoopEvent extends MonkeyEvent {
+    public MonkeyNoopEvent() {
+        super(7);
+    }
+
+    @Override
+    public int injectEvent(IWindowManager iwm, IActivityManager iam, int verbose) {
+        if (verbose > 1) {
+            System.out.println("NOOP");
+        }
+        return 1;
+    }
+}

@@ -152,7 +152,7 @@ public class ServiceMonitor {
         this.mHandler.sendEmptyMessage(1);
     }
 
-    public ComponentName getComponentNameFromSetting() {
+    private ComponentName getComponentNameFromSetting() {
         String cn = Settings.Secure.getStringForUser(this.mContext.getContentResolver(), this.mSettingKey, -2);
         if (cn == null) {
             return null;
@@ -160,7 +160,7 @@ public class ServiceMonitor {
         return ComponentName.unflattenFromString(cn);
     }
 
-    public void packageIntent(Intent intent) {
+    private void packageIntent(Intent intent) {
         if (this.mDebug) {
             Log.d(this.mTag, "packageIntent intent=" + intent + " extras=" + bundleToString(intent.getExtras()));
         }
@@ -180,7 +180,7 @@ public class ServiceMonitor {
         }
     }
 
-    public void stopService() {
+    private void stopService() {
         if (this.mDebug) {
             Log.d(this.mTag, "stopService");
         }
@@ -192,7 +192,7 @@ public class ServiceMonitor {
         this.mBound = false;
     }
 
-    public void startService() {
+    private void startService() {
         this.mServiceName = getComponentNameFromSetting();
         if (this.mDebug) {
             Log.d(this.mTag, "startService mServiceName=" + this.mServiceName);
@@ -206,7 +206,7 @@ public class ServiceMonitor {
         }
     }
 
-    public void continueStartService() {
+    private void continueStartService() {
         if (this.mDebug) {
             Log.d(this.mTag, "continueStartService");
         }
@@ -225,7 +225,7 @@ public class ServiceMonitor {
         }
     }
 
-    public void serviceDisconnected(ComponentName serviceName) {
+    private void serviceDisconnected(ComponentName serviceName) {
         if (this.mDebug) {
             Log.d(this.mTag, "serviceDisconnected serviceName=" + serviceName + " mServiceName=" + this.mServiceName);
         }
@@ -235,7 +235,7 @@ public class ServiceMonitor {
         }
     }
 
-    public void checkBound() {
+    private void checkBound() {
         if (this.mDebug) {
             Log.d(this.mTag, "checkBound mBound=" + this.mBound);
         }

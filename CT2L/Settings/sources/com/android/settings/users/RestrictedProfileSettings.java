@@ -103,7 +103,7 @@ public class RestrictedProfileSettings extends AppRestrictionsFragment implement
         return null;
     }
 
-    public void removeUser() {
+    private void removeUser() {
         getView().post(new Runnable() {
             @Override
             public void run() {

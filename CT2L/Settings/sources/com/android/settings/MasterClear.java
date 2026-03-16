@@ -43,7 +43,7 @@ public class MasterClear extends Fragment {
         }
     };
 
-    public boolean runKeyguardConfirmation(int request) {
+    private boolean runKeyguardConfirmation(int request) {
         Resources res = getActivity().getResources();
         return new ChooseLockSettingsHelper(getActivity(), this).launchConfirmationActivity(request, null, res.getText(R.string.master_clear_gesture_explanation));
     }
@@ -60,7 +60,7 @@ public class MasterClear extends Fragment {
         }
     }
 
-    public void showFinalConfirmation() {
+    private void showFinalConfirmation() {
         Preference preference = new Preference(getActivity());
         preference.setFragment(MasterClearConfirm.class.getName());
         preference.setTitle(R.string.master_clear_confirm_title);

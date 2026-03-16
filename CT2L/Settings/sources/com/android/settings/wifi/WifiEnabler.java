@@ -100,7 +100,7 @@ public class WifiEnabler implements SwitchBar.OnSwitchChangeListener {
         }
     }
 
-    public void handleWifiStateChanged(int state) {
+    private void handleWifiStateChanged(int state) {
         switch (state) {
             case 0:
                 this.mSwitchBar.setEnabled(false);
@@ -140,7 +140,7 @@ public class WifiEnabler implements SwitchBar.OnSwitchChangeListener {
         this.mStateMachineEvent = false;
     }
 
-    public void handleStateChanged(NetworkInfo.DetailedState state) {
+    private void handleStateChanged(NetworkInfo.DetailedState state) {
     }
 
     @Override

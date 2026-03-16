@@ -142,7 +142,7 @@ public class UrlHandler {
         }
 
         @Override
-        public String doInBackground(Void... unused) {
+        protected String doInBackground(Void... unused) {
             String result = this.mSiteUri.toString();
             Cursor cur = null;
             try {
@@ -159,7 +159,7 @@ public class UrlHandler {
         }
 
         @Override
-        public void onPostExecute(String result) {
+        protected void onPostExecute(String result) {
             if (!UrlHandler.this.mController.isActivityPaused() && UrlHandler.this.mController.getTabControl().getTabPosition(this.mTab) != -1 && !UrlHandler.this.startActivityForUrl(this.mTab, result) && !UrlHandler.this.handleMenuClick(this.mTab, result)) {
                 UrlHandler.this.mController.loadUrl(this.mTab, result);
             }
@@ -174,7 +174,7 @@ public class UrlHandler {
         return this.mIsProviderPresent.booleanValue();
     }
 
-    public Uri getRlzUri() {
+    private Uri getRlzUri() {
         if (this.mRlzUri == null) {
             String ap = this.mActivity.getResources().getString(R.string.rlz_access_point);
             this.mRlzUri = Uri.withAppendedPath(RLZ_PROVIDER_URI, ap);

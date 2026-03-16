@@ -73,7 +73,7 @@ public class EmergencyButton extends Button {
         getContext().startActivityAsUser(intent, new UserHandle(this.mLockPatternUtils.getCurrentUser()));
     }
 
-    public void updateEmergencyCallButton() {
+    private void updateEmergencyCallButton() {
         boolean enabled = false;
         if (this.mLockPatternUtils.isInCall()) {
             enabled = true;

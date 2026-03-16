@@ -158,7 +158,7 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         }
 
         @Override
-        public FileDownloadResponse doInBackground(FileDownloadRequest... requests) {
+        protected FileDownloadResponse doInBackground(FileDownloadRequest... requests) {
             Logger.d(DownloadSettingActivity.TAG, "doInBackground 0001");
             this.mCountDownLatch = new CountDownLatch(1);
             this.mThread.setResponseListener(this);
@@ -216,14 +216,14 @@ public class DownloadSettingActivity extends ParentSettingActivity {
         }
 
         @Override
-        public void onProgressUpdate(Integer... progress) {
+        protected void onProgressUpdate(Integer... progress) {
             Logger.d(DownloadSettingActivity.TAG, "onProgressUpdate 0001");
             DownloadSettingActivity.this.mProgressBar.setProgress(progress[0].intValue());
             Logger.d(DownloadSettingActivity.TAG, "onProgressUpdate 0002");
         }
 
         @Override
-        public void onPostExecute(FileDownloadResponse result) {
+        protected void onPostExecute(FileDownloadResponse result) {
             Logger.d(DownloadSettingActivity.TAG, "onPostExecute 0001");
             if (result == null) {
                 Logger.d(DownloadSettingActivity.TAG, "onPostExecute 0002");

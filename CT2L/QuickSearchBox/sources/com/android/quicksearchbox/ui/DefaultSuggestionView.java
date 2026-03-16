@@ -110,7 +110,7 @@ public class DefaultSuggestionView extends BaseSuggestionView {
         return false;
     }
 
-    public static void setViewDrawable(ImageView v, Drawable drawable) {
+    private static void setViewDrawable(ImageView v, Drawable drawable) {
         v.setImageDrawable(drawable);
         if (drawable == null) {
             v.setVisibility(8);
@@ -161,7 +161,7 @@ public class DefaultSuggestionView extends BaseSuggestionView {
             handleNewDrawable(null, null, source);
         }
 
-        public void handleNewDrawable(Drawable icon, String id, Source source) {
+        private void handleNewDrawable(Drawable icon, String id, Source source) {
             if (icon == null) {
                 this.mWantedId = getFallbackIconId(source);
                 if (!TextUtils.equals(this.mWantedId, this.mCurrentId)) {

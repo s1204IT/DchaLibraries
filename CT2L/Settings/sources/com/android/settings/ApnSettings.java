@@ -76,7 +76,7 @@ public class ApnSettings extends SettingsPreferenceFragment implements Preferenc
         }
     }
 
-    public static PhoneConstants.DataState getMobileDataState(Intent intent) {
+    private static PhoneConstants.DataState getMobileDataState(Intent intent) {
         String str = intent.getStringExtra("state");
         return str != null ? Enum.valueOf(PhoneConstants.DataState.class, str) : PhoneConstants.DataState.DISCONNECTED;
     }
@@ -153,7 +153,7 @@ public class ApnSettings extends SettingsPreferenceFragment implements Preferenc
         return false;
     }
 
-    public void fillList() {
+    private void fillList() {
         TelephonyManager tm = (TelephonyManager) getSystemService("phone");
         String mccmnc = this.mSubscriptionInfo == null ? "" : tm.getSimOperator(this.mSubscriptionInfo.getSubscriptionId());
         Log.d("ApnSettings", "mccmnc = " + mccmnc);
@@ -267,7 +267,7 @@ public class ApnSettings extends SettingsPreferenceFragment implements Preferenc
         return key;
     }
 
-    public boolean restoreDefaultApn() {
+    private boolean restoreDefaultApn() {
         showDialog(1001);
         mRestoreDefaultApnMode = true;
         if (this.mRestoreApnUiHandler == null) {

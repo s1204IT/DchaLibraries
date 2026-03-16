@@ -38,7 +38,7 @@ public class SimBootReceiver extends BroadcastReceiver {
         this.mSubscriptionManager.addOnSubscriptionsChangedListener(this.mSubscriptionListener);
     }
 
-    public void detectChangeAndNotify() {
+    private void detectChangeAndNotify() {
         List<SubscriptionInfo> sil;
         int numSlots = this.mTelephonyManager.getSimCount();
         boolean isInProvisioning = Settings.Global.getInt(this.mContext.getContentResolver(), "device_provisioned", 0) == 0;

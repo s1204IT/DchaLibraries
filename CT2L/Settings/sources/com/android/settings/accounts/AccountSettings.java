@@ -215,7 +215,7 @@ public class AccountSettings extends SettingsPreferenceFragment implements Prefe
         return preference;
     }
 
-    public void cleanUpPreferences() {
+    private void cleanUpPreferences() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         if (preferenceScreen != null) {
             preferenceScreen.removeAll();
@@ -223,7 +223,7 @@ public class AccountSettings extends SettingsPreferenceFragment implements Prefe
         this.mProfiles.clear();
     }
 
-    public void listenToAccountUpdates() {
+    private void listenToAccountUpdates() {
         int count = this.mProfiles.size();
         for (int i = 0; i < count; i++) {
             AuthenticatorHelper authenticatorHelper = this.mProfiles.valueAt(i).authenticatorHelper;
@@ -233,7 +233,7 @@ public class AccountSettings extends SettingsPreferenceFragment implements Prefe
         }
     }
 
-    public void stopListeningToAccountUpdates() {
+    private void stopListeningToAccountUpdates() {
         int count = this.mProfiles.size();
         for (int i = 0; i < count; i++) {
             AuthenticatorHelper authenticatorHelper = this.mProfiles.valueAt(i).authenticatorHelper;

@@ -153,7 +153,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         });
     }
 
-    public void onPreloginFinished(Bundle icicle, Intent intent, long currentTabId, boolean restoreIncognitoTabs) {
+    private void onPreloginFinished(Bundle icicle, Intent intent, long currentTabId, boolean restoreIncognitoTabs) {
         Tab t;
         int scale;
         if (currentTabId == -1) {
@@ -388,7 +388,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         }
     }
 
-    public void copy(CharSequence text) {
+    private void copy(CharSequence text) {
         ClipboardManager cm = (ClipboardManager) this.mActivity.getSystemService("clipboard");
         cm.setText(text);
     }
@@ -1419,7 +1419,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
         return bitmapCreateScaledBitmap;
     }
 
-    public void updateScreenshot(Tab tab) {
+    private void updateScreenshot(Tab tab) {
         final Bitmap bm;
         WebView view = tab.getWebView();
         if (view != null) {
@@ -1430,7 +1430,7 @@ public class Controller implements ActivityController, UiController, WebViewCont
                     final ContentResolver cr = this.mActivity.getContentResolver();
                     new AsyncTask<Void, Void, Void>() {
                         @Override
-                        public Void doInBackground(Void... unused) {
+                        protected Void doInBackground(Void... unused) {
                             Cursor cursor = null;
                             try {
                                 try {

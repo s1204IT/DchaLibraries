@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="manage_cache_bottom_height">39dp</dimen>
+    <dimen name="capture_top_margin">0dp</dimen>
+</resources>

@@ -190,7 +190,7 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     }
 
-    public void updateMode() {
+    private void updateMode() {
         if (this.mAutomaticAvailable) {
             int automatic = Settings.System.getIntForUser(this.mContext.getContentResolver(), "screen_brightness_mode", 0, -2);
             this.mAutomatic = automatic != 0;
@@ -201,7 +201,7 @@ public class BrightnessController implements ToggleSlider.Listener {
         }
     }
 
-    public void updateSlider() {
+    private void updateSlider() {
         if (this.mAutomatic) {
             float value = Settings.System.getFloatForUser(this.mContext.getContentResolver(), "screen_auto_brightness_adj", 0.0f, -2);
             this.mControl.setMax(100);

@@ -743,7 +743,7 @@ final class BackStackRecord extends FragmentTransaction implements Runnable {
         });
     }
 
-    public void callSharedElementEnd(TransitionState state, Fragment inFragment, Fragment outFragment, boolean isBack, ArrayMap<String, View> namedViews) {
+    private void callSharedElementEnd(TransitionState state, Fragment inFragment, Fragment outFragment, boolean isBack, ArrayMap<String, View> namedViews) {
         SharedElementCallback sharedElementCallback = isBack ? outFragment.mEnterTransitionCallback : inFragment.mEnterTransitionCallback;
         if (sharedElementCallback != null) {
             ArrayList<String> names = new ArrayList<>(namedViews.keySet());
@@ -752,14 +752,14 @@ final class BackStackRecord extends FragmentTransaction implements Runnable {
         }
     }
 
-    public void setEpicenterIn(ArrayMap<String, View> namedViews, TransitionState state) {
+    private void setEpicenterIn(ArrayMap<String, View> namedViews, TransitionState state) {
         View epicenter;
         if (this.mSharedElementTargetNames != null && !namedViews.isEmpty() && (epicenter = namedViews.get(this.mSharedElementTargetNames.get(0))) != null) {
             state.enteringEpicenterView.epicenter = epicenter;
         }
     }
 
-    public ArrayMap<String, View> mapSharedElementsIn(TransitionState state, boolean isBack, Fragment inFragment) {
+    private ArrayMap<String, View> mapSharedElementsIn(TransitionState state, boolean isBack, Fragment inFragment) {
         ArrayMap<String, View> namedViews = mapEnteringSharedElements(state, inFragment, isBack);
         if (isBack) {
             if (inFragment.mExitTransitionCallback != null) {
@@ -815,7 +815,7 @@ final class BackStackRecord extends FragmentTransaction implements Runnable {
         });
     }
 
-    public void excludeHiddenFragments(TransitionState state, int containerId, Object transition) {
+    private void excludeHiddenFragments(TransitionState state, int containerId, Object transition) {
         if (this.mManager.mAdded != null) {
             for (int i = 0; i < this.mManager.mAdded.size(); i++) {
                 Fragment fragment = this.mManager.mAdded.get(i);

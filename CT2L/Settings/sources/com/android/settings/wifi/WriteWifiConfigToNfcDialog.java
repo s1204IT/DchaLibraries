@@ -106,7 +106,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
         this.mLabelView.setText(R.string.status_invalid_password);
     }
 
-    public void handleWriteNfcEvent(Tag tag) {
+    private void handleWriteNfcEvent(Tag tag) {
         Ndef ndef = Ndef.get(tag);
         if (ndef != null) {
             if (ndef.isWritable()) {
@@ -159,7 +159,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
         });
     }
 
-    public void enableSubmitIfAppropriate() {
+    private void enableSubmitIfAppropriate() {
         if (this.mPasswordView != null) {
             if (this.mAccessPoint.security == 1) {
                 this.mSubmitButton.setEnabled(this.mPasswordView.length() > 0);

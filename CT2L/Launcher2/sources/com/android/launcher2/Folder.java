@@ -382,7 +382,7 @@ public class Folder extends LinearLayout implements View.OnClickListener, View.O
         }
     }
 
-    public void sendCustomAccessibilityEvent(int type, String text) {
+    private void sendCustomAccessibilityEvent(int type, String text) {
         AccessibilityManager accessibilityManager = (AccessibilityManager) getContext().getSystemService("accessibility");
         if (accessibilityManager.isEnabled()) {
             AccessibilityEvent event = AccessibilityEvent.obtain(type);
@@ -392,7 +392,7 @@ public class Folder extends LinearLayout implements View.OnClickListener, View.O
         }
     }
 
-    public void setFocusOnFirstChild() {
+    private void setFocusOnFirstChild() {
         View firstChild = this.mContent.getChildAt(0, 0);
         if (firstChild != null) {
             firstChild.requestFocus();
@@ -475,7 +475,7 @@ public class Folder extends LinearLayout implements View.OnClickListener, View.O
         return v1[1] > v2[1] || (v1[1] == v2[1] && v1[0] > v2[0]);
     }
 
-    public void realTimeReorder(int[] empty, int[] target) {
+    private void realTimeReorder(int[] empty, int[] target) {
         int delay = 0;
         float delayAmount = 30.0f;
         if (readingOrderGreaterThan(target, empty)) {
@@ -761,7 +761,7 @@ public class Folder extends LinearLayout implements View.OnClickListener, View.O
         return this.mContent.getShortcutsAndWidgets().getChildAt(index);
     }
 
-    public void onCloseComplete() {
+    private void onCloseComplete() {
         DragLayer parent = (DragLayer) getParent();
         if (parent != null) {
             parent.removeView(this);

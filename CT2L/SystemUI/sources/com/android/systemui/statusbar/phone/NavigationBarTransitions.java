@@ -105,7 +105,7 @@ public final class NavigationBarTransitions extends BarTransitions {
         }
     }
 
-    public void applyLightsOut(boolean lightsOut, boolean animate, boolean force) {
+    private void applyLightsOut(boolean lightsOut, boolean animate, boolean force) {
         if (force || lightsOut != this.mLightsOut) {
             this.mLightsOut = lightsOut;
             View navButtons = this.mView.getCurrentView().findViewById(R.id.nav_buttons);

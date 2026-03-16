@@ -173,7 +173,7 @@ public class ChartDataUsageView extends ChartView {
         invalidate();
     }
 
-    public void updateVertAxisBounds(ChartSweepView activeSweep) {
+    private void updateVertAxisBounds(ChartSweepView activeSweep) {
         long max = this.mVertMax;
         long newMax = 0;
         if (activeSweep != null) {
@@ -213,7 +213,7 @@ public class ChartDataUsageView extends ChartView {
         }
     }
 
-    public void updateEstimateVisible() {
+    private void updateEstimateVisible() {
         long maxEstimate = this.mSeries.getMaxEstimate();
         long interestLine = Long.MAX_VALUE;
         if (this.mSweepWarning.isEnabled()) {
@@ -228,13 +228,13 @@ public class ChartDataUsageView extends ChartView {
         this.mSeries.setEstimateVisible(estimateVisible);
     }
 
-    public void sendUpdateAxisDelayed(ChartSweepView sweep, boolean force) {
+    private void sendUpdateAxisDelayed(ChartSweepView sweep, boolean force) {
         if (force || !this.mHandler.hasMessages(100, sweep)) {
             this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(100, sweep), 250L);
         }
     }
 
-    public void clearUpdateAxisDelayed(ChartSweepView sweep) {
+    private void clearUpdateAxisDelayed(ChartSweepView sweep) {
         this.mHandler.removeMessages(100, sweep);
     }
 
@@ -466,7 +466,7 @@ public class ChartDataUsageView extends ChartView {
         }
     }
 
-    public static void setText(SpannableStringBuilder builder, Object key, CharSequence text, String bootstrap) {
+    private static void setText(SpannableStringBuilder builder, Object key, CharSequence text, String bootstrap) {
         int start = builder.getSpanStart(key);
         int end = builder.getSpanEnd(key);
         if (start == -1) {
@@ -477,7 +477,7 @@ public class ChartDataUsageView extends ChartView {
         builder.replace(start, end, text);
     }
 
-    public static long roundUpToPowerOfTwo(long i) {
+    private static long roundUpToPowerOfTwo(long i) {
         long i2 = i - 1;
         long i3 = i2 | (i2 >>> 1);
         long i4 = i3 | (i3 >>> 2);

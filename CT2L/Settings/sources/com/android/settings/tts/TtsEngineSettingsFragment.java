@@ -108,7 +108,7 @@ public class TtsEngineSettingsFragment extends SettingsPreferenceFragment implem
         outState.putCharSequence("locale_value", this.mLocalePreference.getValue());
     }
 
-    public final void checkTtsData() {
+    private final void checkTtsData() {
         Intent intent = new Intent("android.speech.tts.engine.CHECK_TTS_DATA");
         intent.setPackage(getEngineName());
         try {

@@ -52,7 +52,7 @@ public class ZenModeDowntimeDaysSelection extends ScrollView {
         }
     }
 
-    public String getMode() {
+    private String getMode() {
         StringBuilder sb = new StringBuilder("days:");
         boolean empty = true;
         for (int i = 0; i < this.mDays.size(); i++) {

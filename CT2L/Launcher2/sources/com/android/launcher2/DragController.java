@@ -287,7 +287,7 @@ public class DragController {
         this.mLastDropTarget = dropTarget;
     }
 
-    public void checkScrollState(int x, int y) {
+    private void checkScrollState(int x, int y) {
         int slop = ViewConfiguration.get(this.mLauncher).getScaledWindowTouchSlop();
         int delay = this.mDistanceSinceScroll < slop ? 750 : 500;
         DragLayer dragLayer = this.mLauncher.getDragLayer();

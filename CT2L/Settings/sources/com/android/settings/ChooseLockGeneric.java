@@ -378,7 +378,7 @@ public class ChooseLockGeneric extends SettingsActivity {
             return ("unlock_set_off".equals(unlockMethod) || "unlock_set_none".equals(unlockMethod)) ? false : true;
         }
 
-        public boolean setUnlockMethod(String unlockMethod) {
+        private boolean setUnlockMethod(String unlockMethod) {
             EventLog.writeEvent(90200, unlockMethod);
             if ("unlock_set_off".equals(unlockMethod)) {
                 updateUnlockMethodAndFinish(0, true);

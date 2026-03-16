@@ -9,7 +9,7 @@ final class LocalBluetoothPreferences {
     private LocalBluetoothPreferences() {
     }
 
-    public static SharedPreferences getSharedPreferences(Context context) {
+    private static SharedPreferences getSharedPreferences(Context context) {
         return context.getSharedPreferences("bluetooth_settings", 0);
     }
 

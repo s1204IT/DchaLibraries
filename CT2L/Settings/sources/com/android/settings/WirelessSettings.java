@@ -216,7 +216,7 @@ public class WirelessSettings extends SettingsPreferenceFragment implements Pref
         }
     }
 
-    public void log(String s) {
+    private void log(String s) {
         Log.d("WirelessSettings", s);
     }
 

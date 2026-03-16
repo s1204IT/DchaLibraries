@@ -43,7 +43,7 @@ public class NetworkPolicyEditor {
         final NetworkPolicy[] policies = (NetworkPolicy[]) this.mPolicies.toArray(new NetworkPolicy[this.mPolicies.size()]);
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... params) {
+            protected Void doInBackground(Void... params) {
                 NetworkPolicyEditor.this.write(policies);
                 return null;
             }

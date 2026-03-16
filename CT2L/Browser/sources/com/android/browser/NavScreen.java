@@ -109,7 +109,7 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         }
     }
 
-    public void onCloseTab(Tab tab) {
+    private void onCloseTab(Tab tab) {
         if (tab != null) {
             if (tab == this.mUiController.getCurrentTab()) {
                 this.mUiController.closeCurrentTab();
@@ -138,7 +138,7 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         }
     }
 
-    public void switchToTab(Tab tab) {
+    private void switchToTab(Tab tab) {
         if (tab != this.mUi.getActiveTab()) {
             this.mUiController.setActiveTab(tab);
         }

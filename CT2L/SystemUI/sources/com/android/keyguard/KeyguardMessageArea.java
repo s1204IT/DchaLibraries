@@ -152,7 +152,7 @@ class KeyguardMessageArea extends TextView {
         return null;
     }
 
-    public void hideMessage(int duration, boolean thenUpdate) {
+    private void hideMessage(int duration, boolean thenUpdate) {
         if (duration > 0) {
             Animator anim = ObjectAnimator.ofFloat(this, "alpha", 0.0f);
             anim.setDuration(duration);
@@ -173,7 +173,7 @@ class KeyguardMessageArea extends TextView {
         }
     }
 
-    public void showMessage(int duration) {
+    private void showMessage(int duration) {
         if (duration > 0) {
             Animator anim = ObjectAnimator.ofFloat(this, "alpha", 1.0f);
             anim.setDuration(duration);

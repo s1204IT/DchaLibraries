@@ -527,25 +527,25 @@ public class RadioInfo extends Activity {
         return true;
     }
 
-    public boolean isRadioOn() {
+    private boolean isRadioOn() {
         return this.phone.getServiceState().getState() != 3;
     }
 
-    public void updatePowerState() {
+    private void updatePowerState() {
         String buttonText = isRadioOn() ? getString(R.string.turn_off_radio) : getString(R.string.turn_on_radio);
         this.radioPowerButton.setText(buttonText);
     }
 
-    public void updateCellInfoListRate() {
+    private void updateCellInfoListRate() {
         this.cellInfoListRateButton.setText("CellInfoListRate " + this.mCellInfoListRateHandler.getRate());
         updateCellInfoTv(this.mTelephonyManager.getAllCellInfo());
     }
 
-    public void updateDnsCheckState() {
+    private void updateDnsCheckState() {
         this.dnsCheckState.setText(this.phone.isDnsCheckDisabled() ? "0.0.0.0 allowed" : "0.0.0.0 not allowed");
     }
 
-    public final void updateSignalStrength() {
+    private final void updateSignalStrength() {
         int state = this.mPhoneStateReceiver.getServiceState().getState();
         Resources r = getResources();
         if (1 == state || 3 == state) {
@@ -562,7 +562,7 @@ public class RadioInfo extends Activity {
         this.dBm.setText(String.valueOf(signalDbm) + " " + r.getString(R.string.radioInfo_display_dbm) + "   " + String.valueOf(signalAsu) + " " + r.getString(R.string.radioInfo_display_asu));
     }
 
-    public final void updateLocation(CellLocation location) {
+    private final void updateLocation(CellLocation location) {
         Resources r = getResources();
         if (location instanceof GsmCellLocation) {
             GsmCellLocation loc = (GsmCellLocation) location;
@@ -584,7 +584,7 @@ public class RadioInfo extends Activity {
         this.mLocation.setText("unknown");
     }
 
-    public final void updateNeighboringCids(ArrayList<NeighboringCellInfo> cids) {
+    private final void updateNeighboringCids(ArrayList<NeighboringCellInfo> cids) {
         StringBuilder sb = new StringBuilder();
         if (cids != null) {
             if (cids.isEmpty()) {
@@ -600,7 +600,7 @@ public class RadioInfo extends Activity {
         this.mNeighboringCids.setText(sb.toString());
     }
 
-    public final void updateCellInfoTv(List<CellInfo> arrayCi) {
+    private final void updateCellInfoTv(List<CellInfo> arrayCi) {
         this.mCellInfoValue = arrayCi;
         StringBuilder value = new StringBuilder();
         if (this.mCellInfoValue != null) {
@@ -619,19 +619,19 @@ public class RadioInfo extends Activity {
         this.mCellInfo.setText(value.toString());
     }
 
-    public final void updateDcRtInfoTv(DataConnectionRealTimeInfo dcRtInfo) {
+    private final void updateDcRtInfoTv(DataConnectionRealTimeInfo dcRtInfo) {
         this.mDcRtInfoTv.setText(dcRtInfo.toString());
     }
 
-    public final void updateMessageWaiting() {
+    private final void updateMessageWaiting() {
         this.mMwi.setText(String.valueOf(this.mMwiValue));
     }
 
-    public final void updateCallRedirect() {
+    private final void updateCallRedirect() {
         this.mCfi.setText(String.valueOf(this.mCfiValue));
     }
 
-    public final void updateServiceState() {
+    private final void updateServiceState() {
         ServiceState serviceState = this.mPhoneStateReceiver.getServiceState();
         int state = serviceState.getState();
         Resources r = getResources();
@@ -657,7 +657,7 @@ public class RadioInfo extends Activity {
         this.operatorName.setText(serviceState.getOperatorAlphaLong());
     }
 
-    public final void updatePhoneState() {
+    private final void updatePhoneState() {
         PhoneConstants.State state = this.mPhoneStateReceiver.getPhoneState();
         Resources r = getResources();
         String display = r.getString(R.string.radioInfo_unknown);
@@ -694,7 +694,7 @@ public class RadioInfo extends Activity {
         }
     }
 
-    public final void updateDataState() {
+    private final void updateDataState() {
         int state = this.mTelephonyManager.getDataState();
         Resources r = getResources();
         String display = r.getString(R.string.radioInfo_unknown);
@@ -715,7 +715,7 @@ public class RadioInfo extends Activity {
         this.gprsState.setText(display);
     }
 
-    public final void updateNetworkType() {
+    private final void updateNetworkType() {
         Resources r = getResources();
         String display = SystemProperties.get("gsm.network.type", r.getString(R.string.radioInfo_unknown));
         this.network.setText(display);
@@ -735,7 +735,7 @@ public class RadioInfo extends Activity {
         this.number.setText(s2);
     }
 
-    public final void updateDataStats() {
+    private final void updateDataStats() {
         String s = SystemProperties.get("net.gsm.radio-reset", "0");
         this.resets.setText(s);
         String s2 = SystemProperties.get("net.gsm.attempt-gprs", "0");
@@ -746,7 +746,7 @@ public class RadioInfo extends Activity {
         this.sentSinceReceived.setText(s4);
     }
 
-    public final void updateDataStats2() {
+    private final void updateDataStats2() {
         Resources r = getResources();
         long txPackets = TrafficStats.getMobileTxPackets();
         long rxPackets = TrafficStats.getMobileRxPackets();
@@ -758,7 +758,7 @@ public class RadioInfo extends Activity {
         this.received.setText(rxPackets + " " + packets + ", " + rxBytes + " " + bytes);
     }
 
-    public final void pingIpAddr() {
+    private final void pingIpAddr() {
         try {
             Process p = Runtime.getRuntime().exec("ping -c 1 74.125.47.104");
             int status = p.waitFor();
@@ -774,7 +774,7 @@ public class RadioInfo extends Activity {
         }
     }
 
-    public final void pingHostname() {
+    private final void pingHostname() {
         try {
             Process p = Runtime.getRuntime().exec("ping -c 1 www.google.com");
             int status = p.waitFor();
@@ -792,7 +792,7 @@ public class RadioInfo extends Activity {
         }
     }
 
-    public void httpClientTest() {
+    private void httpClientTest() {
         HttpClient client = new DefaultHttpClient();
         try {
             HttpGet request = new HttpGet("http://www.google.com");
@@ -808,11 +808,11 @@ public class RadioInfo extends Activity {
         }
     }
 
-    public void refreshSmsc() {
+    private void refreshSmsc() {
         this.phone.getSmscAddress(this.mHandler.obtainMessage(1005));
     }
 
-    public final void updatePingState() {
+    private final void updatePingState() {
         final Handler handler = new Handler();
         this.mPingIpAddrResult = getResources().getString(R.string.radioInfo_unknown);
         this.mPingHostnameResult = getResources().getString(R.string.radioInfo_unknown);
@@ -854,7 +854,7 @@ public class RadioInfo extends Activity {
         httpClient.start();
     }
 
-    public final void updatePdpList() {
+    private final void updatePdpList() {
         StringBuilder sb = new StringBuilder("========DATA=======\n");
         this.disconnects.setText(sb.toString());
     }
@@ -881,21 +881,21 @@ public class RadioInfo extends Activity {
         }
     }
 
-    public boolean isImsRegRequired() {
+    private boolean isImsRegRequired() {
         return SystemProperties.getBoolean("persist.radio.imsregrequired", false);
     }
 
-    public void updateImsRegRequiredState() {
+    private void updateImsRegRequiredState() {
         log("updateImsRegRequiredState isImsRegRequired()=" + isImsRegRequired());
         String buttonText = isImsRegRequired() ? getString(R.string.ims_reg_required_off) : getString(R.string.ims_reg_required_on);
         this.imsRegRequiredButton.setText(buttonText);
     }
 
-    public boolean isSmsOverImsEnabled() {
+    private boolean isSmsOverImsEnabled() {
         return SystemProperties.getBoolean("persist.radio.imsallowmtsms", false);
     }
 
-    public boolean isImsVoLteProvisioned() {
+    private boolean isImsVoLteProvisioned() {
         if (this.phone == null) {
             return false;
         }
@@ -903,29 +903,29 @@ public class RadioInfo extends Activity {
         return ImsManager.isVolteProvisionedOnDevice(this.phone.getContext());
     }
 
-    public void updateImsVoLteProvisionedState() {
+    private void updateImsVoLteProvisionedState() {
         log("updateImsVoLteProvisionedState isImsVoLteProvisioned()=" + isImsVoLteProvisioned());
         String buttonText = isImsVoLteProvisioned() ? getString(R.string.volte_provisioned_flag_off) : getString(R.string.volte_provisioned_flag_on);
         this.imsVoLteProvisionedButton.setText(buttonText);
     }
 
-    public void updateSmsOverImsState() {
+    private void updateSmsOverImsState() {
         log("updateSmsOverImsState isSmsOverImsEnabled()=" + isSmsOverImsEnabled());
         String buttonText = isSmsOverImsEnabled() ? getString(R.string.sms_over_ims_off) : getString(R.string.sms_over_ims_on);
         this.smsOverImsButton.setText(buttonText);
     }
 
-    public boolean isLteRamDumpEnabled() {
+    private boolean isLteRamDumpEnabled() {
         return SystemProperties.getBoolean("persist.radio.ramdump", false);
     }
 
-    public void updateLteRamDumpState() {
+    private void updateLteRamDumpState() {
         log("updateLteRamDumpState isLteRamDumpEnabled()=" + isLteRamDumpEnabled());
         String buttonText = isLteRamDumpEnabled() ? getString(R.string.lte_ram_dump_off) : getString(R.string.lte_ram_dump_on);
         this.lteRamDumpButton.setText(buttonText);
     }
 
-    public void log(String s) {
+    private void log(String s) {
         Log.d("phone", "[RadioInfo] " + s);
     }
 }

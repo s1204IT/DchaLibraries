@@ -7,7 +7,7 @@ class PaintCache extends SoftReferenceThreadLocal<Paint> {
     }
 
     @Override
-    public Paint initialValue() {
+    protected Paint initialValue() {
         return null;
     }
 }

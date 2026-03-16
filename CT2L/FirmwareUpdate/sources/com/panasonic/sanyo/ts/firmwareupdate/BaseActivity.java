@@ -297,7 +297,7 @@ public class BaseActivity extends Activity implements Runnable {
         }
     }
 
-    public void CancelAction(boolean action) {
+    private void CancelAction(boolean action) {
         Log.v("CancelAction", "start");
         File Updatefile = new File("/cache/update.zip");
         if (Updatefile.exists()) {

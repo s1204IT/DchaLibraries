@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="modeHiragana">
+            <case iwnn:keyboardCondition="modeFullKatakana">
+                <case iwnn:keyboardCondition="modeHalfKatakana">
+                    <Row-Key>
+                        <Key
+                            iwnn:codes="-213"
+                            iwnn:keyLabel="@string/ti_key_12key_caps_kana_txt"
+                            iwnn:horizontalGap="@fraction/keyboard_12key_function_horizontal_gap"
+                            iwnn:keyWidth="@fraction/keyboard_12key_input_keywidth"
+                            iwnn:description="@string/ti_description_10key_kana_10"/>
+                    </Row-Key>
+                </case>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="modeFullAlpha">
+            <case iwnn:keyboardCondition="modeHalfAlpha">
+                <Row-Key>
+                    <Key
+                        iwnn:codes="-213"
+                        iwnn:keyLabel="@string/ti_key_12key_caps_alpha_txt"
+                        iwnn:horizontalGap="@fraction/keyboard_12key_function_horizontal_gap"
+                        iwnn:keyWidth="@fraction/keyboard_12key_input_keywidth"
+                        iwnn:description="@string/ti_description_10key_alphabet_10"/>
+                </Row-Key>
+            </case>
+        </case>
+    </switch>
+</Keyboard>

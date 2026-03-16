@@ -305,7 +305,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         updateSystemPreferences();
     }
 
-    public void updateServicesPreferences() {
+    private void updateServicesPreferences() {
         String serviceEnabledString;
         String summaryString;
         this.mServicesCategory.removeAll();
@@ -406,14 +406,14 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         pref.setSummary(enabled ? R.string.accessibility_feature_state_on : R.string.accessibility_feature_state_off);
     }
 
-    public void updateLockScreenRotationCheckbox() {
+    private void updateLockScreenRotationCheckbox() {
         Context context = getActivity();
         if (context != null) {
             this.mToggleLockScreenRotationPreference.setChecked(!RotationPolicy.isRotationLocked(context));
         }
     }
 
-    public void loadInstalledServices() {
+    private void loadInstalledServices() {
         Set<ComponentName> installedServices = sInstalledServices;
         installedServices.clear();
         List<AccessibilityServiceInfo> installedServiceInfos = AccessibilityManager.getInstance(getActivity()).getInstalledAccessibilityServiceList();

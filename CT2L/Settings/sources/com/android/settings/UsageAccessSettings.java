@@ -64,7 +64,7 @@ public class UsageAccessSettings extends SettingsPreferenceFragment implements P
         }
 
         @Override
-        public ArrayMap<String, PackageEntry> doInBackground(Void... params) {
+        protected ArrayMap<String, PackageEntry> doInBackground(Void... params) {
             try {
                 String[] packages = this.mIPackageManager.getAppOpPermissionPackages("android.permission.PACKAGE_USAGE_STATS");
                 if (packages == null) {
@@ -124,7 +124,7 @@ public class UsageAccessSettings extends SettingsPreferenceFragment implements P
         }
 
         @Override
-        public void onPostExecute(ArrayMap<String, PackageEntry> newEntries) {
+        protected void onPostExecute(ArrayMap<String, PackageEntry> newEntries) {
             UsageAccessSettings.this.mLastFetcherTask = null;
             if (UsageAccessSettings.this.getActivity() != null) {
                 if (newEntries == null) {
@@ -204,7 +204,7 @@ public class UsageAccessSettings extends SettingsPreferenceFragment implements P
         }
     }
 
-    public void updateInterestedApps() {
+    private void updateInterestedApps() {
         if (this.mLastFetcherTask != null) {
             this.mLastFetcherTask.cancel(true);
         }

@@ -28,7 +28,7 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public QSTile.BooleanState newTileState() {
+    protected QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
     }
 
@@ -53,7 +53,7 @@ public class RotationLockTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState state, Object arg) {
+    protected void handleUpdateState(QSTile.BooleanState state, Object arg) {
         QSTile<QSTile.BooleanState>.AnimationIcon icon;
         if (this.mController != null) {
             boolean rotationLocked = arg != null ? ((QSTile.UserBoolean) arg).value : this.mController.isRotationLocked();

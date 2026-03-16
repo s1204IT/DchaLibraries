@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="modeHiragana">
+            <case iwnn:keyboardCondition="modeFullKatakana">
+                <case iwnn:keyboardCondition="modeHalfKatakana">
+                    <Row-Key>
+                        <Key
+                            iwnn:codes="-106"
+                            iwnn:isModifier="true"
+                            iwnn:isSticky="false"
+                            iwnn:keyEdgeFlags="left"
+                            iwnn:keyLabel="@string/ti_key_symbol_txt"
+                            iwnn:keyWidth="@fraction/keyboard_qwerty_shift_keywidth"
+                            iwnn:isSecondKey="true"
+                            iwnn:keyPreviewLabel="@string/ti_key_symbol_txt"
+                            iwnn:description="@string/ti_description_key_symbol"/>
+                    </Row-Key>
+                </case>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="modeFullAlpha">
+            <case iwnn:keyboardCondition="modeHalfAlpha">
+                <Row-Key>
+                    <Key
+                        iwnn:codes="-1"
+                        iwnn:isModifier="true"
+                        iwnn:isSticky="true"
+                        iwnn:keyEdgeFlags="left"
+                        iwnn:keyIcon="@drawable/key_qwerty_shift"
+                        iwnn:keyWidth="@fraction/keyboard_qwerty_shift_keywidth"
+                        iwnn:isSecondKey="true"
+                        iwnn:description="@string/ti_description_key_shift"/>
+                </Row-Key>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="modeFullNum">
+            <case iwnn:keyboardCondition="modeHalfNum">
+                <Row-Key>
+                    <Key
+                        iwnn:codes="-1"
+                        iwnn:isModifier="true"
+                        iwnn:isSticky="true"
+                        iwnn:keyEdgeFlags="left"
+                        iwnn:keyIcon="@drawable/key_qwerty_shift"
+                        iwnn:keyWidth="@fraction/keyboard_qwerty_shift_keywidth"
+                        iwnn:isSecondKey="true"
+                        iwnn:description="@string/ti_description_key_symbol_switch"/>
+                </Row-Key>
+            </case>
+        </case>
+    </switch>
+</Keyboard>

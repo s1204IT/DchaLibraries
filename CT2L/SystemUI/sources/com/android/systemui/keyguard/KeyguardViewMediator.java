@@ -639,7 +639,7 @@ public class KeyguardViewMediator extends SystemUI {
         this.mHandler.sendMessage(msg);
     }
 
-    public void handleSetOccluded(boolean isOccluded) {
+    private void handleSetOccluded(boolean isOccluded) {
         synchronized (this) {
             if (this.mOccluded != isOccluded) {
                 this.mOccluded = isOccluded;
@@ -660,7 +660,7 @@ public class KeyguardViewMediator extends SystemUI {
         return this.mShowing || this.mNeedToReshowWhenReenabled || shouldWaitForProvisioning();
     }
 
-    public void updateInputRestricted() {
+    private void updateInputRestricted() {
         synchronized (this) {
             updateInputRestrictedLocked();
         }
@@ -681,7 +681,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void doKeyguardLocked(Bundle options) {
+    private void doKeyguardLocked(Bundle options) {
         if (this.mExternallyEnabled) {
             if (this.mStatusBarKeyguardViewManager.isShowing()) {
                 resetStateLocked();
@@ -704,7 +704,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public boolean shouldWaitForProvisioning() {
+    private boolean shouldWaitForProvisioning() {
         return (this.mUpdateMonitor.isDeviceProvisioned() || isSecure()) ? false : true;
     }
 
@@ -718,7 +718,7 @@ public class KeyguardViewMediator extends SystemUI {
         this.mHandler.sendEmptyMessage(17);
     }
 
-    public void resetStateLocked() {
+    private void resetStateLocked() {
         Message msg = this.mHandler.obtainMessage(4);
         this.mHandler.sendMessage(msg);
     }
@@ -761,7 +761,7 @@ public class KeyguardViewMediator extends SystemUI {
         this.mHandler.sendMessage(msg);
     }
 
-    public void handleKeyguardDone(boolean authenticated, boolean wakeup) {
+    private void handleKeyguardDone(boolean authenticated, boolean wakeup) {
         synchronized (this) {
             resetKeyguardDonePendingLocked();
         }
@@ -785,7 +785,7 @@ public class KeyguardViewMediator extends SystemUI {
         handleHide();
     }
 
-    public void sendUserPresentBroadcast() {
+    private void sendUserPresentBroadcast() {
         synchronized (this) {
             if (this.mBootCompleted) {
                 UserHandle currentUser = new UserHandle(this.mLockPatternUtils.getCurrentUser());
@@ -800,7 +800,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleKeyguardDoneDrawing() {
+    private void handleKeyguardDoneDrawing() {
         synchronized (this) {
             if (this.mWaitingUntilKeyguardVisible) {
                 this.mWaitingUntilKeyguardVisible = false;
@@ -838,7 +838,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void playTrustedSound() {
+    private void playTrustedSound() {
         if (!this.mSuppressNextLockSound) {
             playSound(this.mTrustedSoundId);
         }
@@ -851,7 +851,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleShow(Bundle options) {
+    private void handleShow(Bundle options) {
         synchronized (this) {
             if (this.mSystemReady) {
                 setShowingLocked(true);
@@ -869,7 +869,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleHide() {
+    private void handleHide() {
         synchronized (this) {
             this.mHiding = true;
             if (this.mShowing && !this.mOccluded) {
@@ -884,13 +884,13 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleOnActivityDrawn() {
+    private void handleOnActivityDrawn() {
         if (this.mKeyguardDonePending) {
             this.mStatusBarKeyguardViewManager.onActivityDrawn();
         }
     }
 
-    public void handleStartKeyguardExitAnimation(long startTime, long fadeoutDuration) {
+    private void handleStartKeyguardExitAnimation(long startTime, long fadeoutDuration) {
         synchronized (this) {
             if (this.mHiding) {
                 this.mHiding = false;
@@ -908,7 +908,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void adjustStatusBarLocked() {
+    private void adjustStatusBarLocked() {
         if (this.mStatusBarManager == null) {
             this.mStatusBarManager = (StatusBarManager) this.mContext.getSystemService("statusbar");
         }
@@ -929,13 +929,13 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleReset() {
+    private void handleReset() {
         synchronized (this) {
             this.mStatusBarKeyguardViewManager.reset();
         }
     }
 
-    public void handleVerifyUnlock() {
+    private void handleVerifyUnlock() {
         synchronized (this) {
             setShowingLocked(true);
             this.mStatusBarKeyguardViewManager.verifyUnlock();
@@ -943,19 +943,19 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleNotifyScreenOff() {
+    private void handleNotifyScreenOff() {
         synchronized (this) {
             this.mStatusBarKeyguardViewManager.onScreenTurnedOff();
         }
     }
 
-    public void handleNotifyScreenOn(IKeyguardShowCallback callback) {
+    private void handleNotifyScreenOn(IKeyguardShowCallback callback) {
         synchronized (this) {
             this.mStatusBarKeyguardViewManager.onScreenTurnedOn(callback);
         }
     }
 
-    public void resetKeyguardDonePendingLocked() {
+    private void resetKeyguardDonePendingLocked() {
         this.mKeyguardDonePending = false;
         this.mHandler.removeMessages(20);
     }

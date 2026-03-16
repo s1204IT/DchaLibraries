@@ -318,7 +318,7 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
         return "";
     }
 
-    public static String getFeedbackReporterPackage(Context context) {
+    private static String getFeedbackReporterPackage(Context context) {
         String feedbackReporter = context.getResources().getString(R.string.oem_preferred_feedback_reporter);
         if (!TextUtils.isEmpty(feedbackReporter)) {
             Intent intent = new Intent("android.intent.action.BUG_REPORT");

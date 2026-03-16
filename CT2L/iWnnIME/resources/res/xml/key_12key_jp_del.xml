@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <Row-Key>
+        <Key
+            iwnn:codes="-100"
+            iwnn:isRepeatable="true"
+            iwnn:keyEdgeFlags="right"
+            iwnn:keyIcon="@drawable/key_del"
+            iwnn:horizontalGap="@fraction/keyboard_12key_function_horizontal_gap"
+            iwnn:keyWidth="@fraction/keyboard_12key_function_keywidth"
+            iwnn:isSecondKey="true"
+            iwnn:description="@string/ti_description_key_backspace"/>
+    </Row-Key>
+</Keyboard>

@@ -159,7 +159,7 @@ public class ConfirmLockPattern extends SettingsActivity {
             }
         }
 
-        public void updateStage(Stage stage) {
+        private void updateStage(Stage stage) {
             switch (stage) {
                 case NeedToUnlock:
                     if (this.mHeaderText != null) {
@@ -198,12 +198,12 @@ public class ConfirmLockPattern extends SettingsActivity {
             this.mHeaderTextView.announceForAccessibility(this.mHeaderTextView.getText());
         }
 
-        public void postClearPatternRunnable() {
+        private void postClearPatternRunnable() {
             this.mLockPatternView.removeCallbacks(this.mClearPatternRunnable);
             this.mLockPatternView.postDelayed(this.mClearPatternRunnable, 2000L);
         }
 
-        public void handleAttemptLockout(long elapsedRealtimeDeadline) {
+        private void handleAttemptLockout(long elapsedRealtimeDeadline) {
             updateStage(Stage.LockedOut);
             long elapsedRealtime = SystemClock.elapsedRealtime();
             this.mCountdownTimer = new CountDownTimer(elapsedRealtimeDeadline - elapsedRealtime, 1000L) {

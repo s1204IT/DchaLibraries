@@ -127,7 +127,7 @@ public class TrustDrawable extends Drawable {
         }
     }
 
-    public void updateState(boolean allowTransientState) {
+    private void updateState(boolean allowTransientState) {
         if (this.mAnimating) {
             int nextState = this.mState;
             if (this.mState == -1) {

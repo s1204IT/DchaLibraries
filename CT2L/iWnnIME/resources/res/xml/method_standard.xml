@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+    android:isDefault="@bool/im_is_default"
+    android:settingsActivity="jp.co.omronsoft.iwnnime.ml.controlpanel.ControlPanelStandard"
+    android:supportsSwitchingToNextInputMethod="true">
+    <subtype
+        android:label="@string/ti_choose_language_entry_ja_txt"
+        android:icon="@drawable/iwnnime_icon"
+        android:imeSubtypeLocale="ja"
+        android:imeSubtypeMode="keyboard"/>
+    <subtype
+        android:label="@string/ti_choose_language_entry_emoji_txt"
+        android:icon="@drawable/iwnnime_icon"
+        android:imeSubtypeLocale="emoji"
+        android:imeSubtypeMode="keyboard"/>
+</input-method>

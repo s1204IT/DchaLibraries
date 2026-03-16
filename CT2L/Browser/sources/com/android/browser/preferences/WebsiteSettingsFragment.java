@@ -179,7 +179,7 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             }
         }
 
-        public void addFeatureToSite(Map<String, Site> sites, String origin, int feature) {
+        private void addFeatureToSite(Map<String, Site> sites, String origin, int feature) {
             Site site;
             if (sites.containsKey(origin)) {
                 site = sites.get(origin);
@@ -237,7 +237,7 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             }
 
             @Override
-            public Void doInBackground(Void... unused) {
+            protected Void doInBackground(Void... unused) {
                 Set<Site> hostSites;
                 HashMap<String, Set<Site>> hosts = new HashMap<>();
                 Set<Map.Entry<String, Site>> elements = this.mSites.entrySet();
@@ -288,7 +288,7 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             }
 
             @Override
-            public void onPostExecute(Void unused) {
+            protected void onPostExecute(Void unused) {
                 if (this.mDataSetChanged) {
                     SiteAdapter.this.notifyDataSetChanged();
                 }
@@ -528,7 +528,7 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
         this.mAdapter.askForOrigins();
     }
 
-    public void finish() {
+    private void finish() {
         PreferenceActivity activity = (PreferenceActivity) getActivity();
         if (activity != null) {
             activity.finishPreferencePanel(this, 0, null);

@@ -173,7 +173,7 @@ public class GoogleAccountLogin implements AccountManagerCallback<Bundle>, Dialo
         return lastLogin != -1;
     }
 
-    public synchronized void done() {
+    private synchronized void done() {
         if (this.mRunnable != null) {
             Log.d("BrowserLogin", "Finished login attempt for " + this.mAccount.name);
             this.mActivity.runOnUiThread(this.mRunnable);

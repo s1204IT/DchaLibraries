@@ -7,7 +7,7 @@ class BitmapCache extends SoftReferenceThreadLocal<Bitmap> {
     }
 
     @Override
-    public Bitmap initialValue() {
+    protected Bitmap initialValue() {
         return null;
     }
 }

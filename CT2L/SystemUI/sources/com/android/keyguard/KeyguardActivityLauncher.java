@@ -130,7 +130,7 @@ public abstract class KeyguardActivityLauncher {
         requestDismissKeyguard();
     }
 
-    public void dismissKeyguardOnNextActivity() {
+    private void dismissKeyguardOnNextActivity() {
         try {
             WindowManagerGlobal.getWindowManagerService().dismissKeyguard();
         } catch (RemoteException e) {
@@ -138,7 +138,7 @@ public abstract class KeyguardActivityLauncher {
         }
     }
 
-    public void startActivityForCurrentUser(final Intent intent, final Bundle options, Handler worker, final Runnable onStarted) {
+    private void startActivityForCurrentUser(final Intent intent, final Bundle options, Handler worker, final Runnable onStarted) {
         final UserHandle user = new UserHandle(-2);
         if (worker == null || onStarted == null) {
             getContext().startActivityAsUser(intent, options, user);

@@ -141,9 +141,9 @@ public class Sbox extends Service {
         }
     };
 
-    public static native String getJSONString();
+    private static native String getJSONString();
 
-    public static native int setJSONString(String str);
+    private static native int setJSONString(String str);
 
     static {
         System.loadLibrary("sbox");
@@ -169,7 +169,7 @@ public class Sbox extends Service {
         }
     }
 
-    public String cipher(String str) throws RemoteException {
+    private String cipher(String str) throws RemoteException {
         try {
             byte[] kagi = getSignatures();
             SecretKeySpec sks = new SecretKeySpec(kagi, "AES");

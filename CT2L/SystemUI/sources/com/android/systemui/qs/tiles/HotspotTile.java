@@ -35,7 +35,7 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public QSTile.BooleanState newTileState() {
+    protected QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
     }
 
@@ -70,7 +70,7 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState state, Object arg) {
+    protected void handleUpdateState(QSTile.BooleanState state, Object arg) {
         state.visible = this.mController.isHotspotSupported() && this.mUsageTracker.isRecentlyUsed();
         state.label = this.mContext.getString(R.string.quick_settings_hotspot_label);
         state.value = this.mController.isHotspotEnabled();
@@ -82,7 +82,7 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
         return ((QSTile.BooleanState) this.mState).value ? this.mContext.getString(R.string.accessibility_quick_settings_hotspot_changed_on) : this.mContext.getString(R.string.accessibility_quick_settings_hotspot_changed_off);
     }
 
-    public static UsageTracker newUsageTracker(Context context) {
+    private static UsageTracker newUsageTracker(Context context) {
         return new UsageTracker(context, HotspotTile.class, R.integer.days_to_show_hotspot_tile);
     }
 

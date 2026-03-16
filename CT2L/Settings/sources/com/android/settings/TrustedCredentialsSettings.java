@@ -82,7 +82,7 @@ public class TrustedCredentialsSettings extends Fragment {
             this.mSwitch = withSwitch;
         }
 
-        public List<ParcelableString> getAliases(IKeyChainService service) throws RemoteException {
+        private List<ParcelableString> getAliases(IKeyChainService service) throws RemoteException {
             switch (this) {
                 case SYSTEM:
                     return service.getSystemCaAliases().getList();
@@ -93,7 +93,7 @@ public class TrustedCredentialsSettings extends Fragment {
             }
         }
 
-        public boolean deleted(IKeyChainService service, String alias) throws RemoteException {
+        private boolean deleted(IKeyChainService service, String alias) throws RemoteException {
             switch (this) {
                 case SYSTEM:
                     return !service.containsCaAlias(alias);
@@ -104,7 +104,7 @@ public class TrustedCredentialsSettings extends Fragment {
             }
         }
 
-        public int getButtonLabel(CertHolder certHolder) {
+        private int getButtonLabel(CertHolder certHolder) {
             switch (this) {
                 case SYSTEM:
                     if (certHolder.mDeleted) {
@@ -118,7 +118,7 @@ public class TrustedCredentialsSettings extends Fragment {
             }
         }
 
-        public int getButtonConfirmation(CertHolder certHolder) {
+        private int getButtonConfirmation(CertHolder certHolder) {
             switch (this) {
                 case SYSTEM:
                     if (certHolder.mDeleted) {
@@ -132,7 +132,7 @@ public class TrustedCredentialsSettings extends Fragment {
             }
         }
 
-        public void postOperationUpdate(boolean ok, CertHolder certHolder) {
+        private void postOperationUpdate(boolean ok, CertHolder certHolder) {
             if (ok) {
                 if (certHolder.mTab.mSwitch) {
                     certHolder.mDeleted = !certHolder.mDeleted;
@@ -392,7 +392,7 @@ public class TrustedCredentialsSettings extends Fragment {
             }
 
             @Override
-            public SparseArray<List<CertHolder>> doInBackground(Void... params) {
+            protected SparseArray<List<CertHolder>> doInBackground(Void... params) {
                 SparseArray<List<CertHolder>> certHoldersByProfile = new SparseArray<>();
                 try {
                     List<UserHandle> profiles = TrustedCredentialsSettings.this.mUserManager.getUserProfiles();
@@ -444,7 +444,7 @@ public class TrustedCredentialsSettings extends Fragment {
             }
 
             @Override
-            public void onProgressUpdate(Integer... progressAndMax) {
+            protected void onProgressUpdate(Integer... progressAndMax) {
                 int progress = progressAndMax[0].intValue();
                 int max = progressAndMax[1].intValue();
                 if (max != this.mProgressBar.getMax()) {
@@ -454,7 +454,7 @@ public class TrustedCredentialsSettings extends Fragment {
             }
 
             @Override
-            public void onPostExecute(SparseArray<List<CertHolder>> certHolders) {
+            protected void onPostExecute(SparseArray<List<CertHolder>> certHolders) {
                 AdapterData.this.mCertHoldersByUserId.clear();
                 int n = certHolders.size();
                 for (int i = 0; i < n; i++) {
@@ -541,7 +541,7 @@ public class TrustedCredentialsSettings extends Fragment {
         }
     }
 
-    public View getViewForCertificate(CertHolder certHolder, Tab mTab, View convertView, ViewGroup parent) {
+    private View getViewForCertificate(CertHolder certHolder, Tab mTab, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -573,7 +573,7 @@ public class TrustedCredentialsSettings extends Fragment {
         }
     }
 
-    public void showCertDialog(final CertHolder certHolder) {
+    private void showCertDialog(final CertHolder certHolder) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(android.R.string.lockscreen_sim_locked_message);
         final ArrayList<View> views = new ArrayList<>();
@@ -689,7 +689,7 @@ public class TrustedCredentialsSettings extends Fragment {
         }
 
         @Override
-        public Boolean doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             boolean zValueOf;
             try {
                 KeyChain.KeyChainConnection keyChainConnection = (KeyChain.KeyChainConnection) TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId.get(this.mCertHolder.mProfileId);
@@ -709,7 +709,7 @@ public class TrustedCredentialsSettings extends Fragment {
         }
 
         @Override
-        public void onPostExecute(Boolean ok) {
+        protected void onPostExecute(Boolean ok) {
             this.mCertHolder.mTab.postOperationUpdate(ok.booleanValue(), this.mCertHolder);
             TrustedCredentialsSettings.this.mAliasOperation = null;
         }

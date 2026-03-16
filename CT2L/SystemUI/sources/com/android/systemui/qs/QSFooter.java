@@ -84,7 +84,7 @@ public class QSFooter implements DialogInterface.OnClickListener, View.OnClickLi
         this.mHandler.sendEmptyMessage(0);
     }
 
-    public void handleClick() {
+    private void handleClick() {
         this.mHost.collapsePanels();
         createDialog();
     }
@@ -93,7 +93,7 @@ public class QSFooter implements DialogInterface.OnClickListener, View.OnClickLi
         this.mHandler.sendEmptyMessage(1);
     }
 
-    public void handleRefreshState() {
+    private void handleRefreshState() {
         if (this.mSecurityController.hasDeviceOwner()) {
             this.mFooterTextId = R.string.device_owned_footer;
             this.mIsVisible = true;

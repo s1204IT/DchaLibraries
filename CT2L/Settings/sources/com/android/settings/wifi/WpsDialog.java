@@ -181,7 +181,7 @@ public class WpsDialog extends AlertDialog {
         }
     }
 
-    public void updateDialog(final DialogState state, final String msg) {
+    private void updateDialog(final DialogState state, final String msg) {
         if (this.mDialogState.ordinal() < state.ordinal()) {
             this.mDialogState = state;
             this.mMsgString = msg;
@@ -229,7 +229,7 @@ public class WpsDialog extends AlertDialog {
         }
     }
 
-    public void handleEvent(Context context, Intent intent) {
+    private void handleEvent(Context context, Intent intent) {
         android.net.wifi.WifiInfo wifiInfo;
         String action = intent.getAction();
         if ("android.net.wifi.STATE_CHANGE".equals(action)) {

@@ -40,7 +40,7 @@ final class Synchronized {
         }
     }
 
-    public static <E> Collection<E> collection(Collection<E> collection, Object mutex) {
+    private static <E> Collection<E> collection(Collection<E> collection, Object mutex) {
         return new SynchronizedCollection(collection, mutex);
     }
 
@@ -52,7 +52,7 @@ final class Synchronized {
         }
 
         @Override
-        public Collection<E> delegate() {
+        Collection<E> delegate() {
             return (Collection) super.delegate();
         }
 
@@ -180,7 +180,7 @@ final class Synchronized {
         }
 
         @Override
-        public Set<E> delegate() {
+        Set<E> delegate() {
             return (Set) super.delegate();
         }
 
@@ -221,7 +221,7 @@ final class Synchronized {
         }
 
         @Override
-        public Map<K, V> delegate() {
+        Map<K, V> delegate() {
             return (Map) super.delegate();
         }
 
@@ -364,7 +364,7 @@ final class Synchronized {
         private transient Set<V> valueSet;
 
         @Override
-        public BiMap<K, V> delegate() {
+        BiMap<K, V> delegate() {
             return (BiMap) super.delegate();
         }
 

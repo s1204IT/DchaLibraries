@@ -145,7 +145,7 @@ public class SwipeHelper {
         return Math.min(Math.max(this.mMinSwipeProgress, result), this.mMaxSwipeProgress);
     }
 
-    public void updateSwipeProgressFromOffset(View animView, boolean dismissable) {
+    private void updateSwipeProgressFromOffset(View animView, boolean dismissable) {
         float swipeProgress = getSwipeProgressForOffset(animView);
         if (!this.mCallback.updateSwipeProgress(animView, dismissable, swipeProgress) && dismissable) {
             if (swipeProgress != 0.0f && swipeProgress != 1.0f) {

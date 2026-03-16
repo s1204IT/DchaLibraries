@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="PopupTitleText" parent="">
+        <item name="android:textSize">@dimen/popup_title_text_size</item>
+        <item name="android:textColor">@color/popup_title_color</item>
+        <item name="android:layout_gravity">0x13</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <style name="ViewfinderLabelLayout" parent="">
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:layout_marginLeft">13dp</item>
+        <item name="android:layout_marginTop">13dp</item>
+        <item name="android:layout_marginRight">@dimen/indicator_bar_width</item>
+        <item name="android:layout_marginBottom">13dp</item>
+    </style>
+    <style name="SettingPopupWindow" parent="">
+        <item name="android:visibility">2</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_marginRight">@dimen/setting_popup_right_margin</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+    <style name="ReviewControlIcon" parent="">
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/bg_pressed</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">@dimen/switcher_size</item>
+        <item name="android:layout_height">@dimen/switcher_size</item>
+        <item name="android:layout_centerHorizontal">true</item>
+    </style>
+    <style name="SettingPopupWindow_xlarge" parent="">
+        <item name="android:visibility">2</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_marginRight">@dimen/setting_popup_right_margin</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
+    </style>
+    <style name="ActionBarTwoLinePrimary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

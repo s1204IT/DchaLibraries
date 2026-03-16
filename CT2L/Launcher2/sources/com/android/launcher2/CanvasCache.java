@@ -7,7 +7,7 @@ class CanvasCache extends SoftReferenceThreadLocal<Canvas> {
     }
 
     @Override
-    public Canvas initialValue() {
+    protected Canvas initialValue() {
         return new Canvas();
     }
 }

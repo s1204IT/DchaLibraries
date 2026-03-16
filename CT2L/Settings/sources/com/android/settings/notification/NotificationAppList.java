@@ -211,7 +211,7 @@ public class NotificationAppList extends PinnedHeaderListFragment implements Ada
         AsyncTask.execute(this.mCollectAppsRunnable);
     }
 
-    public String getSection(CharSequence label) {
+    private String getSection(CharSequence label) {
         char c;
         return (label == null || label.length() == 0 || (c = Character.toUpperCase(label.charAt(0))) < 'A') ? "*" : c > 'Z' ? "**" : Character.toString(c);
     }
@@ -440,7 +440,7 @@ public class NotificationAppList extends PinnedHeaderListFragment implements Ada
         }
     }
 
-    public void refreshDisplayedItems() {
+    private void refreshDisplayedItems() {
         if (DEBUG) {
             Log.d("NotificationAppList", "Refreshing apps...");
         }

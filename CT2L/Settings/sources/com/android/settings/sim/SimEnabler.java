@@ -194,7 +194,7 @@ public class SimEnabler implements Preference.OnPreferenceChangeListener, Prefer
         this.mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
     }
 
-    public void onSimEnableChanged(ServiceState serviceState) {
+    private void onSimEnableChanged(ServiceState serviceState) {
         int state = serviceState.getState();
         Log.d(this.mTag, "onSimEnableChanged, state: " + state);
         this.mSimEnablePref.setTitle(this.mEnableTitlePrefix + getNetworkHint());

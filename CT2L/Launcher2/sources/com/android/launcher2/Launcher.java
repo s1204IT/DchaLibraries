@@ -319,18 +319,18 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         }
     }
 
-    public void checkForLocaleChange() {
+    private void checkForLocaleChange() {
         if (sLocaleConfiguration == null) {
             new AsyncTask<Void, Void, LocaleConfiguration>() {
                 @Override
-                public LocaleConfiguration doInBackground(Void... unused) throws Throwable {
+                protected LocaleConfiguration doInBackground(Void... unused) throws Throwable {
                     LocaleConfiguration localeConfiguration = new LocaleConfiguration();
                     Launcher.readConfiguration(Launcher.this, localeConfiguration);
                     return localeConfiguration;
                 }
 
                 @Override
-                public void onPostExecute(LocaleConfiguration result) {
+                protected void onPostExecute(LocaleConfiguration result) {
                     LocaleConfiguration unused = Launcher.sLocaleConfiguration = result;
                     Launcher.this.checkForLocaleChange();
                 }
@@ -371,7 +371,7 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         }
     }
 
-    public static void readConfiguration(Context context, LocaleConfiguration configuration) throws Throwable {
+    private static void readConfiguration(Context context, LocaleConfiguration configuration) throws Throwable {
         DataInputStream in = null;
         try {
             DataInputStream in2 = new DataInputStream(context.openFileInput("launcher.preferences"));
@@ -419,7 +419,7 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         }
     }
 
-    public static void writeConfiguration(Context context, LocaleConfiguration configuration) throws Throwable {
+    private static void writeConfiguration(Context context, LocaleConfiguration configuration) throws Throwable {
         DataOutputStream out;
         DataOutputStream out2 = null;
         try {
@@ -888,7 +888,7 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         return getSpanForWidget(context, info.provider, info.minResizeWidth, info.minResizeHeight);
     }
 
-    public void completeAddAppWidget(final int appWidgetId, long container, int screen, AppWidgetHostView hostView, AppWidgetProviderInfo appWidgetInfo) {
+    private void completeAddAppWidget(final int appWidgetId, long container, int screen, AppWidgetHostView hostView, AppWidgetProviderInfo appWidgetInfo) {
         boolean foundCellSpan;
         if (appWidgetInfo == null) {
             appWidgetInfo = this.mAppWidgetManager.getAppWidgetInfo(appWidgetId);
@@ -1005,14 +1005,14 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         }
     }
 
-    public void sendAdvanceMessage(long delay) {
+    private void sendAdvanceMessage(long delay) {
         this.mHandler.removeMessages(1);
         Message msg = this.mHandler.obtainMessage(1);
         this.mHandler.sendMessageDelayed(msg, delay);
         this.mAutoAdvanceSentTime = System.currentTimeMillis();
     }
 
-    public void updateRunning() {
+    private void updateRunning() {
         boolean autoAdvanceRunning = this.mVisible && this.mUserPresent && !this.mWidgetsToAdvance.isEmpty();
         if (autoAdvanceRunning != this.mAutoAdvanceRunning) {
             this.mAutoAdvanceRunning = autoAdvanceRunning;
@@ -1467,7 +1467,7 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         this.mWorkspace.showOutlinesTemporarily();
     }
 
-    public void onAppWidgetReset() {
+    private void onAppWidgetReset() {
         if (this.mAppWidgetHost != null) {
             this.mAppWidgetHost.startListening();
         }
@@ -1836,7 +1836,7 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         return this.mHotseat.isAllAppsButtonRank(rank);
     }
 
-    public void setPivotsForZoom(View view, float scaleFactor) {
+    private void setPivotsForZoom(View view, float scaleFactor) {
         view.setPivotX(view.getWidth() / 2.0f);
         view.setPivotY(view.getHeight() / 2.0f);
     }
@@ -1866,20 +1866,20 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         }
     }
 
-    public void dispatchOnLauncherTransitionStart(View view, boolean animated, boolean toWorkspace) {
+    private void dispatchOnLauncherTransitionStart(View view, boolean animated, boolean toWorkspace) {
         if (view instanceof LauncherTransitionable) {
             ((LauncherTransitionable) view).onLauncherTransitionStart(this, animated, toWorkspace);
         }
         dispatchOnLauncherTransitionStep(view, 0.0f);
     }
 
-    public void dispatchOnLauncherTransitionStep(View view, float t) {
+    private void dispatchOnLauncherTransitionStep(View view, float t) {
         if (view instanceof LauncherTransitionable) {
             ((LauncherTransitionable) view).onLauncherTransitionStep(this, t);
         }
     }
 
-    public void dispatchOnLauncherTransitionEnd(View view, boolean animated, boolean toWorkspace) {
+    private void dispatchOnLauncherTransitionEnd(View view, boolean animated, boolean toWorkspace) {
         if (view instanceof LauncherTransitionable) {
             ((LauncherTransitionable) view).onLauncherTransitionEnd(this, animated, toWorkspace);
         }
@@ -2653,7 +2653,7 @@ public final class Launcher extends Activity implements View.OnClickListener, Vi
         return diff > ((long) (NEW_APPS_ANIMATION_INACTIVE_TIMEOUT_SECONDS * 1000));
     }
 
-    public void runNewAppsAnimation(boolean immediate) {
+    private void runNewAppsAnimation(boolean immediate) {
         AnimatorSet anim = LauncherAnimUtils.createAnimatorSet();
         Collection<Animator> bounceAnims = new ArrayList<>();
         Collections.sort(this.mNewShortcutAnimateViews, new Comparator<View>() {

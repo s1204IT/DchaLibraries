@@ -548,7 +548,7 @@ public class SlidingPaneLayout extends ViewGroup {
         return result;
     }
 
-    public void invalidateChildRegion(View v) {
+    private void invalidateChildRegion(View v) {
         IMPL.invalidateChildRegion(this, v);
     }
 

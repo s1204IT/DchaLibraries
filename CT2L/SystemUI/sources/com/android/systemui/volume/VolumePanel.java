@@ -242,7 +242,7 @@ public class VolumePanel extends Handler implements DemoMode {
             cleanUp();
         }
 
-        public void cleanUp() {
+        private void cleanUp() {
             synchronized (VolumePanel.sSafetyWarningLock) {
                 AlertDialog unused = VolumePanel.sSafetyWarning = null;
             }
@@ -514,7 +514,7 @@ public class VolumePanel extends Handler implements DemoMode {
         return this.mAudioManager.getStreamVolume(streamType);
     }
 
-    public void setStreamVolume(StreamControl sc, int index, int flags) {
+    private void setStreamVolume(StreamControl sc, int index, int flags) {
         if (sc.streamType == -200) {
             if (sc.controller != null) {
                 sc.controller.setVolumeTo(index, flags);
@@ -594,7 +594,7 @@ public class VolumePanel extends Handler implements DemoMode {
         }
     }
 
-    public void toggleRinger(StreamControl sc) {
+    private void toggleRinger(StreamControl sc) {
         if (this.mHasVibrator) {
             if (this.mAudioManager.getRingerModeInternal() == 2) {
                 this.mAudioManager.setRingerModeInternal(1);
@@ -737,7 +737,7 @@ public class VolumePanel extends Handler implements DemoMode {
         }
     }
 
-    public void showSilentHint() {
+    private void showSilentHint() {
         if (this.mZenPanel != null) {
             this.mZenPanel.showSilentHint();
         }
@@ -761,7 +761,7 @@ public class VolumePanel extends Handler implements DemoMode {
         this.mCallback = callback;
     }
 
-    public void updateTimeoutDelay() {
+    private void updateTimeoutDelay() {
         int i = 10000;
         if (this.mDemoIcon == 0) {
             if (sSafetyWarning != null) {
@@ -779,7 +779,7 @@ public class VolumePanel extends Handler implements DemoMode {
         return this.mZenPanel != null && this.mZenPanel.getVisibility() == 0;
     }
 
-    public void setZenPanelVisible(boolean visible) {
+    private void setZenPanelVisible(boolean visible) {
         if (LOGD) {
             Log.d(this.mTag, "setZenPanelVisible " + visible + " mZenPanel=" + this.mZenPanel);
         }
@@ -796,7 +796,7 @@ public class VolumePanel extends Handler implements DemoMode {
         }
     }
 
-    public void updateStates() {
+    private void updateStates() {
         int count = this.mSliderPanel.getChildCount();
         for (int i = 0; i < count; i++) {
             StreamControl sc = (StreamControl) this.mSliderPanel.getChildAt(i).getTag();
@@ -1268,7 +1268,7 @@ public class VolumePanel extends Handler implements DemoMode {
         }
     }
 
-    public void resetTimeout() {
+    private void resetTimeout() {
         boolean touchExploration = this.mAccessibilityManager.isTouchExplorationEnabled();
         if (LOGD) {
             Log.d(this.mTag, "resetTimeout at " + System.currentTimeMillis() + " delay=" + this.mTimeoutDelay + " touchExploration=" + touchExploration);
@@ -1281,7 +1281,7 @@ public class VolumePanel extends Handler implements DemoMode {
         }
     }
 
-    public void forceTimeout(long delay) {
+    private void forceTimeout(long delay) {
         if (LOGD) {
             Log.d(this.mTag, "forceTimeout delay=" + delay + " callers=" + Debug.getCallers(3));
         }

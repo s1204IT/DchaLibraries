@@ -60,7 +60,7 @@ public class StorageNotification extends SystemUI {
         this.mStorageManager.registerListener(listener);
     }
 
-    public void onUsbMassStorageConnectionChangedAsync(boolean connected) {
+    private void onUsbMassStorageConnectionChangedAsync(boolean connected) {
         this.mUmsAvailable = connected;
         String st = Environment.getExternalStorageState();
         if (connected && (st.equals("removed") || st.equals("checking"))) {
@@ -69,7 +69,7 @@ public class StorageNotification extends SystemUI {
         updateUsbMassStorageNotification(connected);
     }
 
-    public void onStorageStateChangedAsync(String path, String oldState, String newState) {
+    private void onStorageStateChangedAsync(String path, String oldState, String newState) {
         if (newState.equals("shared")) {
             Intent intent = new Intent();
             intent.setClass(this.mContext, UsbStorageActivity.class);

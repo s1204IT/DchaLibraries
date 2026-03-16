@@ -52,7 +52,7 @@ public class SearchBaseUrlHelper implements SharedPreferences.OnSharedPreference
         final HttpHelper.GetRequest request = new HttpHelper.GetRequest("https://www.google.com/searchdomaincheck?format=domain");
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... params) {
+            protected Void doInBackground(Void... params) {
                 try {
                     String domain = SearchBaseUrlHelper.this.mHttpHelper.get(request);
                     SearchBaseUrlHelper.this.setSearchBaseDomain(domain);
@@ -64,11 +64,11 @@ public class SearchBaseUrlHelper implements SharedPreferences.OnSharedPreference
         }.execute(new Void[0]);
     }
 
-    public String getDefaultBaseDomain() {
+    private String getDefaultBaseDomain() {
         return this.mContext.getResources().getString(R.string.default_search_domain);
     }
 
-    public void setSearchBaseDomain(String domain) {
+    private void setSearchBaseDomain(String domain) {
         this.mSearchSettings.setSearchBaseDomain(domain);
     }
 

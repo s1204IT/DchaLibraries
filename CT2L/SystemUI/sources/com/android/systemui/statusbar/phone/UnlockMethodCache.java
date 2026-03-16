@@ -77,7 +77,7 @@ public class UnlockMethodCache {
         this.mListeners.add(listener);
     }
 
-    public void update(boolean updateAlways) {
+    private void update(boolean updateAlways) {
         int user = this.mLockPatternUtils.getCurrentUser();
         boolean secure = this.mLockPatternUtils.isSecure();
         boolean currentlyInsecure = !secure || this.mKeyguardUpdateMonitor.getUserHasTrust(user);

@@ -234,7 +234,7 @@ public final class DeviceProfilesSettings extends SettingsPreferenceFragment imp
         showOrHideProfileGroup();
     }
 
-    public void refreshProfilePreference(CheckBoxPreference profilePref, LocalBluetoothProfile profile) {
+    private void refreshProfilePreference(CheckBoxPreference profilePref, LocalBluetoothProfile profile) {
         BluetoothDevice device = this.mCachedDevice.getDevice();
         profilePref.setEnabled(!this.mCachedDevice.isBusy());
         if (profile instanceof MapProfile) {

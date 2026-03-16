@@ -234,7 +234,7 @@ public class TabletInfoSettingActivity extends PreferenceActivity {
         return false;
     }
 
-    public void hideNavigationBar(boolean hide) {
+    private void hideNavigationBar(boolean hide) {
         Logger.d("TabletInfoSettingActivity", "hideNavigationBar 0001");
         try {
             Logger.d("TabletInfoSettingActivity", "hideNavigationBar 0002");

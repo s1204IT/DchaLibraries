@@ -65,7 +65,7 @@ public class NetworkStateHandler {
         return this.mIsNetworkUp;
     }
 
-    public void sendNetworkType(String type, String subtype) {
+    private void sendNetworkType(String type, String subtype) {
         this.mController.getCurrentWebView();
     }
 }

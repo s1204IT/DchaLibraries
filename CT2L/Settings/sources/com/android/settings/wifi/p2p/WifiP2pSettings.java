@@ -370,7 +370,7 @@ public class WifiP2pSettings extends SettingsPreferenceFragment implements WifiP
         }
     }
 
-    public void handlePeersChanged() {
+    private void handlePeersChanged() {
         this.mPeersGroup.removeAll();
         this.mConnectedDevices = 0;
         for (WifiP2pDevice peer : this.mPeers.getDeviceList()) {
@@ -402,14 +402,14 @@ public class WifiP2pSettings extends SettingsPreferenceFragment implements WifiP
         handlePeersChanged();
     }
 
-    public void handleP2pStateChanged() {
+    private void handleP2pStateChanged() {
         updateSearchMenu(false);
         this.mThisDevicePref.setEnabled(this.mWifiP2pEnabled);
         this.mPeersGroup.setEnabled(this.mWifiP2pEnabled);
         this.mPersistentGroup.setEnabled(this.mWifiP2pEnabled);
     }
 
-    public void updateSearchMenu(boolean searching) {
+    private void updateSearchMenu(boolean searching) {
         this.mWifiP2pSearching = searching;
         Activity activity = getActivity();
         if (activity != null) {
@@ -417,7 +417,7 @@ public class WifiP2pSettings extends SettingsPreferenceFragment implements WifiP
         }
     }
 
-    public void startSearch() {
+    private void startSearch() {
         if (this.mWifiP2pManager != null && !this.mWifiP2pSearching) {
             this.mWifiP2pManager.discoverPeers(this.mChannel, new WifiP2pManager.ActionListener() {
                 @Override
@@ -431,7 +431,7 @@ public class WifiP2pSettings extends SettingsPreferenceFragment implements WifiP
         }
     }
 
-    public void updateDevicePref() {
+    private void updateDevicePref() {
         if (this.mThisDevice != null) {
             if (TextUtils.isEmpty(this.mThisDevice.deviceName)) {
                 this.mThisDevicePref.setTitle(this.mThisDevice.deviceAddress);

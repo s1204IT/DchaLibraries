@@ -170,7 +170,7 @@ final class BluetoothDiscoverableEnabler implements Preference.OnPreferenceClick
         }
     }
 
-    public void updateCountdownSummary() {
+    private void updateCountdownSummary() {
         int mode = this.mLocalAdapter.getScanMode();
         if (mode == 23) {
             long currentTimestamp = System.currentTimeMillis();

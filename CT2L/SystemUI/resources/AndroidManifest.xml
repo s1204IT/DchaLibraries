@@ -83,7 +83,7 @@
         android:theme="@style/systemui_theme"
         android:label="@string/app_label"
         android:icon="@drawable/icon"
-        android:name=".SystemUIApplication"
+        android:name="com.android.systemui.SystemUIApplication"
         android:allowClearUserData="false"
         android:persistent="true"
         android:process="com.android.systemui"
@@ -94,25 +94,25 @@
             android:name="SystemUIService"
             android:exported="true"/>
         <service
-            android:name=".screenshot.TakeScreenshotService"
+            android:name="com.android.systemui.screenshot.TakeScreenshotService"
             android:exported="false"
             android:process=":screenshot"/>
         <service
-            android:name=".LoadAverageService"
+            android:name="com.android.systemui.LoadAverageService"
             android:exported="true"/>
         <service
-            android:name=".ImageWallpaper"
+            android:name="com.android.systemui.ImageWallpaper"
             android:permission="android.permission.BIND_WALLPAPER"
             android:exported="true"/>
         <receiver
-            android:name=".BootReceiver"
+            android:name="com.android.systemui.BootReceiver"
             androidprv:locale="true">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".qs.tiles.HotspotTile$APChangedReceiver"
+            android:name="com.android.systemui.qs.tiles.HotspotTile.APChangedReceiver"
             androidprv:locale="true">
             <intent-filter>
                 <action android:name="android.net.wifi.WIFI_AP_STATE_CHANGED"/>
@@ -120,7 +120,7 @@
         </receiver>
         <activity
             android:label="@android:string/indeterminate_progress_23"
-            android:name=".usb.UsbStorageActivity"
+            android:name="com.android.systemui.usb.UsbStorageActivity"
             android:excludeFromRecents="true"/>
         <activity
             android:theme="@android:style/Widget.DeviceDefault.FragmentBreadCrumbs"
@@ -129,7 +129,7 @@
         <activity
             android:theme="@style/RecentsStyle"
             android:label="@string/accessibility_desc_recent_apps"
-            android:name=".recent.RecentsActivity"
+            android:name="com.android.systemui.recent.RecentsActivity"
             android:exported="true"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
@@ -139,7 +139,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".recent.RecentsPreloadReceiver"
+            android:name="com.android.systemui.recent.RecentsPreloadReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.android.systemui.recent.action.PRELOAD"/>
@@ -149,7 +149,7 @@
         <activity
             android:theme="@style/config_recents_activity_theme"
             android:label="@string/accessibility_desc_recent_apps"
-            android:name=".recents.RecentsActivity"
+            android:name="com.android.systemui.recents.RecentsActivity"
             android:exported="false"
             android:stateNotNeeded="true"
             android:excludeFromRecents="true"
@@ -160,7 +160,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".recents.RecentsUserEventProxyReceiver"
+            android:name="com.android.systemui.recents.RecentsUserEventProxyReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.android.systemui.recents.action.SHOW_RECENTS_FOR_USER"/>
@@ -172,41 +172,41 @@
         </receiver>
         <activity
             android:theme="@style/Theme.SystemUI.Dialog.Alert"
-            android:name=".usb.UsbConfirmActivity"
+            android:name="com.android.systemui.usb.UsbConfirmActivity"
             android:permission="android.permission.MANAGE_USB"
             android:exported="true"
             android:excludeFromRecents="true"
             android:finishOnCloseSystemDialogs="true"/>
         <activity
             android:theme="@style/Theme.SystemUI.Dialog.Alert"
-            android:name=".usb.UsbPermissionActivity"
+            android:name="com.android.systemui.usb.UsbPermissionActivity"
             android:permission="android.permission.MANAGE_USB"
             android:exported="true"
             android:excludeFromRecents="true"
             android:finishOnCloseSystemDialogs="true"/>
         <activity
             android:theme="@style/Theme.SystemUI.Dialog.Alert"
-            android:name=".usb.UsbResolverActivity"
+            android:name="com.android.systemui.usb.UsbResolverActivity"
             android:permission="android.permission.MANAGE_USB"
             android:exported="true"
             android:excludeFromRecents="true"
             android:finishOnCloseSystemDialogs="true"/>
         <activity
             android:theme="@style/Theme.SystemUI.Dialog.Alert"
-            android:name=".usb.UsbAccessoryUriActivity"
+            android:name="com.android.systemui.usb.UsbAccessoryUriActivity"
             android:permission="android.permission.MANAGE_USB"
             android:exported="true"
             android:excludeFromRecents="true"
             android:finishOnCloseSystemDialogs="true"/>
         <activity
             android:theme="@style/Theme.SystemUI.Dialog.Alert"
-            android:name=".usb.UsbDebuggingActivity"
+            android:name="com.android.systemui.usb.UsbDebuggingActivity"
             android:permission="android.permission.MANAGE_USB"
             android:excludeFromRecents="true"
             android:finishOnCloseSystemDialogs="true"/>
         <activity
             android:theme="@android:style/Theme.DeviceDefault.Light.Panel"
-            android:name=".net.NetworkOverLimitActivity"
+            android:name="com.android.systemui.net.NetworkOverLimitActivity"
             android:permission="android.permission.MANAGE_NETWORK_POLICY"
             android:exported="true"
             android:taskAffinity="com.android.systemui.net"
@@ -215,7 +215,7 @@
             android:finishOnCloseSystemDialogs="true"/>
         <activity
             android:theme="@style/Theme.AlertDialogHost"
-            android:name=".media.MediaProjectionPermissionActivity"
+            android:name="com.android.systemui.media.MediaProjectionPermissionActivity"
             android:exported="true"
             android:excludeFromRecents="true"
             android:launchMode="singleTop"
@@ -223,7 +223,7 @@
         <activity
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
             android:label="@string/dessert_case"
-            android:name=".DessertCase"
+            android:name="com.android.systemui.DessertCase"
             android:exported="true"
             android:process=":sweetsweetdesserts"
             android:excludeFromRecents="true"
@@ -238,7 +238,7 @@
         <activity
             android:theme="@android:style/Theme.Material.Light.NoActionBar"
             android:label="@string/lland"
-            android:name=".egg.LLandActivity"
+            android:name="com.android.systemui.egg.LLandActivity"
             android:exported="true"
             android:process=":sweetsweetdesserts"
             android:excludeFromRecents="true"
@@ -253,7 +253,7 @@
         </activity>
         <service
             android:label="@string/dessert_case"
-            android:name=".DessertCaseDream"
+            android:name="com.android.systemui.DessertCaseDream"
             android:permission="android.permission.BIND_DREAM_SERVICE"
             android:enabled="false"
             android:exported="true"
@@ -264,14 +264,14 @@
             </intent-filter>
         </service>
         <service
-            android:name=".keyguard.KeyguardService"
+            android:name="com.android.systemui.keyguard.KeyguardService"
             android:enabled="@bool/config_enableKeyguardService"
             android:exported="true"/>
         <activity
             android:theme="@android:style/Theme.Wallpaper.NoTitleBar"
             android:label="@string/start_dreams"
             android:icon="@mipmap/ic_launcher_dreams"
-            android:name=".Somnambulator"
+            android:name="com.android.systemui.Somnambulator"
             android:exported="true"
             android:excludeFromRecents="true">
             <intent-filter>
@@ -283,7 +283,7 @@
         <activity
             android:theme="@android:style/Theme.DeviceDefault.Dialog"
             android:label="@string/quick_settings_brightness_dialog_title"
-            android:name=".settings.BrightnessDialog"
+            android:name="com.android.systemui.settings.BrightnessDialog"
             android:exported="true"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
@@ -294,7 +294,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".doze.DozeService"
+            android:name="com.android.systemui.doze.DozeService"
             android:permission="android.permission.BIND_DREAM_SERVICE"
             android:exported="true"
             android:singleUser="true"/>

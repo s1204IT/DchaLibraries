@@ -214,7 +214,7 @@ public class FlashlightController {
         return chosen;
     }
 
-    public void postUpdateFlashlight() {
+    private void postUpdateFlashlight() {
         ensureHandler();
         this.mHandler.post(this.mUpdateFlashlightRunnable);
     }
@@ -232,7 +232,7 @@ public class FlashlightController {
         return null;
     }
 
-    public void updateFlashlight(boolean forceDisable) {
+    private void updateFlashlight(boolean forceDisable) {
         boolean enabled;
         try {
             synchronized (this) {
@@ -277,7 +277,7 @@ public class FlashlightController {
         }
     }
 
-    public void teardown() {
+    private void teardown() {
         this.mCameraDevice = null;
         this.mSession = null;
         this.mFlashlightRequest = null;
@@ -289,7 +289,7 @@ public class FlashlightController {
         this.mSurfaceTexture = null;
     }
 
-    public void handleError() {
+    private void handleError() {
         synchronized (this) {
             this.mFlashlightEnabled = false;
         }
@@ -298,7 +298,7 @@ public class FlashlightController {
         updateFlashlight(true);
     }
 
-    public void dispatchOff() {
+    private void dispatchOff() {
         dispatchListeners(1, false);
     }
 
@@ -306,7 +306,7 @@ public class FlashlightController {
         dispatchListeners(0, false);
     }
 
-    public void dispatchAvailabilityChanged(boolean available) {
+    private void dispatchAvailabilityChanged(boolean available) {
         dispatchListeners(2, available);
     }
 

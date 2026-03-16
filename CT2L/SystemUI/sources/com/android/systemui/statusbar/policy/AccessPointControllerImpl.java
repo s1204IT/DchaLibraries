@@ -170,7 +170,7 @@ public class AccessPointControllerImpl implements NetworkController.AccessPointC
         return rt;
     }
 
-    public void updateAccessPoints() {
+    private void updateAccessPoints() {
         WifiInfo wifiInfo = this.mWifiManager.getConnectionInfo();
         int connectedNetworkId = getConnectedNetworkId(wifiInfo);
         if (DEBUG) {

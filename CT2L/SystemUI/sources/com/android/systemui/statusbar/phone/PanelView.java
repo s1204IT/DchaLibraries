@@ -116,7 +116,7 @@ public abstract class PanelView extends FrameLayout {
         }
     }
 
-    public void notifyExpandingFinished() {
+    private void notifyExpandingFinished() {
         if (this.mExpanding) {
             this.mExpanding = false;
             onExpandingFinished();
@@ -130,7 +130,7 @@ public abstract class PanelView extends FrameLayout {
         notifyBarPanelExpansionChanged();
     }
 
-    public void runPeekAnimation() {
+    private void runPeekAnimation() {
         this.mPeekHeight = getPeekHeight();
         if (this.mHeightAnimator == null) {
             this.mPeekAnimator = ObjectAnimator.ofFloat(this, "expandedHeight", this.mPeekHeight).setDuration(250L);
@@ -737,7 +737,7 @@ public abstract class PanelView extends FrameLayout {
         }).start();
     }
 
-    public void startUnlockHintAnimationPhase2(final Runnable onAnimationFinished) {
+    private void startUnlockHintAnimationPhase2(final Runnable onAnimationFinished) {
         ValueAnimator animator = createHeightAnimator(getMaxPanelHeight());
         animator.setDuration(450L);
         animator.setInterpolator(this.mBounceInterpolator);

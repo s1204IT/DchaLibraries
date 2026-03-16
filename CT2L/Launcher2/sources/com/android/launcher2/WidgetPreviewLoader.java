@@ -235,7 +235,7 @@ public class WidgetPreviewLoader {
         return info.activityInfo.packageName;
     }
 
-    public void writeToDb(Object o, Bitmap preview) {
+    private void writeToDb(Object o, Bitmap preview) {
         String name = getObjectName(o);
         SQLiteDatabase db = this.mDb.getWritableDatabase();
         ContentValues values = new ContentValues();

@@ -173,7 +173,7 @@ public class KeyguardWidgetPager extends PagedView implements View.OnLongClickLi
         }
     }
 
-    public void updateWidgetFramesImportantForAccessibility() {
+    private void updateWidgetFramesImportantForAccessibility() {
         int pageCount = getPageCount();
         for (int i = 0; i < pageCount; i++) {
             KeyguardWidgetFrame frame = getWidgetPageAt(i);

@@ -151,11 +151,11 @@ public class OtherSoundSettings extends SettingsPreferenceFragment implements In
         this.mSettingsObserver.register(false);
     }
 
-    public static boolean hasDockSettings(Context context) {
+    private static boolean hasDockSettings(Context context) {
         return context.getResources().getBoolean(R.bool.has_dock_settings);
     }
 
-    public static boolean hasHaptic(Context context) {
+    private static boolean hasHaptic(Context context) {
         Vibrator vibrator = (Vibrator) context.getSystemService("vibrator");
         return vibrator != null && vibrator.hasVibrator();
     }

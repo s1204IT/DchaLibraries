@@ -201,7 +201,7 @@ public class DateTimeSettingsSetupWizard extends Activity implements PreferenceF
         }
     }
 
-    public void updateTimeAndDateDisplay() {
+    private void updateTimeAndDateDisplay() {
         if (this.mUsingXLargeLayout) {
             Calendar now = Calendar.getInstance();
             this.mTimeZoneButton.setText(now.getTimeZone().getDisplayName());

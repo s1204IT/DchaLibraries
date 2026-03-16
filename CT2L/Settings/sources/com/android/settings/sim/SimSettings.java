@@ -138,7 +138,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         }
     }
 
-    public void updateAllOptions() {
+    private void updateAllOptions() {
         updateSimSlotValues();
         updateActivitesCategory();
     }
@@ -419,7 +419,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         }
     }
 
-    public String getPhoneNumber(SubscriptionInfo info) {
+    private String getPhoneNumber(SubscriptionInfo info) {
         TelephonyManager tm = (TelephonyManager) getActivity().getSystemService("phone");
         return tm.getLine1NumberForSubscriber(info.getSubscriptionId());
     }

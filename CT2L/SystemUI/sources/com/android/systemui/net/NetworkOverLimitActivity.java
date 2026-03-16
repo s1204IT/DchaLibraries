@@ -38,7 +38,7 @@ public class NetworkOverLimitActivity extends Activity {
         dialog.show();
     }
 
-    public void snoozePolicy(NetworkTemplate template) {
+    private void snoozePolicy(NetworkTemplate template) {
         INetworkPolicyManager policyService = INetworkPolicyManager.Stub.asInterface(ServiceManager.getService("netpolicy"));
         try {
             policyService.snoozeLimit(template);

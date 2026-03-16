@@ -144,13 +144,13 @@ public class NotificationCompat {
         }
     }
 
-    public static void addActionsToBuilder(NotificationBuilderWithActions builder, ArrayList<Action> actions) {
+    private static void addActionsToBuilder(NotificationBuilderWithActions builder, ArrayList<Action> actions) {
         for (Action action : actions) {
             builder.addAction(action);
         }
     }
 
-    public static void addStyleToBuilderJellybean(NotificationBuilderWithBuilderAccessor builder, Style style) {
+    private static void addStyleToBuilderJellybean(NotificationBuilderWithBuilderAccessor builder, Style style) {
         if (style != null) {
             if (style instanceof BigTextStyle) {
                 BigTextStyle bigTextStyle = (BigTextStyle) style;

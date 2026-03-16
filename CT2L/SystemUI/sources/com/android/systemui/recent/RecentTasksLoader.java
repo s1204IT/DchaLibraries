@@ -121,7 +121,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
         return this.mFirstScreenful;
     }
 
-    public boolean isCurrentHomeActivity(ComponentName component, ActivityInfo homeInfo) {
+    private boolean isCurrentHomeActivity(ComponentName component, ActivityInfo homeInfo) {
         if (homeInfo == null) {
             PackageManager pm = this.mContext.getPackageManager();
             homeInfo = new Intent("android.intent.action.MAIN").addCategory("android.intent.category.HOME").resolveActivityInfo(pm, 0);
@@ -266,7 +266,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
         }
     }
 
-    public void clearFirstTask() {
+    private void clearFirstTask() {
         synchronized (this.mFirstTaskLock) {
             this.mFirstTask = null;
             this.mFirstTaskLoaded = false;
@@ -356,7 +356,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
             final LinkedBlockingQueue<TaskDescription> tasksWaitingForThumbnails = new LinkedBlockingQueue<>();
             this.mTaskLoader = new AsyncTask<Void, ArrayList<TaskDescription>, Void>() {
                 @Override
-                public void onProgressUpdate(ArrayList<TaskDescription>... values) {
+                protected void onProgressUpdate(ArrayList<TaskDescription>... values) {
                     if (!isCancelled()) {
                         ArrayList<TaskDescription> newTasks = values[0];
                         if (RecentTasksLoader.this.mRecentsPanel != null) {
@@ -371,7 +371,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
                 }
 
                 @Override
-                public Void doInBackground(Void... params) {
+                protected Void doInBackground(Void... params) {
                     TaskDescription item;
                     int origPri = Process.getThreadPriority(Process.myTid());
                     Process.setThreadPriority(10);
@@ -430,7 +430,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
     private void loadThumbnailsAndIconsInBackground(final BlockingQueue<TaskDescription> tasksWaitingForThumbnails) {
         this.mThumbnailLoader = new AsyncTask<Void, TaskDescription, Void>() {
             @Override
-            public void onProgressUpdate(TaskDescription... values) {
+            protected void onProgressUpdate(TaskDescription... values) {
                 if (!isCancelled()) {
                     TaskDescription td = values[0];
                     if (!td.isNull()) {
@@ -444,7 +444,7 @@ public class RecentTasksLoader implements View.OnTouchListener {
             }
 
             @Override
-            public Void doInBackground(Void... params) {
+            protected Void doInBackground(Void... params) {
                 int origPri = Process.getThreadPriority(Process.myTid());
                 Process.setThreadPriority(10);
                 while (true) {

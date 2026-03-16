@@ -193,12 +193,12 @@ public class SearchPanelCircleView extends FrameLayout {
         updateElevation();
     }
 
-    public void applyCircleSize(float circleSize) {
+    private void applyCircleSize(float circleSize) {
         this.mCircleSize = circleSize;
         updateLayout();
     }
 
-    public void updateElevation() {
+    private void updateElevation() {
         float t = (this.mStaticOffset - this.mOffset) / this.mStaticOffset;
         float offset = (1.0f - Math.max(t, 0.0f)) * this.mMaxElevation;
         setElevation(offset);
@@ -249,7 +249,7 @@ public class SearchPanelCircleView extends FrameLayout {
         updateClipping();
     }
 
-    public void updateClipping() {
+    private void updateClipping() {
         boolean clip = this.mCircleSize < ((float) this.mCircleMinSize) || !this.mRipples.isEmpty();
         if (clip != this.mClipToOutline) {
             setClipToOutline(clip);
@@ -409,7 +409,7 @@ public class SearchPanelCircleView extends FrameLayout {
         }
     }
 
-    public void addRipple() {
+    private void addRipple() {
         float xInterpolation;
         float yInterpolation;
         if (this.mRipples.size() <= 1) {

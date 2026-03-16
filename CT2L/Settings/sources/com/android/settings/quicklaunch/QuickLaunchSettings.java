@@ -186,7 +186,7 @@ public class QuickLaunchSettings extends SettingsPreferenceFragment implements D
         }
     }
 
-    public synchronized void refreshShortcuts() {
+    private synchronized void refreshShortcuts() {
         ShortcutPreference pref;
         Cursor c = this.mBookmarksCursor;
         if (c != null) {

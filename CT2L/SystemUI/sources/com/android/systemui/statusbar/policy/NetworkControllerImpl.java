@@ -204,7 +204,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DemoMode
         refreshCarrierLabel();
     }
 
-    public void notifyMobileDataEnabled(boolean enabled) {
+    private void notifyMobileDataEnabled(boolean enabled) {
         int length = this.mSignalsChangedCallbacks.size();
         for (int i = 0; i < length; i++) {
             this.mSignalsChangedCallbacks.get(i).onMobileDataEnabled(enabled);
@@ -300,7 +300,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DemoMode
     public void setWifiEnabled(final boolean enabled) {
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... args) {
+            protected Void doInBackground(Void... args) {
                 int wifiApState = NetworkControllerImpl.this.mWifiManager.getWifiApState();
                 if (enabled && (wifiApState == 12 || wifiApState == 13)) {
                     NetworkControllerImpl.this.mWifiManager.setWifiApEnabled(null, false);
@@ -376,7 +376,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DemoMode
         refreshCarrierLabel();
     }
 
-    public void updateMobileControllers() {
+    private void updateMobileControllers() {
         if (this.mListening) {
             List<SubscriptionInfo> subscriptions = this.mSubscriptionManager.getActiveSubscriptionInfoList();
             if (subscriptions == null) {
@@ -723,7 +723,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DemoMode
         }
 
         @Override
-        public WifiState cleanState() {
+        protected WifiState cleanState() {
             return new WifiState();
         }
 
@@ -1036,7 +1036,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DemoMode
         }
 
         @Override
-        public MobileState cleanState() {
+        protected MobileState cleanState() {
             return new MobileState();
         }
 
@@ -1112,7 +1112,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DemoMode
             }
         }
 
-        public final void updateTelephony() {
+        private final void updateTelephony() {
             if (NetworkControllerImpl.DEBUG) {
                 Log.d("NetworkController", "updateTelephonySignalStrength: hasService=" + hasService() + " ss=" + this.mSignalStrength);
             }

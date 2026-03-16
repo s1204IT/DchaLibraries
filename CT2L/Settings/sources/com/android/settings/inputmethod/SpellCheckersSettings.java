@@ -70,7 +70,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         updatePreferenceScreen();
     }
 
-    public void updatePreferenceScreen() {
+    private void updatePreferenceScreen() {
         this.mCurrentSci = this.mTsm.getCurrentSpellChecker();
         boolean isSpellCheckerEnabled = this.mTsm.isSpellCheckerEnabled();
         this.mSwitchBar.setChecked(isSpellCheckerEnabled);
@@ -123,7 +123,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         return index + 1;
     }
 
-    public static int convertDialogItemIdToSubtypeIndex(int item) {
+    private static int convertDialogItemIdToSubtypeIndex(int item) {
         return item - 1;
     }
 
@@ -188,7 +188,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         this.mDialog.show();
     }
 
-    public void changeCurrentSpellChecker(SpellCheckerInfo sci) {
+    private void changeCurrentSpellChecker(SpellCheckerInfo sci) {
         this.mTsm.setCurrentSpellChecker(sci);
         updatePreferenceScreen();
     }

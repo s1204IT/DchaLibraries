@@ -15,7 +15,7 @@ class AppsCustomizeAsyncTask extends AsyncTask<AsyncTaskPageData, Void, AsyncTas
     }
 
     @Override
-    public AsyncTaskPageData doInBackground(AsyncTaskPageData... params) {
+    protected AsyncTaskPageData doInBackground(AsyncTaskPageData... params) {
         if (params.length != 1) {
             return null;
         }
@@ -24,7 +24,7 @@ class AppsCustomizeAsyncTask extends AsyncTask<AsyncTaskPageData, Void, AsyncTas
     }
 
     @Override
-    public void onPostExecute(AsyncTaskPageData result) {
+    protected void onPostExecute(AsyncTaskPageData result) {
         result.postExecuteCallback.run(this, result);
     }
 

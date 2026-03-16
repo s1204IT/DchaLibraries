@@ -177,7 +177,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
         dragLayer.animateView(d.dragView, from, to, scale, 1.0f, 1.0f, 0.1f, 0.1f, DELETE_ANIMATION_DURATION, new DecelerateInterpolator(2.0f), new LinearInterpolator(), onAnimationEndRunnable, 0, null);
     }
 
-    public void completeDrop(DropTarget.DragObject d) {
+    private void completeDrop(DropTarget.DragObject d) {
         ItemInfo item = (ItemInfo) d.dragInfo;
         if (isAllAppsApplication(d.dragSource, item)) {
             this.mLauncher.startApplicationUninstallActivity((ApplicationInfo) item, item.user);

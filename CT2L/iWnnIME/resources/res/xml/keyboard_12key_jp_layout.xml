@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android"
+    iwnn:horizontalGap="@fraction/keyboard_12key_common_horizontal_gap"
+    iwnn:keyWidth="@fraction/keyboard_12key_common_keywidth"
+    iwnn:verticalGap="@dimen/keyboard_12key_common_vertical_gap">
+    <Row>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_close"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_row1"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_del"/>
+    </Row>
+    <Row>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_cursor_left"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_row2"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_cursor_right"/>
+    </Row>
+    <Row>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_symbol"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_row3"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_space"/>
+    </Row>
+    <Row iwnn:rowEdgeFlags="bottom">
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_mode"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_switchime"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_row4"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_kuten"/>
+        <include iwnn:keyboardLayout="@xml/key_12key_jp_enter"/>
+    </Row>
+</Keyboard>

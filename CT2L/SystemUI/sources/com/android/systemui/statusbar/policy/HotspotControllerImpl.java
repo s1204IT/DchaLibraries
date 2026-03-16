@@ -99,7 +99,7 @@ public class HotspotControllerImpl implements HotspotController {
         }
     }
 
-    public void fireCallback(boolean isEnabled) {
+    private void fireCallback(boolean isEnabled) {
         for (HotspotController.Callback callback : this.mCallbacks) {
             callback.onHotspotChanged(isEnabled);
         }

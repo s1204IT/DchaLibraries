@@ -136,7 +136,7 @@ public abstract class ThreadedCursorAdapter<T> extends BaseAdapter {
         return itemId;
     }
 
-    public void loadRowObject(int position, ThreadedCursorAdapter<T>.LoadContainer container) {
+    private void loadRowObject(int position, ThreadedCursorAdapter<T>.LoadContainer container) {
         if (container != null && container.position == position && container.owner == this && container.view.get() != null) {
             synchronized (this.mCursorLock) {
                 Cursor c = (Cursor) this.mCursorAdapter.getItem(position);

@@ -143,7 +143,7 @@ public class ZonePicker extends ListFragment {
         ZoneGetter() {
         }
 
-        public List<HashMap<String, Object>> getZones(Context context) {
+        private List<HashMap<String, Object>> getZones(Context context) {
             String[] arr$ = TimeZoneNames.forLocale(Locale.getDefault());
             for (String olsonId : arr$) {
                 this.mLocalZones.add(olsonId);

@@ -72,7 +72,7 @@ public class DashboardSummary extends Fragment {
         return rootView;
     }
 
-    public void rebuildUI(Context context) {
+    private void rebuildUI(Context context) {
         if (!isAdded()) {
             Log.w("DashboardSummary", "Cannot build the DashboardSummary UI yet as the Fragment is not added");
             return;

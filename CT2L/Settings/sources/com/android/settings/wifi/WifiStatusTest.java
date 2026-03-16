@@ -150,7 +150,7 @@ public class WifiStatusTest extends Activity {
         unregisterReceiver(this.mWifiStateReceiver);
     }
 
-    public void setSupplicantStateText(SupplicantState supplicantState) {
+    private void setSupplicantStateText(SupplicantState supplicantState) {
         if (SupplicantState.FOUR_WAY_HANDSHAKE.equals(supplicantState)) {
             this.mSupplicantState.setText("FOUR WAY HANDSHAKE");
             return;
@@ -197,7 +197,7 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    public void setWifiStateText(int wifiState) {
+    private void setWifiStateText(int wifiState) {
         String wifiStateString;
         switch (wifiState) {
             case 0:
@@ -223,15 +223,15 @@ public class WifiStatusTest extends Activity {
         this.mWifiState.setText(wifiStateString);
     }
 
-    public void handleSignalChanged(int rssi) {
+    private void handleSignalChanged(int rssi) {
         this.mRSSI.setText(String.valueOf(rssi));
     }
 
-    public void handleWifiStateChanged(int wifiState) {
+    private void handleWifiStateChanged(int wifiState) {
         setWifiStateText(wifiState);
     }
 
-    public void handleScanResultsAvailable() {
+    private void handleScanResultsAvailable() {
         List<ScanResult> list = this.mWifiManager.getScanResults();
         StringBuffer scanList = new StringBuffer();
         if (list != null) {
@@ -245,7 +245,7 @@ public class WifiStatusTest extends Activity {
         this.mScanList.setText(scanList);
     }
 
-    public void handleSupplicantStateChanged(SupplicantState state, boolean hasError, int error) {
+    private void handleSupplicantStateChanged(SupplicantState state, boolean hasError, int error) {
         if (hasError) {
             this.mSupplicantState.setText("ERROR AUTHENTICATING");
         } else {
@@ -253,7 +253,7 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    public void handleNetworkStateChanged(NetworkInfo networkInfo) {
+    private void handleNetworkStateChanged(NetworkInfo networkInfo) {
         if (this.mWifiManager.isWifiEnabled()) {
             android.net.wifi.WifiInfo info = this.mWifiManager.getConnectionInfo();
             String summary = Summary.get(this, info.getSSID(), networkInfo.getDetailedState(), info.getNetworkId() == -1);
@@ -261,7 +261,7 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    public final void updatePingState() {
+    private final void updatePingState() {
         final Handler handler = new Handler();
         this.mPingIpAddrResult = getResources().getString(R.string.radioInfo_unknown);
         this.mPingHostnameResult = getResources().getString(R.string.radioInfo_unknown);
@@ -303,7 +303,7 @@ public class WifiStatusTest extends Activity {
         httpClientThread.start();
     }
 
-    public final void pingIpAddr() {
+    private final void pingIpAddr() {
         try {
             Process p = Runtime.getRuntime().exec("ping -c 1 -w 100 74.125.47.104");
             int status = p.waitFor();
@@ -319,7 +319,7 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    public final void pingHostname() {
+    private final void pingHostname() {
         try {
             Process p = Runtime.getRuntime().exec("ping -c 1 -w 100 www.google.com");
             int status = p.waitFor();
@@ -337,7 +337,7 @@ public class WifiStatusTest extends Activity {
         }
     }
 
-    public void httpClientTest() {
+    private void httpClientTest() {
         HttpClient client = new DefaultHttpClient();
         try {
             HttpGet request = new HttpGet("http://www.google.com");

@@ -239,7 +239,7 @@ public class SearchPanelView extends FrameLayout implements StatusBarPanel {
         }
     }
 
-    public void startExitAnimation() {
+    private void startExitAnimation() {
         this.mLaunchPending = false;
         if (!this.mLaunching && getVisibility() == 0) {
             this.mLaunching = true;

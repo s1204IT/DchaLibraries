@@ -34,11 +34,11 @@ public class HttpAuthenticationDialog {
         createDialog();
     }
 
-    public String getUsername() {
+    private String getUsername() {
         return this.mUsernameView.getText().toString();
     }
 
-    public String getPassword() {
+    private String getPassword() {
         return this.mPasswordView.getText().toString();
     }
 

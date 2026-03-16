@@ -183,7 +183,7 @@ public final class DockService extends Service implements LocalBluetoothProfileM
         }
     }
 
-    public synchronized void processMessage(Message msg) {
+    private synchronized void processMessage(Message msg) {
         int msgType = msg.what;
         int state = msg.arg1;
         int startId = msg.arg2;
@@ -519,7 +519,7 @@ public final class DockService extends Service implements LocalBluetoothProfileM
         }
     }
 
-    public synchronized void applyBtSettings(BluetoothDevice device, int startId) {
+    private synchronized void applyBtSettings(BluetoothDevice device, int startId) {
         if (device != null) {
             if (this.mProfiles != null && this.mCheckedItems != null && this.mLocalAdapter != null) {
                 boolean[] arr$ = this.mCheckedItems;
@@ -567,7 +567,7 @@ public final class DockService extends Service implements LocalBluetoothProfileM
         }
     }
 
-    public synchronized void handleDocked(BluetoothDevice device, int state, int startId) {
+    private synchronized void handleDocked(BluetoothDevice device, int state, int startId) {
         if (device != null) {
             if (LocalBluetoothPreferences.getDockAutoConnectSetting(this, device.getAddress())) {
                 initBtSettings(device, state, false);

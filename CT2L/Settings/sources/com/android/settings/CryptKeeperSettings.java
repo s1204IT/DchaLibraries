@@ -88,7 +88,7 @@ public class CryptKeeperSettings extends Fragment {
         }
     }
 
-    public boolean runKeyguardConfirmation(int request) {
+    private boolean runKeyguardConfirmation(int request) {
         Resources res = getActivity().getResources();
         ChooseLockSettingsHelper helper = new ChooseLockSettingsHelper(getActivity(), this);
         if (helper.utils().getKeyguardStoredPasswordQuality() != 0) {

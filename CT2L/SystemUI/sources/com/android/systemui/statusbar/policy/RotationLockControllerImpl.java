@@ -54,7 +54,7 @@ public final class RotationLockControllerImpl implements RotationLockController 
         }
     }
 
-    public void notifyChanged() {
+    private void notifyChanged() {
         for (RotationLockController.RotationLockControllerCallback callback : this.mCallbacks) {
             notifyChanged(callback);
         }

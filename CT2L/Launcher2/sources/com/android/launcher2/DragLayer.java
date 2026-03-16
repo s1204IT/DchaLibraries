@@ -534,7 +534,7 @@ public class DragLayer extends FrameLayout implements ViewGroup.OnHierarchyChang
         return this.mDropView;
     }
 
-    public void fadeOutDragView() {
+    private void fadeOutDragView() {
         this.mFadeOutAnim = new ValueAnimator();
         this.mFadeOutAnim.setDuration(150L);
         this.mFadeOutAnim.setFloatValues(0.0f, 1.0f);

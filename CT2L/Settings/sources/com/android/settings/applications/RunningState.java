@@ -636,7 +636,7 @@ public class RunningState {
         return (pi.flags & 2) == 0 && pi.importance >= 100 && pi.importance < 170 && pi.importanceReasonCode == 0;
     }
 
-    public void reset() {
+    private void reset() {
         this.mServiceProcessesByName.clear();
         this.mServiceProcessesByPid.clear();
         this.mInterestingProcesses.clear();
@@ -678,7 +678,7 @@ public class RunningState {
         userItem.mChildren.add(newItem);
     }
 
-    public boolean update(Context context, ActivityManager activityManager) {
+    private boolean update(Context context, ActivityManager activityManager) {
         int i;
         int i2;
         int[] iArr;

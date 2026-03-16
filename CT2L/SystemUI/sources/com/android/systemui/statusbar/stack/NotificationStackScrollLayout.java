@@ -216,7 +216,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         notifyHeightChangeListener(null);
     }
 
-    public void notifyHeightChangeListener(ExpandableView view) {
+    private void notifyHeightChangeListener(ExpandableView view) {
         if (this.mOnHeightChangedListener != null) {
             this.mOnHeightChangedListener.onHeightChanged(view);
         }
@@ -298,7 +298,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         return getNotGoneChildCount() > 1;
     }
 
-    public void updateChildren() {
+    private void updateChildren() {
         this.mAmbientState.setScrollY(this.mOwnScrollY);
         this.mStackScrollAlgorithm.getStackScrollState(this.mAmbientState, this.mCurrentStackScrollState);
         if (!isCurrentlyAnimating() && !this.mNeedsAnimation) {
@@ -1039,7 +1039,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         return this.mContentHeight;
     }
 
-    public void updateContentHeight() {
+    private void updateContentHeight() {
         int height = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
@@ -1212,7 +1212,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
     }
 
     @Override
-    public void onViewRemoved(View child) {
+    protected void onViewRemoved(View child) {
         super.onViewRemoved(child);
         this.mStackScrollAlgorithm.notifyChildrenChanged(this);
         if (!this.mChangePositionInProgress) {
@@ -1280,7 +1280,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
     }
 
     @Override
-    public void onViewAdded(View child) {
+    protected void onViewAdded(View child) {
         super.onViewAdded(child);
         this.mStackScrollAlgorithm.notifyChildrenChanged(this);
         ((ExpandableView) child).setOnHeightChangedListener(this);

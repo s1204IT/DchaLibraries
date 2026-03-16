@@ -164,7 +164,7 @@ public class HeadsUpNotificationView extends FrameLayout implements ViewTreeObse
         return false;
     }
 
-    public void snooze() {
+    private void snooze() {
         if (this.mMostRecentPackageName != null) {
             this.mSnoozedPackages.put(snoozeKey(this.mMostRecentPackageName, this.mUser), Long.valueOf(SystemClock.elapsedRealtime() + ((long) this.mSnoozeLengthMs)));
         }

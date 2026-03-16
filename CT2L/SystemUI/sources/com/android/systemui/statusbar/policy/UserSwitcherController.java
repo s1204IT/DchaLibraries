@@ -155,7 +155,7 @@ public class UserSwitcherController {
         refreshUsers(-10000);
     }
 
-    public void refreshUsers(int forcePictureLoadForId) {
+    private void refreshUsers(int forcePictureLoadForId) {
         SparseArray<Bitmap> bitmaps = new SparseArray<>(this.mUsers.size());
         int N = this.mUsers.size();
         for (int i = 0; i < N; i++) {
@@ -167,7 +167,7 @@ public class UserSwitcherController {
         final boolean addUsersWhenLocked = this.mAddUsersWhenLocked;
         new AsyncTask<SparseArray<Bitmap>, Void, ArrayList<UserRecord>>() {
             @Override
-            public ArrayList<UserRecord> doInBackground(SparseArray<Bitmap>... params) {
+            protected ArrayList<UserRecord> doInBackground(SparseArray<Bitmap>... params) {
                 SparseArray<Bitmap> bitmaps2 = params[0];
                 List<UserInfo> infos = UserSwitcherController.this.mUserManager.getUsers(true);
                 if (infos == null) {
@@ -214,7 +214,7 @@ public class UserSwitcherController {
             }
 
             @Override
-            public void onPostExecute(ArrayList<UserRecord> userRecords) {
+            protected void onPostExecute(ArrayList<UserRecord> userRecords) {
                 if (userRecords != null) {
                     UserSwitcherController.this.mUsers = userRecords;
                     UserSwitcherController.this.notifyAdapters();
@@ -223,7 +223,7 @@ public class UserSwitcherController {
         }.execute(bitmaps);
     }
 
-    public void notifyAdapters() {
+    private void notifyAdapters() {
         for (int i = this.mAdapters.size() - 1; i >= 0; i--) {
             BaseUserAdapter adapter = this.mAdapters.get(i).get();
             if (adapter != null) {
@@ -264,7 +264,7 @@ public class UserSwitcherController {
         switchToUserId(id);
     }
 
-    public void switchToUserId(int id) {
+    private void switchToUserId(int id) {
         try {
             ActivityManagerNative.getDefault().switchUser(id);
         } catch (RemoteException e) {
@@ -288,7 +288,7 @@ public class UserSwitcherController {
         this.mAddUserDialog.show();
     }
 
-    public void exitGuest(int id) {
+    private void exitGuest(int id) {
         UserInfo info;
         int newId = 0;
         if (this.mLastNonGuestUser != 0 && (info = this.mUserManager.getUserInfo(this.mLastNonGuestUser)) != null && info.isEnabled() && info.supportsSwitchTo()) {

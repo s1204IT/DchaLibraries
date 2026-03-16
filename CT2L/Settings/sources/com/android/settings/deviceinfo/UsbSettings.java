@@ -68,7 +68,7 @@ public class UsbSettings extends SettingsPreferenceFragment {
         getActivity().registerReceiver(this.mStateReceiver, new IntentFilter("android.hardware.usb.action.USB_STATE"));
     }
 
-    public void updateToggles(String function) {
+    private void updateToggles(String function) {
         if ("mtp".equals(function)) {
             this.mMtp.setChecked(true);
             this.mPtp.setChecked(false);

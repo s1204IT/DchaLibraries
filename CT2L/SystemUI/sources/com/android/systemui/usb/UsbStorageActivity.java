@@ -89,7 +89,7 @@ public class UsbStorageActivity extends Activity implements DialogInterface.OnCa
         this.mDestroyed = true;
     }
 
-    public void switchDisplay(final boolean usbStorageInUse) {
+    private void switchDisplay(final boolean usbStorageInUse) {
         this.mUIHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +98,7 @@ public class UsbStorageActivity extends Activity implements DialogInterface.OnCa
         });
     }
 
-    public void switchDisplayAsync(boolean usbStorageInUse) {
+    private void switchDisplayAsync(boolean usbStorageInUse) {
         if (usbStorageInUse) {
             this.mProgressBar.setVisibility(8);
             this.mUnmountButton.setVisibility(0);
@@ -142,7 +142,7 @@ public class UsbStorageActivity extends Activity implements DialogInterface.OnCa
         }
     }
 
-    public void handleUsbStateChanged(Intent intent) {
+    private void handleUsbStateChanged(Intent intent) {
         boolean connected = intent.getExtras().getBoolean("connected");
         if (!connected) {
             finish();
@@ -186,7 +186,7 @@ public class UsbStorageActivity extends Activity implements DialogInterface.OnCa
         });
     }
 
-    public void switchUsbMassStorage(final boolean on) {
+    private void switchUsbMassStorage(final boolean on) {
         this.mUIHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -216,7 +216,7 @@ public class UsbStorageActivity extends Activity implements DialogInterface.OnCa
         });
     }
 
-    public void checkStorageUsersAsync() {
+    private void checkStorageUsersAsync() {
         IMountService ims = getMountService();
         if (ims == null) {
             scheduleShowDialog(2);

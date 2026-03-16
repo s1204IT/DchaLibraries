@@ -42,7 +42,7 @@ public class OpenDownloadReceiver extends BroadcastReceiver {
         sAsyncHandler.post(worker);
     }
 
-    public void onReceiveAsync(Context context, long id) {
+    private void onReceiveAsync(Context context, long id) {
         DownloadManager manager = (DownloadManager) context.getSystemService("download");
         Uri uri = manager.getUriForDownloadedFile(id);
         if (uri == null) {

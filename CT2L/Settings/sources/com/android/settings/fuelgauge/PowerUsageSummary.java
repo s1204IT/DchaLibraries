@@ -198,7 +198,7 @@ public class PowerUsageSummary extends PreferenceFragment {
         this.mAppListGroup.addPreference(notAvailable);
     }
 
-    public boolean updateBatteryStatus(Intent intent) {
+    private boolean updateBatteryStatus(Intent intent) {
         if (intent != null) {
             String batteryLevel = Utils.getBatteryPercentage(intent);
             String batteryStatus = Utils.getBatteryStatus(getResources(), intent);
@@ -211,7 +211,7 @@ public class PowerUsageSummary extends PreferenceFragment {
         return false;
     }
 
-    public void refreshStats() {
+    private void refreshStats() {
         this.mAppListGroup.removeAll();
         this.mAppListGroup.setOrderingAsAdded(false);
         this.mHistPref = new BatteryHistoryPreference(getActivity(), this.mStatsHelper.getStats(), this.mStatsHelper.getBatteryBroadcast());

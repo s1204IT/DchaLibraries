@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="1"
+    package="com.android.printspooler"
+    platformBuildVersionCode="22"
+    platformBuildVersionName="5.1-02.04.000.20191125.213021">
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="22"/>
+    <permission
+        android:label="@string/permlab_accessAllPrintJobs"
+        android:name="com.android.printspooler.permission.ACCESS_ALL_PRINT_JOBS"
+        android:protectionLevel="signature"
+        android:description="@string/permdesc_accessAllPrintJobs"/>
+    <permission
+        android:label="@string/permlab_startPrintServiceConfigActivity"
+        android:name="android.permission.START_PRINT_SERVICE_CONFIG_ACTIVITY"
+        android:protectionLevel="signature"
+        android:description="@string/permdesc_startPrintServiceConfigActivity"/>
+    <uses-permission android:name="com.android.printspooler.permission.ACCESS_ALL_PRINT_JOBS"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.START_PRINT_SERVICE_CONFIG_ACTIVITY"/>
+    <application
+        android:label="@string/app_label"
+        android:allowClearUserData="true"
+        android:allowBackup="false"
+        android:supportsRtl="true">
+        <service
+            android:name="com.android.printspooler.model.PrintSpoolerService"
+            android:permission="android.permission.BIND_PRINT_SPOOLER_SERVICE"
+            android:exported="true"/>
+        <service
+            android:name="com.android.printspooler.renderer.PdfManipulationService"
+            android:process=":renderer"
+            android:isolatedProcess="true"/>
+        <activity
+            android:theme="@style/PrintActivity"
+            android:name="com.android.printspooler.ui.PrintActivity"
+            android:permission="android.permission.BIND_PRINT_SPOOLER_SERVICE"
+            android:configChanges="screenSize|orientation">
+            <intent-filter>
+                <action android:name="android.print.PRINT_DIALOG"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data
+                    android:scheme="printjob"
+                    android:pathPattern="*"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:theme="@android:style/Theme.Material.Settings"
+            android:label="@string/all_printers_label"
+            android:name="com.android.printspooler.ui.SelectPrinterActivity"
+            android:exported="false"/>
+        <receiver
+            android:name="com.android.printspooler.model.NotificationController.NotificationBroadcastReceiver"
+            android:exported="false"/>
+    </application>
+</manifest>

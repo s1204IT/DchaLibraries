@@ -107,7 +107,7 @@ public class RingtonePlayer extends SystemUI {
         }
     }
 
-    public Context getContextForUser(UserHandle user) {
+    private Context getContextForUser(UserHandle user) {
         try {
             return this.mContext.createPackageContextAsUser(this.mContext.getPackageName(), 0, user);
         } catch (PackageManager.NameNotFoundException e) {

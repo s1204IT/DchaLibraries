@@ -134,7 +134,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         changeState(this.mState);
     }
 
-    public void changeState(int newState) {
+    private void changeState(int newState) {
         this.mState = newState;
         if (this.mStateListener != null) {
             this.mStateListener.onStateChanged(this.mState);

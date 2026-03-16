@@ -571,7 +571,7 @@ public class NetworkSettingActivity extends ParentSettingActivity implements Dia
         Logger.d("NetworkSettingActivity", "updateWifiState 0005");
     }
 
-    public void handleEvent(Context context, Intent intent) {
+    private void handleEvent(Context context, Intent intent) {
         Logger.d("NetworkSettingActivity", "handleEvent 0001");
         String action = intent.getAction();
         if (this.mWifiManager.isWifiEnabled()) {

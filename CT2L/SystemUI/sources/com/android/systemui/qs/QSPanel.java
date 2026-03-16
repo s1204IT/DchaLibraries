@@ -218,15 +218,15 @@ public class QSPanel extends ViewGroup {
         showDetail(show, r);
     }
 
-    public void showDetail(boolean show, Record r) {
+    private void showDetail(boolean show, Record r) {
         this.mHandler.obtainMessage(1, show ? 1 : 0, 0, r).sendToTarget();
     }
 
-    public void setTileVisibility(View v, int visibility) {
+    private void setTileVisibility(View v, int visibility) {
         this.mHandler.obtainMessage(2, visibility, 0, v).sendToTarget();
     }
 
-    public void handleSetTileVisibility(View v, int visibility) {
+    private void handleSetTileVisibility(View v, int visibility) {
         if (visibility != v.getVisibility()) {
             v.setVisibility(visibility);
         }
@@ -330,7 +330,7 @@ public class QSPanel extends ViewGroup {
         return this.mGridHeight;
     }
 
-    public void handleShowDetail(Record r, boolean show) {
+    private void handleShowDetail(Record r, boolean show) {
         if (r instanceof TileRecord) {
             handleShowDetailTile((TileRecord) r, show);
         } else {
@@ -390,7 +390,7 @@ public class QSPanel extends ViewGroup {
         }
     }
 
-    public void setGridContentVisibility(boolean visible) {
+    private void setGridContentVisibility(boolean visible) {
         int newVis = visible ? 0 : 4;
         for (int i = 0; i < this.mRecords.size(); i++) {
             TileRecord tileRecord = this.mRecords.get(i);
@@ -503,19 +503,19 @@ public class QSPanel extends ViewGroup {
         }
     }
 
-    public void fireToggleStateChanged(boolean state) {
+    private void fireToggleStateChanged(boolean state) {
         if (this.mCallback != null) {
             this.mCallback.onToggleStateChanged(state);
         }
     }
 
-    public void fireScanStateChanged(boolean state) {
+    private void fireScanStateChanged(boolean state) {
         if (this.mCallback != null) {
             this.mCallback.onScanStateChanged(state);
         }
     }
 
-    public void setDetailRecord(Record r) {
+    private void setDetailRecord(Record r) {
         if (r != this.mDetailRecord) {
             this.mDetailRecord = r;
             boolean scanState = (this.mDetailRecord instanceof TileRecord) && ((TileRecord) this.mDetailRecord).scanState;

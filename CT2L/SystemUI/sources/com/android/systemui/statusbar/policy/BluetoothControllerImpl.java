@@ -252,7 +252,7 @@ public class BluetoothControllerImpl implements BluetoothController {
         return null;
     }
 
-    public void updateBondedDevices() {
+    private void updateBondedDevices() {
         this.mHandler.removeMessages(3);
         this.mHandler.sendEmptyMessage(3);
     }
@@ -263,13 +263,13 @@ public class BluetoothControllerImpl implements BluetoothController {
         this.mHandler.sendEmptyMessage(1);
     }
 
-    public void updateConnectionState(BluetoothDevice device, int profile, int state) {
+    private void updateConnectionState(BluetoothDevice device, int profile, int state) {
         if (!this.mHandler.hasMessages(1)) {
             this.mHandler.obtainMessage(2, profile, state, device).sendToTarget();
         }
     }
 
-    public void handleUpdateBondedDevices() {
+    private void handleUpdateBondedDevices() {
         if (this.mAdapter != null) {
             Set<BluetoothDevice> bondedDevices = this.mAdapter.getBondedDevices();
             for (DeviceInfo info : this.mDeviceInfo.values()) {
@@ -295,7 +295,7 @@ public class BluetoothControllerImpl implements BluetoothController {
         }
     }
 
-    public void handleUpdateConnectionStates() {
+    private void handleUpdateConnectionStates() {
         int N = this.mDeviceInfo.size();
         for (int i = 0; i < N; i++) {
             BluetoothDevice device = this.mDeviceInfo.keyAt(i);
@@ -311,7 +311,7 @@ public class BluetoothControllerImpl implements BluetoothController {
         firePairedDevicesChanged();
     }
 
-    public void handleUpdateConnectionState(BluetoothDevice device, int profile, int state) {
+    private void handleUpdateConnectionState(BluetoothDevice device, int profile, int state) {
         if (DEBUG) {
             Log.d("BluetoothController", "updateConnectionState " + BluetoothUtil.deviceToString(device) + " " + BluetoothUtil.profileToString(profile) + " " + BluetoothUtil.connectionStateToString(state));
         }
@@ -344,7 +344,7 @@ public class BluetoothControllerImpl implements BluetoothController {
         }
     }
 
-    public void handleConnectionChange() {
+    private void handleConnectionChange() {
         if (this.mLastDevice != null && CONNECTION_STATES[this.mDeviceInfo.get(this.mLastDevice).connectionStateIndex] != 2) {
             this.mLastDevice = null;
             int size = this.mDeviceInfo.size();
@@ -370,13 +370,13 @@ public class BluetoothControllerImpl implements BluetoothController {
         this.mAdapter.getProfileProxy(this.mContext, this.mProfileListener, 5);
     }
 
-    public void firePairedDevicesChanged() {
+    private void firePairedDevicesChanged() {
         for (BluetoothController.Callback cb : this.mCallbacks) {
             cb.onBluetoothPairedDevicesChanged();
         }
     }
 
-    public void setAdapterState(int adapterState) {
+    private void setAdapterState(int adapterState) {
         boolean enabled = adapterState == 12;
         if (this.mEnabled != enabled) {
             this.mEnabled = enabled;
@@ -384,7 +384,7 @@ public class BluetoothControllerImpl implements BluetoothController {
         }
     }
 
-    public void setConnecting(boolean connecting) {
+    private void setConnecting(boolean connecting) {
         if (this.mConnecting != connecting) {
             this.mConnecting = connecting;
             fireStateChange();
@@ -401,7 +401,7 @@ public class BluetoothControllerImpl implements BluetoothController {
         cb.onBluetoothStateChange(this.mEnabled, this.mConnecting);
     }
 
-    public static int getProfileFromAction(String action) {
+    private static int getProfileFromAction(String action) {
         if ("android.bluetooth.a2dp.profile.action.CONNECTION_STATE_CHANGED".equals(action)) {
             return 2;
         }
@@ -495,7 +495,7 @@ public class BluetoothControllerImpl implements BluetoothController {
         }
     }
 
-    public DeviceInfo updateInfo(BluetoothDevice device) {
+    private DeviceInfo updateInfo(BluetoothDevice device) {
         DeviceInfo info = this.mDeviceInfo.get(device);
         if (info == null) {
             info = new DeviceInfo();

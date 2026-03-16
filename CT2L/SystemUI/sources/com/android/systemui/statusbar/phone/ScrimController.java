@@ -201,7 +201,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener {
         return scrim == this.mScrimBehind ? this.mCurrentBehindAlpha : this.mCurrentInFrontAlpha;
     }
 
-    public void setCurrentScrimAlpha(View scrim, float alpha) {
+    private void setCurrentScrimAlpha(View scrim, float alpha) {
         if (scrim == this.mScrimBehind) {
             this.mCurrentBehindAlpha = alpha;
         } else {
@@ -209,7 +209,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener {
         }
     }
 
-    public void updateScrimColor(ScrimView scrim) {
+    private void updateScrimColor(ScrimView scrim) {
         float alpha1 = getCurrentScrimAlpha(scrim);
         float alpha2 = getDozeAlpha(scrim);
         float alpha = 1.0f - ((1.0f - alpha1) * (1.0f - alpha2));
@@ -276,7 +276,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener {
         updateScrimBehindDrawingMode();
     }
 
-    public void updateScrimBehindDrawingMode() {
+    private void updateScrimBehindDrawingMode() {
         boolean asSrc = this.mBackDropView.getVisibility() != 0 && this.mScrimSrcEnabled;
         this.mScrimBehind.setDrawAsSrc(asSrc);
     }

@@ -545,7 +545,7 @@ public class StackStateAnimator {
         return duration;
     }
 
-    public void onAnimationFinished() {
+    private void onAnimationFinished() {
         this.mHostLayout.onChildAnimationFinished();
     }
 

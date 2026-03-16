@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="android.uid.phone"
+    android:versionCode="22"
+    android:versionName="5.1-02.04.000.20191125.213021"
+    package="com.android.providers.telephony"
+    coreApp="true"
+    platformBuildVersionCode="22"
+    platformBuildVersionName="5.1-02.04.000.20191125.213021">
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="22"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS"/>
+    <application
+        android:label="@string/app_label"
+        android:icon="@mipmap/ic_launcher_phone"
+        android:allowClearUserData="false"
+        android:process="com.android.phone"
+        android:allowBackup="false">
+        <provider
+            android:name="TelephonyProvider"
+            android:exported="true"
+            android:multiprocess="false"
+            android:authorities="telephony"
+            android:singleUser="true"/>
+        <provider
+            android:name="SmsProvider"
+            android:readPermission="android.permission.READ_SMS"
+            android:writePermission="android.permission.WRITE_SMS"
+            android:exported="true"
+            android:multiprocess="false"
+            android:authorities="sms"
+            android:singleUser="true"/>
+        <provider
+            android:name="MmsProvider"
+            android:readPermission="android.permission.READ_SMS"
+            android:writePermission="android.permission.WRITE_SMS"
+            android:exported="true"
+            android:multiprocess="false"
+            android:authorities="mms"
+            android:singleUser="true">
+            <grant-uri-permission android:pathPrefix="/part/"/>
+            <grant-uri-permission android:pathPrefix="/drm/"/>
+        </provider>
+        <provider
+            android:name="MmsSmsProvider"
+            android:readPermission="android.permission.READ_SMS"
+            android:writePermission="android.permission.WRITE_SMS"
+            android:exported="true"
+            android:multiprocess="false"
+            android:authorities="mms-sms"
+            android:singleUser="true"/>
+        <provider
+            android:name="HbpcdLookupProvider"
+            android:writePermission="android.permission.MODIFY_PHONE_STATE"
+            android:exported="true"
+            android:multiprocess="false"
+            android:authorities="hbpcd_lookup"
+            android:singleUser="true"/>
+    </application>
+</manifest>

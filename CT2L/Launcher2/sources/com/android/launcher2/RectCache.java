@@ -7,7 +7,7 @@ class RectCache extends SoftReferenceThreadLocal<Rect> {
     }
 
     @Override
-    public Rect initialValue() {
+    protected Rect initialValue() {
         return new Rect();
     }
 }

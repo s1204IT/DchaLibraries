@@ -142,7 +142,7 @@ public class ToggleAccessibilityServicePreferenceFragment extends ToggleFeatureP
         }
     }
 
-    public void updateSwitchBarToggleSwitch() {
+    private void updateSwitchBarToggleSwitch() {
         String settingValue = Settings.Secure.getString(getContentResolver(), "enabled_accessibility_services");
         boolean checked = settingValue != null && settingValue.contains(this.mComponentName.flattenToString());
         this.mSwitchBar.setCheckedInternal(checked);

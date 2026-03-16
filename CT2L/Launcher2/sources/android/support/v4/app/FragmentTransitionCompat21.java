@@ -173,7 +173,7 @@ class FragmentTransitionCompat21 {
         }
     }
 
-    public static Rect getBoundsOnScreen(View view) {
+    private static Rect getBoundsOnScreen(View view) {
         Rect epicenter = new Rect();
         int[] loc = new int[2];
         view.getLocationOnScreen(loc);
@@ -181,7 +181,7 @@ class FragmentTransitionCompat21 {
         return epicenter;
     }
 
-    public static void captureTransitioningViews(ArrayList<View> transitioningViews, View view) {
+    private static void captureTransitioningViews(ArrayList<View> transitioningViews, View view) {
         if (view.getVisibility() == 0) {
             if (view instanceof ViewGroup) {
                 ViewGroup viewGroup = (ViewGroup) view;

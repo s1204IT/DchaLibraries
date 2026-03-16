@@ -11,7 +11,7 @@ public class KeyStoreLruCache<V> {
     public KeyStoreLruCache(int cacheSize) {
         this.mCache = new LruCache<Integer, V>(cacheSize) {
             @Override
-            public void entryRemoved(boolean evicted, Integer taskId, V oldV, V newV) {
+            protected void entryRemoved(boolean evicted, Integer taskId, V oldV, V newV) {
                 KeyStoreLruCache.this.mTaskKeys.remove(taskId);
             }
         };

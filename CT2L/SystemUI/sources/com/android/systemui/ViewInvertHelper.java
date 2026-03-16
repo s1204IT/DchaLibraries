@@ -58,7 +58,7 @@ public class ViewInvertHelper {
         }
     }
 
-    public void updateInvertPaint(float intensity) {
+    private void updateInvertPaint(float intensity) {
         float components = 1.0f - (2.0f * intensity);
         float[] invert = {components, 0.0f, 0.0f, 0.0f, 255.0f * intensity, 0.0f, components, 0.0f, 0.0f, 255.0f * intensity, 0.0f, 0.0f, components, 0.0f, 255.0f * intensity, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
         this.mMatrix.set(invert);

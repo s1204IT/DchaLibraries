@@ -121,7 +121,7 @@ public class RequestPermissionActivity extends Activity implements DialogInterfa
         }
     }
 
-    public void proceedAndFinish() {
+    private void proceedAndFinish() {
         int returnCode;
         if (this.mEnableOnly) {
             returnCode = -1;

@@ -124,11 +124,11 @@ public class AppsCustomizeTabHost extends TabHost implements TabHost.OnTabChange
         return super.onTouchEvent(event);
     }
 
-    public void onTabChangedStart() {
+    private void onTabChangedStart() {
         this.mAppsCustomizePane.hideScrollingIndicator(false);
     }
 
-    public void reloadCurrentPage() {
+    private void reloadCurrentPage() {
         if (!LauncherApplication.isScreenLarge()) {
             this.mAppsCustomizePane.flashScrollingIndicator(true);
         }
@@ -136,7 +136,7 @@ public class AppsCustomizeTabHost extends TabHost implements TabHost.OnTabChange
         this.mAppsCustomizePane.requestFocus();
     }
 
-    public void onTabChangedEnd(AppsCustomizePagedView.ContentType type) {
+    private void onTabChangedEnd(AppsCustomizePagedView.ContentType type) {
         this.mAppsCustomizePane.setContentType(type);
     }
 

@@ -64,7 +64,7 @@ public class KeyguardStatusView extends GridLayout {
         };
     }
 
-    public void setEnableMarquee(boolean enabled) {
+    private void setEnableMarquee(boolean enabled) {
         if (this.mAlarmStatusView != null) {
             this.mAlarmStatusView.setSelected(enabled);
         }
@@ -105,7 +105,7 @@ public class KeyguardStatusView extends GridLayout {
         this.mClockView.setFormat24Hour(Patterns.clockView24);
     }
 
-    public void refresh() {
+    private void refresh() {
         AlarmManager.AlarmClockInfo nextAlarm = this.mLockPatternUtils.getNextAlarm();
         Patterns.update(this.mContext, nextAlarm != null);
         refreshTime();
@@ -132,7 +132,7 @@ public class KeyguardStatusView extends GridLayout {
         return DateFormat.format(pattern, info.getTriggerTime()).toString();
     }
 
-    public void updateOwnerInfo() {
+    private void updateOwnerInfo() {
         if (this.mOwnerInfo != null) {
             String ownerInfo = getOwnerInfo();
             if (!TextUtils.isEmpty(ownerInfo)) {

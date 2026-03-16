@@ -432,7 +432,7 @@ public class RecentsPanelView extends FrameLayout implements Animator.AnimatorLi
         transitioner.setAnimator(3, null);
     }
 
-    public void updateIcon(ViewHolder h, Drawable icon, boolean show, boolean anim) {
+    private void updateIcon(ViewHolder h, Drawable icon, boolean show, boolean anim) {
         if (icon != null) {
             h.iconView.setImageDrawable(icon);
             if (show && h.iconView.getVisibility() != 0) {
@@ -444,7 +444,7 @@ public class RecentsPanelView extends FrameLayout implements Animator.AnimatorLi
         }
     }
 
-    public void updateThumbnail(ViewHolder h, Drawable thumbnail, boolean show, boolean anim) {
+    private void updateThumbnail(ViewHolder h, Drawable thumbnail, boolean show, boolean anim) {
         if (thumbnail != null) {
             h.thumbnailViewImage.setImageDrawable(thumbnail);
             if (h.thumbnailViewDrawable == null || h.thumbnailViewDrawable.getIntrinsicWidth() != thumbnail.getIntrinsicWidth() || h.thumbnailViewDrawable.getIntrinsicHeight() != thumbnail.getIntrinsicHeight()) {
@@ -491,7 +491,7 @@ public class RecentsPanelView extends FrameLayout implements Animator.AnimatorLi
         showIfReady();
     }
 
-    public void animateInIconOfFirstTask() {
+    private void animateInIconOfFirstTask() {
         if (this.mItemToAnimateInWhenWindowAnimationIsFinished != null && !this.mRecentTasksLoader.isFirstScreenful()) {
             int timeSinceWindowAnimation = (int) (System.currentTimeMillis() - this.mWindowAnimationStartTime);
             int startDelay = Math.max(0, Math.min(150 - timeSinceWindowAnimation, 150));
@@ -651,7 +651,7 @@ public class RecentsPanelView extends FrameLayout implements Animator.AnimatorLi
         }
     }
 
-    public void startApplicationDetailsActivity(String packageName, int userId) {
+    private void startApplicationDetailsActivity(String packageName, int userId) {
         Intent intent = new Intent("android.settings.APPLICATION_DETAILS_SETTINGS", Uri.fromParts("package", packageName, null));
         intent.setComponent(intent.resolveActivity(getContext().getPackageManager()));
         TaskStackBuilder.create(getContext()).addNextIntentWithParentStack(intent).startActivities(null, new UserHandle(userId));

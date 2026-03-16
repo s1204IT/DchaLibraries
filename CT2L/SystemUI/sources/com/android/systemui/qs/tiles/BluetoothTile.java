@@ -51,7 +51,7 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public QSTile.BooleanState newTileState() {
+    protected QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
     }
 
@@ -80,7 +80,7 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState state, Object arg) {
+    protected void handleUpdateState(QSTile.BooleanState state, Object arg) {
         boolean supported = this.mController.isBluetoothSupported();
         boolean enabled = this.mController.isBluetoothEnabled();
         boolean connected = this.mController.isBluetoothConnected();
@@ -168,7 +168,7 @@ public class BluetoothTile extends QSTile<QSTile.BooleanState> {
             }
         }
 
-        public void updateItems() {
+        private void updateItems() {
             if (this.mItems != null) {
                 QSDetailItems.Item[] items = null;
                 Set<BluetoothController.PairedDevice> devices = BluetoothTile.this.mController.getPairedDevices();

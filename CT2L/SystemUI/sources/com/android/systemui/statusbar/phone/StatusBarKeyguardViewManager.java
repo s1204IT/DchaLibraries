@@ -218,7 +218,7 @@ public class StatusBarKeyguardViewManager {
         updateStates();
     }
 
-    public void executeAfterKeyguardGoneAction() {
+    private void executeAfterKeyguardGoneAction() {
         if (this.mAfterKeyguardGoneAction != null) {
             this.mAfterKeyguardGoneAction.onDismiss();
             this.mAfterKeyguardGoneAction = null;
@@ -258,7 +258,7 @@ public class StatusBarKeyguardViewManager {
         return 320L;
     }
 
-    public void updateStates() {
+    private void updateStates() {
         int vis = this.mContainer.getSystemUiVisibility();
         boolean showing = this.mShowing;
         boolean occluded = this.mOccluded;

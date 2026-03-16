@@ -130,7 +130,7 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
         }
 
         @Override
-        public String doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             String str = null;
             Logger.d("SDSettingActivity", "doInBackground 0001");
             try {
@@ -151,7 +151,7 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
         }
 
         @Override
-        public void onCancelled(String result) {
+        protected void onCancelled(String result) {
             Logger.d("SDSettingActivity", "onCancelled 0001");
             super.onCancelled(result);
             SdUpdateActivity.this.progressDialog.dismiss();
@@ -163,7 +163,7 @@ public class SdUpdateActivity extends ParentSettingActivity implements View.OnCl
         }
 
         @Override
-        public void onPostExecute(String result) {
+        protected void onPostExecute(String result) {
             Logger.d("SDSettingActivity", "onPostExecute 0001");
             if (result != null) {
                 Logger.d("SDSettingActivity", "onPostExecute 0002");

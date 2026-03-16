@@ -121,7 +121,7 @@ public class BatterySaverSettings extends SettingsPreferenceFragment implements 
         trySetPowerSaveMode(false);
     }
 
-    public void trySetPowerSaveMode(boolean mode) {
+    private void trySetPowerSaveMode(boolean mode) {
         if (!this.mPowerManager.setPowerSaveMode(mode)) {
             if (DEBUG) {
                 Log.d("BatterySaverSettings", "Setting mode failed, fallback to current value");
@@ -130,7 +130,7 @@ public class BatterySaverSettings extends SettingsPreferenceFragment implements 
         }
     }
 
-    public void updateSwitch() {
+    private void updateSwitch() {
         boolean mode = this.mPowerManager.isPowerSaveMode();
         if (DEBUG) {
             Log.d("BatterySaverSettings", "updateSwitch: isChecked=" + this.mSwitch.isChecked() + " mode=" + mode);

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="voiceOn">
+            <Row-Key>
+                <Key
+                    iwnn:codes="-311"
+                    iwnn:keyEdgeFlags="left"
+                    iwnn:keyIcon="@drawable/key_12key_voice"
+                    iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:description="@string/ti_description_key_microphone"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="voiceOff">
+            <Row-Key>
+                <Key
+                    iwnn:codes="-239"
+                    iwnn:keyEdgeFlags="left"
+                    iwnn:keyIcon="@drawable/setting"
+                    iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                    iwnn:isSecondKey="true"
+                    iwnn:description="@string/ti_description_key_settings"/>
+            </Row-Key>
+        </case>
+    </switch>
+</Keyboard>

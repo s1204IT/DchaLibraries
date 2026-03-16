@@ -161,7 +161,7 @@ public final class DynamicIndexableContentMonitor extends PackageMonitor impleme
         this.mHandler.sendMessageDelayed(message, 2000L);
     }
 
-    public void handlePackageAvailable(String packageName) {
+    private void handlePackageAvailable(String packageName) {
         if (!this.mAccessibilityServices.contains(packageName)) {
             Intent intent = getAccessibilityServiceIntent(packageName);
             if (!this.mContext.getPackageManager().queryIntentServices(intent, 0).isEmpty()) {
@@ -185,7 +185,7 @@ public final class DynamicIndexableContentMonitor extends PackageMonitor impleme
         }
     }
 
-    public void handlePackageUnavailable(String packageName) {
+    private void handlePackageUnavailable(String packageName) {
         int imeIndex;
         int printIndex;
         int accessibilityIndex = this.mAccessibilityServices.indexOf(packageName);

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.contacts.widget.InterpolatingLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:ex="http://schemas.android.com/apk/res-auto"
+    android:background="@color/contact_all_list_background_color"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:elevation="@dimen/contact_list_card_elevation">
+    <LinearLayout
+        android:orientation="vertical"
+        android:id="@+id/editors"
+        android:fadingEdge="none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        ex:layout_narrowParentWidth="600dp"
+        ex:layout_narrowMarginLeft="50dp"
+        ex:layout_narrowMarginRight="50dp"
+        ex:layout_wideParentWidth="800dp"
+        ex:layout_wideMarginLeft="128dp"
+        ex:layout_wideMarginRight="128dp"/>
+</com.android.contacts.widget.InterpolatingLayout>

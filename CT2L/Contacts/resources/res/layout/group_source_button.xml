@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/group_source"
+    android:background="@drawable/gray_action_bar_background"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/action_bar_button_text_color"
+        android:layout_gravity="center_vertical"
+        android:id="@android:id/title"
+        android:duplicateParentState="true"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="@android:style/Widget.Holo.ActionBar.TabText"/>
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_gravity="center_vertical"
+            android:id="@android:id/icon"
+            android:duplicateParentState="true"
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
+    </FrameLayout>
+</LinearLayout>

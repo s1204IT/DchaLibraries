@@ -239,7 +239,7 @@ public class SuggestionsAdapter extends BaseAdapter implements View.OnClickListe
         }
     }
 
-    public int getMaxLines() {
+    private int getMaxLines() {
         int maxLines = this.mLandscapeMode ? this.mLinesLandscape : this.mLinesPortrait;
         return (int) Math.ceil(((double) maxLines) / 2.0d);
     }

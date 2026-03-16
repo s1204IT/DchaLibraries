@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="input_mode_type_default_value">@string/input_mode_type_list_item_qwerty_keyboard</string>
+    <string name="ti_alternates_maru_jajp_qwerty_en_shift_off_txt">?</string>
+    <string name="ti_alternates_maru_jajp_qwerty_en_shift_on_txt">.</string>
+    <string name="ti_alternates_maru_jajp_qwerty_en_full_alphabet_shift_off_txt">？</string>
+    <string name="ti_alternates_maru_jajp_qwerty_en_full_alphabet_shift_on_txt">．</string>
+</resources>

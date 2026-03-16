@@ -540,7 +540,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         getLoaderManager().restartLoader(0, null, this);
     }
 
-    public void showRemoveButton() {
+    private void showRemoveButton() {
         findViewById(R.id.remove_divider).setVisibility(0);
         this.mRemoveLink = findViewById(R.id.remove);
         this.mRemoveLink.setVisibility(0);
@@ -561,7 +561,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         this.mTopLevelLabel.setCompoundDrawablePadding(6);
     }
 
-    public void onCurrentFolderFound() {
+    private void onCurrentFolderFound() {
         LoaderManager manager = getLoaderManager();
         if (this.mCurrentFolder != this.mRootFolder) {
             this.mFolder.setSelectionIgnoringSelectionChange(this.mEditingFolder ? 1 : 2);
@@ -615,7 +615,7 @@ public class AddBookmarkPage extends Activity implements LoaderManager.LoaderCal
         }
 
         @Override
-        public Void doInBackground(ContentValues... params) {
+        protected Void doInBackground(ContentValues... params) {
             if (params.length != 1) {
                 throw new IllegalArgumentException("No ContentValues provided!");
             }

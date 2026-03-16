@@ -88,7 +88,7 @@ public class BrowserProvider extends ContentProvider {
         return ret;
     }
 
-    public static CharSequence replaceSystemPropertyInString(Context context, CharSequence srcString) {
+    private static CharSequence replaceSystemPropertyInString(Context context, CharSequence srcString) {
         StringBuffer sb = new StringBuffer();
         int lastCharLoc = 0;
         String client_id = getClientId(context.getContentResolver());
@@ -671,7 +671,7 @@ public class BrowserProvider extends ContentProvider {
         return ret;
     }
 
-    public static String stripUrl(String url) {
+    private static String stripUrl(String url) {
         if (url == null) {
             return null;
         }

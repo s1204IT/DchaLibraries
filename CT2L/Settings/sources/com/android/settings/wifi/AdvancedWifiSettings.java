@@ -288,7 +288,7 @@ public class AdvancedWifiSettings extends SettingsPreferenceFragment implements 
         return true;
     }
 
-    public void refreshWifiInfo() {
+    private void refreshWifiInfo() {
         Context context = getActivity();
         android.net.wifi.WifiInfo wifiInfo = this.mWifiManager.getConnectionInfo();
         Preference wifiMacAddressPref = findPreference("mac_address");

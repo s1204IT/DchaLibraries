@@ -118,7 +118,7 @@ public class KeyguardPatternView extends LinearLayout implements AppearAnimation
         }
     }
 
-    public void displayDefaultSecurityMessage() {
+    private void displayDefaultSecurityMessage() {
         if (this.mKeyguardUpdateMonitor.getMaxBiometricUnlockAttemptsReached()) {
             this.mSecurityMessageDisplay.setMessage(R.string.faceunlock_multiple_failures, true);
         } else {
@@ -171,7 +171,7 @@ public class KeyguardPatternView extends LinearLayout implements AppearAnimation
         }
     }
 
-    public void handleAttemptLockout(long elapsedRealtimeDeadline) {
+    private void handleAttemptLockout(long elapsedRealtimeDeadline) {
         this.mLockPatternView.clearPattern();
         this.mLockPatternView.setEnabled(false);
         long elapsedRealtime = SystemClock.elapsedRealtime();
@@ -257,7 +257,7 @@ public class KeyguardPatternView extends LinearLayout implements AppearAnimation
         return true;
     }
 
-    public void enableClipping(boolean enable) {
+    private void enableClipping(boolean enable) {
         setClipChildren(enable);
         this.mKeyguardBouncerFrame.setClipToPadding(enable);
         this.mKeyguardBouncerFrame.setClipChildren(enable);

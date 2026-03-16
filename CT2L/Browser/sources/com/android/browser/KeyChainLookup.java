@@ -20,7 +20,7 @@ final class KeyChainLookup extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    public Void doInBackground(Void... params) {
+    protected Void doInBackground(Void... params) {
         try {
             PrivateKey privateKey = KeyChain.getPrivateKey(this.mContext, this.mAlias);
             X509Certificate[] certificateChain = KeyChain.getCertificateChain(this.mContext, this.mAlias);

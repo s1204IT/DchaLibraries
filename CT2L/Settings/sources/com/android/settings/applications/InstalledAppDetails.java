@@ -197,7 +197,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         }
     }
 
-    public CharSequence getMoveErrMsg(int errCode) {
+    private CharSequence getMoveErrMsg(int errCode) {
         switch (errCode) {
             case -6:
                 return "";
@@ -718,7 +718,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         this.mActivitiesButton.setEnabled(false);
     }
 
-    public void setIntentAndFinish(boolean finish, boolean appChanged) {
+    private void setIntentAndFinish(boolean finish, boolean appChanged) {
         Intent intent = new Intent();
         intent.putExtra("chg", appChanged);
         SettingsActivity sa = (SettingsActivity) getActivity();
@@ -792,7 +792,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         }
     }
 
-    public void processClearMsg(Message msg) {
+    private void processClearMsg(Message msg) {
         int result = msg.arg1;
         String packageName = this.mAppEntry.info.packageName;
         this.mClearDataButton.setText(R.string.clear_user_data_text);
@@ -819,7 +819,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         this.mSpecialDisableButton.setEnabled(false);
     }
 
-    public void processMoveMsg(Message msg) {
+    private void processMoveMsg(Message msg) {
         int result = msg.arg1;
         String packageName = this.mAppEntry.info.packageName;
         this.mMoveInProgress = false;
@@ -832,7 +832,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         refreshUi();
     }
 
-    public void initiateClearUserData() {
+    private void initiateClearUserData() {
         this.mClearDataButton.setEnabled(false);
         String packageName = this.mAppEntry.info.packageName;
         Log.i("InstalledAppDetails", "Clearing user data for package : " + packageName);
@@ -945,7 +945,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         }
     }
 
-    public void uninstallPkg(String packageName, boolean allUsers, boolean andDisable) {
+    private void uninstallPkg(String packageName, boolean allUsers, boolean andDisable) {
         Uri packageURI = Uri.parse("package:" + packageName);
         Intent uninstallIntent = new Intent("android.intent.action.UNINSTALL_PACKAGE", packageURI);
         uninstallIntent.putExtra("android.intent.extra.UNINSTALL_ALL_USERS", allUsers);
@@ -953,7 +953,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         this.mDisableAfterUninstall = andDisable;
     }
 
-    public void forceStopPackage(String pkgName) {
+    private void forceStopPackage(String pkgName) {
         ActivityManager am = (ActivityManager) getActivity().getSystemService("activity");
         am.forceStopPackage(pkgName);
         this.mState.invalidatePackage(pkgName);
@@ -964,7 +964,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         checkForceStop();
     }
 
-    public void updateForceStopButton(boolean enabled) {
+    private void updateForceStopButton(boolean enabled) {
         if (this.mAppControlRestricted) {
             this.mForceStopButton.setEnabled(false);
         } else {
@@ -1009,7 +1009,7 @@ public class InstalledAppDetails extends Fragment implements View.OnClickListene
         }
     }
 
-    public void setNotificationsEnabled(boolean enabled) {
+    private void setNotificationsEnabled(boolean enabled) {
         String packageName = this.mAppEntry.info.packageName;
         INotificationManager nm = INotificationManager.Stub.asInterface(ServiceManager.getService("notification"));
         try {

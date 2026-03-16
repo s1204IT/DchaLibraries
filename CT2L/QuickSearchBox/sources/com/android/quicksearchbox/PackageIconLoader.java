@@ -82,7 +82,7 @@ public class PackageIconLoader implements IconLoader {
         }
     }
 
-    public Drawable getDrawable(Uri uri) {
+    private Drawable getDrawable(Uri uri) {
         try {
             String scheme = uri.getScheme();
             if ("android.resource".equals(scheme)) {

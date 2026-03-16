@@ -197,7 +197,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         }
     }
 
-    public void scheduleUpdate(int changes) {
+    private void scheduleUpdate(int changes) {
         if (this.mStarted) {
             if (this.mPendingChanges == 0) {
                 this.mHandler.post(this.mUpdateRunnable);
@@ -213,7 +213,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         }
     }
 
-    public void update(int changes) {
+    private void update(int changes) {
         boolean invalidateOptions = false;
         if ((changes & 1) != 0) {
             this.mWifiDisplayOnSetting = Settings.Global.getInt(getContentResolver(), "wifi_display_on", 0) != 0;
@@ -402,7 +402,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         this.mCertCategory.addPreference(lp3);
     }
 
-    public void startAutoGO() {
+    private void startAutoGO() {
         this.mWifiP2pManager.createGroup(this.mWifiP2pChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -415,7 +415,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         });
     }
 
-    public void stopAutoGO() {
+    private void stopAutoGO() {
         this.mWifiP2pManager.removeGroup(this.mWifiP2pChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -428,7 +428,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         });
     }
 
-    public void setListenMode(final boolean enable) {
+    private void setListenMode(final boolean enable) {
         this.mWifiP2pManager.listen(this.mWifiP2pChannel, enable, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -441,7 +441,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         });
     }
 
-    public void setWifiP2pChannels(int lc, int oc) {
+    private void setWifiP2pChannels(int lc, int oc) {
         this.mWifiP2pManager.setWifiP2pChannels(this.mWifiP2pChannel, lc, oc, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -454,7 +454,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         });
     }
 
-    public void toggleRoute(MediaRouter.RouteInfo route) {
+    private void toggleRoute(MediaRouter.RouteInfo route) {
         if (route.isSelected()) {
             MediaRouteDialogPresenter.showDialogFragment(getActivity(), 4, (View.OnClickListener) null);
         } else {
@@ -462,13 +462,13 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment {
         }
     }
 
-    public void pairWifiDisplay(WifiDisplay display) {
+    private void pairWifiDisplay(WifiDisplay display) {
         if (display.canConnect()) {
             this.mDisplayManager.connectWifiDisplay(display.getDeviceAddress());
         }
     }
 
-    public void showWifiDisplayOptionsDialog(final WifiDisplay display) {
+    private void showWifiDisplayOptionsDialog(final WifiDisplay display) {
         View view = getActivity().getLayoutInflater().inflate(R.layout.wifi_display_options, (ViewGroup) null);
         final EditText nameEditText = (EditText) view.findViewById(R.id.name);
         nameEditText.setText(display.getFriendlyDisplayName());

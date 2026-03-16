@@ -40,7 +40,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
     public static boolean mNeedChangeCursor = false;
     static ThreadLocal<BitmapFactory.Options> sOptions = new ThreadLocal<BitmapFactory.Options>() {
         @Override
-        public BitmapFactory.Options initialValue() {
+        protected BitmapFactory.Options initialValue() {
             return new BitmapFactory.Options();
         }
     };
@@ -408,7 +408,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public Cursor doInBackground(Void... params) {
+        protected Cursor doInBackground(Void... params) {
             Context c = BrowserBookmarksPage.this.getActivity();
             if (c == null) {
                 return null;
@@ -417,7 +417,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public void onPostExecute(Cursor result) {
+        protected void onPostExecute(Cursor result) {
             if (BrowserBookmarksPage.this.mCallbacks != null && result.getCount() > 0) {
                 String[] urls = new String[result.getCount()];
                 int i = 0;
@@ -526,7 +526,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public Integer doInBackground(Long... params) {
+        protected Integer doInBackground(Long... params) {
             if (params.length != 1) {
                 throw new IllegalArgumentException("Missing folder id!");
             }
@@ -543,7 +543,7 @@ public class BrowserBookmarksPage extends Fragment implements LoaderManager.Load
         }
 
         @Override
-        public void onPostExecute(Integer result) {
+        protected void onPostExecute(Integer result) {
             if (result.intValue() > 0) {
                 this.mHeader.setUrl(this.mContext.getString(R.string.contextheader_folder_bookmarkcount, result));
             } else if (result.intValue() == 0) {

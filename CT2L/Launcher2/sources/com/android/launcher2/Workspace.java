@@ -1059,7 +1059,7 @@ public class Workspace extends SmoothPagedView implements View.OnTouchListener, 
         }
     }
 
-    public void updateChildrenLayersEnabled(boolean force) {
+    private void updateChildrenLayersEnabled(boolean force) {
         boolean small = this.mState == State.SMALL || this.mIsSwitchingState;
         boolean enableChildrenLayers = force || small || this.mAnimatingViewIntoPlace || isPageMoving();
         if (enableChildrenLayers != this.mChildrenLayersEnabled) {
@@ -2472,7 +2472,7 @@ public class Workspace extends SmoothPagedView implements View.OnTouchListener, 
         return (CellLayout) getChildAt(getNextPage());
     }
 
-    public int[] findNearestArea(int pixelX, int pixelY, int spanX, int spanY, CellLayout layout, int[] recycle) {
+    private int[] findNearestArea(int pixelX, int pixelY, int spanX, int spanY, CellLayout layout, int[] recycle) {
         return layout.findNearestArea(pixelX, pixelY, spanX, spanY, recycle);
     }
 

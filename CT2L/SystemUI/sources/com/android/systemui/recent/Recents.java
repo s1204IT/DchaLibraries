@@ -215,7 +215,7 @@ public class Recents extends SystemUI implements RecentsComponent {
         }
     }
 
-    public void sendBroadcastSafely(Intent intent) {
+    private void sendBroadcastSafely(Intent intent) {
         if (this.mBootCompleted) {
             this.mContext.sendBroadcastAsUser(intent, new UserHandle(-2));
         }

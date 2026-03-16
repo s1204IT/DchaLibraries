@@ -827,7 +827,7 @@ public class SlidingChallengeLayout extends ViewGroup implements ChallengeLayout
         return getLayoutBottom();
     }
 
-    public void onFadeStart(boolean show) {
+    private void onFadeStart(boolean show) {
         this.mChallengeInteractiveInternal = false;
         enableHardwareLayerForChallengeView();
         if (show) {
@@ -842,7 +842,7 @@ public class SlidingChallengeLayout extends ViewGroup implements ChallengeLayout
         }
     }
 
-    public void onFadeEnd(boolean show) {
+    private void onFadeEnd(boolean show) {
         this.mChallengeInteractiveInternal = true;
         setChallengeShowing(show);
         if (!show) {

@@ -247,7 +247,7 @@ public class NotificationData {
         pw.println("      tickerText=\"" + ((Object) n.getNotification().tickerText) + "\"");
     }
 
-    public static boolean isSystemNotification(StatusBarNotification sbn) {
+    private static boolean isSystemNotification(StatusBarNotification sbn) {
         String sbnPackage = sbn.getPackageName();
         return "android".equals(sbnPackage) || "com.android.systemui".equals(sbnPackage);
     }

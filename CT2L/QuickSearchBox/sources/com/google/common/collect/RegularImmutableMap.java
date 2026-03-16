@@ -170,7 +170,7 @@ final class RegularImmutableMap<K, V> extends ImmutableMap<K, V> {
         }
 
         @Override
-        public K transform(Map.Entry<K, V> element) {
+        K transform(Map.Entry<K, V> element) {
             return element.getKey();
         }
 

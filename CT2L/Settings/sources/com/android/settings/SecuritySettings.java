@@ -67,7 +67,7 @@ public class SecuritySettings extends SettingsPreferenceFragment implements Dial
         }
     }
 
-    public static int getResIdForLockUnlockScreen(Context context, LockPatternUtils lockPatternUtils) {
+    private static int getResIdForLockUnlockScreen(Context context, LockPatternUtils lockPatternUtils) {
         if (!lockPatternUtils.isSecure()) {
             UserManager mUm = (UserManager) context.getSystemService("user");
             List<UserInfo> users = mUm.getUsers(true);
@@ -230,7 +230,7 @@ public class SecuritySettings extends SettingsPreferenceFragment implements Dial
         return false;
     }
 
-    public static ArrayList<TrustAgentUtils.TrustAgentComponentInfo> getActiveTrustAgents(PackageManager pm, LockPatternUtils utils) {
+    private static ArrayList<TrustAgentUtils.TrustAgentComponentInfo> getActiveTrustAgents(PackageManager pm, LockPatternUtils utils) {
         ArrayList<TrustAgentUtils.TrustAgentComponentInfo> result = new ArrayList<>();
         List<ResolveInfo> resolveInfos = pm.queryIntentServices(TRUST_AGENT_INTENT, 128);
         List<ComponentName> enabledTrustAgents = utils.getEnabledTrustAgents();

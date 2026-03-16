@@ -162,7 +162,7 @@ public class LauncherModel extends BroadcastReceiver {
         runOnMainThread(r, MAIN_THREAD_NORMAL_RUNNABLE);
     }
 
-    public void runOnMainThread(Runnable r, int type) {
+    private void runOnMainThread(Runnable r, int type) {
         if (sWorkerThread.getThreadId() == Process.myTid()) {
             this.mHandler.post(r);
         } else {
@@ -1632,7 +1632,7 @@ public class LauncherModel extends BroadcastReceiver {
         return items;
     }
 
-    public ShortcutInfo getShortcutInfo(Cursor c, Context context, int iconTypeIndex, int iconPackageIndex, int iconResourceIndex, int iconIndex, int titleIndex) {
+    private ShortcutInfo getShortcutInfo(Cursor c, Context context, int iconTypeIndex, int iconPackageIndex, int iconResourceIndex, int iconIndex, int titleIndex) {
         Bitmap icon = null;
         ShortcutInfo info = new ShortcutInfo();
         info.itemType = MAIN_THREAD_BINDING_RUNNABLE;
@@ -1808,7 +1808,7 @@ public class LauncherModel extends BroadcastReceiver {
         }
     }
 
-    public static FolderInfo findOrMakeFolder(HashMap<Long, FolderInfo> folders, long id) {
+    private static FolderInfo findOrMakeFolder(HashMap<Long, FolderInfo> folders, long id) {
         FolderInfo folderInfo = folders.get(Long.valueOf(id));
         if (folderInfo == null) {
             FolderInfo folderInfo2 = new FolderInfo();

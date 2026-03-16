@@ -99,7 +99,7 @@ public class CrashRecoveryHandler {
         browserSettings.setLastRecovered(time);
     }
 
-    public synchronized Bundle loadCrashState() {
+    private synchronized Bundle loadCrashState() {
         Bundle state;
         FileInputStream fin;
         ByteArrayOutputStream dataStream;

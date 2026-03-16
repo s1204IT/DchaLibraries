@@ -159,7 +159,7 @@ public class HomeSettings extends SettingsPreferenceFragment implements Indexabl
         }
     }
 
-    public void buildHomeActivitiesList() {
+    private void buildHomeActivitiesList() {
         HomeAppPreference pref;
         ArrayList<ResolveInfo> homeActivities = new ArrayList<>();
         ComponentName currentDefaultHome = this.mPm.getHomeActivities(homeActivities);

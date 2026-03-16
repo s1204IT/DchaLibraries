@@ -43,7 +43,7 @@ public class ColorInversionTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public QSTile.BooleanState newTileState() {
+    protected QSTile.BooleanState newTileState() {
         return new QSTile.BooleanState();
     }
 
@@ -79,7 +79,7 @@ public class ColorInversionTile extends QSTile<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState state, Object arg) {
+    protected void handleUpdateState(QSTile.BooleanState state, Object arg) {
         int value = arg instanceof Integer ? ((Integer) arg).intValue() : this.mSetting.getValue();
         boolean enabled = value != 0;
         state.visible = enabled || this.mUsageTracker.isRecentlyUsed();

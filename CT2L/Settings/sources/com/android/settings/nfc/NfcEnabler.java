@@ -73,7 +73,7 @@ public class NfcEnabler implements Preference.OnPreferenceChangeListener {
         return false;
     }
 
-    public void handleNfcStateChanged(int newState) {
+    private void handleNfcStateChanged(int newState) {
         switch (newState) {
             case 1:
                 this.mSwitch.setChecked(false);

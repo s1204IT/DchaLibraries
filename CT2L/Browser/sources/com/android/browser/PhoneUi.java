@@ -277,7 +277,7 @@ public class PhoneUi extends BaseUi {
         }
     }
 
-    public void finishAnimationIn() {
+    private void finishAnimationIn() {
         if (showingNavScreen()) {
             this.mNavScreen.sendAccessibilityEvent(32);
             this.mTabControl.setOnThumbnailUpdatedListener(this.mNavScreen);
@@ -364,7 +364,7 @@ public class PhoneUi extends BaseUi {
         }
     }
 
-    public void finishAnimateOut() {
+    private void finishAnimateOut() {
         this.mTabControl.setOnThumbnailUpdatedListener(null);
         this.mNavScreen.setVisibility(8);
         this.mCustomViewContainer.setAlpha(1.0f);
@@ -452,7 +452,7 @@ public class PhoneUi extends BaseUi {
             this.mContent.setImageBitmap(image);
         }
 
-        public void setScaleFactor(float sf) {
+        private void setScaleFactor(float sf) {
             this.mScale = sf;
             Matrix m = new Matrix();
             m.postScale(sf, sf);

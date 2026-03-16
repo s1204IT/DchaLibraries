@@ -90,7 +90,7 @@ public class BookmarkPicker extends ListActivity implements SimpleAdapter.ViewBi
         }.start();
     }
 
-    public void updateAdapterToUseNewLists(final ArrayList<Map<String, ?>> newAdapterList, final ArrayList<ResolveInfo> newResolveList) {
+    private void updateAdapterToUseNewLists(final ArrayList<Map<String, ?>> newAdapterList, final ArrayList<ResolveInfo> newResolveList) {
         this.mUiHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -101,7 +101,7 @@ public class BookmarkPicker extends ListActivity implements SimpleAdapter.ViewBi
         });
     }
 
-    public void fillResolveList(List<ResolveInfo> list) {
+    private void fillResolveList(List<ResolveInfo> list) {
         ensureIntents();
         PackageManager pm = getPackageManager();
         list.clear();
@@ -112,13 +112,13 @@ public class BookmarkPicker extends ListActivity implements SimpleAdapter.ViewBi
         }
     }
 
-    public SimpleAdapter createResolveAdapter(List<Map<String, ?>> list) {
+    private SimpleAdapter createResolveAdapter(List<Map<String, ?>> list) {
         SimpleAdapter adapter = new SimpleAdapter(this, list, R.layout.bookmark_picker_item, sKeys, sResourceIds);
         adapter.setViewBinder(this);
         return adapter;
     }
 
-    public void fillAdapterList(List<Map<String, ?>> list, List<ResolveInfo> resolveList) {
+    private void fillAdapterList(List<Map<String, ?>> list, List<ResolveInfo> resolveList) {
         list.clear();
         int resolveListSize = resolveList.size();
         for (int i = 0; i < resolveListSize; i++) {

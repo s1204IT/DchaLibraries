@@ -166,7 +166,7 @@ public class KeyguardAffordanceHelper {
         }
     }
 
-    public void setSwipingInProgress(boolean inProgress) {
+    private void setSwipingInProgress(boolean inProgress) {
         this.mSwipingInProgress = inProgress;
         if (inProgress) {
             this.mCallback.onSwipingStarted();
@@ -214,7 +214,7 @@ public class KeyguardAffordanceHelper {
         this.mSwipeAnimator = animator;
     }
 
-    public void startUnlockHintAnimationPhase2(boolean right, final Runnable onFinishedListener) {
+    private void startUnlockHintAnimationPhase2(boolean right, final Runnable onFinishedListener) {
         final KeyguardAffordanceView targetView = right ? this.mRightIcon : this.mLeftIcon;
         ValueAnimator animator = getAnimatorToRadius(right, 0);
         animator.addListener(new AnimatorListenerAdapter() {
@@ -343,7 +343,7 @@ public class KeyguardAffordanceHelper {
         }
     }
 
-    public void updateIconsFromRadius(KeyguardAffordanceView targetView, float newRadius) {
+    private void updateIconsFromRadius(KeyguardAffordanceView targetView, float newRadius) {
         float alpha = newRadius / this.mMinBackgroundRadius;
         float fadeOutAlpha = Math.max(0.0f, 0.5f * (1.0f - alpha));
         float alpha2 = alpha + fadeOutAlpha;
@@ -353,7 +353,7 @@ public class KeyguardAffordanceHelper {
         updateIconAlpha(this.mCenterIcon, fadeOutAlpha, false);
     }
 
-    public float getTranslationFromRadius(float circleSize) {
+    private float getTranslationFromRadius(float circleSize) {
         float translation = (circleSize - this.mMinBackgroundRadius) / 0.15f;
         return Math.max(0.0f, translation);
     }

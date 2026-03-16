@@ -235,7 +235,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
             } else {
                 new AsyncTask<Void, Void, Void>() {
                     @Override
-                    public Void doInBackground(Void... args) {
+                    protected Void doInBackground(Void... args) {
                         int wifiApState = wifiManager.getWifiApState();
                         if (desiredState && (wifiApState == 12 || wifiApState == 13)) {
                             wifiManager.setWifiApEnabled(null, false);
@@ -321,7 +321,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
             } else {
                 new AsyncTask<Void, Void, Void>() {
                     @Override
-                    public Void doInBackground(Void... args) {
+                    protected Void doInBackground(Void... args) {
                         SettingsAppWidgetProvider.sLocalBluetoothAdapter.setBluetoothEnabled(desiredState);
                         return null;
                     }
@@ -413,7 +413,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
             final ContentResolver resolver = context.getContentResolver();
             new AsyncTask<Void, Void, Boolean>() {
                 @Override
-                public Boolean doInBackground(Void... args) {
+                protected Boolean doInBackground(Void... args) {
                     UserManager um = (UserManager) context.getSystemService("user");
                     if (um.hasUserRestriction("no_share_location")) {
                         return Boolean.valueOf(LocationStateTracker.this.getActualState(context) == 1);
@@ -439,7 +439,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                 }
 
                 @Override
-                public void onPostExecute(Boolean result) {
+                protected void onPostExecute(Boolean result) {
                     LocationStateTracker.this.setCurrentState(context, result.booleanValue() ? 1 : 0);
                     SettingsAppWidgetProvider.updateWidget(context);
                 }
@@ -493,7 +493,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
             final boolean sync = ContentResolver.getMasterSyncAutomatically();
             new AsyncTask<Void, Void, Boolean>() {
                 @Override
-                public Boolean doInBackground(Void... args) {
+                protected Boolean doInBackground(Void... args) {
                     if (desiredState) {
                         if (!sync) {
                             ContentResolver.setMasterSyncAutomatically(true);
@@ -507,7 +507,7 @@ public class SettingsAppWidgetProvider extends AppWidgetProvider {
                 }
 
                 @Override
-                public void onPostExecute(Boolean result) {
+                protected void onPostExecute(Boolean result) {
                     SyncStateTracker.this.setCurrentState(context, result.booleanValue() ? 1 : 0);
                     SettingsAppWidgetProvider.updateWidget(context);
                 }

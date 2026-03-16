@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="search_view_text_min_width">192dp</dimen>
-    <dimen name="dialog_min_width_major">55%</dimen>
-    <dimen name="dialog_min_width_minor">80%</dimen>
-    <dimen name="preference_widget_width">56dp</dimen>
-</resources>

@@ -371,7 +371,7 @@ public class ExpandHelper {
         return this.mResizedView != null;
     }
 
-    public boolean startExpanding(ExpandableView v, int expandType) {
+    private boolean startExpanding(ExpandableView v, int expandType) {
         if (!(v instanceof ExpandableNotificationRow)) {
             return false;
         }

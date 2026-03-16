@@ -105,14 +105,14 @@ public class StorageMeasurement {
         this.mHandler.sendEmptyMessage(5);
     }
 
-    public void sendInternalApproximateUpdate() {
+    private void sendInternalApproximateUpdate() {
         MeasurementReceiver receiver = this.mReceiver != null ? this.mReceiver.get() : null;
         if (receiver != null) {
             receiver.updateApproximate(this, this.mTotalSize, this.mAvailSize);
         }
     }
 
-    public void sendExactUpdate(MeasurementDetails details) {
+    private void sendExactUpdate(MeasurementDetails details) {
         MeasurementReceiver receiver = this.mReceiver != null ? this.mReceiver.get() : null;
         if (receiver == null) {
             if (LOGV) {
@@ -327,7 +327,7 @@ public class StorageMeasurement {
         }
     }
 
-    public static long getDirectorySize(IMediaContainerService imcs, File path) {
+    private static long getDirectorySize(IMediaContainerService imcs, File path) {
         try {
             long size = imcs.calculateDirectorySize(path.toString());
             Log.d("StorageMeasurement", "getDirectorySize(" + path + ") returned " + size);
@@ -338,7 +338,7 @@ public class StorageMeasurement {
         }
     }
 
-    public long measureMisc(IMediaContainerService imcs, File dir) {
+    private long measureMisc(IMediaContainerService imcs, File dir) {
         this.mFileInfoForMisc = new ArrayList();
         File[] files = dir.listFiles();
         if (files == null) {
@@ -391,7 +391,7 @@ public class StorageMeasurement {
         }
     }
 
-    public static void addValue(SparseLongArray array, int key, long value) {
+    private static void addValue(SparseLongArray array, int key, long value) {
         array.put(key, array.get(key) + value);
     }
 }

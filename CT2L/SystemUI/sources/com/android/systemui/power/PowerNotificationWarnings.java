@@ -170,7 +170,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         nb.addAction(0, this.mContext.getString(R.string.battery_saver_notification_action_text), pendingBroadcast("PNW.stopSaver"));
     }
 
-    public void dismissSaverNotification() {
+    private void dismissSaverNotification() {
         if (this.mSaver) {
             Slog.i("PowerUI.Notification", "dismissing saver notification");
         }
@@ -208,7 +208,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         dismissLowBatteryNotification();
     }
 
-    public void dismissLowBatteryNotification() {
+    private void dismissLowBatteryNotification() {
         if (this.mWarning) {
             Slog.i("PowerUI.Notification", "dismissing low battery notification");
         }
@@ -277,7 +277,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         updateNotification();
     }
 
-    public void showStartSaverConfirmation() {
+    private void showStartSaverConfirmation() {
         if (this.mSaverConfirmation == null) {
             SystemUIDialog d = new SystemUIDialog(this.mContext);
             d.setTitle(R.string.battery_saver_confirmation_title);
@@ -296,7 +296,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         }
     }
 
-    public void setSaverMode(boolean mode) {
+    private void setSaverMode(boolean mode) {
         this.mPowerMan.setPowerSaveMode(mode);
     }
 

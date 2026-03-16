@@ -237,7 +237,7 @@ public class EditStyledText extends EditText {
         return retval;
     }
 
-    public void notifyStateChanged(int mode, int state) {
+    private void notifyStateChanged(int mode, int state) {
         if (this.mESTNotifiers != null) {
             for (EditStyledTextNotifier notifier : this.mESTNotifiers) {
                 notifier.onStateChanged(mode, state);
@@ -331,7 +331,7 @@ public class EditStyledText extends EditText {
         return -16777216;
     }
 
-    public static void stopSelecting(View view, Spannable content) {
+    private static void stopSelecting(View view, Spannable content) {
         content.removeSpan(SELECTING);
     }
 

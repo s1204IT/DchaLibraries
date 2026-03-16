@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="key_label_text_size">22dp</dimen>
+    <dimen name="key_text_size">17dp</dimen>
+    <dimen name="cand_category_text_size">28.5dp</dimen>
+    <dimen name="key_text_size_default">32dp</dimen>
+    <dimen name="key_hint_letter_top_padding">6dp</dimen>
+    <dimen name="keyboardHeight">283.5dp</dimen>
+    <dimen name="keyboard_qwerty_common_top_padding">3.5dp</dimen>
+    <dimen name="keyboard_qwerty_common_row4_vertical_gap">0dp</dimen>
+</resources>

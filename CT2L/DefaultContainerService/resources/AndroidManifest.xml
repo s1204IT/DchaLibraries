@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="22"
+    android:versionName="5.1-02.04.000.20191125.213021"
+    package="com.android.defcontainer"
+    coreApp="true"
+    platformBuildVersionCode="22"
+    platformBuildVersionName="5.1-02.04.000.20191125.213021">
+    <uses-sdk
+        android:minSdkVersion="22"
+        android:targetSdkVersion="22"/>
+    <uses-permission android:name="android.permission.ASEC_ACCESS"/>
+    <uses-permission android:name="android.permission.ASEC_CREATE"/>
+    <uses-permission android:name="android.permission.ASEC_DESTROY"/>
+    <uses-permission android:name="android.permission.ASEC_MOUNT_UNMOUNT"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_CACHE_FILESYSTEM"/>
+    <uses-permission android:name="android.permission.ACCESS_ALL_EXTERNAL_STORAGE"/>
+    <application
+        android:label="@string/service_name"
+        android:allowBackup="false">
+        <service
+            android:name="com.android.defcontainer.DefaultContainerService"
+            android:permission="android.permission.COPY_PROTECTED_DATA"
+            android:enabled="true"
+            android:exported="true"/>
+    </application>
+</manifest>

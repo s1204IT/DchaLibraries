@@ -1655,7 +1655,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         invalidate();
     }
 
-    public void onPostReorderingAnimationCompleted() {
+    private void onPostReorderingAnimationCompleted() {
         this.mPostReorderingPreZoomInRemainingAnimationCount--;
         if (this.mPostReorderingPreZoomInRunnable != null && this.mPostReorderingPreZoomInRemainingAnimationCount == 0) {
             this.mPostReorderingPreZoomInRunnable.run();
@@ -2069,7 +2069,7 @@ public abstract class PagedView extends ViewGroup implements ViewGroup.OnHierarc
         return viewRight.getLeft() - warpView.getLeft();
     }
 
-    public void animateWarpPageOffScreen(String reason, boolean animate) {
+    private void animateWarpPageOffScreen(String reason, boolean animate) {
         if (this.mWarpPageExposed) {
             dispatchOnPageEndWarp();
             KeyguardWidgetFrame v = (KeyguardWidgetFrame) getPageAt(getPageWarpIndex());

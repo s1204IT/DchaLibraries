@@ -71,7 +71,7 @@ public class ZenModeAutomaticConditionSelection extends LinearLayout {
         return button;
     }
 
-    public void setSelectedCondition(Uri conditionId, boolean selected) {
+    private void setSelectedCondition(Uri conditionId, boolean selected) {
         Log.d("ZenModeAutomaticConditionSelection", "setSelectedCondition conditionId=" + conditionId + " selected=" + selected);
         if (selected) {
             this.mSelectedConditions.add(conditionId);

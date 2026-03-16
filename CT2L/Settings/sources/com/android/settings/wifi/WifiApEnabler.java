@@ -67,7 +67,7 @@ public class WifiApEnabler {
         this.mContext.unregisterReceiver(this.mReceiver);
     }
 
-    public void enableWifiSwitch() {
+    private void enableWifiSwitch() {
         boolean isAirplaneMode = Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) != 0;
         if (!isAirplaneMode) {
             this.mSwitch.setEnabled(true);
@@ -120,7 +120,7 @@ public class WifiApEnabler {
         switchPreference.setSummary(String.format(string, objArr));
     }
 
-    public void updateTetherState(Object[] available, Object[] tethered, Object[] errored) {
+    private void updateTetherState(Object[] available, Object[] tethered, Object[] errored) {
         boolean wifiTethered = false;
         boolean wifiErrored = false;
         for (Object o : tethered) {
@@ -149,7 +149,7 @@ public class WifiApEnabler {
         }
     }
 
-    public void handleWifiApStateChanged(int state) {
+    private void handleWifiApStateChanged(int state) {
         switch (state) {
             case 10:
                 this.mSwitch.setSummary(R.string.wifi_tether_stopping);

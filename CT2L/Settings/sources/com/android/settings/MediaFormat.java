@@ -38,7 +38,7 @@ public class MediaFormat extends Activity {
         }
     };
 
-    public boolean runKeyguardConfirmation(int request) {
+    private boolean runKeyguardConfirmation(int request) {
         return new ChooseLockSettingsHelper(this).launchConfirmationActivity(request, null, getText(R.string.media_format_gesture_explanation));
     }
 
@@ -56,7 +56,7 @@ public class MediaFormat extends Activity {
         }
     }
 
-    public void establishFinalConfirmationState() {
+    private void establishFinalConfirmationState() {
         if (this.mFinalView == null) {
             this.mFinalView = this.mInflater.inflate(R.layout.media_format_final, (ViewGroup) null);
             this.mFinalButton = (Button) this.mFinalView.findViewById(R.id.execute_media_format);

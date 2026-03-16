@@ -288,7 +288,7 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
         return this.mWebStorageSizeManager;
     }
 
-    public String getAppCachePath() {
+    private String getAppCachePath() {
         if (this.mAppCachePath == null) {
             this.mAppCachePath = this.mContext.getDir("appcache", 0).getPath();
         }
@@ -439,7 +439,7 @@ public class BrowserSettings implements SharedPreferences.OnSharedPreferenceChan
     }
 
     @Deprecated
-    public WebSettings.TextSize getTextSize() {
+    private WebSettings.TextSize getTextSize() {
         String textSize = this.mPrefs.getString("text_size", "NORMAL");
         return WebSettings.TextSize.valueOf(textSize);
     }

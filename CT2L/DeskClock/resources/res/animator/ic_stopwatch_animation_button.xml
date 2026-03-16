@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:interpolator="@interpolator/ic_stopwatch_button_translatex_interpolator"
+        android:duration="267"
+        android:pathData="M 12,12 c 0,0.16667 0,1 0,1 l 0,-1 "
+        android:propertyXName="translateX"
+        android:propertyYName="translateY"/>
+</set>

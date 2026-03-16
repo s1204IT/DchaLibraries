@@ -85,7 +85,7 @@ public class PermissionsPrompt extends RelativeLayout {
         setVisibility(8);
     }
 
-    public void handleButtonClick(boolean allow) {
+    private void handleButtonClick(boolean allow) {
         hide();
         if (allow) {
             this.mRequest.grant(this.mRequest.getResources());

@@ -220,7 +220,7 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
             return null;
         }
 
-        public boolean superOnClickHandler(View view, PendingIntent pendingIntent, Intent fillInIntent) {
+        private boolean superOnClickHandler(View view, PendingIntent pendingIntent, Intent fillInIntent) {
             return super.onClickHandler(view, pendingIntent, fillInIntent);
         }
     };
@@ -388,7 +388,7 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
         return this.mDeviceProvisioned;
     }
 
-    public void updateCurrentProfilesCache() {
+    private void updateCurrentProfilesCache() {
         synchronized (this.mCurrentProfiles) {
             this.mCurrentProfiles.clear();
             if (this.mUserManager != null) {
@@ -512,7 +512,7 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
         return isCurrentProfile(notificationUserId);
     }
 
-    public boolean isCurrentProfile(int userId) {
+    protected boolean isCurrentProfile(int userId) {
         boolean z;
         synchronized (this.mCurrentProfiles) {
             if (userId != -1) {
@@ -600,13 +600,13 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
         return (entry.expandedBig == null || entry.expandedBig.findViewById(R.id.four) == null) ? false : true;
     }
 
-    public void startAppOwnNotificationSettingsActivity(Intent intent, int notificationId, String notificationTag, int appUid) {
+    private void startAppOwnNotificationSettingsActivity(Intent intent, int notificationId, String notificationTag, int appUid) {
         intent.putExtra("notification_id", notificationId);
         intent.putExtra("notification_tag", notificationTag);
         startNotificationGutsIntent(intent, appUid);
     }
 
-    public void startAppNotificationSettingsActivity(String packageName, int appUid) {
+    private void startAppNotificationSettingsActivity(String packageName, int appUid) {
         Intent intent = new Intent("android.settings.APP_NOTIFICATION_SETTINGS");
         intent.putExtra("app_package", packageName);
         intent.putExtra("app_uid", appUid);
@@ -637,7 +637,7 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
         }, false);
     }
 
-    public void inflateGuts(ExpandableNotificationRow row) {
+    private void inflateGuts(ExpandableNotificationRow row) {
         ViewStub stub = (ViewStub) row.findViewById(com.android.systemui.R.id.notification_guts_stub);
         if (stub != null) {
             stub.inflate();
@@ -915,7 +915,7 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
         }
     }
 
-    public class H extends Handler {
+    protected class H extends Handler {
         protected H() {
         }
 
@@ -1380,7 +1380,7 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
         this.mShowLockscreenNotifications = show;
     }
 
-    public void updateLockscreenNotificationSetting() {
+    private void updateLockscreenNotificationSetting() {
         boolean show = Settings.Secure.getIntForUser(this.mContext.getContentResolver(), "lock_screen_show_notifications", 1, this.mCurrentUserId) != 0;
         int dpmFlags = this.mDevicePolicyManager.getKeyguardDisabledFeatures(null, this.mCurrentUserId);
         boolean allowedByDpm = (dpmFlags & 4) == 0;
@@ -1553,7 +1553,7 @@ public abstract class BaseStatusBar extends SystemUI implements RecentsComponent
         entry.row.resetHeight();
     }
 
-    public void notifyHeadsUpScreenOn(boolean screenOn) {
+    protected void notifyHeadsUpScreenOn(boolean screenOn) {
         if (!screenOn) {
             scheduleHeadsUpEscalation();
         }

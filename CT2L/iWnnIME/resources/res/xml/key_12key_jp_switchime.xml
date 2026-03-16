@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="switchImeOn">
+            <Row-Key>
+                <Key
+                    iwnn:codes="-412"
+                    iwnn:keyIcon="@drawable/sym_keyboard_language_switch"
+                    iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                    iwnn:horizontalGap="@fraction/keyboard_12key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_12key_input_keywidth"
+                    iwnn:description="@string/ti_description_key_language_switch"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeHiragana">
+            <case iwnn:keyboardCondition="switchImeOff|modeFullKatakana">
+                <case iwnn:keyboardCondition="switchImeOff|modeHalfKatakana">
+                    <case iwnn:keyboardCondition="switchImeOff|modeFullAlpha">
+                        <case iwnn:keyboardCondition="switchImeOff|modeHalfAlpha">
+                            <Row-Key>
+                                <include iwnn:keyboardLayout="@xml/key_12key_jp_cap"/>
+                            </Row-Key>
+                        </case>
+                    </case>
+                </case>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeFullNum">
+            <Row-Key>
+                <Key
+                    iwnn:codes="-213"
+                    iwnn:keyLabel="＊"
+                    iwnn:horizontalGap="@fraction/keyboard_12key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_12key_input_keywidth"
+                    iwnn:keyHintLabel="@string/ti_alternates_11_12key_full_num_txt"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeHalfNum">
+            <Row-Key>
+                <Key
+                    iwnn:codes="-213"
+                    iwnn:keyLabel="*"
+                    iwnn:horizontalGap="@fraction/keyboard_12key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_12key_input_keywidth"
+                    iwnn:keyHintLabel="@string/ti_alternates_11_12key_half_num_txt"/>
+            </Row-Key>
+        </case>
+    </switch>
+</Keyboard>

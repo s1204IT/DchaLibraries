@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="cand_view_symbol_div">10</integer>
+    <integer name="cand_view_emoji_div">8</integer>
+</resources>

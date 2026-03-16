@@ -380,7 +380,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment implements D
         this.mHaveDebugSettings |= value;
     }
 
-    public void updateAllOptions() {
+    private void updateAllOptions() {
         Context context = getActivity();
         ContentResolver cr = context.getContentResolver();
         this.mHaveDebugSettings = false;
@@ -563,7 +563,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment implements D
         return Settings.Global.getInt(getActivity().getContentResolver(), "verifier_setting_visible", 1) > 0;
     }
 
-    public static boolean showEnableOemUnlockPreference() {
+    private static boolean showEnableOemUnlockPreference() {
         return !SystemProperties.get("ro.frp.pst").equals("");
     }
 
@@ -1548,7 +1548,7 @@ public class DevelopmentSettings extends SettingsPreferenceFragment implements D
         }
 
         @Override
-        public Void doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             try {
                 String[] services = ServiceManager.listServices();
                 for (String service : services) {

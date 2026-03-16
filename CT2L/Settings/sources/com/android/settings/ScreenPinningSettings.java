@@ -70,7 +70,7 @@ public class ScreenPinningSettings extends SettingsPreferenceFragment implements
         this.mSwitchBar.hide();
     }
 
-    public static boolean isLockToAppEnabled(Context context) {
+    private static boolean isLockToAppEnabled(Context context) {
         return Settings.System.getInt(context.getContentResolver(), "lock_to_app_enabled", 0) != 0;
     }
 
@@ -82,7 +82,7 @@ public class ScreenPinningSettings extends SettingsPreferenceFragment implements
         return Settings.Secure.getInt(getContentResolver(), "lock_to_app_exit_locked", 0) != 0;
     }
 
-    public boolean setScreenLockUsed(boolean isEnabled) {
+    private boolean setScreenLockUsed(boolean isEnabled) {
         if (isEnabled) {
             LockPatternUtils lockPatternUtils = new LockPatternUtils(getActivity());
             if (lockPatternUtils.getKeyguardStoredPasswordQuality() == 0) {

@@ -65,7 +65,7 @@ public class WifiSetupActivity extends WifiPickerActivity implements ButtonBarHa
         return wifiConnected;
     }
 
-    public void refreshConnectionState() {
+    private void refreshConnectionState() {
         if (isWifiConnected()) {
             if (this.mAutoFinishOnConnection && this.mUserSelectedNetwork) {
                 Log.d("WifiSetupActivity", "Auto-finishing with connection");

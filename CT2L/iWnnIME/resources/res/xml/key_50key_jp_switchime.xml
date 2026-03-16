@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android">
+    <switch>
+        <case iwnn:keyboardCondition="switchImeOn|modeHiragana">
+            <case iwnn:keyboardCondition="switchImeOn|modeFullKatakana">
+                <case iwnn:keyboardCondition="switchImeOn|modeHalfKatakana">
+                    <Row-Key>
+                        <Key
+                            iwnn:codes="-412"
+                            iwnn:keyIcon="@drawable/sym_keyboard_language_switch"
+                            iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                            iwnn:keyWidth="@fraction/keyboard_50key_function_keywidth"
+                            iwnn:isSecondKey="true"
+                            iwnn:description="@string/ti_description_key_language_switch"/>
+                    </Row-Key>
+                </case>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOn|modeFullAlpha">
+            <case iwnn:keyboardCondition="switchImeOn|modeHalfAlpha">
+                <case iwnn:keyboardCondition="switchImeOn|modeFullNum">
+                    <case iwnn:keyboardCondition="switchImeOn|modeHalfNum">
+                        <Row-Key>
+                            <Key
+                                iwnn:codes="-412"
+                                iwnn:keyIcon="@drawable/sym_keyboard_language_switch"
+                                iwnn:popupKeyboard="@xml/keyboard_popup_template"
+                                iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                                iwnn:keyWidth="@fraction/keyboard_50key_common_keywidth"
+                                iwnn:description="@string/ti_description_key_language_switch"/>
+                        </Row-Key>
+                    </case>
+                </case>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeHiragana">
+            <case iwnn:keyboardCondition="switchImeOff|modeFullKatakana">
+                <case iwnn:keyboardCondition="switchImeOff|modeHalfKatakana">
+                    <include iwnn:keyboardLayout="@xml/key_50key_jp_cap"/>
+                </case>
+            </case>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeFullAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="65286"
+                    iwnn:keyLabel="&amp;"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_common_keywidth"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeHalfAlpha">
+            <Row-Key>
+                <Key
+                    iwnn:codes="38"
+                    iwnn:keyLabel="&amp;"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_common_keywidth"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeFullNum">
+            <Row-Key>
+                <Key
+                    iwnn:codes="65506"
+                    iwnn:keyLabel="¬"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_common_keywidth"/>
+            </Row-Key>
+        </case>
+        <case iwnn:keyboardCondition="switchImeOff|modeHalfNum">
+            <Row-Key>
+                <Key
+                    iwnn:codes="172"
+                    iwnn:keyLabel="¬"
+                    iwnn:horizontalGap="@fraction/keyboard_50key_function_horizontal_gap"
+                    iwnn:keyWidth="@fraction/keyboard_50key_common_keywidth"/>
+            </Row-Key>
+        </case>
+    </switch>
+</Keyboard>

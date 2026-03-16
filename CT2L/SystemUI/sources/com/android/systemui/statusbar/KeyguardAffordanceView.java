@@ -155,7 +155,7 @@ public class KeyguardAffordanceView extends ImageView {
         }
     }
 
-    public void updateIconColor() {
+    private void updateIconColor() {
         Drawable drawable = getDrawable().mutate();
         float alpha = this.mCircleRadius / this.mMinBackgroundRadius;
         int color = ((Integer) this.mColorInterpolator.evaluate(Math.min(1.0f, alpha), Integer.valueOf(this.mNormalColor), Integer.valueOf(this.mInverseColor))).intValue();

@@ -52,7 +52,7 @@ public final class AuthenticatorHelper extends BroadcastReceiver {
     public void preloadDrawableForType(final Context context, final String accountType) {
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... params) {
+            protected Void doInBackground(Void... params) {
                 AuthenticatorHelper.this.getDrawableForType(context, accountType);
                 return null;
             }

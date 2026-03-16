@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Wnn Keyboard (Old Standard)</string>
+    <string name="app_label">Wnn Keyboard Old Standard</string>
+    <string name="app_name_v23">Wnn Keyboard (Android 4.3)</string>
+    <string name="app_label_v23">Android 4.3</string>
+    <string name="app_name_v24">Wnn Keyboard (Android 4.4)</string>
+    <string name="app_label_v24">Android 4.4</string>
+</resources>

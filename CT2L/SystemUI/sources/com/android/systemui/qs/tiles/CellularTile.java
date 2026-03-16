@@ -76,7 +76,7 @@ public class CellularTile extends QSTile<QSTile.SignalState> {
     }
 
     @Override
-    public QSTile.SignalState newTileState() {
+    protected QSTile.SignalState newTileState() {
         return new QSTile.SignalState();
     }
 
@@ -109,7 +109,7 @@ public class CellularTile extends QSTile<QSTile.SignalState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.SignalState state, Object arg) {
+    protected void handleUpdateState(QSTile.SignalState state, Object arg) {
         CallbackInfo cb;
         int iconId;
         state.visible = this.mController.hasMobileDataFeature();

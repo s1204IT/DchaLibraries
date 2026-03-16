@@ -1151,7 +1151,7 @@ public class BrowserProvider2 extends SQLiteContentProvider {
         }
     }
 
-    public long insertSettingsInTransaction(SQLiteDatabase db, ContentValues values) {
+    private long insertSettingsInTransaction(SQLiteDatabase db, ContentValues values) {
         long id;
         String key = values.getAsString("key");
         if (TextUtils.isEmpty(key)) {

@@ -320,7 +320,7 @@ public class KeyguardHostView extends KeyguardViewBase {
         enableUserSelectorIfNecessary();
     }
 
-    public void updateAndAddWidgets() {
+    private void updateAndAddWidgets() {
         cleanupAppWidgetIds();
         addDefaultWidgets();
         addWidgetsFromSettings();
@@ -339,7 +339,7 @@ public class KeyguardHostView extends KeyguardViewBase {
         }
     }
 
-    public boolean shouldEnableAddWidget() {
+    private boolean shouldEnableAddWidget() {
         return numWidgets() < 5 && this.mUserSetupCompleted;
     }
 
@@ -750,7 +750,7 @@ public class KeyguardHostView extends KeyguardViewBase {
         }
     }
 
-    public void showAppropriateWidgetPage() {
+    private void showAppropriateWidgetPage() {
         int state = this.mTransportState;
         boolean transportAdded = ensureTransportPresentOrRemoved(state);
         final int pageToShow = getAppropriateWidgetPage(state);

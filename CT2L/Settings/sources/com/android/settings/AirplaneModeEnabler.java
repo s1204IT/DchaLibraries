@@ -66,7 +66,7 @@ public class AirplaneModeEnabler implements Preference.OnPreferenceChangeListene
         this.mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
     }
 
-    public void onAirplaneModeChanged() {
+    private void onAirplaneModeChanged() {
         this.mSwitchPref.setChecked(isAirplaneModeOn(this.mContext));
     }
 

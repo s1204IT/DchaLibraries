@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public abstract class ForwardingConcurrentMap<K, V> extends ForwardingMap<K, V> implements ConcurrentMap<K, V> {
     @Override
-    public abstract ConcurrentMap<K, V> delegate();
+    protected abstract ConcurrentMap<K, V> delegate();
 
     protected ForwardingConcurrentMap() {
     }

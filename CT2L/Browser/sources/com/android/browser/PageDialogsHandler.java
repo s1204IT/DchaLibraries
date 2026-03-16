@@ -137,7 +137,7 @@ public class PageDialogsHandler {
         }
     }
 
-    public void showSSLCertificate(final Tab tab) {
+    private void showSSLCertificate(final Tab tab) {
         SslCertificate cert = tab.getWebView().getCertificate();
         if (cert != null) {
             this.mSSLCertificateView = tab;

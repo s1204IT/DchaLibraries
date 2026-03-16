@@ -279,20 +279,20 @@ public class DeviceAdminSettings extends ListFragment {
         }
     }
 
-    public boolean isDeviceOwner(DeviceAdminInfo item) {
+    private boolean isDeviceOwner(DeviceAdminInfo item) {
         return getUserId(item) == UserHandle.myUserId() && item.getPackageName().equals(this.mDeviceOwnerPkg);
     }
 
-    public boolean isProfileOwner(DeviceAdminInfo item) {
+    private boolean isProfileOwner(DeviceAdminInfo item) {
         ComponentName profileOwner = this.mProfileOwnerComponents.get(getUserId(item));
         return item.getComponent().equals(profileOwner);
     }
 
-    public boolean isActiveAdmin(DeviceAdminInfo item) {
+    private boolean isActiveAdmin(DeviceAdminInfo item) {
         return this.mDPM.isAdminActiveAsUser(item.getComponent(), getUserId(item));
     }
 
-    public boolean isRemovingAdmin(DeviceAdminInfo item) {
+    private boolean isRemovingAdmin(DeviceAdminInfo item) {
         return this.mDPM.isRemovingAdmin(item.getComponent(), getUserId(item));
     }
 
@@ -362,7 +362,7 @@ public class DeviceAdminSettings extends ListFragment {
         }
     }
 
-    public int getUserId(DeviceAdminInfo adminInfo) {
+    private int getUserId(DeviceAdminInfo adminInfo) {
         return UserHandle.getUserId(adminInfo.getActivityInfo().applicationInfo.uid);
     }
 }

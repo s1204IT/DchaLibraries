@@ -122,11 +122,11 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 });
             }
 
-            public void handleToggleStateChanged(boolean state) {
+            private void handleToggleStateChanged(boolean state) {
                 StatusBarHeaderView.this.mQsDetailHeaderSwitch.setChecked(state);
             }
 
-            public void handleScanStateChanged(boolean state) {
+            private void handleScanStateChanged(boolean state) {
                 if (this.mScanState != state) {
                     this.mScanState = state;
                     Animatable anim = (Animatable) StatusBarHeaderView.this.mQsDetailHeaderProgress.getDrawable();
@@ -140,7 +140,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 }
             }
 
-            public void handleShowingDetail(final QSTile.DetailAdapter detail) {
+            private void handleShowingDetail(final QSTile.DetailAdapter detail) {
                 boolean showingDetail = detail != null;
                 transition(StatusBarHeaderView.this.mClock, !showingDetail);
                 transition(StatusBarHeaderView.this.mDateGroup, !showingDetail);
@@ -443,7 +443,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         updateAmPmTranslation();
     }
 
-    public void updateAmPmTranslation() {
+    private void updateAmPmTranslation() {
         boolean rtl = getLayoutDirection() == 1;
         this.mAmPm.setTranslationX((rtl ? 1 : -1) * this.mTime.getWidth() * (1.0f - this.mTime.getScaleX()));
     }
@@ -527,7 +527,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         }
     }
 
-    public void setClipping(float height) {
+    private void setClipping(float height) {
         this.mClipBounds.set(getPaddingLeft(), 0, getWidth() - getPaddingRight(), (int) height);
         setClipBounds(this.mClipBounds);
         invalidateOutline();

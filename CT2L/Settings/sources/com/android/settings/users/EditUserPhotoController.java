@@ -84,7 +84,7 @@ public class EditUserPhotoController {
         return this.mNewUserPhotoDrawable;
     }
 
-    public void showUpdatePhotoPopup() {
+    private void showUpdatePhotoPopup() {
         boolean canTakePhoto = canTakePhoto();
         boolean canChoosePhoto = canChoosePhoto();
         if (canTakePhoto || canChoosePhoto) {
@@ -138,13 +138,13 @@ public class EditUserPhotoController {
         return this.mImageView.getContext().getPackageManager().queryIntentActivities(intent, 0).size() > 0;
     }
 
-    public void takePhoto() {
+    private void takePhoto() {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         appendOutputExtra(intent, this.mTakePictureUri);
         this.mFragment.startActivityForResult(intent, 1002);
     }
 
-    public void choosePhoto() {
+    private void choosePhoto() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT", (Uri) null);
         intent.setType("image/*");
         appendOutputExtra(intent, this.mTakePictureUri);
@@ -182,7 +182,7 @@ public class EditUserPhotoController {
     private void onPhotoCropped(final Uri data, final boolean cropped) {
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
-            public Bitmap doInBackground(Void... params) {
+            protected Bitmap doInBackground(Void... params) {
                 if (!cropped) {
                     Bitmap croppedImage = Bitmap.createBitmap(EditUserPhotoController.this.mPhotoSize, EditUserPhotoController.this.mPhotoSize, Bitmap.Config.ARGB_8888);
                     Canvas canvas = new Canvas(croppedImage);
@@ -244,7 +244,7 @@ public class EditUserPhotoController {
             }
 
             @Override
-            public void onPostExecute(Bitmap bitmap) {
+            protected void onPostExecute(Bitmap bitmap) {
                 if (bitmap != null) {
                     EditUserPhotoController.this.mNewUserPhotoBitmap = bitmap;
                     EditUserPhotoController.this.mNewUserPhotoDrawable = CircleFramedDrawable.getInstance(EditUserPhotoController.this.mImageView.getContext(), EditUserPhotoController.this.mNewUserPhotoBitmap);

@@ -153,25 +153,25 @@ public class ZenModeControllerImpl implements ZenModeController {
         return NotificationManager.from(this.mContext).getEffectsSuppressor();
     }
 
-    public void fireNextAlarmChanged() {
+    private void fireNextAlarmChanged() {
         for (ZenModeController.Callback cb : this.mCallbacks) {
             cb.onNextAlarmChanged();
         }
     }
 
-    public void fireEffectsSuppressorChanged() {
+    private void fireEffectsSuppressorChanged() {
         for (ZenModeController.Callback cb : this.mCallbacks) {
             cb.onEffectsSupressorChanged();
         }
     }
 
-    public void fireZenChanged(int zen) {
+    private void fireZenChanged(int zen) {
         for (ZenModeController.Callback cb : this.mCallbacks) {
             cb.onZenChanged(zen);
         }
     }
 
-    public void fireZenAvailableChanged(boolean available) {
+    private void fireZenAvailableChanged(boolean available) {
         for (ZenModeController.Callback cb : this.mCallbacks) {
             cb.onZenAvailableChanged(available);
         }
@@ -183,7 +183,7 @@ public class ZenModeControllerImpl implements ZenModeController {
         }
     }
 
-    public void fireExitConditionChanged() {
+    private void fireExitConditionChanged() {
         Condition exitCondition = getExitCondition();
         if (DEBUG) {
             Slog.d("ZenModeController", "exitCondition changed: " + exitCondition);
@@ -193,7 +193,7 @@ public class ZenModeControllerImpl implements ZenModeController {
         }
     }
 
-    public void updateConditions(Condition[] conditions) {
+    private void updateConditions(Condition[] conditions) {
         if (conditions != null && conditions.length != 0) {
             for (Condition c : conditions) {
                 if ((c.flags & 1) != 0) {

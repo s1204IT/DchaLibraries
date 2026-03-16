@@ -133,7 +133,7 @@ public class IccLockSettings extends PreferenceActivity implements EditPinPrefer
         updatePreferences();
     }
 
-    public void updatePreferences() {
+    private void updatePreferences() {
         this.mPinDialog.setEnabled(this.mPhone != null);
         this.mPinToggle.setEnabled(this.mPhone != null);
         if (this.mPhone != null) {
@@ -277,7 +277,7 @@ public class IccLockSettings extends PreferenceActivity implements EditPinPrefer
         this.mPinToggle.setEnabled(false);
     }
 
-    public void iccLockChanged(boolean success, int attemptsRemaining) {
+    private void iccLockChanged(boolean success, int attemptsRemaining) {
         if (success) {
             this.mPinToggle.setChecked(this.mToState);
         } else {
@@ -287,7 +287,7 @@ public class IccLockSettings extends PreferenceActivity implements EditPinPrefer
         resetDialogState();
     }
 
-    public void iccPinChanged(boolean success, int attemptsRemaining) {
+    private void iccPinChanged(boolean success, int attemptsRemaining) {
         if (!success) {
             Toast.makeText(this, getPinPasswordErrorMessage(attemptsRemaining), 1).show();
         } else {

@@ -114,12 +114,12 @@ public class QSDualTileLabel extends LinearLayout {
         rescheduleUpdateText();
     }
 
-    public void rescheduleUpdateText() {
+    private void rescheduleUpdateText() {
         removeCallbacks(this.mUpdateText);
         post(this.mUpdateText);
     }
 
-    public void updateText() {
+    private void updateText() {
         if (getWidth() != 0) {
             if (TextUtils.isEmpty(this.mText)) {
                 this.mFirstLine.setText((CharSequence) null);

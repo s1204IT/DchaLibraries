@@ -72,7 +72,7 @@ public class PowerUI extends SystemUI {
         this.mReceiver.init();
     }
 
-    public void setSaverMode(boolean mode) {
+    private void setSaverMode(boolean mode) {
         this.mWarnings.showSaverMode(mode);
     }
 
@@ -92,7 +92,7 @@ public class PowerUI extends SystemUI {
         this.mLowBatteryAlertCloseLevel = this.mLowBatteryReminderLevels[0] + this.mContext.getResources().getInteger(R.integer.config_chooser_max_targets_per_row);
     }
 
-    public int findBatteryLevelBucket(int level) {
+    private int findBatteryLevelBucket(int level) {
         if (level >= this.mLowBatteryAlertCloseLevel) {
             return 1;
         }

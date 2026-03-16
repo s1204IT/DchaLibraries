@@ -163,7 +163,7 @@ public class PrintSettingsFragment extends SettingsPreferenceFragment implements
         }
     }
 
-    public void updateServicesPreferences() {
+    private void updateServicesPreferences() {
         if (getPreferenceScreen().findPreference("print_services_category") == null) {
             getPreferenceScreen().addPreference(this.mPrintServicesCategory);
         } else {

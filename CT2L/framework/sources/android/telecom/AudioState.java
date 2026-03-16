@@ -1,0 +1,107 @@
+package android.telecom;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.android.internal.telephony.IccCardConstants;
+import java.util.Locale;
+
+public final class AudioState implements Parcelable {
+    public static final Parcelable.Creator<AudioState> CREATOR = new Parcelable.Creator<AudioState>() {
+        @Override
+        public AudioState createFromParcel(Parcel source) {
+            boolean isMuted = source.readByte() != 0;
+            int route = source.readInt();
+            int supportedRouteMask = source.readInt();
+            return new AudioState(isMuted, route, supportedRouteMask);
+        }
+
+        @Override
+        public AudioState[] newArray(int size) {
+            return new AudioState[size];
+        }
+    };
+    public static final int ROUTE_ALL = 15;
+    public static final int ROUTE_BLUETOOTH = 2;
+    public static final int ROUTE_EARPIECE = 1;
+    public static final int ROUTE_SPEAKER = 8;
+    public static final int ROUTE_WIRED_HEADSET = 4;
+    public static final int ROUTE_WIRED_OR_EARPIECE = 5;
+    public final boolean isMuted;
+    public final int route;
+    public final int supportedRouteMask;
+
+    public AudioState(boolean muted, int route, int supportedRouteMask) {
+        this.isMuted = muted;
+        this.route = route;
+        this.supportedRouteMask = supportedRouteMask;
+    }
+
+    public AudioState(AudioState state) {
+        this.isMuted = state.isMuted();
+        this.route = state.getRoute();
+        this.supportedRouteMask = state.getSupportedRouteMask();
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == null || !(obj instanceof AudioState)) {
+            return false;
+        }
+        AudioState state = (AudioState) obj;
+        return isMuted() == state.isMuted() && getRoute() == state.getRoute() && getSupportedRouteMask() == state.getSupportedRouteMask();
+    }
+
+    public String toString() {
+        return String.format(Locale.US, "[AudioState isMuted: %b, route: %s, supportedRouteMask: %s]", Boolean.valueOf(this.isMuted), audioRouteToString(this.route), audioRouteToString(this.supportedRouteMask));
+    }
+
+    public static String audioRouteToString(int route) {
+        if (route == 0 || (route & (-16)) != 0) {
+            return IccCardConstants.INTENT_VALUE_ICC_UNKNOWN;
+        }
+        StringBuffer buffer = new StringBuffer();
+        if ((route & 1) == 1) {
+            listAppend(buffer, "EARPIECE");
+        }
+        if ((route & 2) == 2) {
+            listAppend(buffer, "BLUETOOTH");
+        }
+        if ((route & 4) == 4) {
+            listAppend(buffer, "WIRED_HEADSET");
+        }
+        if ((route & 8) == 8) {
+            listAppend(buffer, "SPEAKER");
+        }
+        return buffer.toString();
+    }
+
+    private static void listAppend(StringBuffer buffer, String str) {
+        if (buffer.length() > 0) {
+            buffer.append(", ");
+        }
+        buffer.append(str);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel destination, int flags) {
+        destination.writeByte((byte) (this.isMuted ? 1 : 0));
+        destination.writeInt(this.route);
+        destination.writeInt(this.supportedRouteMask);
+    }
+
+    public boolean isMuted() {
+        return this.isMuted;
+    }
+
+    public int getRoute() {
+        return this.route;
+    }
+
+    public int getSupportedRouteMask() {
+        return this.supportedRouteMask;
+    }
+}

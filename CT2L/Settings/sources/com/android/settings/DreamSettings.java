@@ -172,7 +172,7 @@ public class DreamSettings extends SettingsPreferenceFragment implements SwitchB
         return !isEnabled ? context.getString(R.string.screensaver_settings_summary_off) : backend.getActiveDreamName();
     }
 
-    public void refreshFromBackend() {
+    private void refreshFromBackend() {
         logd("refreshFromBackend()", new Object[0]);
         this.mRefreshing = true;
         boolean dreamsEnabled = this.mBackend.isEnabled();
@@ -193,7 +193,7 @@ public class DreamSettings extends SettingsPreferenceFragment implements SwitchB
         this.mRefreshing = false;
     }
 
-    public static void logd(String msg, Object... args) {
+    private static void logd(String msg, Object... args) {
     }
 
     private class DreamInfoAdapter extends ArrayAdapter<DreamBackend.DreamInfo> {
@@ -261,7 +261,7 @@ public class DreamSettings extends SettingsPreferenceFragment implements SwitchB
             return null;
         }
 
-        public void activate(DreamBackend.DreamInfo dreamInfo) {
+        private void activate(DreamBackend.DreamInfo dreamInfo) {
             if (!dreamInfo.equals(getCurrentSelection())) {
                 for (int i = 0; i < getCount(); i++) {
                     getItem(i).isActive = false;

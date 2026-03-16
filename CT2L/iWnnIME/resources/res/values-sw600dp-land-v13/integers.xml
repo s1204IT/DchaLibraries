@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="keyboard_qwerty_p_keyEdgeflags">0</integer>
+    <integer name="keyboard_qwerty_l_keyEdgeflags">0</integer>
+    <integer name="keyboard_qwerty_tyouon_keyEdgeflags">0</integer>
+    <integer name="keyboard_qwerty_row_number_0_keyEdgeflags">0</integer>
+    <integer name="keyboard_12key_row4_rowedgeflags">8</integer>
+</resources>

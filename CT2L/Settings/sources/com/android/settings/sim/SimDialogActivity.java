@@ -90,23 +90,23 @@ public class SimDialogActivity extends Activity {
         finish();
     }
 
-    public static void setDefaultDataSubId(Context context, int subId) {
+    private static void setDefaultDataSubId(Context context, int subId) {
         SubscriptionManager subscriptionManager = SubscriptionManager.from(context);
         subscriptionManager.setDefaultDataSubId(subId);
         Toast.makeText(context, R.string.data_switch_started, 1).show();
     }
 
-    public static void setDefaultSmsSubId(Context context, int subId) {
+    private static void setDefaultSmsSubId(Context context, int subId) {
         SubscriptionManager subscriptionManager = SubscriptionManager.from(context);
         subscriptionManager.setDefaultSmsSubId(subId);
     }
 
-    public void setUserSelectedOutgoingPhoneAccount(PhoneAccountHandle phoneAccount) {
+    private void setUserSelectedOutgoingPhoneAccount(PhoneAccountHandle phoneAccount) {
         TelecomManager telecomManager = TelecomManager.from(this);
         telecomManager.setUserSelectedOutgoingPhoneAccount(phoneAccount);
     }
 
-    public PhoneAccountHandle subscriptionIdToPhoneAccountHandle(int subId) {
+    private PhoneAccountHandle subscriptionIdToPhoneAccountHandle(int subId) {
         TelecomManager telecomManager = TelecomManager.from(this);
         Iterator<PhoneAccountHandle> phoneAccounts = telecomManager.getCallCapablePhoneAccounts().listIterator();
         while (phoneAccounts.hasNext()) {

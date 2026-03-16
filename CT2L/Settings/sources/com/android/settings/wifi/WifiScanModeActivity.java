@@ -53,13 +53,13 @@ public class WifiScanModeActivity extends Activity {
         }
     }
 
-    public void doPositiveClick() {
+    private void doPositiveClick() {
         Settings.Global.putInt(getContentResolver(), "wifi_scan_always_enabled", 1);
         setResult(-1);
         finish();
     }
 
-    public void doNegativeClick() {
+    private void doNegativeClick() {
         setResult(0);
         finish();
     }

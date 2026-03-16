@@ -88,7 +88,7 @@ public class Display extends Activity implements View.OnClickListener {
         updateFontScale();
     }
 
-    public void updateFontScale() {
+    private void updateFontScale() {
         this.mDisplayMetrics.scaledDensity = this.mDisplayMetrics.density * this.mCurConfig.fontScale;
         float size = this.mTextSizeTyped.getDimension(this.mDisplayMetrics);
         this.mPreview.setTextSize(0, size);

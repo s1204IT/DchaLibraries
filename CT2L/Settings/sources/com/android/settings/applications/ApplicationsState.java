@@ -724,21 +724,21 @@ public class ApplicationsState {
         return entry;
     }
 
-    public long getTotalInternalSize(PackageStats ps) {
+    private long getTotalInternalSize(PackageStats ps) {
         if (ps != null) {
             return ps.codeSize + ps.dataSize;
         }
         return -2L;
     }
 
-    public long getTotalExternalSize(PackageStats ps) {
+    private long getTotalExternalSize(PackageStats ps) {
         if (ps != null) {
             return ps.externalCodeSize + ps.externalDataSize + ps.externalCacheSize + ps.externalMediaSize + ps.externalObbSize;
         }
         return -2L;
     }
 
-    public String getSizeStr(long size) {
+    private String getSizeStr(long size) {
         if (size >= 0) {
             return Formatter.formatFileSize(this.mContext, size);
         }

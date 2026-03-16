@@ -113,7 +113,7 @@ public class ConfirmLockPassword extends SettingsActivity {
             return view;
         }
 
-        public int getDefaultHeader() {
+        private int getDefaultHeader() {
             return this.mIsAlpha ? R.string.lockpassword_confirm_your_password_header : R.string.lockpassword_confirm_your_pin_header;
         }
 

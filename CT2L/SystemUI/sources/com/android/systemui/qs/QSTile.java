@@ -164,7 +164,7 @@ public abstract class QSTile<TState extends State> implements Listenable {
         return this.mState;
     }
 
-    public void handleSetCallback(Callback callback) {
+    private void handleSetCallback(Callback callback) {
         this.mCallback = callback;
         handleRefreshState(null);
     }
@@ -203,19 +203,19 @@ public abstract class QSTile<TState extends State> implements Listenable {
         return null;
     }
 
-    public void handleShowDetail(boolean show) {
+    private void handleShowDetail(boolean show) {
         if (this.mCallback != null) {
             this.mCallback.onShowDetail(show);
         }
     }
 
-    public void handleToggleStateChanged(boolean state) {
+    private void handleToggleStateChanged(boolean state) {
         if (this.mCallback != null) {
             this.mCallback.onToggleStateChanged(state);
         }
     }
 
-    public void handleScanStateChanged(boolean state) {
+    private void handleScanStateChanged(boolean state) {
         if (this.mCallback != null) {
             this.mCallback.onScanStateChanged(state);
         }
@@ -350,7 +350,7 @@ public abstract class QSTile<TState extends State> implements Listenable {
         }
     }
 
-    public enum UserBoolean {
+    protected enum UserBoolean {
         USER_TRUE(true, true),
         USER_FALSE(true, false),
         BACKGROUND_TRUE(false, true),

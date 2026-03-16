@@ -224,7 +224,7 @@ public class SignalClusterView extends LinearLayout implements NetworkController
         return false;
     }
 
-    public void apply() {
+    private void apply() {
         boolean anythingVisible = true;
         if (this.mWifiGroup != null) {
             this.mVpn.setVisibility(this.mVpnVisible ? 0 : 8);

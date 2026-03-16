@@ -107,7 +107,7 @@ public class PrintJobSettingsFragment extends SettingsPreferenceFragment {
         return this.mPrintJob;
     }
 
-    public void updateUi() {
+    private void updateUi() {
         PrintJob printJob = getPrintJob();
         if (printJob == null) {
             finish();

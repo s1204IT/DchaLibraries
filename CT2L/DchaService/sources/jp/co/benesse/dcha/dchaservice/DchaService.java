@@ -975,7 +975,7 @@ public class DchaService extends Service {
         }
 
         @Override
-        public Void doInBackground(Void... params) {
+        protected Void doInBackground(Void... params) {
             Log.d("SystemPropPoker", "doInBackground 0001");
             try {
                 String[] services = ServiceManager.listServices();

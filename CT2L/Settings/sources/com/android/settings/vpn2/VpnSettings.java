@@ -470,7 +470,7 @@ public class VpnSettings extends SettingsPreferenceFragment implements DialogInt
         }
     }
 
-    public static List<VpnProfile> loadVpnProfiles(KeyStore keyStore, int... excludeTypes) {
+    private static List<VpnProfile> loadVpnProfiles(KeyStore keyStore, int... excludeTypes) {
         ArrayList<VpnProfile> result = Lists.newArrayList();
         String[] keys = keyStore.saw("VPN_");
         if (keys != null) {

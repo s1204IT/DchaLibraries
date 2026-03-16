@@ -134,12 +134,12 @@ public class DisplaySettings extends SettingsPreferenceFragment implements Prefe
         return Resources.getSystem().getBoolean(android.R.^attr-private.colorSurfaceHighlight);
     }
 
-    public static boolean isLiftToWakeAvailable(Context context) {
+    private static boolean isLiftToWakeAvailable(Context context) {
         SensorManager sensors = (SensorManager) context.getSystemService("sensor");
         return (sensors == null || sensors.getDefaultSensor(23) == null) ? false : true;
     }
 
-    public static boolean isDozeAvailable(Context context) {
+    private static boolean isDozeAvailable(Context context) {
         String name = Build.IS_DEBUGGABLE ? SystemProperties.get("debug.doze.component") : null;
         if (TextUtils.isEmpty(name)) {
             name = context.getResources().getString(android.R.string.config_devicePolicyManagement);
@@ -147,7 +147,7 @@ public class DisplaySettings extends SettingsPreferenceFragment implements Prefe
         return !TextUtils.isEmpty(name);
     }
 
-    public static boolean isAutomaticBrightnessAvailable(Resources res) {
+    private static boolean isAutomaticBrightnessAvailable(Resources res) {
         return res.getBoolean(android.R.^attr-private.borderRight);
     }
 

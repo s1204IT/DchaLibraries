@@ -63,7 +63,7 @@ public class SetFullBackupPassword extends Activity {
         this.mSet.setOnClickListener(this.mButtonListener);
     }
 
-    public boolean setBackupPassword(String currentPw, String newPw) {
+    private boolean setBackupPassword(String currentPw, String newPw) {
         try {
             return this.mBackupManager.setBackupPassword(currentPw, newPw);
         } catch (RemoteException e) {

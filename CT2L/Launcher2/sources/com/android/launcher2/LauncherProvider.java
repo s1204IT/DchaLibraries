@@ -72,14 +72,14 @@ public class LauncherProvider extends ContentProvider {
         return result;
     }
 
-    public static long dbInsertAndCheck(DatabaseHelper helper, SQLiteDatabase db, String table, String nullColumnHack, ContentValues values) {
+    private static long dbInsertAndCheck(DatabaseHelper helper, SQLiteDatabase db, String table, String nullColumnHack, ContentValues values) {
         if (!values.containsKey("_id")) {
             throw new RuntimeException("Error: attempting to add item without specifying an id");
         }
         return db.insert(table, nullColumnHack, values);
     }
 
-    public static void deleteId(SQLiteDatabase db, long id) {
+    private static void deleteId(SQLiteDatabase db, long id) {
         Uri uri = LauncherSettings.Favorites.getContentUri(id, false);
         SqlArguments args = new SqlArguments(uri, null, null);
         db.delete(args.table, args.where, args.args);
@@ -624,7 +624,7 @@ public class LauncherProvider extends ContentProvider {
             }
         }
 
-        public int loadFavorites(SQLiteDatabase db, int workspaceResourceId, boolean useDefaultWorkspace) {
+        private int loadFavorites(SQLiteDatabase db, int workspaceResourceId, boolean useDefaultWorkspace) {
             String title;
             Intent intent = new Intent("android.intent.action.MAIN", (Uri) null);
             intent.addCategory("android.intent.category.LAUNCHER");

@@ -221,12 +221,12 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         } else {
             new AsyncTask<Void, Void, String>() {
                 @Override
-                public void onPostExecute(String result) {
+                protected void onPostExecute(String result) {
                     UserSettings.this.finishLoadProfile(result);
                 }
 
                 @Override
-                public String doInBackground(Void... values) {
+                protected String doInBackground(Void... values) {
                     UserInfo user = UserSettings.this.mUserManager.getUserInfo(UserHandle.myUserId());
                     if (user.iconPath == null || user.iconPath.equals("")) {
                         UserSettings.this.assignProfilePhoto(user);
@@ -237,7 +237,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void finishLoadProfile(String profileName) {
+    private void finishLoadProfile(String profileName) {
         if (getActivity() != null) {
             this.mMePreference.setTitle(getString(R.string.user_you, new Object[]{profileName}));
             int myUserId = UserHandle.myUserId();
@@ -254,7 +254,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return lpu.isLockPasswordEnabled() || lpu.isLockPatternEnabled();
     }
 
-    public void launchChooseLockscreen() {
+    private void launchChooseLockscreen() {
         Intent chooseLockIntent = new Intent("android.app.action.SET_NEW_PASSWORD");
         chooseLockIntent.putExtra("minimum_quality", 65536);
         startActivityForResult(chooseLockIntent, 10);
@@ -273,7 +273,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         this.mEditUserInfoController.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void onAddUserClicked(int userType) {
+    private void onAddUserClicked(int userType) {
         synchronized (this.mUserLock) {
             if (this.mRemovingUserId == -1 && !this.mAddingUser) {
                 switch (userType) {
@@ -301,7 +301,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public UserInfo createLimitedUser() {
+    private UserInfo createLimitedUser() {
         UserInfo newUserInfo = this.mUserManager.createSecondaryUser(getResources().getString(R.string.user_new_profile_name), 8);
         int userId = newUserInfo.id;
         UserHandle user = new UserHandle(userId);
@@ -319,7 +319,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return newUserInfo;
     }
 
-    public UserInfo createTrustedUser() {
+    private UserInfo createTrustedUser() {
         UserInfo newUserInfo = this.mUserManager.createSecondaryUser(getResources().getString(R.string.user_new_user_name), 0);
         if (newUserInfo != null) {
             assignDefaultPhoto(newUserInfo);
@@ -327,7 +327,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return newUserInfo;
     }
 
-    public void onManageUserClicked(int userId, boolean newUser) {
+    private void onManageUserClicked(int userId, boolean newUser) {
         int titleResId;
         if (userId == -11) {
             Bundle extras = new Bundle();
@@ -363,7 +363,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void onUserCreated(int userId) {
+    private void onUserCreated(int userId) {
         this.mAddedUserId = userId;
         if (this.mUserManager.getUserInfo(userId).isRestricted()) {
             showDialog(4);
@@ -464,7 +464,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void removeUserNow() {
+    private void removeUserNow() {
         if (this.mRemovingUserId == UserHandle.myUserId()) {
             removeThisUser();
         } else {
@@ -489,7 +489,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void addUserNow(final int userType) {
+    private void addUserNow(final int userType) {
         synchronized (this.mUserLock) {
             this.mAddingUser = true;
             new Thread() {
@@ -510,20 +510,20 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void switchUserNow(int userId) {
+    private void switchUserNow(int userId) {
         try {
             ActivityManagerNative.getDefault().switchUser(userId);
         } catch (RemoteException e) {
         }
     }
 
-    public void exitGuest() {
+    private void exitGuest() {
         if (this.mIsGuest) {
             removeThisUser();
         }
     }
 
-    public void updateUserList() {
+    private void updateUserList() {
         Preference pref;
         if (getActivity() != null) {
             List<UserInfo> users = this.mUserManager.getUsers(true);
@@ -612,12 +612,12 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         getResources();
         new AsyncTask<List<Integer>, Void, Void>() {
             @Override
-            public void onPostExecute(Void result) {
+            protected void onPostExecute(Void result) {
                 UserSettings.this.updateUserList();
             }
 
             @Override
-            public Void doInBackground(List<Integer>... values) {
+            protected Void doInBackground(List<Integer>... values) {
                 Iterator<Integer> it = values[0].iterator();
                 while (it.hasNext()) {
                     int userId = it.next().intValue();
@@ -632,7 +632,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }.execute(missingIcons);
     }
 
-    public void assignProfilePhoto(UserInfo user) {
+    private void assignProfilePhoto(UserInfo user) {
         if (!Utils.copyMeProfilePhoto(getActivity(), user)) {
             assignDefaultPhoto(user);
         }

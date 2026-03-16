@@ -92,7 +92,7 @@ public class KeyguardIndicationController {
         }
     }
 
-    public void updateIndication() {
+    private void updateIndication() {
         if (this.mVisible) {
             this.mTextView.switchIndication(computeIndication());
         }

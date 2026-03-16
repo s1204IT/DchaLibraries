@@ -125,7 +125,7 @@ public class VolumeSeekBarPreference extends SeekBarPreference implements Prefer
         this.mCallback.onStreamValueChanged(this.mStream, progress);
     }
 
-    public void updateIconView() {
+    private void updateIconView() {
         if (this.mIconView != null) {
             if (this.mIconResId != 0) {
                 this.mIconView.setImageResource(this.mIconResId);

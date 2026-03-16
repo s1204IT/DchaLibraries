@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_focused="true"
+        android:color="@android:color/accessibility_daltonizer_background"
+        android:state_activated="true"/>
+    <item
+        android:state_focused="false"
+        android:color="@android:color/accessibility_daltonizer_background"
+        android:state_activated="true"/>
+    <item
+        android:state_enabled="false"
+        android:color="@android:color/accessibility_autoclick_background"
+        android:alpha="@android:dimen/config_restrictedIconSize"/>
+    <item android:color="@android:color/accessibility_autoclick_background"/>
+</selector>

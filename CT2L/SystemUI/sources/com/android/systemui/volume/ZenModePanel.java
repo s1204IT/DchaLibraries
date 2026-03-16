@@ -306,7 +306,7 @@ public class ZenModePanel extends LinearLayout {
         }
     }
 
-    public void setExpanded(boolean expanded) {
+    private void setExpanded(boolean expanded) {
         if (expanded != this.mExpanded) {
             this.mExpanded = expanded;
             if (this.mExpanded) {
@@ -421,7 +421,7 @@ public class ZenModePanel extends LinearLayout {
         }
     }
 
-    public void handleUpdateZen(int zen) {
+    private void handleUpdateZen(int zen) {
         if (this.mSessionZen != -1 && this.mSessionZen != zen) {
             setExpanded(zen != 0);
             this.mSessionZen = zen;
@@ -457,7 +457,7 @@ public class ZenModePanel extends LinearLayout {
         return defValue2;
     }
 
-    public void updateWidgets() {
+    private void updateWidgets() {
         if (this.mTransitionHelper.isTransitioning()) {
             this.mTransitionHelper.pendingUpdateWidgets();
             return;
@@ -503,7 +503,7 @@ public class ZenModePanel extends LinearLayout {
         return ZenModeConfig.toTimeCondition(this.mContext, time, Math.round(span / 60000.0f), now, ActivityManager.getCurrentUser());
     }
 
-    public void handleUpdateConditions(Condition[] conditions) {
+    private void handleUpdateConditions(Condition[] conditions) {
         Condition[] conditions2 = trimConditions(conditions);
         if (Arrays.equals(conditions2, this.mConditions)) {
             int count = this.mConditions == null ? 0 : this.mConditions.length;
@@ -543,7 +543,7 @@ public class ZenModePanel extends LinearLayout {
         return rt;
     }
 
-    public void handleUpdateConditions() {
+    private void handleUpdateConditions() {
         if (this.mTransitionHelper.isTransitioning()) {
             this.mTransitionHelper.pendingUpdateConditions();
             return;
@@ -575,11 +575,11 @@ public class ZenModePanel extends LinearLayout {
         return this.mContext.getString(android.R.string.network_partial_connectivity_detailed);
     }
 
-    public ConditionTag getConditionTagAt(int index) {
+    private ConditionTag getConditionTagAt(int index) {
         return (ConditionTag) this.mZenConditions.getChildAt(index).getTag();
     }
 
-    public int getVisibleConditions() {
+    private int getVisibleConditions() {
         int rt = 0;
         int N = this.mZenConditions.getChildCount();
         for (int i = 0; i < N; i++) {
@@ -626,7 +626,7 @@ public class ZenModePanel extends LinearLayout {
         }
     }
 
-    public void handleExitConditionChanged(Condition exitCondition) {
+    private void handleExitConditionChanged(Condition exitCondition) {
         setExitCondition(exitCondition);
         if (DEBUG) {
             Log.d(this.mTag, "handleExitConditionChanged " + this.mExitCondition);
@@ -759,7 +759,7 @@ public class ZenModePanel extends LinearLayout {
         row.setVisibility(0);
     }
 
-    public void announceConditionSelection(ConditionTag tag) {
+    private void announceConditionSelection(ConditionTag tag) {
         String modeText;
         int zen = getSelectedZen(0);
         switch (zen) {
@@ -775,7 +775,7 @@ public class ZenModePanel extends LinearLayout {
         announceForAccessibility(this.mContext.getString(R.string.zen_mode_and_condition, modeText, tag.line1.getText()));
     }
 
-    public void onClickTimeButton(View row, ConditionTag tag, boolean up) {
+    private void onClickTimeButton(View row, ConditionTag tag, boolean up) {
         Condition newCondition = null;
         int N = MINUTE_BUCKETS.length;
         if (this.mBucketIndex == -1) {
@@ -807,7 +807,7 @@ public class ZenModePanel extends LinearLayout {
         announceConditionSelection(tag);
     }
 
-    public void select(final Condition condition) {
+    private void select(final Condition condition) {
         if (DEBUG) {
             Log.d(this.mTag, "select " + condition);
         }
@@ -829,13 +829,13 @@ public class ZenModePanel extends LinearLayout {
         setSessionExitCondition(copy(condition));
     }
 
-    public void fireMoreSettings() {
+    private void fireMoreSettings() {
         if (this.mCallback != null) {
             this.mCallback.onMoreSettings();
         }
     }
 
-    public void fireInteraction() {
+    private void fireInteraction() {
         if (this.mCallback != null) {
             this.mCallback.onInteraction();
         }

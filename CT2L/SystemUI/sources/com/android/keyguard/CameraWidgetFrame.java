@@ -177,7 +177,7 @@ public class CameraWidgetFrame extends KeyguardWidgetFrame implements View.OnCli
         return iv;
     }
 
-    public void render() {
+    private void render() {
         View root = getRootView();
         int width = root.getWidth() - this.mInsets.right;
         int height = root.getHeight() - this.mInsets.bottom;
@@ -205,7 +205,7 @@ public class CameraWidgetFrame extends KeyguardWidgetFrame implements View.OnCli
         }
     }
 
-    public void transitionToCamera() {
+    private void transitionToCamera() {
         if (!this.mTransitioning && !this.mDown) {
             this.mTransitioning = true;
             enableWindowExitAnimation(false);
@@ -252,7 +252,7 @@ public class CameraWidgetFrame extends KeyguardWidgetFrame implements View.OnCli
         }
     }
 
-    public void recover() {
+    private void recover() {
         this.mCallbacks.onCameraLaunchedUnsuccessfully();
         reset();
     }
@@ -383,7 +383,7 @@ public class CameraWidgetFrame extends KeyguardWidgetFrame implements View.OnCli
         }
     }
 
-    public void onKeyguardVisibilityChanged(boolean showing) {
+    private void onKeyguardVisibilityChanged(boolean showing) {
         if (this.mTransitioning && !showing) {
             this.mTransitioning = false;
             this.mHandler.removeCallbacks(this.mRecoverRunnable);
@@ -395,7 +395,7 @@ public class CameraWidgetFrame extends KeyguardWidgetFrame implements View.OnCli
         }
     }
 
-    public void onSecureCameraActivityStarted() {
+    private void onSecureCameraActivityStarted() {
         this.mHandler.postDelayed(this.mRecoverRunnable, 1000L);
     }
 

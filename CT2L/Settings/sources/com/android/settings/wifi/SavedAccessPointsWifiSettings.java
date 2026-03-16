@@ -89,7 +89,7 @@ public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment im
         }
     }
 
-    public static List<AccessPoint> constructSavedAccessPoints(Context context, WifiManager wifiManager) {
+    private static List<AccessPoint> constructSavedAccessPoints(Context context, WifiManager wifiManager) {
         List<AccessPoint> accessPoints = new ArrayList<>();
         Map<String, List<ScanResult>> resultsMap = new HashMap<>();
         List<WifiConfiguration> configs = wifiManager.getConfiguredNetworks();

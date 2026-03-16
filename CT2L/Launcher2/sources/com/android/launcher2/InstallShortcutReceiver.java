@@ -26,7 +26,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
     private static Object sLock = new Object();
     private static boolean mUseInstallQueue = false;
 
-    public static void addToStringSet(SharedPreferences sharedPrefs, SharedPreferences.Editor editor, String key, String value) {
+    private static void addToStringSet(SharedPreferences sharedPrefs, SharedPreferences.Editor editor, String key, String value) {
         Set<String> strings;
         Set<String> strings2 = sharedPrefs.getStringSet(key, null);
         if (strings2 == null) {

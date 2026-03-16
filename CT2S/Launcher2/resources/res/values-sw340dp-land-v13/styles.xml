@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="QSBBar" parent="">
-        <item name="android:layout_gravity">0x800013</item>
-        <item name="android:orientation">1</item>
-        <item name="android:layout_width">@dimen/qsb_bar_height</item>
-        <item name="android:layout_height">-1</item>
-    </style>
-</resources>

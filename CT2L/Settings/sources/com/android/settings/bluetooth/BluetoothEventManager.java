@@ -87,7 +87,7 @@ final class BluetoothEventManager {
         }
     }
 
-    public static String getDockedDeviceAddress(Context context) {
+    private static String getDockedDeviceAddress(Context context) {
         BluetoothDevice device;
         Intent i = context.registerReceiver(null, new IntentFilter("android.intent.action.DOCK_EVENT"));
         if (i == null) {
@@ -158,7 +158,7 @@ final class BluetoothEventManager {
         }
     }
 
-    public void dispatchDeviceAdded(CachedBluetoothDevice cachedDevice) {
+    private void dispatchDeviceAdded(CachedBluetoothDevice cachedDevice) {
         synchronized (this.mCallbacks) {
             for (BluetoothCallback callback : this.mCallbacks) {
                 callback.onDeviceAdded(cachedDevice);

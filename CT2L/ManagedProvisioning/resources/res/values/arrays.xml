@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="required_apps_managed_device">
+        <item>com.android.settings</item>
+        <item>com.android.contacts</item>
+        <item>com.android.providers.downloads</item>
+        <item>com.android.providers.downloads.ui</item>
+    </array>
+    <array name="required_apps_managed_profile">
+        <item>com.android.contacts</item>
+        <item>com.android.settings</item>
+        <item>com.android.providers.downloads</item>
+        <item>com.android.providers.downloads.ui</item>
+    </array>
+    <array name="vendor_required_apps_managed_device">
+    </array>
+    <array name="vendor_required_apps_managed_profile">
+        <item>com.android.vending</item>
+        <item>com.google.android.gms</item>
+        <item>com.google.android.contacts</item>
+    </array>
+</resources>
