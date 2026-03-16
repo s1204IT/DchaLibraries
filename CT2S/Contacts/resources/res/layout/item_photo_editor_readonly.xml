@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    class="com.android.contacts.editor.PhotoEditorView">
+    <ImageView
+        android:id="@+id/kind_icon"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/ic_camera_alt_black_24dp"
+        android:contentDescription="@string/header_photo_entry"
+        style="@style/EditKindIconStyle"/>
+    <ImageView
+        android:gravity="start"
+        android:id="@+id/photo"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="@dimen/editor_padding_around_read_only_photo_editor"
+        android:scaleType="centerCrop"
+        android:cropToPadding="true"
+        android:contentDescription="@string/description_contact_photo"
+        android:layout_marginStart="2dp"/>
+    <RadioButton
+        android:textSize="@dimen/editor_form_text_size"
+        android:id="@+id/primary_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="@string/primary_photo"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="@dimen/editor_delete_button_width"/>
+</view>

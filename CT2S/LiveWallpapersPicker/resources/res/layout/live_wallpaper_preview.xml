@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="bottom|center_horizontal"
+    android:background="#88000000"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="?android:attr/buttonBarStyle">
+    <Button
+        android:layout_gravity="center_vertical"
+        android:id="@+id/configure"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/configure_wallpaper"
+        android:layout_weight="1"
+        android:onClick="configureLiveWallpaper"
+        style="?android:attr/buttonBarButtonStyle"/>
+    <Button
+        android:layout_gravity="center_vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/wallpaper_instructions"
+        android:layout_weight="1"
+        android:onClick="setLiveWallpaper"
+        style="?android:attr/buttonBarButtonStyle"/>
+</LinearLayout>

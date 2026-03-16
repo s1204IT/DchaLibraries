@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FilterShowHistoryButton" parent="">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">0x1</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/filtershow_button_background</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    <style name="FilterShowTopButton" parent="">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">0x1</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/filtershow_button_background</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:scaleType">7</item>
+    </style>
+    <style name="FilterShowBottomButton" parent="">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">0x1</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/filtershow_button_background</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:layout_width">96dp</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:scaleType">7</item>
+    </style>
+    <style name="FilterShowSlider" parent="">
+        <item name="android:focusable">true</item>
+        <item name="android:maxHeight">13dp</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@drawable/filtershow_slider</item>
+        <item name="android:progressDrawable">@drawable/filtershow_slider</item>
+        <item name="android:minHeight">13dp</item>
+        <item name="android:thumb">@drawable/filtershow_scrubber</item>
+        <item name="android:thumbOffset">16dp</item>
+    </style>
+    <style name="IconButton" parent="">
+        <item name="android:textSize">14dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:ellipsize">4</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/filtershow_button_background</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:layout_width">96dp</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:scaleType">7</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:drawablePadding">6dp</item>
+        <item name="android:marqueeRepeatLimit">-1</item>
+    </style>
+    <style name="FilterIconButton" parent="">
+        <item name="android:textSize">13dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:ellipsize">4</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/filtershow_button_background</item>
+        <item name="android:paddingLeft">3dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingRight">3dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:scaleType">7</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:marqueeRepeatLimit">-1</item>
+    </style>
+    <style name="Theme.GalleryBase" parent="@android:style/Theme.Holo">
+        <item name="listPreferredItemHeightSmall">48dp</item>
+        <item name="switchStyle">@android:style/Widget.CompoundButton</item>
+    </style>
+    <style name="Theme.Gallery.Dialog" parent="@android:style/Theme.Holo.Dialog">
+    </style>
+    <style name="Theme.Gallery" parent="@style/Theme.GalleryBase">
+        <item name="android:colorBackground">@null</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
+        <item name="android:displayOptions">0x0</item>
+    </style>
+    <style name="Theme.FilterShow" parent="@style/Theme.Gallery">
+        <item name="android:windowBackground">@null</item>
+    </style>
+    <style name="Theme.Crop" parent="@style/Theme.GalleryBase">
+        <item name="android:colorBackground">@null</item>
+        <item name="android:windowBackground">@drawable/filtershow_tiled_background</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:actionBarStyle">@style/Holo.ActionBar</item>
+        <item name="android:displayOptions">0x0</item>
+    </style>
+    <style name="Holo.ActionBar" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@drawable/actionbar_translucent</item>
+        <item name="android:displayOptions">0x3</item>
+        <item name="android:backgroundStacked">@null</item>
+    </style>
+    <style name="MediaButton.Play" parent="@android:style/MediaButton.Play">
+        <item name="android:background">@null</item>
+        <item name="android:src">@drawable/icn_media_play</item>
+    </style>
+    <style name="DialogPickerTheme" parent="@style/Theme.Gallery">
+    </style>
+    <style name="Theme.ProxyLauncher" parent="@android:style/Theme.Translucent.NoTitleBar">
+    </style>
+    <style name="ActionBarTwoLinePrimary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+    </style>
+    <style name="ActionBarTwoLineSecondary" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Subtitle">
+    </style>
+    <style name="ActionBarTwoLineItem" parent="">
+        <item name="android:background">@drawable/action_bar_two_line_background</item>
+    </style>
+    <style name="Theme.Camera" parent="@style/Theme.CameraBase">
+        <item name="android:colorBackground">@android:color/black</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/black</item>
+    </style>
+    <style name="Theme.CameraBase" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+    </style>
+    <style name="OnScreenHintTextAppearance" parent="">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">0x0</item>
+        <item name="android:textColor">@android:color/primary_text_dark</item>
+        <item name="android:textColorHighlight">#ffff9200</item>
+        <item name="android:textColorHint">#808080</item>
+        <item name="android:textColorLink">#5c5cff</item>
+    </style>
+    <style name="OnScreenHintTextAppearance.Small" parent="@style/OnScreenHintTextAppearance">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">0x0</item>
+        <item name="android:textColor">@android:color/secondary_text_dark</item>
+    </style>
+    <style name="Animation_OnScreenHint" parent="">
+        <item name="android:windowEnterAnimation">@anim/on_screen_hint_enter</item>
+        <item name="android:windowExitAnimation">@anim/on_screen_hint_exit</item>
+    </style>
+    <style name="ReviewPlayIcon" parent="">
+        <item name="android:visibility">2</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:src">@drawable/ic_gallery_play_big</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+    <style name="PopupTitleSeparator" parent="">
+        <item name="android:background">@color/popup_title_color</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">2dp</item>
+    </style>
+    <style name="SettingItemList" parent="">
+        <item name="android:layout_gravity">0x11</item>
+        <item name="android:orientation">1</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:listSelector">@drawable/bg_pressed</item>
+    </style>
+    <style name="SettingItemTitle" parent="">
+        <item name="android:textSize">@dimen/setting_item_text_size</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:gravity">0x13</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    <style name="SettingItemText" parent="">
+        <item name="android:textSize">@dimen/setting_item_text_size</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:layout_gravity">0x10</item>
+        <item name="android:layout_width">@dimen/setting_item_text_width</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <style name="SettingRow" parent="">
+        <item name="android:gravity">0x10</item>
+        <item name="android:orientation">0</item>
+        <item name="android:background">@drawable/setting_picker</item>
+        <item name="android:paddingLeft">@dimen/setting_item_list_margin</item>
+        <item name="android:paddingRight">@dimen/setting_item_list_margin</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">@dimen/setting_row_height</item>
+    </style>
+    <style name="OnViewfinderLabel" parent="">
+        <item name="android:textSize">16dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/bg_text_on_preview</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <style name="PanoCustomDialogText" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Medium</item>
+    </style>
+    <style name="EffectSettingGrid" parent="">
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_marginLeft">@dimen/setting_item_list_margin</item>
+        <item name="android:layout_marginRight">@dimen/setting_item_list_margin</item>
+        <item name="android:horizontalSpacing">3dp</item>
+        <item name="android:verticalSpacing">3dp</item>
+        <item name="android:numColumns">3</item>
+        <item name="android:choiceMode">1</item>
+    </style>
+    <style name="EffectSettingItem" parent="">
+        <item name="android:orientation">1</item>
+        <item name="android:background">@drawable/setting_picker</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-2</item>
+    </style>
+    <style name="EffectSettingItemTitle" parent="">
+        <item name="android:textSize">@dimen/effect_setting_item_text_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <style name="EffectSettingTypeTitle" parent="">
+        <item name="android:textSize">@dimen/effect_setting_type_text_size</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">0x13</item>
+        <item name="android:paddingLeft">@dimen/effect_setting_type_text_left_padding</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:minHeight">@dimen/effect_setting_type_text_min_height</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:alpha">0.7</item>
+    </style>
+    <style name="EffectTypeSeparator" parent="">
+        <item name="android:background">#2c2c2c</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginBottom">14dp</item>
+    </style>
+    <style name="EffectTitleSeparator" parent="">
+        <item name="android:background">@android:drawable/divider_horizontal_dark</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">2dp</item>
+    </style>
+    <style name="TextAppearance.DialogWindowTitle" parent="">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/holo_blue_light</item>
+    </style>
+    <style name="TextAppearance.Medium" parent="@android:style/TextAppearance.Medium">
+    </style>
+    <style name="Widget.Button.Borderless" parent="@android:style/Widget.Button">
+        <item name="android:textAppearance">@style/TextAppearance.Medium</item>
+        <item name="android:textColor">@color/primary_text</item>
+        <item name="android:background">@drawable/bg_pressed</item>
+        <item name="android:paddingLeft">4dp</item>
+        <item name="android:paddingRight">4dp</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="ReviewControlText_xlarge" parent="">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">0x1</item>
+        <item name="android:gravity">0x11</item>
+        <item name="android:background">@drawable/bg_pressed_exit_fading</item>
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+    </style>
+    <style name="PopupTitleText_xlarge" parent="">
+        <item name="android:textSize">@dimen/popup_title_text_size</item>
+        <item name="android:textColor">@color/popup_title_color</item>
+        <item name="android:layout_gravity">0x13</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+    <style name="PanoCustomDialogText_xlarge" parent="">
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+    </style>
+    <style name="ViewfinderLabelLayout_xlarge" parent="">
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:layout_margin">13dp</item>
+    </style>
+    <style name="SwitcherButton" parent="">
+        <item name="android:background">@drawable/bg_pressed_exit_fading</item>
+        <item name="android:layout_width">@dimen/switcher_size</item>
+        <item name="android:layout_height">@dimen/switcher_size</item>
+    </style>
+    <style name="MenuIndicator" parent="">
+        <item name="android:enabled">false</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:scaleType">5</item>
+    </style>
+    <style name="CameraControls" parent="">
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-1</item>
+    </style>
+    <style name="UndoBar" parent="">
+        <item name="android:layout_gravity">0x50</item>
+        <item name="android:background">@drawable/panel_undo_holo</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
+    </style>
+    <style name="UndoBarTextAppearance" parent="">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    <style name="UndoBarSeparator" parent="">
+        <item name="android:background">@color/gray</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+    <style name="UndoButton" parent="">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">0x1</item>
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:gravity">0x10</item>
+        <item name="android:background">@drawable/bg_pressed</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:drawablePadding">8dp</item>
+    </style>
+</resources>

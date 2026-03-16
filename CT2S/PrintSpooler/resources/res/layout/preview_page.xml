@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.printspooler.widget.PreviewPageFrame xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/preview_page"
+    android:background="?android:attr/colorForeground"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/preview_page_margin">
+    <com.android.printspooler.widget.PageContentView
+        android:id="@+id/page_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <RelativeLayout
+        android:orientation="horizontal"
+        android:id="@+id/page_footer"
+        android:background="@color/material_grey_500"
+        android:duplicateParentState="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/preview_page_footer_height">
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="?android:attr/textColorPrimary"
+            android:id="@+id/page_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/page_selector"
+            android:background="@drawable/page_selector_background"
+            android:duplicateParentState="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+</com.android.printspooler.widget.PreviewPageFrame>

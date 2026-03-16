@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/battery_history_chart_height">
+    <include layout="@layout/battery_history_chart"/>
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="14sp"
+        android:textColor="?android:attr/colorControlActivated"
+        android:gravity="start|center_vertical"
+        android:id="@+id/labelsHeader"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="@string/power_usage_list_summary"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"/>
+</LinearLayout>

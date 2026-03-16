@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DialogWhenReallyLarge" parent="@android:style/Theme.DeviceDefault.Light">
+    </style>
+    <style name="DocumentsTheme" parent="@style/DialogWhenReallyLarge">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:listDivider">@android:drawable/ic_lockscreen_text_focusde</item>
+        <item name="android:windowSoftInputMode">0x0</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowMinWidthMajor">@null</item>
+        <item name="android:windowMinWidthMinor">@null</item>
+        <item name="android:actionBarWidgetTheme">@null</item>
+        <item name="android:actionBarTheme">@android:style/ThemeOverlay.Material.Dark.ActionBar</item>
+        <item name="android:colorPrimary">@android:color/accessibility_magnification_thumbnail_background_color</item>
+        <item name="android:colorPrimaryDark">@android:color/accessibility_magnification_thumbnail_container_background_color</item>
+        <item name="android:colorAccent">@android:color/accessibility_magnification_background</item>
+        <item name="android:actionBarPopupTheme">@android:style/ThemeOverlay.Material.Light</item>
+        <item name="android:^attr-private.findOnPageNextDrawable">@null</item>
+        <item name="android:^attr-private.findOnPagePreviousDrawable">90%</item>
+        <item name="android:^attr-private.colorSwitchThumbNormal">@null</item>
+        <item name="android:^attr-private.lightY">80%</item>
+    </style>
+</resources>

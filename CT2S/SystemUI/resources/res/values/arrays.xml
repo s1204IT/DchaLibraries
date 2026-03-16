@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="batterymeter_color_levels">
+        <item>15</item>
+        <item>100</item>
+    </array>
+    <array name="batterymeter_color_values">
+        <item>@android:color/system_accent3_700</item>
+        <item>#ffffffff</item>
+    </array>
+    <array name="batterymeter_bolt_points">
+        <item>73</item>
+        <item>0</item>
+        <item>392</item>
+        <item>0</item>
+        <item>201</item>
+        <item>259</item>
+        <item>442</item>
+        <item>259</item>
+        <item>4</item>
+        <item>703</item>
+        <item>157</item>
+        <item>334</item>
+        <item>0</item>
+        <item>334</item>
+    </array>
+    <array name="lockscreen_num_pad_klondike">
+        <item>+</item>
+        <item />
+        <item>ABC</item>
+        <item>DEF</item>
+        <item>GHI</item>
+        <item>JKL</item>
+        <item>MNO</item>
+        <item>PQRS</item>
+        <item>TUV</item>
+        <item>WXYZ</item>
+    </array>
+</resources>

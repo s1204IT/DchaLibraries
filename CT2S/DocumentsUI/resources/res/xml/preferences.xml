@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:title="0x7f090025"
+        android:key="advancedDevices"
+        android:defaultValue="false"/>
+    <CheckBoxPreference
+        android:title="0x7f090026"
+        android:key="fileSize"
+        android:defaultValue="false"/>
+</PreferenceScreen>

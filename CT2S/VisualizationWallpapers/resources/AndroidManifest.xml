@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="22"
+    android:versionName="5.1-01.16.000.20191209.162107"
+    package="com.android.musicvis"
+    platformBuildVersionCode="17"
+    platformBuildVersionName="4.2-526865">
+    <uses-sdk
+        android:minSdkVersion="17"
+        android:targetSdkVersion="17"/>
+    <original-package android:name="com.android.musicvis"/>
+    <uses-feature android:name="android.software.live_wallpaper"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <application
+        android:label="@string/wallpapers"
+        android:icon="@drawable/ic_launcher_wallpaper">
+        <service
+            android:label="@string/wallpaper_vis2"
+            android:name="com.android.musicvis.vis2.Visualization2"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:enabled="@bool/config_enable_vis2">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/vis2"/>
+        </service>
+        <service
+            android:label="@string/wallpaper_vis3"
+            android:name="com.android.musicvis.vis3.Visualization3"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:enabled="@bool/config_enable_vis3">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/vis3"/>
+        </service>
+        <service
+            android:label="@string/wallpaper_vis4"
+            android:name="com.android.musicvis.vis4.Visualization4"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:enabled="@bool/config_enable_vis4">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/vis4"/>
+        </service>
+        <service
+            android:label="@string/wallpaper_vis5"
+            android:name="com.android.musicvis.vis5.Visualization5"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:enabled="@bool/config_enable_vis5">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/vis5"/>
+        </service>
+    </application>
+</manifest>

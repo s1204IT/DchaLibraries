@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <fraction name="key_hint_letter_ratio">58%</fraction>
-    <fraction name="minKeyboardHeight">45%p</fraction>
-    <fraction name="keyboard_12key_common_keywidth">20.735%p</fraction>
-    <fraction name="keyboard_12key_function_keywidth">16.889%p</fraction>
-    <fraction name="keyboard_phone_function_keywidth">8.444%</fraction>
-</resources>

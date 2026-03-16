@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <bool name="dtmf_type_enabled">true</bool>
+    <bool name="support_swap_after_merge">false</bool>
+</resources>

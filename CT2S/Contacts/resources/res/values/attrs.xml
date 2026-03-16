@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="cardBackgroundColor" format="color">
+    </attr>
+    <attr name="cardCornerRadius" format="dimension">
+    </attr>
+    <attr name="cardElevation" format="dimension">
+    </attr>
+    <attr name="cardMaxElevation" format="dimension">
+    </attr>
+    <attr name="cardUseCompatPadding" format="boolean">
+    </attr>
+    <attr name="cardPreventCornerOverlap" format="boolean">
+    </attr>
+    <attr name="contentPadding" format="dimension">
+    </attr>
+    <attr name="contentPaddingLeft" format="dimension">
+    </attr>
+    <attr name="contentPaddingRight" format="dimension">
+    </attr>
+    <attr name="contentPaddingTop" format="dimension">
+    </attr>
+    <attr name="contentPaddingBottom" format="dimension">
+    </attr>
+    <attr name="dialpad_key_button_touch_tint" format="color">
+    </attr>
+    <attr name="resizing_text_min_size" format="dimension">
+    </attr>
+    <attr name="list_item_height" format="dimension">
+    </attr>
+    <attr name="list_section_header_height" format="dimension">
+    </attr>
+    <attr name="activated_background" format="reference">
+    </attr>
+    <attr name="section_header_background" format="reference">
+    </attr>
+    <attr name="list_item_padding_top" format="dimension">
+    </attr>
+    <attr name="list_item_padding_right" format="dimension">
+    </attr>
+    <attr name="list_item_padding_bottom" format="dimension">
+    </attr>
+    <attr name="list_item_padding_left" format="dimension">
+    </attr>
+    <attr name="list_item_gap_between_image_and_text" format="dimension">
+    </attr>
+    <attr name="list_item_gap_between_label_and_data" format="dimension">
+    </attr>
+    <attr name="list_item_presence_icon_margin" format="dimension">
+    </attr>
+    <attr name="list_item_presence_icon_size" format="dimension">
+    </attr>
+    <attr name="list_item_photo_size" format="dimension">
+    </attr>
+    <attr name="list_item_profile_photo_size" format="dimension">
+    </attr>
+    <attr name="list_item_prefix_highlight_color" format="color">
+    </attr>
+    <attr name="list_item_background_color" format="color">
+    </attr>
+    <attr name="list_item_header_text_indent" format="dimension">
+    </attr>
+    <attr name="list_item_header_text_color" format="color">
+    </attr>
+    <attr name="list_item_header_text_size" format="dimension">
+    </attr>
+    <attr name="list_item_header_height" format="dimension">
+    </attr>
+    <attr name="list_item_name_text_color" format="color">
+    </attr>
+    <attr name="list_item_name_text_size" format="dimension">
+    </attr>
+    <attr name="list_item_text_indent" format="dimension">
+    </attr>
+    <attr name="list_item_text_offset_top" format="dimension">
+    </attr>
+    <attr name="list_item_data_width_weight" format="integer">
+    </attr>
+    <attr name="list_item_label_width_weight" format="integer">
+    </attr>
+    <attr name="contact_browser_list_padding_left" format="dimension">
+    </attr>
+    <attr name="contact_browser_list_padding_right" format="dimension">
+    </attr>
+    <attr name="contact_browser_background" format="reference">
+    </attr>
+    <attr name="direction" format="string">
+    </attr>
+    <attr name="ratio" format="float">
+    </attr>
+    <attr name="favorites_padding_bottom" format="dimension">
+    </attr>
+    <attr name="mimeType" format="string">
+    </attr>
+    <attr name="remoteViews" format="reference">
+    </attr>
+    <attr name="icon" format="reference">
+    </attr>
+    <attr name="summaryColumn" format="string">
+    </attr>
+    <attr name="detailColumn" format="string">
+    </attr>
+    <attr name="edgeWidth" format="dimension">
+    </attr>
+    <attr name="listenEdges">
+        <flag name="left" value="0x1" />
+        <flag name="right" value="0x2" />
+    </attr>
+    <attr name="layout_narrowParentWidth" format="dimension">
+    </attr>
+    <attr name="layout_narrowWidth" format="dimension">
+    </attr>
+    <attr name="layout_narrowMarginLeft" format="dimension">
+    </attr>
+    <attr name="layout_narrowMarginRight" format="dimension">
+    </attr>
+    <attr name="layout_narrowPaddingLeft" format="dimension">
+    </attr>
+    <attr name="layout_narrowPaddingRight" format="dimension">
+    </attr>
+    <attr name="layout_wideParentWidth" format="dimension">
+    </attr>
+    <attr name="layout_wideWidth" format="dimension">
+    </attr>
+    <attr name="layout_wideMarginLeft" format="dimension">
+    </attr>
+    <attr name="layout_wideMarginRight" format="dimension">
+    </attr>
+    <attr name="layout_widePaddingLeft" format="dimension">
+    </attr>
+    <attr name="layout_widePaddingRight" format="dimension">
+    </attr>
+</resources>

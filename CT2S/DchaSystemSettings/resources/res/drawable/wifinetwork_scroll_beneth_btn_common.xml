@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_enabled="true"
+        android:state_pressed="false"
+        android:drawable="@drawable/wifinetwork_scroll_beneth_btn"/>
+    <item
+        android:state_enabled="true"
+        android:state_pressed="true"
+        android:drawable="@drawable/wifinetwork_scroll_beneth_down"/>
+    <item
+        android:state_enabled="false"
+        android:drawable="@drawable/wifinetwork_scroll_beneth_disable"/>
+</selector>

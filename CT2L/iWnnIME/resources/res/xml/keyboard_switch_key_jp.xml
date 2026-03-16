@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Keyboard xmlns:iwnn="http://schemas.android.com/apk/res/jp.co.omronsoft.iwnnime.ml" xmlns:android="http://schemas.android.com/apk/res/android"
-    iwnn:horizontalGap="0dp"
-    iwnn:keyHeight="50dp"
-    iwnn:keyWidth="15%p"
-    iwnn:verticalGap="0dp"/>

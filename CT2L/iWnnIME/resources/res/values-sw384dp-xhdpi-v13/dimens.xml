@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="keyboard_qwerty_common_top_padding">6dp</dimen>
-    <dimen name="keyboard_qwerty_common_row4_vertical_gap">7.5dp</dimen>
-</resources>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <integer name="image_string_list_string_area_div">8</integer>
-    <integer name="flick_sensitivity_division_number">5</integer>
-    <integer name="keyboard_qwerty_p_keyEdgeflags">2</integer>
-    <integer name="keyboard_qwerty_l_keyEdgeflags">2</integer>
-    <integer name="keyboard_qwerty_tyouon_keyEdgeflags">0</integer>
-    <integer name="keyboard_12key_row4_rowedgeflags">0</integer>
-</resources>

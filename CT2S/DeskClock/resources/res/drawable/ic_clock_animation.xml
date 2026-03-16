@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_focused="true"
+        android:state_selected="false"
+        android:drawable="@drawable/ic_tab_clock_activated"/>
+    <item
+        android:state_selected="true"
+        android:id="@+id/on"
+        android:drawable="@drawable/ic_tab_clock_activated"/>
+    <item
+        android:id="@+id/off"
+        android:drawable="@drawable/ic_tab_clock_normal"/>
+    <transition
+        android:toId="@+id/on"
+        android:fromId="@+id/off">
+        <animated-vector android:drawable="@drawable/ic_clock">
+            <target
+                android:name="second_hand"
+                android:animation="@animator/ic_clock_animation_second_hand"/>
+        </animated-vector>
+    </transition>
+</animated-selector>

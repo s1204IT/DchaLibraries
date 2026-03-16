@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <size
+        android:height="@dimen/search_shortcut_radius"
+        android:width="@dimen/search_shortcut_radius"/>
+    <solid android:color="@color/search_shortcut_background_color"/>
+</shape>

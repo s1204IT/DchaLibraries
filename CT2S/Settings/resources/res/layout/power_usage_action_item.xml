@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeight"
+    android:paddingStart="4dp"
+    android:paddingEnd="?android:attr/scrollbarSize">
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:ellipsize="marquee"
+        android:id="@+id/summary"
+        android:paddingBottom="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:id="@+id/buttons_spacer_left"
+            android:visibility="invisible"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"/>
+        <Button
+            android:id="@+id/action_button"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:paddingEnd="6dp"/>
+    </LinearLayout>
+</LinearLayout>

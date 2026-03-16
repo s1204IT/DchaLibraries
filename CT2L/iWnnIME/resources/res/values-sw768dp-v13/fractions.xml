@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <fraction name="key_hint_ellipsis_ratio">87%</fraction>
-    <fraction name="maxKeyboardHeight">46%p</fraction>
-    <fraction name="minKeyboardHeight">-35%p</fraction>
-</resources>

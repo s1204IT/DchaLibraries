@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SetupWorkSpaceTheme" parent="@android:style/Theme.Material">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:colorPrimary">@color/teal</item>
+        <item name="android:colorPrimaryDark">@color/light_teal</item>
+        <item name="android:colorAccent">@color/dark_turquoise</item>
+    </style>
+    <style name="HeaderImage" parent="">
+        <item name="android:gravity">0x3</item>
+        <item name="android:layout_gravity">0x3</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:src">@drawable/setup_illustration</item>
+        <item name="android:scaleType">2</item>
+    </style>
+    <style name="HeaderImageTile" parent="">
+        <item name="android:gravity">0x3</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-1</item>
+        <item name="android:src">@drawable/setup_illustration_right</item>
+        <item name="android:scaleType">1</item>
+    </style>
+</resources>

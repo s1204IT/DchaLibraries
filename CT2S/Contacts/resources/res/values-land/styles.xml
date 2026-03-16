@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="DialpadKeyNumberStyle" parent="">
+        <item name="android:textSize">@dimen/dialpad_key_numbers_size</item>
+        <item name="android:textColor">@color/dialpad_primary_text_color</item>
+        <item name="android:layout_width">@dimen/dialpad_key_number_width</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:layout_marginBottom">@dimen/dialpad_key_number_margin_bottom</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="DialpadKeyLettersStyle" parent="">
+        <item name="android:textSize">@dimen/dialpad_key_letters_size</item>
+        <item name="android:textColor">@color/dialpad_secondary_text_color</item>
+        <item name="android:gravity">0x3</item>
+        <item name="android:layout_width">-2</item>
+        <item name="android:layout_height">-2</item>
+        <item name="android:fontFamily">sans-serif-regular</item>
+    </style>
+    <style name="ConfirmAddDetailViewStyle" parent="">
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">-1</item>
+    </style>
+    <style name="ConfirmAddDetailHeaderViewStyle" parent="">
+        <item name="android:layout_width">-1</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+</resources>
