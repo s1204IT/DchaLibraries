@@ -1,2 +1,0 @@
-package junit.extensions;
-

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="eq_slider_margin">25dp</dimen>
-    <dimen name="eq_slider_height">380dp</dimen>
-</resources>

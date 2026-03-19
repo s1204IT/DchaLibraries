@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="big_font_size">70sp</dimen>
-    <dimen name="main_clock_font_size">80sp</dimen>
-    <dimen name="no_alarms_size">120dp</dimen>
-    <dimen name="preference_category_padding_start">56dp</dimen>
-    <dimen name="timer_setup_digit_font_size">46dp</dimen>
-</resources>

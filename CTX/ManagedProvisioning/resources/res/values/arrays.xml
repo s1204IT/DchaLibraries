@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <array name="packages_to_delete_new_managed_profile">
-        <item>com.android.server.telecom</item>
-    </array>
-</resources>

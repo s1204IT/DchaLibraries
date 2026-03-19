@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="TextAppearance.EditEvent_SpinnerButton" parent="@style/TextAppearance.EditEvent_Spinner">
-        <item name="android:paddingLeft">12dp</item>
-        <item name="android:paddingRight">12dp</item>
-        <item name="android:stateListAnimator">@null</item>
-    </style>
-</resources>

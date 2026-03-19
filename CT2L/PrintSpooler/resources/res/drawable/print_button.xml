@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/print_button_tint_color">
-    <item android:drawable="@drawable/print_button_background"/>
-</ripple>

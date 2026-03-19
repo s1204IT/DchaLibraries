@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="kg_status_line_font_right_margin">16dp</dimen>
-    <dimen name="kg_clock_top_margin">174dp</dimen>
-    <dimen name="kg_widget_pager_horizontal_padding">32dp</dimen>
-    <dimen name="widget_big_font_size">150dp</dimen>
-</resources>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.android.setupwizardlib.SetupWizardListLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:settings="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    settings:suwHeaderText="@string/wifi_setup_wizard_title"
-    settings:suwBackgroundTile="@drawable/setup_illustration_tile"
-    settings:suwIllustrationHorizontalTile="@drawable/setup_illustration_horizontal_tile"
-    settings:suwIllustrationImage="@drawable/setup_illustration_wifi"/>

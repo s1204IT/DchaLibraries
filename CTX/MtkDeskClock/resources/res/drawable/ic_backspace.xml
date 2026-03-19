@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:tint="?attr/colorControlNormal"
-    android:height="@dimen/backspace_icon_size"
-    android:width="@dimen/backspace_icon_size">
-    <path/>
-</vector>

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="TextAppearance.DialogWindowTitle" parent="@android:style/TextAppearance.Holo.DialogWindowTitle">
-    </style>
-    <style name="TextAppearance.Medium" parent="@android:style/TextAppearance.Holo.Medium">
-    </style>
-</resources>

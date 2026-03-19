@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="alarm_side_padding">96dp</dimen>
-    <dimen name="clock_side_padding">128dp</dimen>
-    <dimen name="clock_side_padding_reduced">116dp</dimen>
-    <dimen name="big_font_size">152sp</dimen>
-    <dimen name="medium_font_size">80sp</dimen>
-</resources>

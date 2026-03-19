@@ -1,6 +1,0 @@
-on post-fs-data
-    mkdir /factory/log 0777 system system
-    mkdir /factory/anrlog 0777 system system
-    chown root root /factory/dcha_hash
-    chmod 0644 /factory/dcha_hash
-    restorecon_recursive /factory

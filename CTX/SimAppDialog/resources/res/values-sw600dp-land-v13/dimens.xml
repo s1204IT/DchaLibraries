@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="suw_card_land_header_text_margin_top">160dp</dimen>
-    <dimen name="suw_decor_padding_top">128dp</dimen>
-    <dimen name="suw_illustration_aspect_ratio">0</dimen>
-</resources>

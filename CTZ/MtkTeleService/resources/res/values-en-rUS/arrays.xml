@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <array name="gsm_umts_network_preferences_choices">
-        <item>2G/3G (auto)</item>
-        <item>3G only</item>
-        <item>2G Only</item>
-    </array>
-</resources>
