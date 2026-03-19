@@ -26,7 +26,7 @@ public class CircularRevealHelper {
     private final Paint scrimPaint;
     private final View view;
 
-    public interface Delegate {
+    interface Delegate {
         void actualDraw(Canvas canvas);
 
         boolean actualIsOpaque();

@@ -125,6 +125,6 @@ public class StorageAsyncLoader extends AsyncLoader<SparseArray<AppsStorageResul
     }
 
     @Override
-    public void onDiscardResult(SparseArray<AppsStorageResult> sparseArray) {
+    protected void onDiscardResult(SparseArray<AppsStorageResult> sparseArray) {
     }
 }

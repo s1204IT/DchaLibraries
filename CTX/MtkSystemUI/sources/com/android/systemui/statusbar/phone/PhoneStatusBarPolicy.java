@@ -290,7 +290,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         }
     }
 
-    public void updateAlarm() {
+    private void updateAlarm() {
         AlarmManager.AlarmClockInfo nextAlarmClock = this.mAlarmManager.getNextAlarmClock(-2);
         boolean z = false;
         boolean z2 = nextAlarmClock != null && nextAlarmClock.getTriggerTime() > 0;
@@ -317,7 +317,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         return context.getString(com.android.systemui.R.string.accessibility_quick_settings_alarm, DateFormat.format(DateFormat.getBestDateTimePattern(Locale.getDefault(), DateFormat.is24HourFormat(context, ActivityManager.getCurrentUser()) ? "EHm" : "Ehma"), alarmClockInfo.getTriggerTime()).toString());
     }
 
-    public final void updateSimState(Intent intent) {
+    private final void updateSimState(Intent intent) {
         String stringExtra = intent.getStringExtra("ss");
         if ("ABSENT".equals(stringExtra)) {
             this.mSimState = IccCardConstants.State.ABSENT;
@@ -351,7 +351,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         this.mSimState = IccCardConstants.State.UNKNOWN;
     }
 
-    public final void updateVolumeZen() {
+    private final void updateVolumeZen() {
         boolean z;
         int i;
         String string;
@@ -446,7 +446,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         }
     }
 
-    public final void updateTTY(int i) {
+    private final void updateTTY(int i) {
         boolean z = i != 0;
         if (DEBUG) {
             Log.v("PhoneStatusBarPolicy", "updateTTY: enabled: " + z);
@@ -465,7 +465,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         this.mIconController.setIconVisibility(this.mSlotTty, false);
     }
 
-    public void updateCast() {
+    private void updateCast() {
         boolean z;
         for (CastController.CastDevice castDevice : this.mCast.getCastDevices()) {
             if (castDevice.state == 1 || castDevice.state == 2) {
@@ -502,7 +502,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         }
     }
 
-    public void updateManagedProfile() {
+    private void updateManagedProfile() {
         this.mUiOffloadThread.submit(new Runnable() {
             @Override
             public final void run() {
@@ -539,7 +539,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         }
     }
 
-    public void updateForegroundInstantApps() {
+    private void updateForegroundInstantApps() {
         final NotificationManager notificationManager = (NotificationManager) this.mContext.getSystemService(NotificationManager.class);
         final ArraySet arraySet = new ArraySet((ArraySet) this.mCurrentNotifs);
         final IPackageManager packageManager = AppGlobals.getPackageManager();
@@ -720,7 +720,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         this.mIconController.setIconVisibility(this.mSlotRotate, false);
     }
 
-    public void updateHeadsetPlug(Intent intent) {
+    private void updateHeadsetPlug(Intent intent) {
         int i;
         boolean z = intent.getIntExtra("state", 0) != 0;
         boolean z2 = intent.getIntExtra("microphone", 0) != 0;
@@ -744,7 +744,7 @@ public class PhoneStatusBarPolicy implements CommandQueue.Callbacks, BluetoothCo
         this.mIconController.setIconVisibility(this.mSlotDataSaver, z);
     }
 
-    public void registerAlarmClockChanged(int i, boolean z) {
+    private void registerAlarmClockChanged(int i, boolean z) {
         if (z) {
             this.mContext.unregisterReceiver(this.mAlarmIntentReceiver);
         }

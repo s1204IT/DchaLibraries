@@ -61,7 +61,7 @@ public class ColorInversionTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         boolean z;
         if ((obj instanceof Integer ? ((Integer) obj).intValue() : this.mSetting.getValue()) == 0) {
             z = false;

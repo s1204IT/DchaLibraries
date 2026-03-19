@@ -239,7 +239,7 @@ public class SearchFragment extends Fragment implements LoaderManager.LoaderCall
         onQueryTextChange(str);
     }
 
-    public void hideKeyboard() {
+    private void hideKeyboard() {
         Activity activity = getActivity();
         if (activity != null) {
             ((InputMethodManager) activity.getSystemService("input_method")).hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);

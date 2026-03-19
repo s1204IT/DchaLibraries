@@ -68,7 +68,7 @@ public class BottomUserEducationView extends AbstractSlideInView implements Inse
     }
 
     @Override
-    public void handleClose(boolean z) {
+    protected void handleClose(boolean z) {
         handleClose(z, 200L);
         if (z) {
             this.mLauncher.getSharedPrefs().edit().putBoolean(KEY_SHOWED_BOTTOM_USER_EDUCATION, true).apply();

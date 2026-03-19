@@ -223,7 +223,7 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
             this.mUsingFingerprint = z;
         }
 
-        public void updatePasswordEntry() {
+        private void updatePasswordEntry() {
             boolean z = this.mLockPatternUtils.getLockoutAttemptDeadline(this.mEffectiveUserId) != 0;
             this.mPasswordEntry.setEnabled(!z);
             this.mPasswordEntryInputDisabler.setInputEnabled(!z);
@@ -264,7 +264,7 @@ public class ConfirmLockPassword extends ConfirmDeviceCredentialBaseActivity {
             startCheckPassword(string, intent);
         }
 
-        public boolean isInternalActivity() {
+        private boolean isInternalActivity() {
             return getActivity() instanceof InternalActivity;
         }
 

@@ -43,13 +43,13 @@ public class MasterClearConfirm extends InstrumentedFragment {
                     ProgressDialog mProgressDialog;
 
                     @Override
-                    public Void doInBackground(Void... voidArr) {
+                    protected Void doInBackground(Void... voidArr) {
                         persistentDataBlockManager.wipe();
                         return null;
                     }
 
                     @Override
-                    public void onPostExecute(Void r2) {
+                    protected void onPostExecute(Void r2) {
                         this.mProgressDialog.hide();
                         if (MasterClearConfirm.this.getActivity() != null) {
                             MasterClearConfirm.this.getActivity().setRequestedOrientation(this.mOldOrientation);
@@ -68,7 +68,7 @@ public class MasterClearConfirm extends InstrumentedFragment {
             }
         }
 
-        public ProgressDialog getProgressDialog() {
+        private ProgressDialog getProgressDialog() {
             ProgressDialog progressDialog = new ProgressDialog(MasterClearConfirm.this.getActivity());
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(false);
@@ -84,7 +84,7 @@ public class MasterClearConfirm extends InstrumentedFragment {
         }
     };
 
-    public void doMasterClear() {
+    private void doMasterClear() {
         Intent intent = new Intent("android.intent.action.FACTORY_RESET");
         intent.setPackage("android");
         intent.addFlags(268435456);
@@ -127,7 +127,7 @@ public class MasterClearConfirm extends InstrumentedFragment {
         }
     }
 
-    public void showNeedToConnectAcDialog() {
+    private void showNeedToConnectAcDialog() {
         Resources resources = getActivity().getResources();
         new AlertDialog.Builder(getActivity()).setTitle(resources.getText(R.string.master_clear_title)).setMessage(resources.getText(R.string.master_clear_need_ac_message)).setPositiveButton(resources.getText(R.string.master_clear_need_ac_label), this.mNeedToConnectAcListener).show();
     }

@@ -250,11 +250,11 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         }
     }
 
-    public boolean isActiveAdmin(DeviceAdminInfo deviceAdminInfo) {
+    private boolean isActiveAdmin(DeviceAdminInfo deviceAdminInfo) {
         return this.mDPM.isAdminActiveAsUser(deviceAdminInfo.getComponent(), getUserId(deviceAdminInfo));
     }
 
-    public boolean isRemovingAdmin(DeviceAdminInfo deviceAdminInfo) {
+    private boolean isRemovingAdmin(DeviceAdminInfo deviceAdminInfo) {
         return this.mDPM.isRemovingAdmin(deviceAdminInfo.getComponent(), getUserId(deviceAdminInfo));
     }
 
@@ -317,7 +317,7 @@ public class DeviceAdminSettings extends ListFragment implements Instrumentable 
         }
     }
 
-    public int getUserId(DeviceAdminInfo deviceAdminInfo) {
+    private int getUserId(DeviceAdminInfo deviceAdminInfo) {
         return UserHandle.getUserId(deviceAdminInfo.getActivityInfo().applicationInfo.uid);
     }
 }

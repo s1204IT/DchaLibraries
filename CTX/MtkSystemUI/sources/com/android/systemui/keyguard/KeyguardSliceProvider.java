@@ -168,7 +168,7 @@ public class KeyguardSliceProvider extends SliceProvider implements NextAlarmCon
         this.mContentResolver.notifyChange(this.mSliceUri, null);
     }
 
-    public void updateNextAlarm() {
+    private void updateNextAlarm() {
         if (withinNHours(this.mNextAlarmInfo, 12)) {
             this.mNextAlarm = android.text.format.DateFormat.format(android.text.format.DateFormat.is24HourFormat(getContext(), ActivityManager.getCurrentUser()) ? "H:mm" : "h:mm", this.mNextAlarmInfo.getTriggerTime()).toString();
         } else {

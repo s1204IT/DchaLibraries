@@ -60,7 +60,7 @@ public class AppDataUsagePreference extends AppPreference {
         progressBar.setProgress(this.mPercent);
     }
 
-    public void setAppInfo() {
+    private void setAppInfo() {
         if (this.mDetail != null) {
             setIcon(this.mDetail.icon);
             setTitle(this.mDetail.label);

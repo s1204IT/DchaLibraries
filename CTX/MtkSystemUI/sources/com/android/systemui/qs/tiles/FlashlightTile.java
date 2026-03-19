@@ -74,7 +74,7 @@ public class FlashlightTile extends QSTileImpl<QSTile.BooleanState> implements F
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (booleanState.slash == null) {
             booleanState.slash = new QSTile.SlashState();
         }

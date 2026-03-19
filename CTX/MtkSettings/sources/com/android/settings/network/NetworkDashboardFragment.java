@@ -92,7 +92,7 @@ public class NetworkDashboardFragment extends DashboardFragment implements Mobil
         return buildPreferenceControllers(context, getLifecycle(), this.mMetricsFeatureProvider, this, this);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, MetricsFeatureProvider metricsFeatureProvider, Fragment fragment, MobilePlanPreferenceController.MobilePlanPreferenceHost mobilePlanPreferenceHost) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, MetricsFeatureProvider metricsFeatureProvider, Fragment fragment, MobilePlanPreferenceController.MobilePlanPreferenceHost mobilePlanPreferenceHost) {
         MobilePlanPreferenceController mobilePlanPreferenceController = new MobilePlanPreferenceController(context, mobilePlanPreferenceHost);
         WifiMasterSwitchPreferenceController wifiMasterSwitchPreferenceController = new WifiMasterSwitchPreferenceController(context, metricsFeatureProvider);
         MobileNetworkPreferenceController mobileNetworkPreferenceController = new MobileNetworkPreferenceController(context);

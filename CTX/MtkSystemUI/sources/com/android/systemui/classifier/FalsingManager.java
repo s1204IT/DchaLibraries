@@ -64,7 +64,7 @@ public class FalsingManager implements SensorEventListener {
         return sInstance;
     }
 
-    public void updateConfiguration() {
+    private void updateConfiguration() {
         this.mEnforceBouncer = Settings.Secure.getInt(this.mContext.getContentResolver(), "falsing_manager_enforce_bouncer", 0) != 0;
     }
 

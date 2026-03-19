@@ -191,7 +191,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         updatePreferences();
     }
 
-    public void updatePreferences() {
+    private void updatePreferences() {
         boolean z = false;
         if (this.mPinDialog != null) {
             this.mPinDialog.setEnabled((this.mPhone == null || this.mIsAirplaneModeOn) ? false : true);
@@ -381,7 +381,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         }
     }
 
-    public void iccLockChanged(Throwable th, int i, Phone phone) {
+    private void iccLockChanged(Throwable th, int i, Phone phone) {
         Log.d("IccLockSettings", "iccLockChanged, exception=" + th + ", attemptsRemaining=" + i);
         boolean z = false;
         boolean z2 = th == null;
@@ -411,7 +411,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         resetDialogState();
     }
 
-    public void iccPinChanged(Throwable th, int i, Phone phone) {
+    private void iccPinChanged(Throwable th, int i, Phone phone) {
         Log.d("IccLockSettings", "iccPinChanged, exception=" + th + ", attemptsRemaining=" + i);
         boolean z = th == null;
         boolean z2 = this.mPhone != null && this.mPhone.equals(phone);
@@ -468,7 +468,7 @@ public class IccLockSettings extends SettingsPreferenceFragment implements EditP
         return true;
     }
 
-    public void resetDialogState() {
+    private void resetDialogState() {
         this.mError = null;
         this.mDialogState = 2;
         this.mPin = "";

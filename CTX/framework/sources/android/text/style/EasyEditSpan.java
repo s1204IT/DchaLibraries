@@ -1,0 +1,66 @@
+package android.text.style;
+
+import android.app.PendingIntent;
+import android.os.Parcel;
+import android.text.ParcelableSpan;
+
+public class EasyEditSpan implements ParcelableSpan {
+    public static final String EXTRA_TEXT_CHANGED_TYPE = "android.text.style.EXTRA_TEXT_CHANGED_TYPE";
+    public static final int TEXT_DELETED = 1;
+    public static final int TEXT_MODIFIED = 2;
+    private boolean mDeleteEnabled;
+    private final PendingIntent mPendingIntent;
+
+    public EasyEditSpan() {
+        this.mPendingIntent = null;
+        this.mDeleteEnabled = true;
+    }
+
+    public EasyEditSpan(PendingIntent pendingIntent) {
+        this.mPendingIntent = pendingIntent;
+        this.mDeleteEnabled = true;
+    }
+
+    public EasyEditSpan(Parcel parcel) {
+        this.mPendingIntent = (PendingIntent) parcel.readParcelable(null);
+        this.mDeleteEnabled = parcel.readByte() == 1;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        writeToParcelInternal(parcel, i);
+    }
+
+    @Override
+    public void writeToParcelInternal(Parcel parcel, int i) {
+        parcel.writeParcelable(this.mPendingIntent, 0);
+        parcel.writeByte(this.mDeleteEnabled ? (byte) 1 : (byte) 0);
+    }
+
+    @Override
+    public int getSpanTypeId() {
+        return getSpanTypeIdInternal();
+    }
+
+    @Override
+    public int getSpanTypeIdInternal() {
+        return 22;
+    }
+
+    public boolean isDeleteEnabled() {
+        return this.mDeleteEnabled;
+    }
+
+    public void setDeleteEnabled(boolean z) {
+        this.mDeleteEnabled = z;
+    }
+
+    public PendingIntent getPendingIntent() {
+        return this.mPendingIntent;
+    }
+}

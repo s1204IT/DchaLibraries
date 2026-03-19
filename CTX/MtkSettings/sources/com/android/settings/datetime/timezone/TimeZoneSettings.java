@@ -121,7 +121,7 @@ public class TimeZoneSettings extends DashboardFragment {
         this.mTimeZoneData = timeZoneData;
     }
 
-    public void onTimeZoneDataReady(TimeZoneData timeZoneData) {
+    private void onTimeZoneDataReady(TimeZoneData timeZoneData) {
         if (this.mTimeZoneData == null && timeZoneData != null) {
             this.mTimeZoneData = timeZoneData;
             setupForCurrentTimeZone();
@@ -129,17 +129,17 @@ public class TimeZoneSettings extends DashboardFragment {
         }
     }
 
-    public void startRegionPicker() {
+    private void startRegionPicker() {
         startPickerFragment(RegionSearchPicker.class, new Bundle(), 1);
     }
 
-    public void onRegionZonePreferenceClicked() {
+    private void onRegionZonePreferenceClicked() {
         Bundle bundle = new Bundle();
         bundle.putString("com.android.settings.datetime.timezone.region_id", ((RegionPreferenceController) use(RegionPreferenceController.class)).getRegionId());
         startPickerFragment(RegionZonePicker.class, bundle, 2);
     }
 
-    public void startFixedOffsetPicker() {
+    private void startFixedOffsetPicker() {
         startPickerFragment(FixedOffsetPicker.class, new Bundle(), 3);
     }
 

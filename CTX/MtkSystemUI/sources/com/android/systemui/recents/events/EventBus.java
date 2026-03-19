@@ -334,7 +334,7 @@ public class EventBus extends BroadcastReceiver {
         }
     }
 
-    public void processEvent(EventHandler eventHandler, Event event) {
+    private void processEvent(EventHandler eventHandler, Event event) {
         if (event.cancelled) {
             if (event.trace) {
                 logWithPid("Event dispatch cancelled");

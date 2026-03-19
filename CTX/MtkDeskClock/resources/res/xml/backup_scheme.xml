@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <include
+        domain="database"
+        path="alarms.db"/>
+    <include
+        domain="sharedpref"
+        path="com.android.deskclock_preferences.xml"/>
+</full-backup-content>

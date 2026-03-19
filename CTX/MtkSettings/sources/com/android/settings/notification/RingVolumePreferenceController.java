@@ -84,7 +84,7 @@ public class RingVolumePreferenceController extends VolumeSeekBarPreferenceContr
         return this.mMuteIcon;
     }
 
-    public void updateRingerMode() {
+    private void updateRingerMode() {
         int ringerModeInternal = this.mHelper.getRingerModeInternal();
         if (this.mRingerMode == ringerModeInternal) {
             return;
@@ -93,7 +93,7 @@ public class RingVolumePreferenceController extends VolumeSeekBarPreferenceContr
         updatePreferenceIcon();
     }
 
-    public void updateEffectsSuppressor() {
+    private void updateEffectsSuppressor() {
         ComponentName effectsSuppressor = NotificationManager.from(this.mContext).getEffectsSuppressor();
         if (Objects.equals(effectsSuppressor, this.mSuppressor)) {
             return;

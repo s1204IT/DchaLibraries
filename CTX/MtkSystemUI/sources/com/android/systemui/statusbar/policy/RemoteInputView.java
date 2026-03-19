@@ -99,7 +99,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         this.mEditText.mRemoteInputView = this;
     }
 
-    public void sendRemoteInput() {
+    private void sendRemoteInput() {
         Bundle bundle = new Bundle();
         bundle.putString(this.mRemoteInput.getResultKey(), this.mEditText.getText().toString());
         Intent intentAddFlags = new Intent().addFlags(268435456);
@@ -166,7 +166,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         return true;
     }
 
-    public void onDefocus(boolean z) {
+    private void onDefocus(boolean z) {
         this.mController.removeRemoteInput(this.mEntry, this.mToken);
         this.mEntry.remoteInputText = this.mEditText.getText();
         if (!this.mRemoved) {
@@ -418,7 +418,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
             this.mBackground = getBackground();
         }
 
-        public void defocusIfNeeded(boolean z) {
+        private void defocusIfNeeded(boolean z) {
             if ((this.mRemoteInputView != null && this.mRemoteInputView.mEntry.row.isChangingPosition()) || isTemporarilyDetached()) {
                 if (isTemporarilyDetached() && this.mRemoteInputView != null) {
                     this.mRemoteInputView.mEntry.remoteInputText = getText();

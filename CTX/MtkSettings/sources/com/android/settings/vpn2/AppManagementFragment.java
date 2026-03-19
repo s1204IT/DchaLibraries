@@ -165,7 +165,7 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
         return alwaysOnVpn;
     }
 
-    public boolean setAlwaysOnVpn(boolean z, boolean z2) {
+    private boolean setAlwaysOnVpn(boolean z, boolean z2) {
         return this.mConnectivityManager.setAlwaysOnVpnPackageForUser(this.mUserId, z ? this.mPackageName : null, z2);
     }
 
@@ -198,7 +198,7 @@ public class AppManagementFragment extends SettingsPreferenceFragment implements
         return this.mConnectivityManager.getAlwaysOnVpnPackageForUser(this.mUserId);
     }
 
-    public boolean isVpnAlwaysOn() {
+    private boolean isVpnAlwaysOn() {
         return this.mPackageName.equals(getAlwaysOnVpnPackage());
     }
 

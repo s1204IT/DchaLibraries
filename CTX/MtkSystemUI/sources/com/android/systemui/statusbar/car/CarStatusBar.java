@@ -79,7 +79,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         }
     }
 
-    public void restartNavBars() {
+    private void restartNavBars() {
         this.mCarFacetButtonController.removeAll();
         if (ENABLE_HVAC_CONNECTION) {
             ((HvacController) Dependency.get(HvacController.class)).removeAllComponents();

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="start|center_vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true">
+    <ImageView
+        android:id="@+id/device_manager_icon_view"
+        android:layout_width="@dimen/icon_width_height"
+        android:layout_height="@dimen/icon_width_height"
+        android:scaleType="fitCenter"
+        android:importantForAccessibility="no"/>
+    <TextView
+        android:textSize="@dimen/main_text_size"
+        android:textColor="@color/text_black"
+        android:gravity="center_vertical"
+        android:id="@+id/device_manager_name"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingStart="@dimen/mdm_app_name_padding_start"/>
+</LinearLayout>

@@ -132,7 +132,7 @@ public class TileServices extends IQSService.Stub {
         }
     }
 
-    public void requestListening(ComponentName componentName) {
+    private void requestListening(ComponentName componentName) {
         synchronized (this.mServices) {
             CustomTile tileForComponent = getTileForComponent(componentName);
             if (tileForComponent == null) {

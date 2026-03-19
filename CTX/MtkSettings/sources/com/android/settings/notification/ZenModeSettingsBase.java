@@ -59,7 +59,7 @@ public abstract class ZenModeSettingsBase extends RestrictedDashboardFragment {
         this.mSettingsObserver.unregister();
     }
 
-    public void updateZenMode(boolean z) {
+    private void updateZenMode(boolean z) {
         int i = Settings.Global.getInt(getContentResolver(), "zen_mode", this.mZenMode);
         if (i == this.mZenMode) {
             return;

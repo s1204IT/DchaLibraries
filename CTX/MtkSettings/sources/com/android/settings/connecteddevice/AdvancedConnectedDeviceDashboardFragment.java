@@ -65,7 +65,7 @@ public class AdvancedConnectedDeviceDashboardFragment extends DashboardFragment 
         return buildControllers(context, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new BluetoothFilesPreferenceController(context));
         arrayList.add(new BluetoothOnWhileDrivingPreferenceController(context));

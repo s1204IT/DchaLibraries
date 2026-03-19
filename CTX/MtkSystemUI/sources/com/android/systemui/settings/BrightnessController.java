@@ -327,20 +327,20 @@ public class BrightnessController implements ToggleSlider.Listener {
         this.mDisplayManager.setTemporaryBrightness(i);
     }
 
-    public void updateIcon(boolean z) {
+    private void updateIcon(boolean z) {
         if (this.mIcon != null) {
             this.mIcon.setImageResource(com.android.systemui.R.drawable.ic_qs_brightness_auto_off);
         }
     }
 
-    public void updateVrMode(boolean z) {
+    private void updateVrMode(boolean z) {
         if (this.mIsVrModeEnabled != z) {
             this.mIsVrModeEnabled = z;
             this.mBackgroundHandler.post(this.mUpdateSliderRunnable);
         }
     }
 
-    public void updateSlider(int i, boolean z) {
+    private void updateSlider(int i, boolean z) {
         int i2;
         int i3;
         if (z) {

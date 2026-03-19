@@ -165,7 +165,7 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
         this.mSeekBar.setOnSeekBarChangeListener(null);
     }
 
-    public void setPreviewLayer(int i, boolean z) {
+    private void setPreviewLayer(int i, boolean z) {
         this.mLabel.setText(this.mEntries[i]);
         this.mSmaller.setEnabled(i > 0);
         this.mLarger.setEnabled(i < this.mEntries.length - 1);
@@ -174,7 +174,7 @@ public abstract class PreviewSeekBarPreferenceFragment extends SettingsPreferenc
         this.mCurrentIndex = i;
     }
 
-    public void setPagerIndicatorContentDescription(int i) {
+    private void setPagerIndicatorContentDescription(int i) {
         this.mPageIndicator.setContentDescription(getPrefContext().getString(R.string.preview_page_indicator_content_description, Integer.valueOf(i + 1), Integer.valueOf(this.mPreviewSampleResIds.length)));
     }
 }

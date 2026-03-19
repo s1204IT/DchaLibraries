@@ -55,7 +55,7 @@ public class BillingCyclePreference extends Preference implements TemplatePrefer
         setIntent(getIntent());
     }
 
-    public void updateEnabled() {
+    private void updateEnabled() {
         try {
             setEnabled(this.mServices.mNetworkService.isBandwidthControlEnabled() && this.mServices.mTelephonyManager.getDataEnabled(this.mSubId) && this.mServices.mUserManager.isAdminUser());
         } catch (RemoteException e) {

@@ -40,7 +40,7 @@ public class BluetoothPermissionActivity extends AlertActivity implements Dialog
     };
     private boolean mReceiverRegistered = false;
 
-    public void dismissDialog() {
+    private void dismissDialog() {
         dismiss();
     }
 

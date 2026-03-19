@@ -167,7 +167,7 @@ public class TouchInteractionService extends Service {
         return this.mMyBinder;
     }
 
-    public void setupTouchConsumer(final int i) {
+    private void setupTouchConsumer(final int i) {
         this.mEventQueue.reset();
         final TouchConsumer consumer = this.mEventQueue.getConsumer();
         if (consumer.deferNextEventToMainThread()) {
@@ -183,7 +183,7 @@ public class TouchInteractionService extends Service {
         }
     }
 
-    public TouchConsumer getCurrentTouchConsumer(int i, boolean z, VelocityTracker velocityTracker) {
+    private TouchConsumer getCurrentTouchConsumer(int i, boolean z, VelocityTracker velocityTracker) {
         ActivityManager.RunningTaskInfo runningTask = this.mAM.getRunningTask(0);
         if (runningTask == null && !z) {
             return this.mNoOpTouchConsumer;
@@ -203,7 +203,7 @@ public class TouchInteractionService extends Service {
         return new OverviewTouchConsumer(activityControlHelper, createdActivity);
     }
 
-    static class OverviewTouchConsumer<T extends BaseDraggingActivity> implements TouchConsumer {
+    private static class OverviewTouchConsumer<T extends BaseDraggingActivity> implements TouchConsumer {
         private final T mActivity;
         private final ActivityControlHelper<T> mActivityHelper;
         private final QuickScrubController mQuickScrubController;

@@ -117,7 +117,7 @@ public class DreamSettings extends DashboardFragment {
         return dreamBackend.getActiveDreamName();
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new CurrentDreamPreferenceController(context));
         arrayList.add(new WhenToDreamPreferenceController(context));

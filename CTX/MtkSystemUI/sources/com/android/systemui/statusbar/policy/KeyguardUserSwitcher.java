@@ -167,7 +167,7 @@ public class KeyguardUserSwitcher {
         });
     }
 
-    public void refresh() {
+    private void refresh() {
         int childCount = this.mUserSwitcher.getChildCount();
         int count = this.mAdapter.getCount();
         int iMax = Math.max(childCount, count);

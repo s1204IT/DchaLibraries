@@ -377,7 +377,7 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
         }
     }
 
-    public void showAlert(Intent intent) {
+    private void showAlert(Intent intent) {
         CharSequence charSequenceExtra = intent.getCharSequenceExtra("alertTitle");
         CharSequence charSequenceExtra2 = intent.getCharSequenceExtra("alertMessage");
         AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -385,7 +385,7 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
         builder.create().show();
     }
 
-    public void updateScreen() {
+    private void updateScreen() {
         SettingsActivity settingsActivity = (SettingsActivity) getActivity();
         if (settingsActivity == null) {
             return;
@@ -422,7 +422,7 @@ public class AdvancedCallingOptions extends SettingsPreferenceFragment implement
         }
     }
 
-    public void handleImsStateChange(int i, int[] iArr, int[] iArr2) {
+    private void handleImsStateChange(int i, int[] iArr, int[] iArr2) {
         if (i == 1) {
             Log.d("OP12AdvancedCallingOptionsFragment", "VoLTE capability changed to :" + iArr[0]);
             this.mSwitchBar.setEnabled(true);

@@ -248,7 +248,7 @@ public class ImageWallpaper extends WallpaperService {
             }
             this.mLoader = new AsyncTask<Void, Void, Bitmap>() {
                 @Override
-                public Bitmap doInBackground(Void... voidArr) {
+                protected Bitmap doInBackground(Void... voidArr) {
                     try {
                         return ImageWallpaper.this.mWallpaperManager.getBitmap(true);
                     } catch (OutOfMemoryError | RuntimeException e) {
@@ -274,7 +274,7 @@ public class ImageWallpaper extends WallpaperService {
                 }
 
                 @Override
-                public void onPostExecute(Bitmap bitmap) {
+                protected void onPostExecute(Bitmap bitmap) {
                     DrawableEngine.this.updateBitmap(bitmap);
                     if (DrawableEngine.this.mNeedsDrawAfterLoadingWallpaper) {
                         DrawableEngine.this.drawFrame();
@@ -285,7 +285,7 @@ public class ImageWallpaper extends WallpaperService {
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, new Void[0]);
         }
 
-        public void updateBitmap(Bitmap bitmap) {
+        private void updateBitmap(Bitmap bitmap) {
             this.mBackground = null;
             this.mBackgroundWidth = -1;
             this.mBackgroundHeight = -1;
@@ -297,7 +297,7 @@ public class ImageWallpaper extends WallpaperService {
             updateSurfaceSize(getSurfaceHolder(), getDefaultDisplayInfo(), false);
         }
 
-        public void unloadWallpaper(boolean z) {
+        private void unloadWallpaper(boolean z) {
             if (this.mLoader != null) {
                 this.mLoader.cancel(false);
                 this.mLoader = null;

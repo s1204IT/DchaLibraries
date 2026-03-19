@@ -47,7 +47,7 @@ public class RecentLocationRequestSeeAllFragment extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle(), this);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, RecentLocationRequestSeeAllFragment recentLocationRequestSeeAllFragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, RecentLocationRequestSeeAllFragment recentLocationRequestSeeAllFragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new RecentLocationRequestSeeAllPreferenceController(context, lifecycle, recentLocationRequestSeeAllFragment));
         return arrayList;

@@ -37,7 +37,7 @@ public class EncryptionAndCredential extends DashboardFragment {
         return R.xml.encryption_and_credential;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         EncryptionStatusPreferenceController encryptionStatusPreferenceController = new EncryptionStatusPreferenceController(context, "encryption_and_credentials_encryption_status");
         arrayList.add(encryptionStatusPreferenceController);

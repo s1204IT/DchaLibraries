@@ -71,7 +71,7 @@ public class ZenRulePreference extends TwoTargetPreference {
         }
     }
 
-    public void showDeleteRuleDialog(Fragment fragment, String str, String str2) {
+    private void showDeleteRuleDialog(Fragment fragment, String str, String str2) {
         ZenDeleteRuleDialog.show(fragment, str2, str, new ZenDeleteRuleDialog.PositiveClickListener() {
             @Override
             public void onOk(String str3) {

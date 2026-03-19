@@ -108,11 +108,11 @@ public class SliceQuery {
         }), null);
     }
 
-    public static boolean checkFormat(SliceItem item, String format) {
+    private static boolean checkFormat(SliceItem item, String format) {
         return format == null || format.equals(item.getFormat());
     }
 
-    public static boolean checkSubtype(SliceItem item, String subtype) {
+    private static boolean checkSubtype(SliceItem item, String subtype) {
         return subtype == null || subtype.equals(item.getSubType());
     }
 

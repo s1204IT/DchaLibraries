@@ -163,7 +163,7 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         startIconAnimation();
     }
 
-    public void startIconAnimation() {
+    private void startIconAnimation() {
         this.mIconAnimationDrawable.start();
     }
 
@@ -225,7 +225,7 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         this.mIconBackgroundBlinksDrawable.start();
     }
 
-    public void launchFinish(byte[] bArr) {
+    private void launchFinish(byte[] bArr) {
         Intent finishIntent = getFinishIntent();
         finishIntent.addFlags(637534208);
         finishIntent.putExtra("hw_auth_token", bArr);
@@ -306,12 +306,12 @@ public class FingerprintEnrollEnrolling extends FingerprintEnrollBase implements
         ErrorDialog.newInstance(charSequence, i).show(getFragmentManager(), ErrorDialog.class.getName());
     }
 
-    public void showIconTouchDialog() {
+    private void showIconTouchDialog() {
         this.mIconTouchCount = 0;
         new IconTouchDialog().show(getFragmentManager(), (String) null);
     }
 
-    public void showError(CharSequence charSequence) {
+    private void showError(CharSequence charSequence) {
         this.mErrorText.setText(charSequence);
         if (this.mErrorText.getVisibility() == 4) {
             this.mErrorText.setVisibility(0);

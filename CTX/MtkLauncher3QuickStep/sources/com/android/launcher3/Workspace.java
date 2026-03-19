@@ -834,7 +834,7 @@ public class Workspace extends PagedView<WorkspacePageIndicator> implements Drop
         this.mLauncher.getDragLayer().getAlphaProperty(0).setValue(interpolation);
     }
 
-    public boolean tryRunOverlayCallback() {
+    private boolean tryRunOverlayCallback() {
         if (this.mOnOverlayHiddenCallback == null) {
             return true;
         }
@@ -1067,13 +1067,13 @@ public class Workspace extends PagedView<WorkspacePageIndicator> implements Drop
         snapToPage(i, 250, Interpolators.ZOOM_IN);
     }
 
-    public void onStartStateTransition(LauncherState launcherState) {
+    private void onStartStateTransition(LauncherState launcherState) {
         this.mIsSwitchingState = true;
         this.mTransitionProgress = 0.0f;
         updateChildrenLayersEnabled();
     }
 
-    public void onEndStateTransition() {
+    private void onEndStateTransition() {
         this.mIsSwitchingState = false;
         this.mForceDrawAdjacentPages = false;
         this.mTransitionProgress = 1.0f;
@@ -2734,7 +2734,7 @@ public class Workspace extends PagedView<WorkspacePageIndicator> implements Drop
         }
     }
 
-    class DeferredWidgetRefresh implements Runnable, LauncherAppWidgetHost.ProviderChangedListener {
+    private class DeferredWidgetRefresh implements Runnable, LauncherAppWidgetHost.ProviderChangedListener {
         private final LauncherAppWidgetHost mHost;
         private final ArrayList<LauncherAppWidgetInfo> mInfos;
         private final Handler mHandler = new Handler();

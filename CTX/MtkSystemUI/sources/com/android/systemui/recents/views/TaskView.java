@@ -327,7 +327,7 @@ public class TaskView extends FixedSizeFrameLayout implements View.OnClickListen
         return this.mClipViewInStack;
     }
 
-    public void setClipViewInStack(boolean z) {
+    void setClipViewInStack(boolean z) {
         if (z != this.mClipViewInStack) {
             this.mClipViewInStack = z;
             if (this.mCb != null) {

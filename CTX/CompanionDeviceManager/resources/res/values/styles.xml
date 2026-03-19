@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ContainerLayout" parent="">
+        <item name="android:layout_gravity">0x11</item>
+        <item name="android:orientation">1</item>
+        <item name="android:background">@drawable/dialog_background</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:layout_width">-1</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:elevation">16dp</item>
+    </style>
+    <style name="ChooserActivity" parent="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:bool.config_cecRcProfileSourceSetupMenuNotHandled_default">100%</item>
+        <item name="android:bool.config_cecRcProfileSourceSetupMenu_userConfigurable">100%</item>
+    </style>
+</resources>

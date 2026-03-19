@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:scrollbarStyle="outsideOverlay"
+    android:id="@+id/cities"
+    android:paddingBottom="@dimen/fab_height"
+    android:scrollbars="vertical"
+    android:clickable="false"
+    android:clipToPadding="false"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"/>

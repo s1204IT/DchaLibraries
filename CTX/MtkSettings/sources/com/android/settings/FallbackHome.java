@@ -82,7 +82,7 @@ public class FallbackHome extends Activity {
         unregisterReceiver(this.mReceiver);
     }
 
-    public void maybeFinish() {
+    private void maybeFinish() {
         if (((UserManager) getSystemService(UserManager.class)).isUserUnlocked()) {
             if (Objects.equals(getPackageName(), getPackageManager().resolveActivity(new Intent("android.intent.action.MAIN").addCategory("android.intent.category.HOME"), 0).activityInfo.packageName)) {
                 if (UserManager.isSplitSystemUser() && UserHandle.myUserId() == 0) {

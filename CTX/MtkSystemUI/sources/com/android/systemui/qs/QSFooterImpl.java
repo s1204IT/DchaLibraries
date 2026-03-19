@@ -117,7 +117,7 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
         setImportantForAccessibility(1);
     }
 
-    public void updateAnimator(int i) {
+    private void updateAnimator(int i) {
         int numQuickTiles = QuickQSPanel.getNumQuickTiles(this.mContext);
         int dimensionPixelSize = (i - ((this.mContext.getResources().getDimensionPixelSize(com.android.systemui.R.dimen.qs_quick_tile_size) - this.mContext.getResources().getDimensionPixelSize(com.android.systemui.R.dimen.qs_quick_tile_padding)) * numQuickTiles)) / (numQuickTiles - 1);
         int dimensionPixelOffset = this.mContext.getResources().getDimensionPixelOffset(com.android.systemui.R.dimen.default_gear_space);
@@ -337,7 +337,7 @@ public class QSFooterImpl extends FrameLayout implements View.OnClickListener, Q
         qSFooterImpl.startSettingsActivity();
     }
 
-    public void startSettingsActivity() {
+    private void startSettingsActivity() {
         if (BenesseExtension.getDchaState() != 0) {
             return;
         }

@@ -103,7 +103,7 @@ public class ResetAppsHelper implements DialogInterface.OnClickListener, DialogI
         });
     }
 
-    public boolean isNonEnableableFallback(String str) {
+    private boolean isNonEnableableFallback(String str) {
         try {
             return this.mWvus.isFallbackPackage(str);
         } catch (RemoteException e) {

@@ -980,7 +980,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         }, false);
     }
 
-    public void setOverScrolling(boolean z) {
+    private void setOverScrolling(boolean z) {
         this.mStackScrollerOverscrolling = z;
         if (this.mQs == null) {
             return;
@@ -1132,7 +1132,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         this.mKeyguardStatusView.setAlpha(1.0f);
     }
 
-    public void updateQsState() {
+    private void updateQsState() {
         this.mNotificationStackScroller.setQsExpanded(this.mQsExpanded);
         this.mNotificationStackScroller.setScrollingEnabled(this.mStatusBarState != 1 && (!this.mQsExpanded || this.mQsExpansionFromOverscroll));
         updateEmptyShadeView();
@@ -1146,7 +1146,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         this.mQs.setExpanded(this.mQsExpanded);
     }
 
-    public void setQsExpansion(float f) {
+    private void setQsExpansion(float f) {
         float fMin = Math.min(Math.max(f, this.mQsMinExpansionHeight), this.mQsMaxExpansionHeight);
         this.mQsFullyExpanded = fMin == ((float) this.mQsMaxExpansionHeight) && this.mQsMaxExpansionHeight != 0;
         if (fMin > this.mQsMinExpansionHeight && !this.mQsExpanded && !this.mStackScrollerOverscrolling) {
@@ -1460,7 +1460,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         return (float) Math.pow(MathUtils.constrain(notificationsTopY, 0.0f, 1.0f), 0.75d);
     }
 
-    public void updateHeaderKeyguardAlpha() {
+    private void updateHeaderKeyguardAlpha() {
         this.mKeyguardStatusBar.setAlpha(Math.min(getKeyguardContentsAlpha(), 1.0f - Math.min(1.0f, getQsExpansionFraction() * 2.0f)) * this.mKeyguardStatusBarAnimateAlpha);
         this.mKeyguardStatusBar.setVisibility((this.mKeyguardStatusBar.getAlpha() == 0.0f || this.mDozing) ? 4 : 0);
     }
@@ -1541,7 +1541,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         }
     }
 
-    public void setListening(boolean z) {
+    private void setListening(boolean z) {
         this.mKeyguardStatusBar.setListening(z);
         if (this.mQs == null) {
             return;
@@ -2335,7 +2335,7 @@ public class NotificationPanelView extends PanelView implements View.OnClickList
         setDarkAmount(f);
     }
 
-    public void setDarkAmount(float f) {
+    private void setDarkAmount(float f) {
         this.mDarkAmount = f;
         this.mKeyguardStatusView.setDarkAmount(this.mDarkAmount);
         this.mKeyguardBottomArea.setDarkAmount(this.mDarkAmount);

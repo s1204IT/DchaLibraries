@@ -94,7 +94,7 @@ public class WifiTetherSwitchBarController implements DataSaverBackend.Listener,
         this.mConnectivityManager.startTethering(0, true, this.mOnStartTetheringCallback, new Handler(Looper.getMainLooper()));
     }
 
-    public void handleWifiApStateChanged(int i) {
+    private void handleWifiApStateChanged(int i) {
         switch (i) {
             case AccessPoint.Speed.MODERATE:
                 if (this.mSwitchBar.isChecked()) {
@@ -122,7 +122,7 @@ public class WifiTetherSwitchBarController implements DataSaverBackend.Listener,
         }
     }
 
-    public void updateWifiSwitch() {
+    private void updateWifiSwitch() {
         if (!(Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) != 0)) {
             this.mSwitchBar.setEnabled(true ^ this.mDataSaverBackend.isDataSaverEnabled());
         } else {

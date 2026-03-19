@@ -90,7 +90,7 @@ public class AppLaunchSettings extends AppInfoWithHeader implements Preference.O
         }
     }
 
-    public boolean updateAppLinkState(int i) {
+    private boolean updateAppLinkState(int i) {
         if (this.mIsBrowser) {
             return false;
         }

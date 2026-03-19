@@ -295,7 +295,7 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
     }
 
     @Override
-    public void restartBatteryStatsLoader(int i) {
+    protected void restartBatteryStatsLoader(int i) {
         super.restartBatteryStatsLoader(i);
         this.mBatteryHeaderPreferenceController.quickUpdateHeaderPreference();
     }
@@ -311,7 +311,7 @@ public class PowerUsageSummary extends PowerUsageBase implements View.OnLongClic
         restartBatteryTipLoader();
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final BatteryBroadcastReceiver mBatteryBroadcastReceiver;
         private final Context mContext;
         private final SummaryLoader mLoader;

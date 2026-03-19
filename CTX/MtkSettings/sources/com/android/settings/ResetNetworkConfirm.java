@@ -85,12 +85,12 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
         }
 
         @Override
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             return Boolean.valueOf(RecoverySystem.wipeEuiccData(this.mContext, this.mPackageName));
         }
 
         @Override
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             if (bool.booleanValue()) {
                 Toast.makeText(this.mContext, R.string.reset_network_complete_toast, 0).show();
             } else {
@@ -99,7 +99,7 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
         }
     }
 
-    public void resetImsNetwork(Context context, int i) {
+    private void resetImsNetwork(Context context, int i) {
         int phoneId;
         if (i == -1) {
             phoneId = 0;
@@ -109,7 +109,7 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
         MtkImsManager.factoryReset(context, phoneId);
     }
 
-    public void cleanUpSmsRawTable(Context context) {
+    private void cleanUpSmsRawTable(Context context) {
         context.getContentResolver().delete(Uri.withAppendedPath(Telephony.Sms.CONTENT_URI, "raw/permanentDelete"), null, null);
     }
 
@@ -122,7 +122,7 @@ public class ResetNetworkConfirm extends InstrumentedFragment {
         }
     }
 
-    public void restoreDefaultApn(Context context) {
+    private void restoreDefaultApn(Context context) {
         Uri uriWithAppendedPath = Uri.parse("content://telephony/carriers/restore");
         if (SubscriptionManager.isUsableSubIdValue(this.mSubId)) {
             uriWithAppendedPath = Uri.withAppendedPath(uriWithAppendedPath, "subId/" + String.valueOf(this.mSubId));

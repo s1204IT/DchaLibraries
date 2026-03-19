@@ -1,0 +1,72 @@
+package android.nfc.tech;
+
+import android.nfc.Tag;
+import android.os.Bundle;
+import android.os.RemoteException;
+import java.io.IOException;
+
+public final class NfcB extends BasicTagTechnology {
+    public static final String EXTRA_APPDATA = "appdata";
+    public static final String EXTRA_PROTINFO = "protinfo";
+    private byte[] mAppData;
+    private byte[] mProtInfo;
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+    }
+
+    @Override
+    public void connect() throws IOException {
+        super.connect();
+    }
+
+    @Override
+    public Tag getTag() {
+        return super.getTag();
+    }
+
+    @Override
+    public boolean isConnected() {
+        return super.isConnected();
+    }
+
+    @Override
+    public void reconnect() throws IOException {
+        super.reconnect();
+    }
+
+    public static NfcB get(Tag tag) {
+        if (!tag.hasTech(2)) {
+            return null;
+        }
+        try {
+            return new NfcB(tag);
+        } catch (RemoteException e) {
+            return null;
+        }
+    }
+
+    public NfcB(Tag tag) throws RemoteException {
+        super(tag, 2);
+        Bundle techExtras = tag.getTechExtras(2);
+        this.mAppData = techExtras.getByteArray(EXTRA_APPDATA);
+        this.mProtInfo = techExtras.getByteArray(EXTRA_PROTINFO);
+    }
+
+    public byte[] getApplicationData() {
+        return this.mAppData;
+    }
+
+    public byte[] getProtocolInfo() {
+        return this.mProtInfo;
+    }
+
+    public byte[] transceive(byte[] bArr) throws IOException {
+        return transceive(bArr, true);
+    }
+
+    public int getMaxTransceiveLength() {
+        return getMaxTransceiveLengthInternal();
+    }
+}

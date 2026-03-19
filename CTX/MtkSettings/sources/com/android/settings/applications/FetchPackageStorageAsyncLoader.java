@@ -33,6 +33,6 @@ public class FetchPackageStorageAsyncLoader extends AsyncLoader<StorageStatsSour
     }
 
     @Override
-    public void onDiscardResult(StorageStatsSource.AppStorageStats appStorageStats) {
+    protected void onDiscardResult(StorageStatsSource.AppStorageStats appStorageStats) {
     }
 }

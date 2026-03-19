@@ -401,7 +401,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         return this.mContext.getPackageManager().resolveActivityAsUser(getCameraIntent(), 65536, KeyguardUpdateMonitor.getCurrentUser());
     }
 
-    public void updateCameraVisibility() {
+    private void updateCameraVisibility() {
         if (this.mRightAffordanceView == null) {
             return;
         }
@@ -419,7 +419,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         return this.mLeftIsVoiceAssist;
     }
 
-    public boolean isPhoneVisible() {
+    private boolean isPhoneVisible() {
         PackageManager packageManager = this.mContext.getPackageManager();
         return packageManager.hasSystemFeature("android.hardware.telephony") && packageManager.resolveActivity(PHONE_INTENT, 0) != null;
     }
@@ -542,7 +542,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         this.mIndicationArea.setTranslationY(MathUtils.lerp(0.0f, this.mIndicationBottomMargin - this.mIndicationBottomMarginAmbient, f));
     }
 
-    public static boolean isSuccessfulLaunch(int i) {
+    private static boolean isSuccessfulLaunch(int i) {
         return i == 0 || i == 3 || i == 2;
     }
 
@@ -568,7 +568,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         }
     }
 
-    public boolean canLaunchVoiceAssist() {
+    private boolean canLaunchVoiceAssist() {
         return this.mAssistManager.canVoiceAssistBeLaunchedFromKeyguard();
     }
 
@@ -630,7 +630,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         updateCameraVisibility();
     }
 
-    public void inflateCameraPreview() {
+    private void inflateCameraPreview() {
         boolean z;
         View view = this.mCameraPreview;
         if (view != null) {
@@ -699,14 +699,14 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         inflateCameraPreview();
     }
 
-    public void setRightButton(IntentButtonProvider.IntentButton intentButton) {
+    private void setRightButton(IntentButtonProvider.IntentButton intentButton) {
         this.mRightButton = intentButton;
         updateRightAffordanceIcon();
         updateCameraVisibility();
         inflateCameraPreview();
     }
 
-    public void setLeftButton(IntentButtonProvider.IntentButton intentButton) {
+    private void setLeftButton(IntentButtonProvider.IntentButton intentButton) {
         this.mLeftButton = intentButton;
         if (!(this.mLeftButton instanceof DefaultLeftButton)) {
             this.mLeftIsVoiceAssist = false;
@@ -744,7 +744,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         this.mIndicationArea.setTranslationX(i);
     }
 
-    class DefaultLeftButton implements IntentButtonProvider.IntentButton {
+    private class DefaultLeftButton implements IntentButtonProvider.IntentButton {
         private IntentButtonProvider.IntentButton.IconState mIconState;
 
         private DefaultLeftButton() {
@@ -786,7 +786,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         }
     }
 
-    class DefaultRightButton implements IntentButtonProvider.IntentButton {
+    private class DefaultRightButton implements IntentButtonProvider.IntentButton {
         private IntentButtonProvider.IntentButton.IconState mIconState;
 
         private DefaultRightButton() {

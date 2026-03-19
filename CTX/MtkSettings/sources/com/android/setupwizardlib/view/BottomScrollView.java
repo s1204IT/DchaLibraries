@@ -78,7 +78,7 @@ public class BottomScrollView extends ScrollView {
         }
     }
 
-    public void checkScroll() {
+    private void checkScroll() {
         if (this.mListener != null) {
             if (getScrollY() >= this.mScrollThreshold) {
                 this.mListener.onScrolledToBottom();

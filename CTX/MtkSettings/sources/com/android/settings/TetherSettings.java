@@ -234,11 +234,11 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         this.mStartTetheringCallback = null;
     }
 
-    public void updateState() {
+    private void updateState() {
         updateState(this.mCm.getTetherableIfaces(), this.mCm.getTetheredIfaces(), this.mCm.getTetheringErroredIfaces());
     }
 
-    public void updateState(String[] strArr, String[] strArr2, String[] strArr3) {
+    private void updateState(String[] strArr, String[] strArr2, String[] strArr3) {
         updateUsbState(strArr, strArr2, strArr3);
         updateBluetoothState();
     }
@@ -333,7 +333,7 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         return packageManager.queryIntentActivities(intent, 65536).size() > 0;
     }
 
-    public void startTethering(int i) {
+    private void startTethering(int i) {
         if (i == 2) {
             BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
             if (this.mBluetoothPan.get() == null) {
@@ -396,7 +396,7 @@ public class TetherSettings extends RestrictedSettingsFragment implements DataSa
         }
     }
 
-    public void onReceiveExt(String str, Intent intent) {
+    private void onReceiveExt(String str, Intent intent) {
         if (str.equals("android.bluetooth.pan.profile.action.CONNECTION_STATE_CHANGED")) {
             updateState();
         }

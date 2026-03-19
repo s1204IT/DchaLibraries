@@ -80,7 +80,7 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
         volumeDialogComponent.mDialog.init(2020, volumeDialogComponent.mVolumeDialogCallback);
     }
 
-    public VolumeDialog createDefault() {
+    private VolumeDialog createDefault() {
         VolumeDialogImpl volumeDialogImpl = new VolumeDialogImpl(this.mContext);
         volumeDialogImpl.setStreamImportant(1, false);
         volumeDialogImpl.setAutomute(true);
@@ -88,7 +88,7 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
         return volumeDialogImpl;
     }
 
-    public VolumeDialog createCarDefault() {
+    private VolumeDialog createCarDefault() {
         return new CarVolumeDialogImpl(this.mContext);
     }
 
@@ -165,7 +165,7 @@ public class VolumeDialogComponent implements TunerService.Tunable, VolumeCompon
     public void dump(FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
     }
 
-    public void startSettings(Intent intent) {
+    private void startSettings(Intent intent) {
         ((ActivityStarter) Dependency.get(ActivityStarter.class)).startActivity(intent, true, true);
     }
 }

@@ -64,7 +64,7 @@ public abstract class AbstractZenModeAutomaticRulePreferenceController extends A
         this.mRules = getZenModeRules();
     }
 
-    public static List<String> getDefaultRuleIds() {
+    private static List<String> getDefaultRuleIds() {
         if (mDefaultRuleIds == null) {
             mDefaultRuleIds = ZenModeConfig.DEFAULT_RULE_IDS;
         }

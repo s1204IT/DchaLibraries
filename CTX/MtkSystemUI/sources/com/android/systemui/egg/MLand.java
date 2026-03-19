@@ -248,7 +248,7 @@ public class MLand extends FrameLayout {
         start(false);
     }
 
-    public static float luma(int i) {
+    private static float luma(int i) {
         return ((0.2126f * (16711680 & i)) / 1.671168E7f) + ((0.7152f * (65280 & i)) / 65280.0f) + ((0.0722f * (i & 255)) / 255.0f);
     }
 
@@ -588,7 +588,7 @@ public class MLand extends FrameLayout {
         return iArr[irand(0, iArr.length - 1)];
     }
 
-    public void step(long j, long j2) {
+    private void step(long j, long j2) {
         this.t = j / 1000.0f;
         this.dt = j2 / 1000.0f;
         if (DEBUG) {
@@ -877,7 +877,7 @@ public class MLand extends FrameLayout {
             return this.mScore;
         }
 
-        public void addScore(int i) {
+        private void addScore(int i) {
             setScore(this.mScore + i);
         }
 

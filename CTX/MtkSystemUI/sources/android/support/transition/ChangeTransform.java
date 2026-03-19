@@ -264,11 +264,11 @@ public class ChangeTransform extends Transition {
         startLocal.postConcat(toLocal);
     }
 
-    public static void setIdentityTransforms(View view) {
+    private static void setIdentityTransforms(View view) {
         setTransforms(view, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
     }
 
-    public static void setTransforms(View view, float translationX, float translationY, float translationZ, float scaleX, float scaleY, float rotationX, float rotationY, float rotationZ) {
+    private static void setTransforms(View view, float translationX, float translationY, float translationZ, float scaleX, float scaleY, float rotationX, float rotationY, float rotationZ) {
         view.setTranslationX(translationX);
         view.setTranslationY(translationY);
         ViewCompat.setTranslationZ(view, translationZ);

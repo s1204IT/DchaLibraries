@@ -137,7 +137,7 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
         this.mSwitchBar.hide();
     }
 
-    public void showAlert(Intent intent) {
+    private void showAlert(Intent intent) {
         Activity activity = getActivity();
         CharSequence charSequenceExtra = intent.getCharSequenceExtra("alertTitle");
         CharSequence charSequenceExtra2 = intent.getCharSequenceExtra("alertMessage");
@@ -307,7 +307,7 @@ public class WifiCallingSettingsForSub extends SettingsPreferenceFragment implem
         }
     }
 
-    public Intent getCarrierActivityIntent() {
+    private Intent getCarrierActivityIntent() {
         PersistableBundle configForSubId;
         ComponentName componentNameUnflattenFromString;
         CarrierConfigManager carrierConfigManager = (CarrierConfigManager) getActivity().getSystemService(CarrierConfigManager.class);

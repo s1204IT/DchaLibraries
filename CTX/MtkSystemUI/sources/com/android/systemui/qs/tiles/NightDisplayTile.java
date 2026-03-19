@@ -55,7 +55,7 @@ public class NightDisplayTile extends QSTileImpl<QSTile.BooleanState> implements
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         booleanState.value = this.mController.isActivated();
         String string = this.mContext.getString(R.string.quick_settings_night_display_label);
         booleanState.contentDescription = string;

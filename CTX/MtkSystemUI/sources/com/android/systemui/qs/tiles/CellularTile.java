@@ -113,7 +113,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
         this.mQuickSettingsPlugin.disableDataForOtherSubscriptions();
     }
 
-    public void maybeShowDisableDialog() {
+    private void maybeShowDisableDialog() {
         if (Prefs.getBoolean(this.mContext, "QsHasTurnedOffMobileData", false)) {
             this.mDataController.setMobileDataEnabled(false);
             return;
@@ -158,7 +158,7 @@ public class CellularTile extends QSTileImpl<QSTile.SignalState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.SignalState signalState, Object obj) {
+    protected void handleUpdateState(QSTile.SignalState signalState, Object obj) {
         Object string;
         if (this.mDisplayDataUsage) {
             signalState.icon = this.mIcon;

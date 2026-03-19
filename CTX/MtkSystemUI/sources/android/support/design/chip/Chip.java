@@ -383,11 +383,11 @@ public class Chip extends AppCompatCheckBox implements ChipDrawable.Delegate {
         return stateSet;
     }
 
-    public boolean hasCloseIcon() {
+    private boolean hasCloseIcon() {
         return (this.chipDrawable == null || this.chipDrawable.getCloseIcon() == null) ? false : true;
     }
 
-    public RectF getCloseIconTouchBounds() {
+    private RectF getCloseIconTouchBounds() {
         this.rectF.setEmpty();
         if (hasCloseIcon()) {
             this.chipDrawable.getCloseIconTouchBounds(this.rectF);
@@ -395,7 +395,7 @@ public class Chip extends AppCompatCheckBox implements ChipDrawable.Delegate {
         return this.rectF;
     }
 
-    public Rect getCloseIconTouchBoundsInt() {
+    private Rect getCloseIconTouchBoundsInt() {
         RectF bounds = getCloseIconTouchBounds();
         this.rect.set((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom);
         return this.rect;

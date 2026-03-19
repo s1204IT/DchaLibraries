@@ -227,7 +227,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         return (context.getSystemService("display") == null || !context.getPackageManager().hasSystemFeature("android.hardware.wifi.direct") || context.getSystemService("wifip2p") == null) ? false : true;
     }
 
-    public void scheduleUpdate(int i) {
+    private void scheduleUpdate(int i) {
         if (this.mStarted) {
             if (this.mPendingChanges == 0) {
                 this.mHandler.post(this.mUpdateRunnable);
@@ -243,7 +243,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    public void update(int i) {
+    private void update(int i) {
         boolean z;
         Preference preference;
         if ((i & 1) != 0) {
@@ -452,7 +452,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         this.mCertCategory.addPreference(listPreference3);
     }
 
-    public void startAutoGO() {
+    private void startAutoGO() {
         this.mWifiP2pManager.createGroup(this.mWifiP2pChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -465,7 +465,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    public void stopAutoGO() {
+    private void stopAutoGO() {
         this.mWifiP2pManager.removeGroup(this.mWifiP2pChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -478,7 +478,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    public void setListenMode(final boolean z) {
+    private void setListenMode(final boolean z) {
         this.mWifiP2pManager.listen(this.mWifiP2pChannel, z, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -497,7 +497,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    public void setWifiP2pChannels(int i, int i2) {
+    private void setWifiP2pChannels(int i, int i2) {
         this.mWifiP2pManager.setWifiP2pChannels(this.mWifiP2pChannel, i, i2, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -510,7 +510,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         });
     }
 
-    public void toggleRoute(MediaRouter.RouteInfo routeInfo) {
+    private void toggleRoute(MediaRouter.RouteInfo routeInfo) {
         if (routeInfo.isSelected()) {
             MediaRouteDialogPresenter.showDialogFragment(getActivity(), 4, (View.OnClickListener) null);
             return;
@@ -521,7 +521,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         routeInfo.select();
     }
 
-    public void pairWifiDisplay(WifiDisplay wifiDisplay) {
+    private void pairWifiDisplay(WifiDisplay wifiDisplay) {
         if (wifiDisplay.canConnect()) {
             if (this.mWfdChangeResolution != null) {
                 this.mWfdChangeResolution.prepareWfdConnect();
@@ -530,7 +530,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    public void showWifiDisplayOptionsDialog(final WifiDisplay wifiDisplay) {
+    private void showWifiDisplayOptionsDialog(final WifiDisplay wifiDisplay) {
         View viewInflate = getActivity().getLayoutInflater().inflate(R.layout.wifi_display_options, (ViewGroup) null);
         final EditText editText = (EditText) viewInflate.findViewById(R.id.name);
         editText.setText(wifiDisplay.getFriendlyDisplayName());
@@ -643,7 +643,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
         }
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final MediaRouter mRouter;
         private final MediaRouter.Callback mRouterCallback = new MediaRouter.SimpleCallback() {
@@ -690,7 +690,7 @@ public final class WifiDisplaySettings extends SettingsPreferenceFragment implem
             }
         }
 
-        public void updateSummary() {
+        private void updateSummary() {
             String string = this.mContext.getString(R.string.disconnected);
             int routeCount = this.mRouter.getRouteCount();
             int i = 0;

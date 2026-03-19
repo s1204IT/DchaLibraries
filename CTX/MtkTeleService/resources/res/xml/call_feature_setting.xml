@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:phone="http://schemas.android.com/apk/res/com.android.phone" android:title="@string/call_settings">
+    <PreferenceScreen
+        android:title="@string/voicemail"
+        android:key="button_voicemail_category_key"/>
+    <PreferenceScreen
+        android:persistent="false"
+        android:title="@string/fdn"
+        android:key="button_fdn_key"/>
+    <PreferenceScreen
+        android:title="@string/wifi_calling"
+        android:key="@string/wifi_calling_settings_key">
+        <intent
+            android:targetPackage="com.android.settings"
+            android:action="android.intent.action.MAIN"
+            android:targetClass="com.android.settings.Settings$WifiCallingSettingsActivity">
+            <extra
+                android:name="show_drawer_menu"
+                android:value="true"/>
+        </intent>
+    </PreferenceScreen>
+    <SwitchPreference
+        android:persistent="true"
+        android:title="@string/enable_video_calling_title"
+        android:key="button_enable_video_calling"
+        android:defaultValue="true"/>
+    <SwitchPreference
+        android:persistent="false"
+        android:title="@string/auto_retry_mode_title"
+        android:key="button_auto_retry_key"
+        android:summary="@string/auto_retry_mode_summary"/>
+    <PreferenceScreen
+        android:persistent="false"
+        android:title="@string/labelGSMMore"
+        android:key="button_gsm_more_expand_key"
+        android:summary="@string/sum_gsm_call_settings"/>
+    <PreferenceScreen
+        android:persistent="false"
+        android:title="@string/labelCDMAMore"
+        android:key="button_cdma_more_expand_key"
+        android:summary="@string/sum_cdma_call_settings"/>
+</PreferenceScreen>

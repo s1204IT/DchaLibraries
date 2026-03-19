@@ -61,7 +61,7 @@ public class DataSaverTile extends QSTileImpl<QSTile.BooleanState> implements Da
         Prefs.putBoolean(this.mContext, "QsDataSaverDialogShown", true);
     }
 
-    public void toggleDataSaver() {
+    private void toggleDataSaver() {
         ((QSTile.BooleanState) this.mState).value = !this.mDataSaverController.isDataSaverEnabled();
         this.mDataSaverController.setDataSaverEnabled(((QSTile.BooleanState) this.mState).value);
         refreshState(Boolean.valueOf(((QSTile.BooleanState) this.mState).value));
@@ -73,7 +73,7 @@ public class DataSaverTile extends QSTileImpl<QSTile.BooleanState> implements Da
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         booleanState.value = obj instanceof Boolean ? ((Boolean) obj).booleanValue() : this.mDataSaverController.isDataSaverEnabled();
         booleanState.state = booleanState.value ? 2 : 1;
         booleanState.label = this.mContext.getString(com.android.systemui.R.string.data_saver);

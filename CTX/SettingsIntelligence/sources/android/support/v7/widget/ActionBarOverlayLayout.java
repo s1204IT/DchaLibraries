@@ -250,7 +250,7 @@ public class ActionBarOverlayLayout extends ViewGroup implements NestedScrolling
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-1, -1);
     }
 

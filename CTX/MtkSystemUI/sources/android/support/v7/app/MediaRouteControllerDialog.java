@@ -372,7 +372,7 @@ public class MediaRouteControllerDialog extends AlertDialog {
         updateLayoutHeight(animate);
     }
 
-    public boolean isBitmapRecycled(Bitmap bitmap) {
+    private boolean isBitmapRecycled(Bitmap bitmap) {
         return bitmap != null && bitmap.isRecycled();
     }
 
@@ -810,15 +810,15 @@ public class MediaRouteControllerDialog extends AlertDialog {
         }
     }
 
-    public boolean isPlayActionSupported() {
+    private boolean isPlayActionSupported() {
         return (this.mState.getActions() & 516) != 0;
     }
 
-    public boolean isPauseActionSupported() {
+    private boolean isPauseActionSupported() {
         return (this.mState.getActions() & 514) != 0;
     }
 
-    public boolean isStopActionSupported() {
+    private boolean isStopActionSupported() {
         return (this.mState.getActions() & 1) != 0;
     }
 
@@ -1113,7 +1113,7 @@ public class MediaRouteControllerDialog extends AlertDialog {
         }
 
         @Override
-        public Bitmap doInBackground(Void... voidArr) {
+        protected Bitmap doInBackground(Void... voidArr) {
             Bitmap bitmapDecodeStream = null;
             Rect rect = null;
             Object[] objArr = 0;
@@ -1211,7 +1211,7 @@ public class MediaRouteControllerDialog extends AlertDialog {
         }
 
         @Override
-        public void onPostExecute(Bitmap art) {
+        protected void onPostExecute(Bitmap art) {
             MediaRouteControllerDialog.this.mFetchArtTask = null;
             if (!ObjectsCompat.equals(MediaRouteControllerDialog.this.mArtIconBitmap, this.mIconBitmap) || !ObjectsCompat.equals(MediaRouteControllerDialog.this.mArtIconUri, this.mIconUri)) {
                 MediaRouteControllerDialog.this.mArtIconBitmap = this.mIconBitmap;

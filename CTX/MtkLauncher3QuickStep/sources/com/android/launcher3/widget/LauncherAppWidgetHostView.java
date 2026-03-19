@@ -379,7 +379,7 @@ public class LauncherAppWidgetHostView extends AppWidgetHostView implements Base
         }
     }
 
-    public void runAutoAdvance() {
+    private void runAutoAdvance() {
         Advanceable advanceable = getAdvanceable();
         if (advanceable != null) {
             advanceable.advance();

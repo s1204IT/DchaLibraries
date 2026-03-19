@@ -218,7 +218,7 @@ public class DndTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         int iIntValue = obj instanceof Integer ? ((Integer) obj).intValue() : this.mController.getZen();
         boolean z = iIntValue != 0;
         boolean z2 = booleanState.value != z;
@@ -338,7 +338,7 @@ public class DndTile extends QSTileImpl<QSTile.BooleanState> {
             return this.mZenPanel;
         }
 
-        public void updatePanel() {
+        private void updatePanel() {
             if (this.mZenPanel == null) {
                 return;
             }

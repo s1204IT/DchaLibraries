@@ -39,7 +39,7 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
     }
 
     @Override
-    public boolean setEnabled(ComponentName componentName, String str, boolean z) {
+    protected boolean setEnabled(ComponentName componentName, String str, boolean z) {
         logSpecialPermissionChange(z, componentName.getPackageName());
         if (!z) {
             if (!isServiceEnabled(componentName)) {
@@ -61,7 +61,7 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
     }
 
     @Override
-    public void enable(ComponentName componentName) {
+    protected void enable(ComponentName componentName) {
         this.mNm.setNotificationListenerAccessGranted(componentName, true);
     }
 
@@ -75,7 +75,7 @@ public class NotificationAccessSettings extends ManagedServiceSettings {
         FeatureFactory.getFactory(getContext()).getMetricsFeatureProvider().action(getContext(), z ? 776 : 777, str, new Pair[0]);
     }
 
-    public static void disable(final NotificationAccessSettings notificationAccessSettings, final ComponentName componentName) {
+    private static void disable(final NotificationAccessSettings notificationAccessSettings, final ComponentName componentName) {
         notificationAccessSettings.mNm.setNotificationListenerAccessGranted(componentName, false);
         AsyncTask.execute(new Runnable() {
             @Override

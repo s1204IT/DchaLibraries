@@ -106,7 +106,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             this.mSwitch = z;
         }
 
-        public List<String> getAliases(IKeyChainService iKeyChainService) throws RemoteException {
+        private List<String> getAliases(IKeyChainService iKeyChainService) throws RemoteException {
             switch (this) {
                 case SYSTEM:
                     return iKeyChainService.getSystemCaAliases().getList();
@@ -117,7 +117,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             }
         }
 
-        public boolean deleted(IKeyChainService iKeyChainService, String str) throws RemoteException {
+        private boolean deleted(IKeyChainService iKeyChainService, String str) throws RemoteException {
             switch (this) {
                 case SYSTEM:
                     return !iKeyChainService.containsCaAlias(str);
@@ -250,7 +250,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
     }
 
-    public boolean startConfirmCredential(int i) {
+    private boolean startConfirmCredential(int i) {
         Intent intentCreateConfirmDeviceCredentialIntent = this.mKeyguardManager.createConfirmDeviceCredentialIntent(null, null, i);
         if (intentCreateConfirmDeviceCredentialIntent == null) {
             return false;
@@ -598,7 +598,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             }
 
             @Override
-            public SparseArray<List<CertHolder>> doInBackground(Void... voidArr) {
+            protected SparseArray<List<CertHolder>> doInBackground(Void... voidArr) {
                 List<UserHandle> list;
                 int i;
                 SparseArray sparseArray;
@@ -689,7 +689,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             }
 
             @Override
-            public void onProgressUpdate(Integer... numArr) {
+            protected void onProgressUpdate(Integer... numArr) {
                 int iIntValue = numArr[0].intValue();
                 int iIntValue2 = numArr[1].intValue();
                 if (iIntValue2 != this.mProgressBar.getMax()) {
@@ -699,7 +699,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
             }
 
             @Override
-            public void onPostExecute(SparseArray<List<CertHolder>> sparseArray) {
+            protected void onPostExecute(SparseArray<List<CertHolder>> sparseArray) {
                 AdapterData.this.mCertHoldersByUserId.clear();
                 int size = sparseArray.size();
                 for (int i = 0; i < size; i++) {
@@ -828,11 +828,11 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
     }
 
-    public boolean isTrustAllCaCertModeInProgress() {
+    private boolean isTrustAllCaCertModeInProgress() {
         return this.mTrustAllCaUserId != -10000;
     }
 
-    public void showTrustAllCaDialog(List<CertHolder> list) {
+    private void showTrustAllCaDialog(List<CertHolder> list) {
         new TrustedCredentialsDialogBuilder(getActivity(), this).setCertHolders((CertHolder[]) list.toArray(new CertHolder[list.size()])).setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
@@ -842,7 +842,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }).show();
     }
 
-    public void showCertDialog(CertHolder certHolder) {
+    private void showCertDialog(CertHolder certHolder) {
         new TrustedCredentialsDialogBuilder(getActivity(), this).setCertHolder(certHolder).show();
     }
 
@@ -903,7 +903,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
 
         @Override
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             try {
                 synchronized (TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId) {
                     IKeyChainService service = ((KeyChain.KeyChainConnection) TrustedCredentialsSettings.this.mKeyChainConnectionByProfileId.get(this.mCertHolder.mProfileId)).getService();
@@ -920,7 +920,7 @@ public class TrustedCredentialsSettings extends InstrumentedFragment implements 
         }
 
         @Override
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             if (bool.booleanValue()) {
                 if (!this.mCertHolder.mTab.mSwitch) {
                     this.mCertHolder.mAdapter.remove(this.mCertHolder);

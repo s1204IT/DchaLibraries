@@ -174,7 +174,7 @@ public class CdmaSimDialogActivity extends Activity {
         Log.d("CdmaSimDialogActivity", "no need to show the alert dialog");
     }
 
-    public void setDefaultDataSubId(Context context, int i) {
+    private void setDefaultDataSubId(Context context, int i) {
         SubscriptionManager.from(context).setDefaultDataSubId(i);
         if (this.mActionType == 0) {
             Toast.makeText(context, R.string.data_switch_started, 1).show();

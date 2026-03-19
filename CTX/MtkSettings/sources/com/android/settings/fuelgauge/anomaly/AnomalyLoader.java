@@ -32,7 +32,7 @@ public class AnomalyLoader extends AsyncLoader<List<Anomaly>> {
     }
 
     @Override
-    public void onDiscardResult(List<Anomaly> list) {
+    protected void onDiscardResult(List<Anomaly> list) {
     }
 
     @Override

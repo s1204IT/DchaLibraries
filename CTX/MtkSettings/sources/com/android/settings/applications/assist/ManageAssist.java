@@ -67,7 +67,7 @@ public class ManageAssist extends DashboardFragment {
         this.mFooterPreferenceMixin.createFooterPreference().setTitle(R.string.assist_footer);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new DefaultAssistPreferenceController(context, "default_assist", true));
         arrayList.add(new AssistContextPreferenceController(context, lifecycle));

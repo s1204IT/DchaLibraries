@@ -146,7 +146,7 @@ public class TaskMenuView extends AbstractFloatingView {
         setY((sTempRect.top - this.mTaskIconAndName.getPaddingTop()) - r4.top);
     }
 
-    public void animateOpen() {
+    private void animateOpen() {
         animateOpenOrClosed(false);
         this.mIsOpen = true;
     }
@@ -184,7 +184,7 @@ public class TaskMenuView extends AbstractFloatingView {
         this.mOpenCloseAnimator.start();
     }
 
-    public void closeComplete() {
+    private void closeComplete() {
         this.mIsOpen = false;
         this.mActivity.getDragLayer().removeView(this);
     }

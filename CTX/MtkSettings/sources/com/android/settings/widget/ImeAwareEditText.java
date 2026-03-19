@@ -61,7 +61,7 @@ public class ImeAwareEditText extends EditText {
         return inputConnectionOnCreateInputConnection;
     }
 
-    public void showSoftInputIfNecessary() {
+    private void showSoftInputIfNecessary() {
         if (this.mHasPendingShowSoftInputRequest) {
             ((InputMethodManager) getContext().getSystemService(InputMethodManager.class)).showSoftInput(this, 0);
             this.mHasPendingShowSoftInputRequest = false;

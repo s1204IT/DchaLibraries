@@ -98,7 +98,7 @@ public class LocationSettings extends DashboardFragment {
         return R.string.help_url_location_access;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, LocationSettings locationSettings, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, LocationSettings locationSettings, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new AppLocationPermissionPreferenceController(context));
         arrayList.add(new LocationForWorkPreferenceController(context, lifecycle));

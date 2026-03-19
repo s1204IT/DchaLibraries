@@ -283,7 +283,7 @@ public class DataUsageSummaryLegacy extends DataUsageBaseFragment implements Dat
         updateState();
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Activity mActivity;
         private final DataUsageController mDataController;
         private final SummaryLoader mSummaryLoader;

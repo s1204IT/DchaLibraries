@@ -40,7 +40,7 @@ public class LauncherAppWidgetHost extends AppWidgetHost {
     }
 
     @Override
-    public LauncherAppWidgetHostView onCreateView(Context context, int i, AppWidgetProviderInfo appWidgetProviderInfo) {
+    protected LauncherAppWidgetHostView onCreateView(Context context, int i, AppWidgetProviderInfo appWidgetProviderInfo) {
         LauncherAppWidgetHostView launcherAppWidgetHostView = new LauncherAppWidgetHostView(context);
         this.mViews.put(i, launcherAppWidgetHostView);
         return launcherAppWidgetHostView;

@@ -284,7 +284,7 @@ public class ZenModePanel extends FrameLayout {
         }
     }
 
-    public void confirmZenIntroduction() {
+    private void confirmZenIntroduction() {
         String strPrefKeyForConfirmation = prefKeyForConfirmation(getSelectedZen(0));
         if (strPrefKeyForConfirmation == null) {
             return;
@@ -436,7 +436,7 @@ public class ZenModePanel extends FrameLayout {
         return null;
     }
 
-    public Uri getRealConditionId(Condition condition) {
+    private Uri getRealConditionId(Condition condition) {
         if (isForever(condition)) {
             return null;
         }
@@ -492,7 +492,7 @@ public class ZenModePanel extends FrameLayout {
         return selectedValue != null ? ((Integer) selectedValue).intValue() : i;
     }
 
-    public void updateWidgets() {
+    private void updateWidgets() {
         int i;
         if (this.mTransitionHelper.isTransitioning()) {
             this.mTransitionHelper.pendingUpdateWidgets();
@@ -771,7 +771,7 @@ public class ZenModePanel extends FrameLayout {
         view.setVisibility(0);
     }
 
-    public void announceConditionSelection(ConditionTag conditionTag) {
+    private void announceConditionSelection(ConditionTag conditionTag) {
         String string;
         switch (getSelectedZen(0)) {
             case 1:
@@ -789,7 +789,7 @@ public class ZenModePanel extends FrameLayout {
         announceForAccessibility(this.mContext.getString(R.string.zen_mode_and_condition, string, conditionTag.line1.getText()));
     }
 
-    public void onClickTimeButton(View view, ConditionTag conditionTag, boolean z, int i) {
+    private void onClickTimeButton(View view, ConditionTag conditionTag, boolean z, int i) {
         Condition timeCondition;
         int i2;
         MetricsLogger.action(this.mContext, 163, z);
@@ -826,7 +826,7 @@ public class ZenModePanel extends FrameLayout {
         announceConditionSelection(conditionTag);
     }
 
-    public void select(Condition condition) {
+    private void select(Condition condition) {
         if (DEBUG) {
             Log.d(this.mTag, "select " + condition);
         }
@@ -855,7 +855,7 @@ public class ZenModePanel extends FrameLayout {
         setSessionExitCondition(copy(condition));
     }
 
-    public void fireInteraction() {
+    private void fireInteraction() {
         if (this.mCallback != null) {
             this.mCallback.onInteraction();
         }

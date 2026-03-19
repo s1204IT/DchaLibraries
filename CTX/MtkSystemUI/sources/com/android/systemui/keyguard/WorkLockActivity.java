@@ -90,7 +90,7 @@ public class WorkLockActivity extends Activity {
         return ActivityOptions.makeScaleUpAnimation(decorView, 0, 0, decorView.getWidth(), decorView.getHeight());
     }
 
-    public KeyguardManager getKeyguardManager() {
+    private KeyguardManager getKeyguardManager() {
         if (this.mKgm == null) {
             this.mKgm = (KeyguardManager) getSystemService("keyguard");
         }

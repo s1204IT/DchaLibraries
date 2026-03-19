@@ -235,7 +235,7 @@ public class LauncherStateManager {
         return this.mConfig.mCurrentAnimation;
     }
 
-    public void onStateTransitionStart(LauncherState launcherState) {
+    private void onStateTransitionStart(LauncherState launcherState) {
         this.mState.onStateDisabled(this.mLauncher);
         this.mState = launcherState;
         this.mState.onStateEnabled(this.mLauncher);
@@ -246,7 +246,7 @@ public class LauncherStateManager {
         UiFactory.onLauncherStateOrResumeChanged(this.mLauncher);
     }
 
-    public void onStateTransitionEnd(LauncherState launcherState) {
+    private void onStateTransitionEnd(LauncherState launcherState) {
         if (launcherState != this.mCurrentStableState) {
             this.mLastStableState = launcherState.getHistoryForState(this.mCurrentStableState);
             this.mCurrentStableState = launcherState;

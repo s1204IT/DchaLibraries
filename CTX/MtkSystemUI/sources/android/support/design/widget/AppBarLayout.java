@@ -173,7 +173,7 @@ public class AppBarLayout extends LinearLayout {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-1, -2);
     }
 
@@ -183,7 +183,7 @@ public class AppBarLayout extends LinearLayout {
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         if (Build.VERSION.SDK_INT >= 19 && (p instanceof LinearLayout.LayoutParams)) {
             return new LayoutParams((LinearLayout.LayoutParams) p);
         }
@@ -651,7 +651,7 @@ public class AppBarLayout extends LinearLayout {
         }
 
         @Override
-        public boolean canDragView(AppBarLayout view) {
+        boolean canDragView(AppBarLayout view) {
             if (this.onDragCallback != null) {
                 return this.onDragCallback.canDrag(view);
             }
@@ -663,22 +663,22 @@ public class AppBarLayout extends LinearLayout {
         }
 
         @Override
-        public void onFlingFinished(CoordinatorLayout parent, AppBarLayout layout) {
+        void onFlingFinished(CoordinatorLayout parent, AppBarLayout layout) {
             snapToChildIfNeeded(parent, layout);
         }
 
         @Override
-        public int getMaxDragOffset(AppBarLayout view) {
+        int getMaxDragOffset(AppBarLayout view) {
             return -view.getDownNestedScrollRange();
         }
 
         @Override
-        public int getScrollRangeForDragFling(AppBarLayout view) {
+        int getScrollRangeForDragFling(AppBarLayout view) {
             return view.getTotalScrollRange();
         }
 
         @Override
-        public int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout, AppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset) {
+        int setHeaderTopBottomOffset(CoordinatorLayout coordinatorLayout, AppBarLayout appBarLayout, int newOffset, int minOffset, int maxOffset) {
             int curOffset = getTopBottomOffsetForScrollingSibling();
             int consumed = 0;
             if (minOffset != 0 && curOffset >= minOffset && curOffset <= maxOffset) {

@@ -104,7 +104,7 @@ public class SegmentedButtons extends LinearLayout {
         }
     }
 
-    public void fireInteraction() {
+    private void fireInteraction() {
         if (this.mCallback != null) {
             this.mCallback.onInteraction();
         }

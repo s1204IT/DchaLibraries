@@ -108,7 +108,7 @@ public class LocaleListEditor extends RestrictedSettingsFragment implements Loca
         return super.onOptionsItemSelected(menuItem);
     }
 
-    public void setRemoveMode(boolean z) {
+    private void setRemoveMode(boolean z) {
         this.mRemoveMode = z;
         this.mAdapter.setRemoveMode(z);
         this.mAddLanguage.setVisibility(z ? 4 : 0);

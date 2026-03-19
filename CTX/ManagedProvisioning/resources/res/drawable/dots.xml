@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="dots"
+    android:height="8dp"
+    android:width="40dp"
+    android:viewportWidth="40"
+    android:viewportHeight="8">
+    <group
+        android:name="dots_0"
+        android:translateX="20"
+        android:translateY="4">
+        <group android:name="dot3">
+            <group
+                android:name="rectangle_path_1_position"
+                android:translateX="16">
+                <path
+                    android:name="rectangle_path_1"
+                    android:fillColor="#ff000000"
+                    android:pathData="M 0.0,-4.0 l 0.0,0.0 c 2.2091389992,0.0 4.0,1.7908610008 4.0,4.0 l 0.0,0.0 c 0.0,2.2091389992 -1.7908610008,4.0 -4.0,4.0 l 0.0,0.0 c -2.2091389992,0.0 -4.0,-1.7908610008 -4.0,-4.0 l 0.0,0.0 c 0.0,-2.2091389992 1.7908610008,-4.0 4.0,-4.0 Z"
+                    android:fillAlpha="0.3"/>
+            </group>
+        </group>
+        <group android:name="dot2">
+            <path
+                android:name="rectangle_path_2"
+                android:fillColor="#ff000000"
+                android:pathData="M 0.0,-4.0 l 0.0,0.0 c 2.2091389992,0.0 4.0,1.7908610008 4.0,4.0 l 0.0,0.0 c 0.0,2.2091389992 -1.7908610008,4.0 -4.0,4.0 l 0.0,0.0 c -2.2091389992,0.0 -4.0,-1.7908610008 -4.0,-4.0 l 0.0,0.0 c 0.0,-2.2091389992 1.7908610008,-4.0 4.0,-4.0 Z"
+                android:fillAlpha="0.3"/>
+        </group>
+        <group android:name="dot1">
+            <group
+                android:name="rectangle_path_3_position"
+                android:translateX="-16">
+                <path
+                    android:name="rectangle_path_3"
+                    android:fillColor="#ff000000"
+                    android:pathData="M 0.0,-4.0 l 0.0,0.0 c 2.2091389992,0.0 4.0,1.7908610008 4.0,4.0 l 0.0,0.0 c 0.0,2.2091389992 -1.7908610008,4.0 -4.0,4.0 l 0.0,0.0 c -2.2091389992,0.0 -4.0,-1.7908610008 -4.0,-4.0 l 0.0,0.0 c 0.0,-2.2091389992 1.7908610008,-4.0 4.0,-4.0 Z"
+                    android:fillAlpha="0.3"/>
+            </group>
+        </group>
+        <group android:name="dot_moving">
+            <group
+                android:name="rectangle_position"
+                android:translateX="-16">
+                <path
+                    android:name="rectangle_path_4"
+                    android:fillColor="#ff000000"
+                    android:pathData="M 0.0,-4.0 l 0.0,0.0 c 2.2091389992,0.0 4.0,1.7908610008 4.0,4.0 l 0.0,0.0 c 0.0,2.2091389992 -1.7908610008,4.0 -4.0,4.0 l 0.0,0.0 c -2.2091389992,0.0 -4.0,-1.7908610008 -4.0,-4.0 l 0.0,0.0 c 0.0,-2.2091389992 1.7908610008,-4.0 4.0,-4.0 Z"/>
+            </group>
+        </group>
+    </group>
+</vector>

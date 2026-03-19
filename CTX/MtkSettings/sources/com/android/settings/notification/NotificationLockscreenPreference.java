@@ -89,7 +89,7 @@ public class NotificationLockscreenPreference extends RestrictedListPreference {
         return false;
     }
 
-    public int checkboxVisibilityForSelectedIndex(int i, boolean z) {
+    private int checkboxVisibilityForSelectedIndex(int i, boolean z) {
         return (i == 1 && z && this.mRemoteInputCheckBoxEnabled) ? 0 : 8;
     }
 

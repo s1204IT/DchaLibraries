@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.documentsui.sidebar.RootsList xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/roots_list"
+    android:background="@drawable/roots_list_border"
+    android:paddingTop="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:listSelector="@drawable/root_list_selector"
+    android:divider="@null"
+    android:keyboardNavigationCluster="true"/>

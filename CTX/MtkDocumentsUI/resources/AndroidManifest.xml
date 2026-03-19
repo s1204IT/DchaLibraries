@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="28"
+    android:versionName="9"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.documentsui"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <uses-permission android:name="android.permission.GET_APP_GRANTED_URI_PERMISSIONS"/>
+    <uses-permission android:name="android.permission.FORCE_PERSISTABLE_URI_PERMISSIONS"/>
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
+    <uses-permission android:name="android.permission.REMOVE_TASKS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.CACHE_CONTENT"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SET_PREFERRED_APPLICATIONS"/>
+    <uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS"/>
+    <application
+        android:label="@string/app_label"
+        android:icon="@drawable/app_icon"
+        android:name="com.android.documentsui.DocumentsApplication"
+        android:backupAgent=".prefs.BackupAgent"
+        android:allowBackup="true"
+        android:supportsRtl="true"
+        android:fullBackupOnly="false">
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAInBA8ued0O_ZyYUsVhwinUF-x50NIe9K0GzBW4A"/>
+        <activity
+            android:theme="@style/DocumentsTheme"
+            android:name="com.android.documentsui.picker.PickActivity"
+            android:visibleToInstantApps="true">
+            <intent-filter>
+                <action android:name="android.intent.action.OPEN_DOCUMENT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_DOCUMENT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.GET_CONTENT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.OPENABLE"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.OPEN_DOCUMENT_TREE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:label="@string/launcher_label"
+            android:icon="@drawable/launcher_icon"
+            android:name="com.android.documentsui.files.LauncherActivity"/>
+        <activity
+            android:theme="@style/DocumentsTheme"
+            android:label="@string/menu_inspect"
+            android:icon="@drawable/launcher_icon"
+            android:name="com.android.documentsui.inspector.InspectorActivity"/>
+        <activity-alias
+            android:label="@string/launcher_label"
+            android:icon="@drawable/launcher_icon"
+            android:name=".LauncherActivity"
+            android:enabled="@bool/is_launcher_enabled"
+            android:targetActivity=".files.LauncherActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts"/>
+        </activity-alias>
+        <activity
+            android:theme="@style/DocumentsTheme"
+            android:name="com.android.documentsui.files.FilesActivity"
+            android:documentLaunchMode="intoExisting">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.provider.action.BROWSE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="vnd.android.document/root"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="vnd.android.document/root"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="vnd.android.document/directory"/>
+            </intent-filter>
+        </activity>
+        <activity-alias
+            android:name="ViewDownloadsActivity"
+            android:enabled="@bool/handle_view_downloads_intent"
+            android:targetActivity=".files.FilesActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_DOWNLOADS"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity-alias>
+        <activity
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:name="com.android.documentsui.ScopedAccessActivity">
+            <intent-filter>
+                <action android:name="android.os.storage.action.OPEN_EXTERNAL_DIRECTORY"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <provider
+            android:name="com.android.documentsui.ScopedAccessProvider"
+            android:permission="android.permission.MANAGE_SCOPED_ACCESS_DIRECTORY_PERMISSIONS"
+            android:exported="true"
+            android:authorities="com.android.documentsui.scopedAccess"/>
+        <provider
+            android:name="com.android.documentsui.picker.LastAccessedProvider"
+            android:exported="false"
+            android:authorities="com.android.documentsui.lastAccessed"/>
+        <provider
+            android:name="com.android.documentsui.archives.ArchivesProvider"
+            android:permission="android.permission.MANAGE_DOCUMENTS"
+            android:exported="true"
+            android:authorities="com.android.documentsui.archives"
+            android:grantUriPermissions="true">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER"/>
+            </intent-filter>
+        </provider>
+        <receiver android:name="com.android.documentsui.PackageReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_FULLY_REMOVED"/>
+                <action android:name="android.intent.action.PACKAGE_DATA_CLEARED"/>
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.android.documentsui.roots.BootReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.android.documentsui.services.FileOperationService"
+            android:exported="false"
+            android:process=":com.android.documentsui.services"
+            android:stopWithTask="false"/>
+        <activity
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:label="Selection Demo"
+            android:name="com.android.documentsui.selection.demo.SelectionDemoActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

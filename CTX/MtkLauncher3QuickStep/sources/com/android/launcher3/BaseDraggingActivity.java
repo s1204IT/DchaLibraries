@@ -218,7 +218,7 @@ public abstract class BaseDraggingActivity extends BaseActivity implements Wallp
         }
     }
 
-    public void onDeviceRotationChanged() {
+    private void onDeviceRotationChanged() {
         if (this.mDeviceProfile.updateIsSeascape(getWindowManager())) {
             reapplyUi();
         }

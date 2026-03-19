@@ -69,7 +69,7 @@ public class WifiTetherUserPreferenceController extends AbstractPreferenceContro
         this.mContext.unregisterReceiver(this.mReceiver);
     }
 
-    public void handleWifiApClientsChanged() {
+    private void handleWifiApClientsChanged() {
         int i;
         int i2;
         List hotspotClients = this.mHotspotManager.getHotspotClients();

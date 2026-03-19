@@ -94,7 +94,7 @@ public class NotificationLogger {
         this.mNotificationLocationsChangedListener.onChildLocationsChanged();
     }
 
-    public void logNotificationVisibilityChanges(final Collection<NotificationVisibility> collection, Collection<NotificationVisibility> collection2) {
+    private void logNotificationVisibilityChanges(final Collection<NotificationVisibility> collection, Collection<NotificationVisibility> collection2) {
         if (collection.isEmpty() && collection2.isEmpty()) {
             return;
         }
@@ -129,7 +129,7 @@ public class NotificationLogger {
         notificationLogger.recycleAllVisibilityObjects(notificationVisibilityArr2);
     }
 
-    public void recycleAllVisibilityObjects(ArraySet<NotificationVisibility> arraySet) {
+    private void recycleAllVisibilityObjects(ArraySet<NotificationVisibility> arraySet) {
         int size = arraySet.size();
         for (int i = 0; i < size; i++) {
             arraySet.valueAt(i).recycle();

@@ -424,7 +424,7 @@ public class SettingsActivity extends SettingsDrawerActivity implements Fragment
         return fragmentInstantiate;
     }
 
-    public void updateTilesList() {
+    private void updateTilesList() {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
@@ -443,7 +443,7 @@ public class SettingsActivity extends SettingsDrawerActivity implements Fragment
         });
     }
 
-    public void doUpdateTilesList() {
+    private void doUpdateTilesList() {
         PackageManager packageManager = getPackageManager();
         UserManager userManager = UserManager.get(this);
         boolean zIsAdminUser = userManager.isAdminUser();

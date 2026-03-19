@@ -113,7 +113,7 @@ public class DefaultAutofillPicker extends DefaultAppPickerFragment {
         }
     }
 
-    public void update() {
+    private void update() {
         updateCandidates();
         addAddServicePreference();
     }

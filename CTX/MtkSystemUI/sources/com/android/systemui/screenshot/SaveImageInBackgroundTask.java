@@ -108,7 +108,7 @@ class SaveImageInBackgroundTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    public Void doInBackground(Void... voidArr) {
+    protected Void doInBackground(Void... voidArr) {
         if (isCancelled()) {
             return null;
         }
@@ -165,7 +165,7 @@ class SaveImageInBackgroundTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    public void onPostExecute(Void r13) {
+    protected void onPostExecute(Void r13) {
         if (this.mParams.errorMsgResId != 0) {
             GlobalScreenshot.notifyScreenshotError(this.mParams.context, this.mNotificationManager, this.mParams.errorMsgResId);
         } else {
@@ -184,7 +184,7 @@ class SaveImageInBackgroundTask extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    public void onCancelled(Void r2) {
+    protected void onCancelled(Void r2) {
         this.mParams.finisher.run();
         this.mParams.clearImage();
         this.mParams.clearContext();

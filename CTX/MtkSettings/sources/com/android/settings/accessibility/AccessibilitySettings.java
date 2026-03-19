@@ -317,7 +317,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         this.mVibrationPreferenceScreen = findPreference("vibration_preference_screen");
     }
 
-    public void updateAllPreferences() {
+    private void updateAllPreferences() {
         updateSystemPreferences();
         updateServicePreferences();
     }
@@ -514,7 +514,7 @@ public class AccessibilitySettings extends SettingsPreferenceFragment implements
         }
     }
 
-    public void updateLockScreenRotationCheckbox() {
+    private void updateLockScreenRotationCheckbox() {
         if (getActivity() != null) {
             this.mToggleLockScreenRotationPreference.setChecked(!RotationPolicy.isRotationLocked(r0));
         }

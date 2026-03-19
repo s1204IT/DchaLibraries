@@ -158,12 +158,12 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         updateChecked();
     }
 
-    public void updateChecked() {
+    private void updateChecked() {
         setChecked(this.mTelephonyManager.getDataEnabled(this.mSubId));
     }
 
     @Override
-    public void performClick(View view) {
+    protected void performClick(View view) {
         Context context = getContext();
         FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(context, 178, !this.mChecked);
         SubscriptionInfo activeSubscriptionInfo = this.mSubscriptionManager.getActiveSubscriptionInfo(this.mSubId);
@@ -346,7 +346,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         }
     }
 
-    public void onCdmaCompetitionHandled(Intent intent) {
+    private void onCdmaCompetitionHandled(Intent intent) {
         int intExtra = intent.getIntExtra("subscription", -1);
         log("defaultDataSubId: " + intExtra + " mAlertForCdmaCompetition: " + this.mAlertForCdmaCompetition);
         if (this.mAlertForCdmaCompetition && intExtra == this.mSubId) {
@@ -358,7 +358,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         }
     }
 
-    public void updateScreenEnableState() {
+    private void updateScreenEnableState() {
         boolean zIsCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
         log("updateScreenEnableState, mIsAirplaneModeOn = " + this.mIsAirplaneModeOn + ", isCapabilitySwitching = " + zIsCapabilitySwitching);
         boolean z = (this.mIsAirplaneModeOn || zIsCapabilitySwitching) ? false : true;
@@ -369,7 +369,7 @@ public class CellDataPreference extends CustomDialogPreference implements Templa
         setEnabled(z);
     }
 
-    public void log(String str) {
+    private void log(String str) {
         Log.d("CellDataPreference[" + this.mSubId + "]", str);
     }
 }

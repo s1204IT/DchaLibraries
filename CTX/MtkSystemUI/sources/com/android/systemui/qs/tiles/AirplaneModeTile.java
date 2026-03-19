@@ -88,7 +88,7 @@ public class AirplaneModeTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         boolean z;
         checkIfRestrictionEnforcedByAdminOnly(booleanState, "no_airplane_mode");
         if ((obj instanceof Integer ? ((Integer) obj).intValue() : this.mSetting.getValue()) == 0) {

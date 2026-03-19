@@ -66,7 +66,7 @@ public class CustomEditTextPreference extends EditTextPreference {
         }
     }
 
-    public void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
+    private void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
         this.mFragment = customPreferenceDialogFragment;
     }
 

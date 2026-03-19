@@ -213,15 +213,15 @@ public class TetherService extends Service {
         return stringBuffer.toString();
     }
 
-    public void disableWifiTethering() {
+    private void disableWifiTethering() {
         ((ConnectivityManager) getSystemService("connectivity")).stopTethering(0);
     }
 
-    public void disableUsbTethering() {
+    private void disableUsbTethering() {
         ((ConnectivityManager) getSystemService("connectivity")).setUsbTethering(false);
     }
 
-    public void disableBtTethering() {
+    private void disableBtTethering() {
         final BluetoothAdapter defaultAdapter = BluetoothAdapter.getDefaultAdapter();
         if (defaultAdapter != null) {
             defaultAdapter.getProfileProxy(this, new BluetoothProfile.ServiceListener() {
@@ -238,7 +238,7 @@ public class TetherService extends Service {
         }
     }
 
-    public void startProvisioning(int i) {
+    private void startProvisioning(int i) {
         if (i < this.mCurrentTethers.size()) {
             Intent provisionBroadcastIntent = getProvisionBroadcastIntent(i);
             setEntitlementAppActive(i);
@@ -306,7 +306,7 @@ public class TetherService extends Service {
         }
     }
 
-    public void fireCallbacksForType(int i, int i2) {
+    private void fireCallbacksForType(int i, int i2) {
         List<ResultReceiver> list = this.mPendingCallbacks.get(Integer.valueOf(i));
         if (list == null) {
             return;

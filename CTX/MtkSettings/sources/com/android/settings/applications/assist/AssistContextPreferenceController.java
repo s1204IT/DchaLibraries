@@ -65,7 +65,7 @@ public class AssistContextPreferenceController extends AbstractPreferenceControl
         this.mSettingObserver.register(this.mContext.getContentResolver(), false);
     }
 
-    public void updatePreference() {
+    private void updatePreference() {
         if (this.mPreference == null || !(this.mPreference instanceof TwoStatePreference)) {
             return;
         }

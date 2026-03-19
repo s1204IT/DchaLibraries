@@ -32,7 +32,7 @@ public class AppMemoryPreferenceController extends BasePreferenceController impl
         }
 
         @Override
-        public ProcStatsPackageEntry doInBackground(Void... voidArr) {
+        protected ProcStatsPackageEntry doInBackground(Void... voidArr) {
             PackageInfo packageInfo;
             Activity activity = AppMemoryPreferenceController.this.mParent.getActivity();
             if (activity != null && (packageInfo = AppMemoryPreferenceController.this.mParent.getPackageInfo()) != null) {
@@ -56,7 +56,7 @@ public class AppMemoryPreferenceController extends BasePreferenceController impl
         }
 
         @Override
-        public void onPostExecute(ProcStatsPackageEntry procStatsPackageEntry) {
+        protected void onPostExecute(ProcStatsPackageEntry procStatsPackageEntry) {
             if (AppMemoryPreferenceController.this.mParent.getActivity() == null) {
                 return;
             }

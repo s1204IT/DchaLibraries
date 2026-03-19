@@ -61,13 +61,13 @@ public final class KeyboardShortcutKeysLayout extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         int horizontalVerticalSpacing = getHorizontalVerticalSpacing();
         return new LayoutParams(horizontalVerticalSpacing, horizontalVerticalSpacing);
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
         int horizontalVerticalSpacing = getHorizontalVerticalSpacing();
         return new LayoutParams(horizontalVerticalSpacing, horizontalVerticalSpacing, layoutParams);
     }

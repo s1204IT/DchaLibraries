@@ -49,7 +49,7 @@ public class WorkModeSwitch extends Switch {
             }
 
             @Override
-            public Boolean doInBackground(Void... voidArr) {
+            protected Boolean doInBackground(Void... voidArr) {
                 Iterator<UserHandle> it = UserManagerCompat.getInstance(WorkModeSwitch.this.getContext()).getUserProfiles().iterator();
                 boolean z2 = false;
                 while (it.hasNext()) {
@@ -61,7 +61,7 @@ public class WorkModeSwitch extends Switch {
             }
 
             @Override
-            public void onPostExecute(Boolean bool) {
+            protected void onPostExecute(Boolean bool) {
                 if (bool.booleanValue()) {
                     WorkModeSwitch.this.setEnabled(true);
                 }

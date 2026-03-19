@@ -57,7 +57,7 @@ public class DefaultSmsPicker extends DefaultAppPickerFragment {
     }
 
     @Override
-    public String getConfirmationMessage(CandidateInfo candidateInfo) {
+    protected String getConfirmationMessage(CandidateInfo candidateInfo) {
         if (Utils.isPackageDirectBootAware(getContext(), candidateInfo.getKey())) {
             return null;
         }

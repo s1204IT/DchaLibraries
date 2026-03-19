@@ -378,7 +378,7 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
         this.mSwitchBar.setChecked(false);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, Lifecycle lifecycle, DevelopmentSettingsDashboardFragment developmentSettingsDashboardFragment, BluetoothA2dpConfigStore bluetoothA2dpConfigStore) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, Lifecycle lifecycle, DevelopmentSettingsDashboardFragment developmentSettingsDashboardFragment, BluetoothA2dpConfigStore bluetoothA2dpConfigStore) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new TouchPanelVersionPreferenceController(context));
         arrayList.add(new DigitizerVersionPreferenceController(context));

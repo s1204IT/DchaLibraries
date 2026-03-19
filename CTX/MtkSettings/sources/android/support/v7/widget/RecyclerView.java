@@ -951,7 +951,7 @@ public class RecyclerView extends ViewGroup implements NestedScrollingChild2 {
         }
     }
 
-    public void scrollStep(int dx, int dy, int[] consumed) {
+    private void scrollStep(int dx, int dy, int[] consumed) {
         startInterceptRequestLayout();
         onEnterLayoutOrScroll();
         TraceCompat.beginSection("RV Scroll");
@@ -5162,7 +5162,7 @@ public class RecyclerView extends ViewGroup implements NestedScrollingChild2 {
             }
         }
 
-        public void onSmoothScrollerStopped(SmoothScroller smoothScroller) {
+        private void onSmoothScrollerStopped(SmoothScroller smoothScroller) {
             if (this.mSmoothScroller == smoothScroller) {
                 this.mSmoothScroller = null;
             }
@@ -5562,7 +5562,7 @@ public class RecyclerView extends ViewGroup implements NestedScrollingChild2 {
             RecyclerView.clearNestedRecyclerViewIfNotNested(this);
         }
 
-        public void onEnteredHiddenState(RecyclerView parent) {
+        private void onEnteredHiddenState(RecyclerView parent) {
             if (this.mPendingAccessibilityState != -1) {
                 this.mWasImportantForAccessibilityBeforeHidden = this.mPendingAccessibilityState;
             } else {
@@ -5571,7 +5571,7 @@ public class RecyclerView extends ViewGroup implements NestedScrollingChild2 {
             parent.setChildImportantForAccessibilityInternal(this, 4);
         }
 
-        public void onLeftHiddenState(RecyclerView parent) {
+        private void onLeftHiddenState(RecyclerView parent) {
             parent.setChildImportantForAccessibilityInternal(this, this.mWasImportantForAccessibilityBeforeHidden);
             this.mWasImportantForAccessibilityBeforeHidden = 0;
         }
@@ -5631,11 +5631,11 @@ public class RecyclerView extends ViewGroup implements NestedScrollingChild2 {
             return (this.mFlags & 16) == 0 && !ViewCompat.hasTransientState(this.itemView);
         }
 
-        public boolean shouldBeKeptAsChild() {
+        private boolean shouldBeKeptAsChild() {
             return (this.mFlags & 16) != 0;
         }
 
-        public boolean doesTransientStatePreventRecycling() {
+        private boolean doesTransientStatePreventRecycling() {
             return (this.mFlags & 16) == 0 && ViewCompat.hasTransientState(this.itemView);
         }
 
@@ -5909,7 +5909,7 @@ public class RecyclerView extends ViewGroup implements NestedScrollingChild2 {
             return this.mTargetPosition;
         }
 
-        public void onAnimation(int dx, int dy) {
+        private void onAnimation(int dx, int dy) {
             PointF pointF;
             RecyclerView recyclerView = this.mRecyclerView;
             if (!this.mRunning || this.mTargetPosition == -1 || recyclerView == null) {

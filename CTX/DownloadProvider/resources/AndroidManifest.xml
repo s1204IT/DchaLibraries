@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="android.media"
+    android:versionCode="28"
+    android:versionName="9"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.providers.downloads"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <permission
+        android:label="@string/permlab_downloadManager"
+        android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"
+        android:protectionLevel="signatureOrSystem"
+        android:description="@string/permdesc_downloadManager"/>
+    <permission
+        android:label="@string/permlab_downloadManagerAdvanced"
+        android:name="android.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED"
+        android:protectionLevel="signatureOrSystem"
+        android:description="@string/permdesc_downloadManagerAdvanced"/>
+    <permission
+        android:label="@string/permlab_downloadCompletedIntent"
+        android:name="android.permission.SEND_DOWNLOAD_COMPLETED_INTENTS"
+        android:protectionLevel="signature"
+        android:description="@string/permdesc_downloadCompletedIntent"/>
+    <permission
+        android:label="@string/permlab_downloadCacheNonPurgeable"
+        android:name="android.permission.DOWNLOAD_CACHE_NON_PURGEABLE"
+        android:protectionLevel="signatureOrSystem"
+        android:description="@string/permdesc_downloadCacheNonPurgeable"/>
+    <permission
+        android:label="@string/permlab_downloadWithoutNotification"
+        android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"
+        android:protectionLevel="normal"
+        android:permissionGroup="android.permission-group.NETWORK"
+        android:description="@string/permdesc_downloadWithoutNotification"/>
+    <permission
+        android:label="@string/permlab_accessAllDownloads"
+        android:name="android.permission.ACCESS_ALL_DOWNLOADS"
+        android:protectionLevel="signature"
+        android:description="@string/permdesc_accessAllDownloads"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
+    <uses-permission android:name="android.permission.ACCESS_CACHE_FILESYSTEM"/>
+    <uses-permission android:name="android.permission.SEND_DOWNLOAD_COMPLETED_INTENTS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS"/>
+    <uses-permission android:name="android.permission.UPDATE_DEVICE_STATS"/>
+    <uses-permission android:name="android.permission.CONNECTIVITY_INTERNAL"/>
+    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.UPDATE_APP_OPS_STATS"/>
+    <application
+        android:label="@string/app_label"
+        android:icon="@mipmap/ic_launcher_download"
+        android:process="android.process.media"
+        android:allowBackup="false"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true">
+        <provider
+            android:name="com.android.providers.downloads.DownloadProvider"
+            android:exported="true"
+            android:authorities="downloads">
+            <path-permission
+                android:permission="android.permission.INTERNET"
+                android:pathPrefix="/my_downloads"/>
+            <path-permission
+                android:permission="android.permission.ACCESS_ALL_DOWNLOADS"
+                android:pathPrefix="/all_downloads"/>
+            <path-permission
+                android:permission="android.permission.INTERNET"
+                android:pathPrefix="/download"/>
+            <grant-uri-permission android:pathPrefix="/all_downloads/"/>
+            <grant-uri-permission android:pathPrefix="/my_downloads/"/>
+        </provider>
+        <provider
+            android:label="@string/storage_description"
+            android:name="com.android.providers.downloads.DownloadStorageProvider"
+            android:permission="android.permission.MANAGE_DOCUMENTS"
+            android:exported="true"
+            android:authorities="com.android.providers.downloads.documents"
+            android:grantUriPermissions="true">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER"/>
+            </intent-filter>
+        </provider>
+        <service
+            android:name="com.android.providers.downloads.DownloadJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
+        <service
+            android:name="com.android.providers.downloads.DownloadIdleService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="true"/>
+        <receiver
+            android:name="com.android.providers.downloads.DownloadReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.UID_REMOVED"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
+                <data android:scheme="file"/>
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

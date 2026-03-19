@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_selected="true"
+        android:drawable="@color/item_doc_background_selected"/>
+    <item
+        android:drawable="@color/item_hover_color"
+        android:state_drag_hovered="true"/>
+    <item
+        android:state_selected="false"
+        android:drawable="@color/item_doc_background"/>
+</selector>

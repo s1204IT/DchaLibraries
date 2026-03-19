@@ -270,12 +270,12 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         } else {
             new AsyncTask<Void, Void, String>() {
                 @Override
-                public void onPostExecute(String str) {
+                protected void onPostExecute(String str) {
                     UserSettings.this.finishLoadProfile(str);
                 }
 
                 @Override
-                public String doInBackground(Void... voidArr) {
+                protected String doInBackground(Void... voidArr) {
                     Activity activity;
                     UserInfo userInfo = UserSettings.this.mUserManager.getUserInfo(UserHandle.myUserId());
                     if ((userInfo.iconPath == null || userInfo.iconPath.equals("")) && (activity = UserSettings.this.getActivity()) != null) {
@@ -287,7 +287,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void finishLoadProfile(String str) {
+    private void finishLoadProfile(String str) {
         if (getActivity() == null) {
             return;
         }
@@ -304,7 +304,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return new LockPatternUtils(getActivity()).isSecure(UserHandle.myUserId());
     }
 
-    public void launchChooseLockscreen() {
+    private void launchChooseLockscreen() {
         Intent intent = new Intent("android.app.action.SET_NEW_PASSWORD");
         intent.putExtra("minimum_quality", 65536);
         startActivityForResult(intent, 10);
@@ -323,7 +323,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         this.mEditUserInfoController.onActivityResult(i, i2, intent);
     }
 
-    public void onAddUserClicked(int i) {
+    private void onAddUserClicked(int i) {
         synchronized (this.mUserLock) {
             if (this.mRemovingUserId == -1 && !this.mAddingUser) {
                 switch (i) {
@@ -351,7 +351,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public UserInfo createRestrictedProfile() {
+    private UserInfo createRestrictedProfile() {
         UserInfo userInfoCreateRestrictedProfile = this.mUserManager.createRestrictedProfile(this.mAddingUserName);
         if (userInfoCreateRestrictedProfile != null && !assignDefaultPhoto(getActivity(), userInfoCreateRestrictedProfile.id)) {
             return null;
@@ -359,7 +359,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return userInfoCreateRestrictedProfile;
     }
 
-    public UserInfo createTrustedUser() {
+    private UserInfo createTrustedUser() {
         UserInfo userInfoCreateUser = this.mUserManager.createUser(this.mAddingUserName, 0);
         if (userInfoCreateUser != null && !assignDefaultPhoto(getActivity(), userInfoCreateUser.id)) {
             return null;
@@ -367,7 +367,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         return userInfoCreateUser;
     }
 
-    public void onManageUserClicked(int i, boolean z) {
+    private void onManageUserClicked(int i, boolean z) {
         this.mAddingUser = false;
         if (i == -11) {
             Bundle bundle = new Bundle();
@@ -392,7 +392,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void onUserCreated(int i) {
+    private void onUserCreated(int i) {
         this.mAddedUserId = i;
         this.mAddingUser = false;
         if (!isResumed()) {
@@ -485,7 +485,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void removeUserNow() {
+    private void removeUserNow() {
         if (this.mRemovingUserId == UserHandle.myUserId()) {
             removeThisUser();
         } else {
@@ -515,7 +515,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void addUserNow(final int i) {
+    private void addUserNow(final int i) {
         synchronized (this.mUserLock) {
             this.mAddingUser = true;
             this.mAddingUserName = i == 1 ? getString(R.string.user_new_user_name) : getString(R.string.user_new_profile_name);
@@ -542,21 +542,21 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void switchUserNow(int i) {
+    private void switchUserNow(int i) {
         try {
             ActivityManager.getService().switchUser(i);
         } catch (RemoteException e) {
         }
     }
 
-    public void exitGuest() {
+    private void exitGuest() {
         if (!this.mUserCaps.mIsGuest) {
             return;
         }
         removeThisUser();
     }
 
-    public void updateUserList() {
+    private void updateUserList() {
         UserPreference userPreference;
         this.mUpdateUserListOperate = true;
         if (getActivity() == null) {
@@ -703,12 +703,12 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
     private void loadIconsAsync(List<Integer> list) {
         new AsyncTask<List<Integer>, Void, Void>() {
             @Override
-            public void onPostExecute(Void r1) {
+            protected void onPostExecute(Void r1) {
                 UserSettings.this.updateUserList();
             }
 
             @Override
-            public Void doInBackground(List<Integer>... listArr) {
+            protected Void doInBackground(List<Integer>... listArr) {
                 Iterator<Integer> it = listArr[0].iterator();
                 while (it.hasNext()) {
                     int iIntValue = it.next().intValue();
@@ -817,7 +817,7 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         this.mMePreference.setTitle(charSequence);
     }
 
-    public static Bitmap getDefaultUserIconAsBitmap(Resources resources, int i) {
+    private static Bitmap getDefaultUserIconAsBitmap(Resources resources, int i) {
         Bitmap bitmap = sDarkDefaultUserBitmapCache.get(i);
         if (bitmap == null) {
             Bitmap bitmapConvertToBitmap = UserIcons.convertToBitmap(UserIcons.getDefaultUserIcon(resources, i, false));
@@ -862,13 +862,13 @@ public class UserSettings extends SettingsPreferenceFragment implements DialogIn
         }
     }
 
-    public void dismissDeleteUserDialog() {
+    private void dismissDeleteUserDialog() {
         if (this.mDeletingUserDialog != null && this.mDeletingUserDialog.isShowing()) {
             this.mDeletingUserDialog.dismiss();
         }
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;
 

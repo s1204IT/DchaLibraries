@@ -23,6 +23,6 @@ public class BatteryStatsHelperLoader extends AsyncLoader<BatteryStatsHelper> {
     }
 
     @Override
-    public void onDiscardResult(BatteryStatsHelper batteryStatsHelper) {
+    protected void onDiscardResult(BatteryStatsHelper batteryStatsHelper) {
     }
 }

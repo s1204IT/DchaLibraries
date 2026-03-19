@@ -390,7 +390,7 @@ public abstract class RecentsView<T extends BaseActivity> extends PagedView impl
         return super.onTouchEvent(motionEvent);
     }
 
-    public void applyLoadPlan(final RecentsTaskLoadPlan recentsTaskLoadPlan) {
+    private void applyLoadPlan(final RecentsTaskLoadPlan recentsTaskLoadPlan) {
         if (this.mPendingAnimation != null) {
             this.mPendingAnimation.addEndListener(new Consumer() {
                 @Override

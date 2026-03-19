@@ -51,7 +51,7 @@ public class ZenModeScheduleDaysSelection extends ScrollView {
         }
     }
 
-    public int[] getDays() {
+    private int[] getDays() {
         SparseBooleanArray sparseBooleanArray = new SparseBooleanArray(this.mDays.size());
         for (int i = 0; i < this.mDays.size(); i++) {
             int iKeyAt = this.mDays.keyAt(i);

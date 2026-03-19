@@ -133,14 +133,14 @@ public class DozeScrimController {
         }
     }
 
-    public void pulseStarted() {
+    private void pulseStarted() {
         DozeLog.tracePulseStart(this.mPulseReason);
         if (this.mPulseCallback != null) {
             this.mPulseCallback.onPulseStarted();
         }
     }
 
-    public void pulseFinished() {
+    private void pulseFinished() {
         DozeLog.tracePulseFinish();
         if (this.mPulseCallback != null) {
             this.mPulseCallback.onPulseFinished();

@@ -79,11 +79,11 @@ public class SharedPreferencesLogger implements SharedPreferences {
     public void unregisterOnSharedPreferenceChangeListener(SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener) {
     }
 
-    public void logValue(String str, Object obj) {
+    private void logValue(String str, Object obj) {
         logValue(str, obj, false);
     }
 
-    public void logValue(String str, Object obj, boolean z) {
+    private void logValue(String str, Object obj, boolean z) {
         int iIntValue;
         String strBuildPrefKey = buildPrefKey(this.mTag, str);
         if (!z && !this.mPreferenceKeySet.contains(strBuildPrefKey)) {
@@ -122,7 +122,7 @@ public class SharedPreferencesLogger implements SharedPreferences {
         this.mMetricsFeature.action(this.mContext, 853, str2, Pair.create(854, this.mTag + "/" + str));
     }
 
-    public void safeLogValue(String str, String str2) {
+    private void safeLogValue(String str, String str2) {
         new AsyncPackageCheck().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, str, str2);
     }
 
@@ -139,7 +139,7 @@ public class SharedPreferencesLogger implements SharedPreferences {
         }
 
         @Override
-        public Void doInBackground(String... strArr) {
+        protected Void doInBackground(String... strArr) {
             String str = strArr[0];
             String packageName = strArr[1];
             PackageManager packageManager = SharedPreferencesLogger.this.mContext.getPackageManager();

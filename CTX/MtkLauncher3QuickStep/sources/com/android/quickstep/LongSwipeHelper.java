@@ -107,7 +107,7 @@ public class LongSwipeHelper {
         transactionCompat.apply();
     }
 
-    public void onSwipeAnimationComplete(boolean z, boolean z2, Runnable runnable) {
+    private void onSwipeAnimationComplete(boolean z, boolean z2, Runnable runnable) {
         this.mLauncher.getStateManager().goToState(z ? LauncherState.ALL_APPS : LauncherState.OVERVIEW, false);
         if (!z) {
             DiscoveryBounce.showForOverviewIfNeeded(this.mLauncher);

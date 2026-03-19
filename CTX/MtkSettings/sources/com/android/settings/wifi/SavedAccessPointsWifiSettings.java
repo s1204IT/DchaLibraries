@@ -102,7 +102,7 @@ public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment im
         }
     }
 
-    public void initPreferences() {
+    private void initPreferences() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         Context prefContext = getPrefContext();
         List<AccessPoint> allConfigs = WifiSavedConfigUtils.getAllConfigs(prefContext, this.mWifiManager);
@@ -135,7 +135,7 @@ public class SavedAccessPointsWifiSettings extends SettingsPreferenceFragment im
         }
     }
 
-    public void postUpdatePreference() {
+    private void postUpdatePreference() {
         if (!this.mHandler.hasMessages(1)) {
             this.mHandler.sendEmptyMessage(1);
         }

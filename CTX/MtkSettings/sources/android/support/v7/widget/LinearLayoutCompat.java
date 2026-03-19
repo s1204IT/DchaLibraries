@@ -1454,7 +1454,7 @@ public class LinearLayoutCompat extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         if (this.mOrientation == 0) {
             return new LayoutParams(-2, -2);
         }
@@ -1465,7 +1465,7 @@ public class LinearLayoutCompat extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return new LayoutParams(p);
     }
 

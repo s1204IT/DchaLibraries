@@ -59,7 +59,7 @@ public class RotationLockTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         boolean zIsRotationLocked = this.mController.isRotationLocked();
         booleanState.value = !zIsRotationLocked;
         booleanState.label = this.mContext.getString(R.string.quick_settings_rotation_unlocked_label);

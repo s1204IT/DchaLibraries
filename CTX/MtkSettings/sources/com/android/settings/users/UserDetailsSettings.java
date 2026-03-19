@@ -230,7 +230,7 @@ public class UserDetailsSettings extends SettingsPreferenceFragment implements P
         }
     }
 
-    public void dismissDialogAndFinish() {
+    private void dismissDialogAndFinish() {
         dismissDeleteUserDialog();
         finish();
     }

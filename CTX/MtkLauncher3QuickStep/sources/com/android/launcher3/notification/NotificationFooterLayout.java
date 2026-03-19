@@ -134,7 +134,7 @@ public class NotificationFooterLayout extends FrameLayout {
         animatorSetCreateAnimatorSet.start();
     }
 
-    public void removeViewFromIconRow(View view) {
+    private void removeViewFromIconRow(View view) {
         this.mIconRow.removeView(view);
         this.mNotifications.remove(view.getTag());
         updateOverflowEllipsisVisibility();

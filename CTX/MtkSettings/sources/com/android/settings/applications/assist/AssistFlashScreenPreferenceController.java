@@ -73,7 +73,7 @@ public class AssistFlashScreenPreferenceController extends AbstractPreferenceCon
         return true;
     }
 
-    public void updatePreference() {
+    private void updatePreference() {
         if (this.mPreference == null || !(this.mPreference instanceof TwoStatePreference)) {
             return;
         }

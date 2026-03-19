@@ -260,7 +260,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         fireCallbacks();
     }
 
-    public void refreshCACerts() {
+    private void refreshCACerts() {
         new CACertLoader().execute(Integer.valueOf(this.mCurrentUserId));
         int workProfileUserId = getWorkProfileUserId(this.mCurrentUserId);
         if (workProfileUserId != -10000) {
@@ -281,7 +281,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
     }
 
-    public void fireCallbacks() {
+    private void fireCallbacks() {
         synchronized (this.mCallbacks) {
             Iterator<SecurityController.SecurityControllerCallback> it = this.mCallbacks.iterator();
             while (it.hasNext()) {
@@ -290,7 +290,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
     }
 
-    public void updateState() {
+    private void updateState() {
         LegacyVpnInfo legacyVpnInfo;
         SparseArray<VpnConfig> sparseArray = new SparseArray<>();
         try {
@@ -330,7 +330,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
 
         @Override
-        public Pair<Integer, Boolean> doInBackground(final Integer... numArr) {
+        protected Pair<Integer, Boolean> doInBackground(final Integer... numArr) {
             Throwable th;
             try {
                 KeyChain.KeyChainConnection keyChainConnectionBindAsUser = KeyChain.bindAsUser(SecurityControllerImpl.this.mContext, UserHandle.of(numArr[0].intValue()));
@@ -359,7 +359,7 @@ public class SecurityControllerImpl extends CurrentUserTracker implements Securi
         }
 
         @Override
-        public void onPostExecute(Pair<Integer, Boolean> pair) {
+        protected void onPostExecute(Pair<Integer, Boolean> pair) {
             if (SecurityControllerImpl.DEBUG) {
                 Log.d("SecurityController", "onPostExecute " + pair);
             }

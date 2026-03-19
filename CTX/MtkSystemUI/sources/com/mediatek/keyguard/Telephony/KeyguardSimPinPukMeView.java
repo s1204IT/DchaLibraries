@@ -232,7 +232,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         this.mSecurityMessageDisplay.setMessage(operatorSIMString);
     }
 
-    public String getPinPasswordErrorMessage(int i) {
+    private String getPinPasswordErrorMessage(int i) {
         String string;
         if (i == 0) {
             string = getContext().getString(R.string.kg_password_wrong_pin_code_pukked);
@@ -245,7 +245,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return string;
     }
 
-    public String getPukPasswordErrorMessage(int i) {
+    private String getPukPasswordErrorMessage(int i) {
         String string;
         if (i == 0) {
             string = getContext().getString(R.string.kg_password_wrong_puk_code_dead);
@@ -316,7 +316,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         }
     }
 
-    public void setInputInvalidAlertDialog(CharSequence charSequence, boolean z) {
+    private void setInputInvalidAlertDialog(CharSequence charSequence, boolean z) {
         StringBuilder sb = new StringBuilder(charSequence);
         if (z) {
             AlertDialog alertDialogCreate = new AlertDialog.Builder(this.mContext).setMessage(sb).setPositiveButton(android.R.string.ok, (DialogInterface.OnClickListener) null).setCancelable(true).create();
@@ -328,15 +328,15 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         Toast.makeText(this.mContext, sb).show();
     }
 
-    public String getRetryMeString(int i) {
+    private String getRetryMeString(int i) {
         return "(" + this.mContext.getString(R.string.retries_left, Integer.valueOf(getRetryMeCount(i))) + ")";
     }
 
-    public int getRetryMeCount(int i) {
+    private int getRetryMeCount(int i) {
         return this.mUpdateMonitor.getSimMeLeftRetryCountOfPhoneId(i);
     }
 
-    public void minusRetryMeCount(int i) {
+    private void minusRetryMeCount(int i) {
         this.mUpdateMonitor.minusSimMeLeftRetryCountOfPhoneId(i);
     }
 
@@ -674,7 +674,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         }
     }
 
-    public Dialog getSimRemainingAttemptsDialog(int i) {
+    private Dialog getSimRemainingAttemptsDialog(int i) {
         String pinPasswordErrorMessage = getPinPasswordErrorMessage(i);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -689,7 +689,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return this.mRemainingAttemptsDialog;
     }
 
-    public Dialog getPukRemainingAttemptsDialog(int i) {
+    private Dialog getPukRemainingAttemptsDialog(int i) {
         String pukPasswordErrorMessage = getPukPasswordErrorMessage(i);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -704,7 +704,7 @@ public class KeyguardSimPinPukMeView extends KeyguardPinBasedInputView {
         return this.mRemainingAttemptsDialog;
     }
 
-    public void simStateReadyProcess() {
+    private void simStateReadyProcess() {
         this.mNextRepollStatePhoneId = getNextRepollStatePhoneId();
         Log.d("KeyguardSimPinPukMeView", "simStateReadyProcess mNextRepollStatePhoneId =" + this.mNextRepollStatePhoneId);
         if (this.mNextRepollStatePhoneId != -1) {

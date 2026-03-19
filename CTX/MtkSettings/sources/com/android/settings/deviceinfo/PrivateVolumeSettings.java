@@ -138,7 +138,7 @@ public class PrivateVolumeSettings extends SettingsPreferenceFragment {
         getActivity().setTitle(this.mStorageManager.getBestVolumeDescription(this.mVolume));
     }
 
-    public void update() {
+    private void update() {
         PreferenceGroup preferenceGroupAddCategory;
         if (!isVolumeValid()) {
             getActivity().finish();
@@ -426,7 +426,7 @@ public class PrivateVolumeSettings extends SettingsPreferenceFragment {
         return intent;
     }
 
-    public void updateDetails(StorageMeasurement.MeasurementDetails measurementDetails) {
+    private void updateDetails(StorageMeasurement.MeasurementDetails measurementDetails) {
         int i;
         long j = 0;
         long j2 = 0;

@@ -149,7 +149,7 @@ public class AccountPreferenceController extends AbstractPreferenceController im
         return false;
     }
 
-    public void updateUi() {
+    private void updateUi() {
         if (!isAvailable()) {
             Log.e("AccountPrefController", "We should not be showing settings for a managed profile");
             return;
@@ -272,7 +272,7 @@ public class AccountPreferenceController extends AbstractPreferenceController im
         }
     }
 
-    public void listenToAccountUpdates() {
+    private void listenToAccountUpdates() {
         int size = this.mProfiles.size();
         for (int i = 0; i < size; i++) {
             AuthenticatorHelper authenticatorHelper = this.mProfiles.valueAt(i).authenticatorHelper;
@@ -282,7 +282,7 @@ public class AccountPreferenceController extends AbstractPreferenceController im
         }
     }
 
-    public void stopListeningToAccountUpdates() {
+    private void stopListeningToAccountUpdates() {
         int size = this.mProfiles.size();
         for (int i = 0; i < size; i++) {
             AuthenticatorHelper authenticatorHelper = this.mProfiles.valueAt(i).authenticatorHelper;

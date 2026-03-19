@@ -127,7 +127,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.SignalState signalState, Object obj) {
+    protected void handleUpdateState(QSTile.SignalState signalState, Object obj) {
         if (DEBUG) {
             Log.d(this.TAG, "handleUpdateState arg=" + obj);
         }
@@ -389,7 +389,7 @@ public class WifiTile extends QSTileImpl<QSTile.SignalState> {
             this.mItems.setItemsVisible(z);
         }
 
-        public void updateItems() {
+        private void updateItems() {
             QSDetailItems.Item[] itemArr;
             int i;
             if (this.mItems == null) {

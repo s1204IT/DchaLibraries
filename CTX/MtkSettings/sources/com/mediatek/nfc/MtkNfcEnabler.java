@@ -107,7 +107,7 @@ public class MtkNfcEnabler implements SwitchBar.OnSwitchChangeListener {
         }
     }
 
-    public void handleNfcStateChanged(int i) {
+    private void handleNfcStateChanged(int i) {
         Log.d("@M_MtkNfcEnabler", "handleNfcStateChanged  newState = " + i);
         updateSwitch(i);
     }
@@ -143,14 +143,14 @@ public class MtkNfcEnabler implements SwitchBar.OnSwitchChangeListener {
         }
 
         @Override
-        public Integer doInBackground(Void... voidArr) {
+        protected Integer doInBackground(Void... voidArr) {
             MtkNfcEnabler.this.mNfcState = MtkNfcEnabler.this.mNfcAdapter.getAdapterState();
             Log.d("@M_MtkNfcEnabler", "[QueryTask] doInBackground  mNfcState: " + MtkNfcEnabler.this.mNfcState);
             return Integer.valueOf(MtkNfcEnabler.this.mNfcState);
         }
 
         @Override
-        public void onPostExecute(Integer num) {
+        protected void onPostExecute(Integer num) {
             Log.d("@M_MtkNfcEnabler", "[QueryTask] onPostExecute: " + num);
             MtkNfcEnabler.this.handleNfcStateChanged(num.intValue());
         }

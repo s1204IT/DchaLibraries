@@ -147,7 +147,7 @@ public class GridRowView extends SliceChildView implements View.OnClickListener 
         return false;
     }
 
-    public int getMaxCells() {
+    private int getMaxCells() {
         if (this.mGridContent == null || !this.mGridContent.isValid() || getWidth() == 0) {
             return -1;
         }
@@ -159,7 +159,7 @@ public class GridRowView extends SliceChildView implements View.OnClickListener 
         return getWidth() / (this.mGutter + desiredCellWidth);
     }
 
-    public void populateViews() {
+    private void populateViews() {
         if (this.mGridContent == null || !this.mGridContent.isValid()) {
             resetView();
             return;

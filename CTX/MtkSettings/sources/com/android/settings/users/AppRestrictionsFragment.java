@@ -88,7 +88,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
             this.listener = onClickListener;
         }
 
-        public void setSettingsEnabled(boolean z) {
+        private void setSettingsEnabled(boolean z) {
             this.hasSettings = z;
         }
 
@@ -209,7 +209,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         if (this.mAppListChanged) {
             new AsyncTask<Void, Void, Void>() {
                 @Override
-                public Void doInBackground(Void... voidArr) {
+                protected Void doInBackground(Void... voidArr) {
                     AppRestrictionsFragment.this.mHelper.applyUserAppsStates(AppRestrictionsFragment.this);
                     return null;
                 }
@@ -217,7 +217,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    public void onPackageChanged(Intent intent) {
+    private void onPackageChanged(Intent intent) {
         String action = intent.getAction();
         AppRestrictionsPreference appRestrictionsPreference = (AppRestrictionsPreference) findPreference(getKeyForPackage(intent.getData().getSchemeSpecificPart()));
         if (appRestrictionsPreference == null) {
@@ -245,13 +245,13 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             AppRestrictionsFragment.this.mHelper.fetchAndMergeApps();
             return null;
         }
 
         @Override
-        public void onPostExecute(Void r1) {
+        protected void onPostExecute(Void r1) {
             AppRestrictionsFragment.this.populateApps();
         }
     }
@@ -267,7 +267,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         return (packageInfo.applicationInfo.flags & 8388608) != 0 && (packageInfo.applicationInfo.privateFlags & 1) == 0;
     }
 
-    public void populateApps() {
+    private void populateApps() {
         PackageInfo packageInfo;
         Activity activity = getActivity();
         if (activity == null) {
@@ -535,7 +535,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    public void onRestrictionsReceived(AppRestrictionsPreference appRestrictionsPreference, ArrayList<RestrictionEntry> arrayList) {
+    private void onRestrictionsReceived(AppRestrictionsPreference appRestrictionsPreference, ArrayList<RestrictionEntry> arrayList) {
         removeRestrictionsForApp(appRestrictionsPreference);
         int i = 1;
         for (RestrictionEntry restrictionEntry : arrayList) {
@@ -591,7 +591,7 @@ public class AppRestrictionsFragment extends SettingsPreferenceFragment implemen
         }
     }
 
-    public int generateCustomActivityRequestCode(AppRestrictionsPreference appRestrictionsPreference) {
+    private int generateCustomActivityRequestCode(AppRestrictionsPreference appRestrictionsPreference) {
         this.mCustomRequestCode++;
         this.mCustomRequestMap.put(Integer.valueOf(this.mCustomRequestCode), appRestrictionsPreference);
         return this.mCustomRequestCode;

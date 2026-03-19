@@ -107,7 +107,7 @@ public class OperatorNameView extends TextView implements DemoMode, DarkIconDisp
         }
     }
 
-    public void updateText() {
+    private void updateText() {
         CharSequence carrierName;
         ServiceState serviceState;
         int i = 0;

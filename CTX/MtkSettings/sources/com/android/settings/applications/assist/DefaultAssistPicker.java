@@ -71,7 +71,7 @@ public class DefaultAssistPicker extends DefaultAppPickerFragment {
     }
 
     @Override
-    public String getConfirmationMessage(CandidateInfo candidateInfo) {
+    protected String getConfirmationMessage(CandidateInfo candidateInfo) {
         if (candidateInfo == null) {
             return null;
         }

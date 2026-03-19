@@ -242,7 +242,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         }
     }
 
-    public AnimatorSet createAtomicAnimForState(LauncherState launcherState, LauncherState launcherState2, long j) {
+    private AnimatorSet createAtomicAnimForState(LauncherState launcherState, LauncherState launcherState2, long j) {
         AnimatorSetBuilder animatorSetBuilder = new AnimatorSetBuilder();
         this.mLauncher.getStateManager().prepareForAtomicAnimation(launcherState, launcherState2, animatorSetBuilder);
         LauncherStateManager.AnimationConfig animationConfig = new LauncherStateManager.AnimationConfig();
@@ -323,7 +323,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         }
     }
 
-    public void startAtomicComponentsAnim(float f, long j) {
+    private void startAtomicComponentsAnim(float f, long j) {
         if (this.mAtomicComponentsController != null) {
             ValueAnimator animationPlayer = this.mAtomicComponentsController.getAnimationPlayer();
             animationPlayer.setFloatValues(this.mAtomicComponentsController.getProgressFraction(), f);
@@ -361,7 +361,7 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         return this.mToState.ordinal > this.mFromState.ordinal ? 1 : 2;
     }
 
-    public void onSwipeInteractionCompleted(LauncherState launcherState, int i) {
+    protected void onSwipeInteractionCompleted(LauncherState launcherState, int i) {
         clearState();
         boolean z = true;
         if (this.mPendingAnimation != null) {
@@ -382,14 +382,14 @@ public abstract class AbstractStateChangeTouchController implements TouchControl
         this.mLauncher.getUserEventDispatcher().logStateChangeAction(i, getDirectionForLog(), this.mStartContainerType, this.mStartState.containerType, launcherState.containerType, this.mLauncher.getWorkspace().getCurrentPage());
     }
 
-    public void clearState() {
+    protected void clearState() {
         this.mCurrentAnimation = null;
         cancelAtomicComponentsController();
         this.mDetector.finishedScrolling();
         this.mDetector.setDetectableScrollConditions(0, false);
     }
 
-    public void cancelAtomicComponentsController() {
+    private void cancelAtomicComponentsController() {
         if (this.mAtomicComponentsController != null) {
             this.mAtomicComponentsController.getAnimationPlayer().cancel();
             this.mAtomicComponentsController = null;

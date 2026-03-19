@@ -978,14 +978,14 @@ public class ApnEditor extends SettingsPreferenceFragment implements SharedPrefe
         this.mApnExt.onDestroy();
     }
 
-    public void exitWithoutSave() {
+    private void exitWithoutSave() {
         if (this.mNewApn && this.mApnData.getUri() != null) {
             getContentResolver().delete(this.mApnData.getUri(), null, null);
         }
         finish();
     }
 
-    public void updateScreenEnableState() {
+    private void updateScreenEnableState() {
         boolean zIsSimReadyAndRadioOn = isSimReadyAndRadioOn();
         Log.d(TAG, "enable = " + zIsSimReadyAndRadioOn + " mReadOnlyMode = " + this.mReadOnlyMode);
         getPreferenceScreen().setEnabled(zIsSimReadyAndRadioOn && !this.mReadOnlyMode && this.mApnExt.getScreenEnableState(this.mSubId, getActivity()));

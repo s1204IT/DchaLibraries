@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:width="24dp">
+    <group android:name="button">
+        <group android:name="button_pivot">
+            <group android:name="right_button">
+                <path android:name="path_1"/>
+            </group>
+            <group android:name="left_button">
+                <path android:name="left_button_path"/>
+            </group>
+        </group>
+    </group>
+    <group android:name="alarm">
+        <group android:name="alarm_pivot">
+            <group android:name="alarm_hands">
+                <path android:name="alarm_hands_path"/>
+            </group>
+            <group android:name="alarm_body">
+                <path android:name="alarm_outline_path"/>
+            </group>
+        </group>
+    </group>
+</vector>

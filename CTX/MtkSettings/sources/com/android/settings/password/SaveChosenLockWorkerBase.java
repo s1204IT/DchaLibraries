@@ -83,12 +83,12 @@ abstract class SaveChosenLockWorkerBase extends Fragment {
         }
 
         @Override
-        public Intent doInBackground(Void... voidArr) {
+        protected Intent doInBackground(Void... voidArr) {
             return SaveChosenLockWorkerBase.this.saveAndVerifyInBackground();
         }
 
         @Override
-        public void onPostExecute(Intent intent) {
+        protected void onPostExecute(Intent intent) {
             SaveChosenLockWorkerBase.this.finish(intent);
         }
     }

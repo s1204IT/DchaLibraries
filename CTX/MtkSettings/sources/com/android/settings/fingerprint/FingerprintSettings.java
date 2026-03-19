@@ -160,7 +160,7 @@ public class FingerprintSettings extends SubSettings {
             retryFingerprint();
         }
 
-        public void retryFingerprint() {
+        private void retryFingerprint() {
             if (!this.mRemovalSidecar.inProgress() && this.mFingerprintManager.getEnrolledFingerprints(this.mUserId).size() != 0 && !this.mLaunchedConfirm && !this.mInFingerprintLockout) {
                 this.mAuthenticateSidecar.startAuthentication(this.mUserId);
                 this.mAuthenticateSidecar.setListener(this.mAuthenticateListener);
@@ -278,7 +278,7 @@ public class FingerprintSettings extends SubSettings {
             updateAddPreference();
         }
 
-        public void updateAddPreference() {
+        private void updateAddPreference() {
             if (getActivity() == null) {
                 return;
             }
@@ -434,7 +434,7 @@ public class FingerprintSettings extends SubSettings {
             return this.mHighlightDrawable;
         }
 
-        public void highlightFingerprintItem(int i) {
+        private void highlightFingerprintItem(int i) {
             FingerprintPreference fingerprintPreference = (FingerprintPreference) findPreference(genKey(i));
             Drawable highlightDrawable = getHighlightDrawable();
             if (highlightDrawable != null && fingerprintPreference != null) {
@@ -473,7 +473,7 @@ public class FingerprintSettings extends SubSettings {
             updateAddPreference();
         }
 
-        public void renameFingerPrint(int i, String str) {
+        private void renameFingerPrint(int i, String str) {
             this.mFingerprintManager.rename(i, this.mUserId, str);
             if (!TextUtils.isEmpty(str)) {
                 this.mFingerprintsRenaming.put(Integer.valueOf(i), str);

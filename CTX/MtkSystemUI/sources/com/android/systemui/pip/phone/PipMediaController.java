@@ -132,12 +132,12 @@ public class PipMediaController {
         this.mPrevAction = new RemoteAction(Icon.createWithResource(this.mContext, R.drawable.ic_skip_previous_white), string4, string4, PendingIntent.getBroadcast(this.mContext, 0, new Intent("com.android.systemui.pip.phone.PREV"), 134217728));
     }
 
-    public void registerSessionListenerForCurrentUser() {
+    private void registerSessionListenerForCurrentUser() {
         this.mMediaSessionManager.removeOnActiveSessionsChangedListener(this.mSessionsChangedListener);
         this.mMediaSessionManager.addOnActiveSessionsChangedListener(this.mSessionsChangedListener, null, -2, null);
     }
 
-    public void resolveActiveMediaController(List<MediaController> list) {
+    private void resolveActiveMediaController(List<MediaController> list) {
         ComponentName componentName;
         if (list != null && (componentName = (ComponentName) PipUtils.getTopPinnedActivity(this.mContext, this.mActivityManager).first) != null) {
             for (int i = 0; i < list.size(); i++) {
@@ -164,7 +164,7 @@ public class PipMediaController {
         }
     }
 
-    public void notifyActionsChanged() {
+    private void notifyActionsChanged() {
         if (!this.mListeners.isEmpty()) {
             final List<RemoteAction> mediaActions = getMediaActions();
             this.mListeners.forEach(new Consumer() {

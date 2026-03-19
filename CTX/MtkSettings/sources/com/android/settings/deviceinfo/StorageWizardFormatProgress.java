@@ -53,7 +53,7 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
         private volatile int mProgress = 20;
 
         @Override
-        public Exception doInBackground(Void... voidArr) {
+        protected Exception doInBackground(Void... voidArr) {
             StorageWizardFormatProgress storageWizardFormatProgress = this.mActivity;
             StorageManager storageManager = this.mActivity.mStorage;
             try {
@@ -86,7 +86,7 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
         }
 
         @Override
-        public void onProgressUpdate(Integer... numArr) {
+        protected void onProgressUpdate(Integer... numArr) {
             this.mProgress = numArr[0].intValue();
             this.mActivity.setCurrentProgress(this.mProgress);
         }
@@ -97,7 +97,7 @@ public class StorageWizardFormatProgress extends StorageWizardBase {
         }
 
         @Override
-        public void onPostExecute(Exception exc) {
+        protected void onPostExecute(Exception exc) {
             StorageWizardFormatProgress storageWizardFormatProgress = this.mActivity;
             if (storageWizardFormatProgress.isDestroyed()) {
                 return;

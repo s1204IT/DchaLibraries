@@ -592,7 +592,7 @@ public class Fragment implements LifecycleOwner, ViewModelStoreOwner, ComponentC
         }
     }
 
-    public void callStartTransitionListener() {
+    private void callStartTransitionListener() {
         OnStartEnterTransitionListener listener;
         if (this.mAnimationInfo == null) {
             listener = null;

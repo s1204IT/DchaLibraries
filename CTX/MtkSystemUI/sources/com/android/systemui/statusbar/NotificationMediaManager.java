@@ -152,7 +152,7 @@ public class NotificationMediaManager implements Dumpable {
         printWriter.println();
     }
 
-    public boolean isPlaybackActive(int i) {
+    private boolean isPlaybackActive(int i) {
         return (i == 1 || i == 7 || i == 0) ? false : true;
     }
 

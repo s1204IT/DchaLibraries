@@ -76,7 +76,7 @@ public class TtsEnginePreference extends Preference {
         builder.create().show();
     }
 
-    public void onRadioButtonClicked(final CompoundButton compoundButton, boolean z) {
+    private void onRadioButtonClicked(final CompoundButton compoundButton, boolean z) {
         if (!this.mPreventRadioButtonCallbacks && this.mSharedState.getCurrentChecked() != compoundButton && z) {
             if (shouldDisplayDataAlert()) {
                 displayDataAlert(new DialogInterface.OnClickListener() {
@@ -96,7 +96,7 @@ public class TtsEnginePreference extends Preference {
         }
     }
 
-    public void makeCurrentEngine(Checkable checkable) {
+    private void makeCurrentEngine(Checkable checkable) {
         if (this.mSharedState.getCurrentChecked() != null) {
             this.mSharedState.getCurrentChecked().setChecked(false);
         }

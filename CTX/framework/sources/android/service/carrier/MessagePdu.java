@@ -1,0 +1,63 @@
+package android.service.carrier;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public final class MessagePdu implements Parcelable {
+    public static final Parcelable.Creator<MessagePdu> CREATOR = new Parcelable.Creator<MessagePdu>() {
+        @Override
+        public MessagePdu createFromParcel(Parcel parcel) {
+            ArrayList arrayList;
+            int i = parcel.readInt();
+            if (i == -1) {
+                arrayList = null;
+            } else {
+                ArrayList arrayList2 = new ArrayList(i);
+                for (int i2 = 0; i2 < i; i2++) {
+                    arrayList2.add(parcel.createByteArray());
+                }
+                arrayList = arrayList2;
+            }
+            return new MessagePdu(arrayList);
+        }
+
+        @Override
+        public MessagePdu[] newArray(int i) {
+            return new MessagePdu[i];
+        }
+    };
+    private static final int NULL_LENGTH = -1;
+    private final List<byte[]> mPduList;
+
+    public MessagePdu(List<byte[]> list) {
+        if (list == null || list.contains(null)) {
+            throw new IllegalArgumentException("pduList must not be null or contain nulls");
+        }
+        this.mPduList = list;
+    }
+
+    public List<byte[]> getPdus() {
+        return this.mPduList;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        if (this.mPduList == null) {
+            parcel.writeInt(-1);
+            return;
+        }
+        parcel.writeInt(this.mPduList.size());
+        Iterator<byte[]> it = this.mPduList.iterator();
+        while (it.hasNext()) {
+            parcel.writeByteArray(it.next());
+        }
+    }
+}

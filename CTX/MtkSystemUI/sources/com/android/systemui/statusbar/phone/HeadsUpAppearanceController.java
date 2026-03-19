@@ -100,7 +100,7 @@ public class HeadsUpAppearanceController implements DarkIconDispatcher.DarkRecei
         this.mDarkIconDispatcher.removeDarkReceiver(this);
     }
 
-    public void updateIsolatedIconLocation(boolean z) {
+    private void updateIsolatedIconLocation(boolean z) {
         this.mNotificationIconAreaController.setIsolatedIconLocation(this.mHeadsUpStatusBarView.getIconDrawingRect(), z);
     }
 

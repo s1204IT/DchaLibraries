@@ -50,7 +50,7 @@ public class AutoAddTracker {
         Settings.Secure.putString(this.mContext.getContentResolver(), "qs_auto_tiles", TextUtils.join(",", this.mAutoAdded));
     }
 
-    public Collection<String> getAdded() {
+    private Collection<String> getAdded() {
         String string = Settings.Secure.getString(this.mContext.getContentResolver(), "qs_auto_tiles");
         if (string == null) {
             return Collections.emptyList();

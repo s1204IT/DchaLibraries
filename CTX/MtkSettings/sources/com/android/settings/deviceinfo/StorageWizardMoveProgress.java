@@ -50,7 +50,7 @@ public class StorageWizardMoveProgress extends StorageWizardBase {
         getPackageManager().unregisterMoveCallback(this.mCallback);
     }
 
-    public CharSequence moveStatusToMessage(int i) {
+    private CharSequence moveStatusToMessage(int i) {
         if (i == -8) {
             return getString(R.string.move_error_device_admin);
         }

@@ -110,7 +110,7 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         return R.string.help_url_storage_dashboard;
     }
 
-    public void onReceivedSizes() {
+    private void onReceivedSizes() {
         if (this.mStorageInfo != null) {
             long j = this.mStorageInfo.totalBytes - this.mStorageInfo.freeBytes;
             this.mSummaryController.updateBytes(j, this.mStorageInfo.totalBytes);
@@ -238,7 +238,7 @@ public class StorageDashboardFragment extends DashboardFragment implements Loade
         onReceivedSizes();
     }
 
-    public void maybeCacheFreshValues() {
+    private void maybeCacheFreshValues() {
         if (this.mStorageInfo != null && this.mAppsResult != null) {
             this.mCachedStorageValuesHelper.cacheResult(this.mStorageInfo, this.mAppsResult.get(UserHandle.myUserId()));
         }

@@ -46,7 +46,7 @@ public class SystemPropPoker {
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             String[] strArrListServices = listServices();
             if (strArrListServices == null) {
                 Log.e("SystemPropPoker", "There are no services, how odd");

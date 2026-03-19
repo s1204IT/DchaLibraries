@@ -142,7 +142,7 @@ public class PipControlsView extends LinearLayout {
         }
     }
 
-    public void updateMediaController() {
+    private void updateMediaController() {
         MediaController mediaController = this.mPipManager.getMediaController();
         if (this.mMediaController == mediaController) {
             return;
@@ -157,7 +157,7 @@ public class PipControlsView extends LinearLayout {
         updateUserActions();
     }
 
-    public void updateUserActions() {
+    private void updateUserActions() {
         int i = 0;
         if (!this.mCustomActions.isEmpty()) {
             while (this.mCustomButtonViews.size() < this.mCustomActions.size()) {

@@ -162,7 +162,7 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
         this.mDrawBottomScrim = !this.mLauncher.getDeviceProfile().isVerticalBarLayout();
     }
 
-    public void setScrimProgress(float f) {
+    private void setScrimProgress(float f) {
         if (this.mScrimProgress != f) {
             this.mScrimProgress = f;
             this.mScrimAlpha = Math.round(255.0f * this.mScrimProgress);
@@ -214,14 +214,14 @@ public class WorkspaceAndHotseatScrim implements View.OnAttachStateChangeListene
         invalidate();
     }
 
-    public void setSysUiProgress(float f) {
+    private void setSysUiProgress(float f) {
         if (f != this.mSysUiProgress) {
             this.mSysUiProgress = f;
             reapplySysUiAlpha();
         }
     }
 
-    public void reapplySysUiAlpha() {
+    private void reapplySysUiAlpha() {
         if (this.mHasSysUiScrim) {
             reapplySysUiAlphaNoInvalidate();
             if (!this.mHideSysUiScrim) {

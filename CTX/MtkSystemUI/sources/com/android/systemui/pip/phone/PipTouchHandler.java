@@ -368,7 +368,7 @@ public class PipTouchHandler {
         this.mMotionHelper.animateToOffset(rect3);
     }
 
-    public void onRegistrationChanged(boolean z) {
+    private void onRegistrationChanged(boolean z) {
         PipAccessibilityInteractionConnection pipAccessibilityInteractionConnection;
         AccessibilityManager accessibilityManager = this.mAccessibilityManager;
         if (z) {
@@ -387,11 +387,11 @@ public class PipTouchHandler {
         }
     }
 
-    public void onAccessibilityShowMenu() {
+    private void onAccessibilityShowMenu() {
         this.mMenuController.showMenu(2, this.mMotionHelper.getBounds(), this.mMovementBounds, false, willResizeMenu());
     }
 
-    public boolean handleTouchEvent(MotionEvent motionEvent) {
+    private boolean handleTouchEvent(MotionEvent motionEvent) {
         if (this.mPinnedStackController == null) {
             return true;
         }
@@ -445,7 +445,7 @@ public class PipTouchHandler {
         return this.mMenuState == 0;
     }
 
-    public void updateDismissFraction() {
+    private void updateDismissFraction() {
         float fMin;
         if (this.mMenuController != null && !this.mIsImeShowing) {
             Rect bounds = this.mMotionHelper.getBounds();
@@ -465,13 +465,13 @@ public class PipTouchHandler {
         this.mPinnedStackController = iPinnedStackController;
     }
 
-    public void setMinimizedStateInternal(boolean z) {
+    private void setMinimizedStateInternal(boolean z) {
     }
 
     void setMinimizedState(boolean z, boolean z2) {
     }
 
-    public void setMenuState(int i, boolean z) {
+    private void setMenuState(int i, boolean z) {
         if (i == 2) {
             Rect rect = new Rect(this.mExpandedBounds);
             if (z) {
@@ -530,7 +530,7 @@ public class PipTouchHandler {
         }
     }
 
-    public void cleanUpDismissTarget() {
+    private void cleanUpDismissTarget() {
         this.mHandler.removeCallbacks(this.mShowDismissAffordance);
         this.mDismissViewController.destroyDismissTarget();
     }
@@ -542,7 +542,7 @@ public class PipTouchHandler {
         cleanUpDismissTarget();
     }
 
-    public boolean willResizeMenu() {
+    private boolean willResizeMenu() {
         return (this.mExpandedBounds.width() == this.mNormalBounds.width() && this.mExpandedBounds.height() == this.mNormalBounds.height()) ? false : true;
     }
 

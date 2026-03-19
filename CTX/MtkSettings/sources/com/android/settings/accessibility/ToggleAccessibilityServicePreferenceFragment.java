@@ -111,7 +111,7 @@ public class ToggleAccessibilityServicePreferenceFragment extends ToggleFeatureP
         return 584;
     }
 
-    public void updateSwitchBarToggleSwitch() {
+    private void updateSwitchBarToggleSwitch() {
         this.mSwitchBar.setCheckedInternal(AccessibilityUtils.getEnabledServicesFromSettings(getActivity()).contains(this.mComponentName));
     }
 

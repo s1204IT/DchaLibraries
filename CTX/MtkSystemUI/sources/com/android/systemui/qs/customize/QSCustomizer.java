@@ -217,7 +217,7 @@ public class QSCustomizer extends LinearLayout implements Toolbar.OnMenuItemClic
         return this.isShown;
     }
 
-    public void setCustomizing(boolean z) {
+    private void setCustomizing(boolean z) {
         this.mCustomizing = z;
         this.mQs.notifyCustomizeChanged();
     }

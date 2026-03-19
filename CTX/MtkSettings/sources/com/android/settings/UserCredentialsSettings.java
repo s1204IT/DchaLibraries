@@ -128,7 +128,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
             }
 
             @Override
-            public Credential[] doInBackground(Credential... credentialArr) {
+            protected Credential[] doInBackground(Credential... credentialArr) {
                 for (Credential credential : credentialArr) {
                     if (credential.isSystem()) {
                         removeGrantsAndDelete(credential);
@@ -157,7 +157,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
             }
 
             @Override
-            public void onPostExecute(Credential... credentialArr) {
+            protected void onPostExecute(Credential... credentialArr) {
                 if ((this.targetFragment instanceof UserCredentialsSettings) && this.targetFragment.isAdded()) {
                     UserCredentialsSettings userCredentialsSettings = (UserCredentialsSettings) this.targetFragment;
                     for (Credential credential : credentialArr) {
@@ -174,7 +174,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         }
 
         @Override
-        public List<Credential> doInBackground(Void... voidArr) {
+        protected List<Credential> doInBackground(Void... voidArr) {
             KeyStore keyStore = KeyStore.getInstance();
             int iMyUserId = UserHandle.myUserId();
             int uid = UserHandle.getUid(iMyUserId, 1000);
@@ -256,7 +256,7 @@ public class UserCredentialsSettings extends SettingsPreferenceFragment implemen
         }
 
         @Override
-        public void onPostExecute(List<Credential> list) {
+        protected void onPostExecute(List<Credential> list) {
             if (!UserCredentialsSettings.this.isAdded()) {
                 return;
             }

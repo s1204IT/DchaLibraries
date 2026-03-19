@@ -1,0 +1,238 @@
+package android.speech.tts;
+
+import android.media.AudioFormat;
+import android.speech.tts.TextToSpeechService;
+import android.util.Log;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+
+class FileSynthesisCallback extends AbstractSynthesisCallback {
+    private static final boolean DBG = false;
+    private static final int MAX_AUDIO_BUFFER_SIZE = 8192;
+    private static final String TAG = "FileSynthesisRequest";
+    private static final short WAV_FORMAT_PCM = 1;
+    private static final int WAV_HEADER_LENGTH = 44;
+    private int mAudioFormat;
+    private int mChannelCount;
+    private final TextToSpeechService.UtteranceProgressDispatcher mDispatcher;
+    private boolean mDone;
+    private FileChannel mFileChannel;
+    private int mSampleRateInHz;
+    private boolean mStarted;
+    private final Object mStateLock;
+    protected int mStatusCode;
+
+    FileSynthesisCallback(FileChannel fileChannel, TextToSpeechService.UtteranceProgressDispatcher utteranceProgressDispatcher, boolean z) {
+        super(z);
+        this.mStateLock = new Object();
+        this.mStarted = false;
+        this.mDone = false;
+        this.mFileChannel = fileChannel;
+        this.mDispatcher = utteranceProgressDispatcher;
+        this.mStatusCode = 0;
+    }
+
+    @Override
+    void stop() {
+        synchronized (this.mStateLock) {
+            if (this.mDone) {
+                return;
+            }
+            if (this.mStatusCode == -2) {
+                return;
+            }
+            this.mStatusCode = -2;
+            cleanUp();
+            this.mDispatcher.dispatchOnStop();
+        }
+    }
+
+    private void cleanUp() {
+        closeFile();
+    }
+
+    private void closeFile() {
+        this.mFileChannel = null;
+    }
+
+    @Override
+    public int getMaxBufferSize() {
+        return 8192;
+    }
+
+    @Override
+    public int start(int i, int i2, int i3) {
+        if (i2 != 3 && i2 != 2 && i2 != 4) {
+            Log.e(TAG, "Audio format encoding " + i2 + " not supported. Please use one of AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT or AudioFormat.ENCODING_PCM_FLOAT");
+        }
+        this.mDispatcher.dispatchOnBeginSynthesis(i, i2, i3);
+        synchronized (this.mStateLock) {
+            if (this.mStatusCode == -2) {
+                return errorCodeOnStop();
+            }
+            if (this.mStatusCode != 0) {
+                return -1;
+            }
+            if (this.mStarted) {
+                Log.e(TAG, "Start called twice");
+                return -1;
+            }
+            this.mStarted = true;
+            this.mSampleRateInHz = i;
+            this.mAudioFormat = i2;
+            this.mChannelCount = i3;
+            this.mDispatcher.dispatchOnStart();
+            FileChannel fileChannel = this.mFileChannel;
+            try {
+                fileChannel.write(ByteBuffer.allocate(44));
+                return 0;
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to write wav header to output file descriptor", e);
+                synchronized (this.mStateLock) {
+                    cleanUp();
+                    this.mStatusCode = -5;
+                    return -1;
+                }
+            }
+        }
+    }
+
+    @Override
+    public int audioAvailable(byte[] bArr, int i, int i2) {
+        synchronized (this.mStateLock) {
+            if (this.mStatusCode == -2) {
+                return errorCodeOnStop();
+            }
+            if (this.mStatusCode != 0) {
+                return -1;
+            }
+            if (this.mFileChannel == null) {
+                Log.e(TAG, "File not open");
+                this.mStatusCode = -5;
+                return -1;
+            }
+            if (!this.mStarted) {
+                Log.e(TAG, "Start method was not called");
+                return -1;
+            }
+            FileChannel fileChannel = this.mFileChannel;
+            byte[] bArr2 = new byte[i2];
+            System.arraycopy(bArr, i, bArr2, 0, i2);
+            this.mDispatcher.dispatchOnAudioAvailable(bArr2);
+            try {
+                fileChannel.write(ByteBuffer.wrap(bArr, i, i2));
+                return 0;
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to write to output file descriptor", e);
+                synchronized (this.mStateLock) {
+                    cleanUp();
+                    this.mStatusCode = -5;
+                    return -1;
+                }
+            }
+        }
+    }
+
+    @Override
+    public int done() {
+        synchronized (this.mStateLock) {
+            if (this.mDone) {
+                Log.w(TAG, "Duplicate call to done()");
+                return -1;
+            }
+            if (this.mStatusCode == -2) {
+                return errorCodeOnStop();
+            }
+            if (this.mStatusCode != 0 && this.mStatusCode != -2) {
+                this.mDispatcher.dispatchOnError(this.mStatusCode);
+                return -1;
+            }
+            if (this.mFileChannel == null) {
+                Log.e(TAG, "File not open");
+                return -1;
+            }
+            this.mDone = true;
+            FileChannel fileChannel = this.mFileChannel;
+            int i = this.mSampleRateInHz;
+            int i2 = this.mAudioFormat;
+            int i3 = this.mChannelCount;
+            try {
+                fileChannel.position(0L);
+                fileChannel.write(makeWavHeader(i, i2, i3, (int) (fileChannel.size() - 44)));
+                synchronized (this.mStateLock) {
+                    closeFile();
+                    this.mDispatcher.dispatchOnSuccess();
+                }
+                return 0;
+            } catch (IOException e) {
+                Log.e(TAG, "Failed to write to output file descriptor", e);
+                synchronized (this.mStateLock) {
+                    cleanUp();
+                    return -1;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void error() {
+        error(-3);
+    }
+
+    @Override
+    public void error(int i) {
+        synchronized (this.mStateLock) {
+            if (this.mDone) {
+                return;
+            }
+            cleanUp();
+            this.mStatusCode = i;
+        }
+    }
+
+    @Override
+    public boolean hasStarted() {
+        boolean z;
+        synchronized (this.mStateLock) {
+            z = this.mStarted;
+        }
+        return z;
+    }
+
+    @Override
+    public boolean hasFinished() {
+        boolean z;
+        synchronized (this.mStateLock) {
+            z = this.mDone;
+        }
+        return z;
+    }
+
+    private ByteBuffer makeWavHeader(int i, int i2, int i3, int i4) {
+        int bytesPerSample = AudioFormat.getBytesPerSample(i2);
+        ByteBuffer byteBufferWrap = ByteBuffer.wrap(new byte[44]);
+        byteBufferWrap.order(ByteOrder.LITTLE_ENDIAN);
+        byteBufferWrap.put(new byte[]{82, 73, 70, 70});
+        byteBufferWrap.putInt((i4 + 44) - 8);
+        byteBufferWrap.put(new byte[]{87, 65, 86, 69});
+        byteBufferWrap.put(new byte[]{102, 109, 116, 32});
+        byteBufferWrap.putInt(16);
+        byteBufferWrap.putShort((short) 1);
+        byteBufferWrap.putShort((short) i3);
+        byteBufferWrap.putInt(i);
+        byteBufferWrap.putInt(i * bytesPerSample * i3);
+        byteBufferWrap.putShort((short) (bytesPerSample * i3));
+        byteBufferWrap.putShort((short) (bytesPerSample * 8));
+        byteBufferWrap.put(new byte[]{100, 97, 116, 97});
+        byteBufferWrap.putInt(i4);
+        byteBufferWrap.flip();
+        return byteBufferWrap;
+    }
+
+    @Override
+    public void rangeStart(int i, int i2, int i3) {
+        this.mDispatcher.dispatchOnRangeStart(i, i2, i3);
+    }
+}

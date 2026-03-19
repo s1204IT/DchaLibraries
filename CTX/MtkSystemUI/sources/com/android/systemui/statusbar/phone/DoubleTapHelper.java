@@ -120,7 +120,7 @@ public class DoubleTapHelper {
         }
     }
 
-    public void makeInactive() {
+    private void makeInactive() {
         if (this.mActivated) {
             this.mActivated = false;
             this.mActivationListener.onActiveChanged(false);

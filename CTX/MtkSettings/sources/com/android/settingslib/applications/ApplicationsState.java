@@ -692,7 +692,7 @@ public class ApplicationsState {
         addPackage(str, i);
     }
 
-    public void addUser(int i) {
+    private void addUser(int i) {
         if (ArrayUtils.contains(this.mUm.getProfileIdsWithDisabled(UserHandle.myUserId()), i)) {
             synchronized (this.mEntriesMap) {
                 this.mEntriesMap.put(i, new HashMap<>());
@@ -707,7 +707,7 @@ public class ApplicationsState {
         }
     }
 
-    public void removeUser(int i) {
+    private void removeUser(int i) {
         synchronized (this.mEntriesMap) {
             HashMap<String, AppEntry> map = this.mEntriesMap.get(i);
             if (map != null) {
@@ -723,7 +723,7 @@ public class ApplicationsState {
         }
     }
 
-    public AppEntry getEntryLocked(ApplicationInfo applicationInfo) {
+    private AppEntry getEntryLocked(ApplicationInfo applicationInfo) {
         int userId = UserHandle.getUserId(applicationInfo.uid);
         AppEntry appEntry = this.mEntriesMap.get(userId).get(applicationInfo.packageName);
         if (appEntry == null) {
@@ -742,21 +742,21 @@ public class ApplicationsState {
         return appEntry;
     }
 
-    public long getTotalInternalSize(PackageStats packageStats) {
+    private long getTotalInternalSize(PackageStats packageStats) {
         if (packageStats != null) {
             return packageStats.codeSize + packageStats.dataSize;
         }
         return -2L;
     }
 
-    public long getTotalExternalSize(PackageStats packageStats) {
+    private long getTotalExternalSize(PackageStats packageStats) {
         if (packageStats != null) {
             return packageStats.externalCodeSize + packageStats.externalDataSize + packageStats.externalCacheSize + packageStats.externalMediaSize + packageStats.externalObbSize;
         }
         return -2L;
     }
 
-    public String getSizeStr(long j) {
+    private String getSizeStr(long j) {
         if (j >= 0) {
             return Formatter.formatFileSize(this.mContext, j);
         }
@@ -981,7 +981,7 @@ public class ApplicationsState {
         }
     }
 
-    class BackgroundHandler extends Handler {
+    private class BackgroundHandler extends Handler {
         boolean mRunning;
         final IPackageStatsObserver.Stub mStatsObserver;
 
@@ -1393,7 +1393,7 @@ public class ApplicationsState {
         }
     }
 
-    public static boolean hasFlag(int i, int i2) {
+    private static boolean hasFlag(int i, int i2) {
         return (i & i2) != 0;
     }
 

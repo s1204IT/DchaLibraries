@@ -182,7 +182,7 @@ public class EmergencyButton extends Button {
         getContext().startActivityAsUser(INTENT_EMERGENCY_DIAL, ActivityOptions.makeCustomAnimation(getContext(), 0, 0).toBundle(), new UserHandle(KeyguardUpdateMonitor.getCurrentUser()));
     }
 
-    public void updateEmergencyCallButton() {
+    private void updateEmergencyCallButton() {
         boolean z;
         boolean zIsSecure = isInCall() ? true : this.mIsVoiceCapable ? KeyguardUpdateMonitor.getInstance(this.mContext).isSimPinVoiceSecure() ? this.mEnableEmergencyCallWhileSimLocked : this.mLockPatternUtils.isSecure(KeyguardUpdateMonitor.getCurrentUser()) : false;
         boolean zIsAntiTheftLocked = AntiTheftManager.isAntiTheftLocked();

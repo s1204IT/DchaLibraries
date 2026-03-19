@@ -442,7 +442,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         this.mHeaderBar.setLayoutDirection(resources.getConfiguration().getLayoutDirection());
     }
 
-    public void updateDummyStackViewLayout(TaskStackLayoutAlgorithm taskStackLayoutAlgorithm, TaskStack taskStack, Rect rect) {
+    private void updateDummyStackViewLayout(TaskStackLayoutAlgorithm taskStackLayoutAlgorithm, TaskStack taskStack, Rect rect) {
         SystemServicesProxy systemServices = Recents.getSystemServices();
         Rect displayRect = systemServices.getDisplayRect();
         Rect rect2 = new Rect();
@@ -463,7 +463,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         }
     }
 
-    public Rect getWindowRect(Rect rect) {
+    private Rect getWindowRect(Rect rect) {
         if (rect != null) {
             return new Rect(rect);
         }
@@ -566,7 +566,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         return this.mTmpTransform;
     }
 
-    public Bitmap drawThumbnailTransitionBitmap(Task task, TaskViewTransform taskViewTransform) {
+    private Bitmap drawThumbnailTransitionBitmap(Task task, TaskViewTransform taskViewTransform) {
         Bitmap bitmapDrawViewIntoHardwareBitmap;
         SystemServicesProxy systemServices = Recents.getSystemServices();
         int iWidth = (int) taskViewTransform.rect.width();
@@ -613,7 +613,7 @@ public class RecentsImpl implements ActivityOptions.OnAnimationFinishedListener 
         });
     }
 
-    public void startRecentsActivity(ActivityManager.RunningTaskInfo runningTaskInfo, boolean z, boolean z2, int i) {
+    private void startRecentsActivity(ActivityManager.RunningTaskInfo runningTaskInfo, boolean z, boolean z2, int i) {
         int i2;
         Pair<ActivityOptions, AppTransitionAnimationSpecsFuture> pair;
         ActivityOptions unknownTransitionActivityOptions;

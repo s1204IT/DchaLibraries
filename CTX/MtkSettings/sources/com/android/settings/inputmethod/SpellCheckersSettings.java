@@ -76,7 +76,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         updatePreferenceScreen();
     }
 
-    public void updatePreferenceScreen() {
+    private void updatePreferenceScreen() {
         SpellCheckerSubtype currentSpellCheckerSubtype;
         this.mCurrentSci = this.mTsm.getCurrentSpellChecker();
         boolean zIsSpellCheckerEnabled = this.mTsm.isSpellCheckerEnabled();
@@ -138,7 +138,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         return i + 1;
     }
 
-    public static int convertDialogItemIdToSubtypeIndex(int i) {
+    private static int convertDialogItemIdToSubtypeIndex(int i) {
         return i - 1;
     }
 
@@ -206,7 +206,7 @@ public class SpellCheckersSettings extends SettingsPreferenceFragment implements
         this.mDialog.show();
     }
 
-    public void changeCurrentSpellChecker(SpellCheckerInfo spellCheckerInfo) {
+    private void changeCurrentSpellChecker(SpellCheckerInfo spellCheckerInfo) {
         Settings.Secure.putString(getContentResolver(), "selected_spell_checker", spellCheckerInfo.getId());
         Settings.Secure.putInt(getContentResolver(), "selected_spell_checker_subtype", 0);
         updatePreferenceScreen();

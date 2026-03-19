@@ -119,7 +119,7 @@ public class ReverseLinearLayout extends LinearLayout {
         }
     }
 
-    public static void reverseGroup(ViewGroup viewGroup, boolean z) {
+    private static void reverseGroup(ViewGroup viewGroup, boolean z) {
         for (int i = 0; i < viewGroup.getChildCount(); i++) {
             View childAt = viewGroup.getChildAt(i);
             reverseParams(childAt.getLayoutParams(), childAt, z);

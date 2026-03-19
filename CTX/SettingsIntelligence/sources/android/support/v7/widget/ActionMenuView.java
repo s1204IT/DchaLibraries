@@ -537,7 +537,7 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         LayoutParams params = new LayoutParams(-2, -2);
         params.gravity = 16;
         return params;
@@ -549,7 +549,7 @@ public class ActionMenuView extends LinearLayoutCompat implements MenuBuilder.It
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         if (p != null) {
             LayoutParams result = p instanceof LayoutParams ? new LayoutParams((LayoutParams) p) : new LayoutParams(p);
             if (result.gravity <= 0) {

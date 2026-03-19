@@ -105,7 +105,7 @@ public class UnlockMethodCache {
         this.mListeners.add(onUnlockMethodChangedListener);
     }
 
-    public void update(boolean z) {
+    private void update(boolean z) {
         Trace.beginSection("UnlockMethodCache#update");
         int currentUser = KeyguardUpdateMonitor.getCurrentUser();
         boolean zIsSecure = this.mLockPatternUtils.isSecure(currentUser);

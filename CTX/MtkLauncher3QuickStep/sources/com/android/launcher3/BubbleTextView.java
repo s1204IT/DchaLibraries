@@ -360,7 +360,7 @@ public class BubbleTextView extends TextView implements IconCache.ItemInfoUpdate
         setTextAlpha(z ? 1.0f : 0.0f);
     }
 
-    public void setTextAlpha(float f) {
+    private void setTextAlpha(float f) {
         this.mTextAlpha = f;
         super.setTextColor(getModifiedColor());
     }

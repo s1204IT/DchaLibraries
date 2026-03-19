@@ -768,7 +768,7 @@ public class KeyguardViewMediator extends SystemUI {
         this.mHandler.obtainMessage(18).sendToTarget();
     }
 
-    public void handleSystemReady() {
+    private void handleSystemReady() {
         synchronized (this) {
             if (DEBUG) {
                 Log.d("KeyguardViewMediator", "onSystemReady");
@@ -862,7 +862,7 @@ public class KeyguardViewMediator extends SystemUI {
         return j;
     }
 
-    public void doKeyguardLaterLocked() {
+    private void doKeyguardLaterLocked() {
         long lockTimeout = getLockTimeout(KeyguardUpdateMonitor.getCurrentUser());
         if (lockTimeout == 0) {
             doKeyguardLocked(null);
@@ -1101,7 +1101,7 @@ public class KeyguardViewMediator extends SystemUI {
         return this.mHiding;
     }
 
-    public void handleSetOccluded(boolean z, boolean z2) {
+    private void handleSetOccluded(boolean z, boolean z2) {
         Trace.beginSection("KeyguardViewMediator#handleSetOccluded");
         synchronized (this) {
             if (this.mHiding && z) {
@@ -1148,7 +1148,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void doKeyguardLocked(Bundle bundle) {
+    private void doKeyguardLocked(Bundle bundle) {
         boolean z;
         if (KeyguardUpdateMonitor.CORE_APPS_ONLY) {
             if (DEBUG) {
@@ -1218,15 +1218,15 @@ public class KeyguardViewMediator extends SystemUI {
         showLocked(bundle);
     }
 
-    public void lockProfile(int i) {
+    private void lockProfile(int i) {
         this.mTrustManager.setDeviceLockedForUser(i, true);
     }
 
-    public boolean shouldWaitForProvisioning() {
+    private boolean shouldWaitForProvisioning() {
         return (this.mUpdateMonitor.isDeviceProvisioned() || isSecure()) ? false : true;
     }
 
-    public void handleDismiss(IKeyguardDismissCallback iKeyguardDismissCallback, CharSequence charSequence) {
+    private void handleDismiss(IKeyguardDismissCallback iKeyguardDismissCallback, CharSequence charSequence) {
         if (this.mShowing) {
             if (iKeyguardDismissCallback != null) {
                 this.mDismissCallbackRegistry.addCallback(iKeyguardDismissCallback);
@@ -1244,7 +1244,7 @@ public class KeyguardViewMediator extends SystemUI {
         this.mHandler.obtainMessage(11, new DismissMessage(iKeyguardDismissCallback, charSequence)).sendToTarget();
     }
 
-    public void resetStateLocked() {
+    private void resetStateLocked() {
         if (DEBUG) {
             Log.e("KeyguardViewMediator", "resetStateLocked");
         }
@@ -1293,7 +1293,7 @@ public class KeyguardViewMediator extends SystemUI {
         this.mHandler.sendMessage(this.mHandler.obtainMessage(16));
     }
 
-    public void showLocked(Bundle bundle) {
+    private void showLocked(Bundle bundle) {
         Trace.beginSection("KeyguardViewMediator#showLocked aqcuiring mShowKeyguardWakeLock");
         if (DEBUG) {
             Log.d("KeyguardViewMediator", "showLocked");
@@ -1303,7 +1303,7 @@ public class KeyguardViewMediator extends SystemUI {
         Trace.endSection();
     }
 
-    public void hideLocked() {
+    private void hideLocked() {
         Trace.beginSection("KeyguardViewMediator#hideLocked");
         if (DEBUG) {
             Log.d("KeyguardViewMediator", "hideLocked");
@@ -1342,7 +1342,7 @@ public class KeyguardViewMediator extends SystemUI {
         Trace.endSection();
     }
 
-    public void tryKeyguardDone() {
+    private void tryKeyguardDone() {
         if (!this.mKeyguardDonePending && this.mHideAnimationRun && !this.mHideAnimationRunning) {
             handleKeyguardDone();
         } else if (!this.mHideAnimationRun) {
@@ -1352,7 +1352,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleKeyguardDone() {
+    private void handleKeyguardDone() {
         Trace.beginSection("KeyguardViewMediator#handleKeyguardDone");
         final int currentUser = KeyguardUpdateMonitor.getCurrentUser();
         this.mUiOffloadThread.submit(new Runnable() {
@@ -1400,7 +1400,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void sendUserPresentBroadcast() {
+    private void sendUserPresentBroadcast() {
         synchronized (this) {
             if (this.mBootCompleted) {
                 final int currentUser = KeyguardUpdateMonitor.getCurrentUser();
@@ -1425,7 +1425,7 @@ public class KeyguardViewMediator extends SystemUI {
         keyguardViewMediator.getLockPatternUtils().userPresent(i);
     }
 
-    public void handleKeyguardDoneDrawing() {
+    private void handleKeyguardDoneDrawing() {
         Trace.beginSection("KeyguardViewMediator#handleKeyguardDoneDrawing");
         synchronized (this) {
             if (DEBUG) {
@@ -1482,7 +1482,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void playTrustedSound() {
+    private void playTrustedSound() {
         if (this.mSuppressNextLockSound) {
             return;
         }
@@ -1498,7 +1498,7 @@ public class KeyguardViewMediator extends SystemUI {
         });
     }
 
-    public void handleShow(Bundle bundle) {
+    private void handleShow(Bundle bundle) {
         Trace.beginSection("KeyguardViewMediator#handleShow");
         int currentUser = KeyguardUpdateMonitor.getCurrentUser();
         if (this.mLockPatternUtils.isSecure(currentUser)) {
@@ -1555,7 +1555,7 @@ public class KeyguardViewMediator extends SystemUI {
         keyguardViewMediator.tryKeyguardDone();
     }
 
-    public void handleHide() {
+    private void handleHide() {
         Trace.beginSection("KeyguardViewMediator#handleHide");
         synchronized (this) {
             if (DEBUG) {
@@ -1577,7 +1577,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleStartKeyguardExitAnimation(long j, long j2) {
+    private void handleStartKeyguardExitAnimation(long j, long j2) {
         Trace.beginSection("KeyguardViewMediator#handleStartKeyguardExitAnimation");
         if (DEBUG) {
             Log.d("KeyguardViewMediator", "handleStartKeyguardExitAnimation startTime=" + j + " fadeoutDuration=" + j2);
@@ -1611,11 +1611,11 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void adjustStatusBarLocked() {
+    private void adjustStatusBarLocked() {
         adjustStatusBarLocked(false);
     }
 
-    public void adjustStatusBarLocked(boolean z) {
+    private void adjustStatusBarLocked(boolean z) {
         if (this.mStatusBarManager == null) {
             this.mStatusBarManager = (StatusBarManager) this.mContext.getSystemService("statusbar");
         }
@@ -1636,7 +1636,7 @@ public class KeyguardViewMediator extends SystemUI {
         this.mStatusBarManager.disable(i);
     }
 
-    public void handleReset() {
+    private void handleReset() {
         synchronized (this) {
             if (DEBUG) {
                 Log.d("KeyguardViewMediator", "handleReset");
@@ -1646,7 +1646,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleVerifyUnlock() {
+    private void handleVerifyUnlock() {
         Trace.beginSection("KeyguardViewMediator#handleVerifyUnlock");
         synchronized (this) {
             if (DEBUG) {
@@ -1658,7 +1658,7 @@ public class KeyguardViewMediator extends SystemUI {
         Trace.endSection();
     }
 
-    public void handleNotifyStartedGoingToSleep() {
+    private void handleNotifyStartedGoingToSleep() {
         synchronized (this) {
             if (DEBUG) {
                 Log.d("KeyguardViewMediator", "handleNotifyStartedGoingToSleep");
@@ -1667,7 +1667,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleNotifyFinishedGoingToSleep() {
+    private void handleNotifyFinishedGoingToSleep() {
         synchronized (this) {
             if (DEBUG) {
                 Log.d("KeyguardViewMediator", "handleNotifyFinishedGoingToSleep");
@@ -1676,7 +1676,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void handleNotifyStartedWakingUp() {
+    private void handleNotifyStartedWakingUp() {
         Trace.beginSection("KeyguardViewMediator#handleMotifyStartedWakingUp");
         synchronized (this) {
             if (DEBUG) {
@@ -1687,7 +1687,7 @@ public class KeyguardViewMediator extends SystemUI {
         Trace.endSection();
     }
 
-    public void handleNotifyScreenTurningOn(IKeyguardDrawnCallback iKeyguardDrawnCallback) {
+    private void handleNotifyScreenTurningOn(IKeyguardDrawnCallback iKeyguardDrawnCallback) {
         Trace.beginSection("KeyguardViewMediator#handleNotifyScreenTurningOn");
         synchronized (this) {
             if (DEBUG) {
@@ -1705,7 +1705,7 @@ public class KeyguardViewMediator extends SystemUI {
         Trace.endSection();
     }
 
-    public void handleNotifyScreenTurnedOn() {
+    private void handleNotifyScreenTurnedOn() {
         Trace.beginSection("KeyguardViewMediator#handleNotifyScreenTurnedOn");
         if (LatencyTracker.isEnabled(this.mContext)) {
             LatencyTracker.getInstance(this.mContext).onActionEnd(5);
@@ -1719,7 +1719,7 @@ public class KeyguardViewMediator extends SystemUI {
         Trace.endSection();
     }
 
-    public void handleNotifyScreenTurnedOff() {
+    private void handleNotifyScreenTurnedOff() {
         synchronized (this) {
             if (DEBUG) {
                 Log.d("KeyguardViewMediator", "handleNotifyScreenTurnedOff");
@@ -1739,7 +1739,7 @@ public class KeyguardViewMediator extends SystemUI {
         Trace.endSection();
     }
 
-    public void resetKeyguardDonePendingLocked() {
+    private void resetKeyguardDonePendingLocked() {
         this.mKeyguardDonePending = false;
         this.mHandler.removeMessages(13);
     }
@@ -1849,7 +1849,7 @@ public class KeyguardViewMediator extends SystemUI {
         setShowingLocked(z, z2, this.mSecondaryDisplayShowing, false);
     }
 
-    public void setShowingLocked(boolean z, boolean z2, int i, boolean z3) {
+    private void setShowingLocked(boolean z, boolean z2, int i, boolean z3) {
         boolean z4 = (z == this.mShowing && z2 == this.mAodShowing && !z3) ? false : true;
         if (z4 || i != this.mSecondaryDisplayShowing) {
             this.mShowing = z;
@@ -1883,7 +1883,7 @@ public class KeyguardViewMediator extends SystemUI {
         });
     }
 
-    public void notifyTrustedChangedLocked(boolean z) {
+    private void notifyTrustedChangedLocked(boolean z) {
         for (int size = this.mKeyguardStateCallbacks.size() - 1; size >= 0; size--) {
             try {
                 this.mKeyguardStateCallbacks.get(size).onTrustedChanged(z);
@@ -1896,7 +1896,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void notifyHasLockscreenWallpaperChanged(boolean z) {
+    private void notifyHasLockscreenWallpaperChanged(boolean z) {
         for (int size = this.mKeyguardStateCallbacks.size() - 1; size >= 0; size--) {
             try {
                 this.mKeyguardStateCallbacks.get(size).onHasLockscreenWallpaperChanged(z);
@@ -1942,7 +1942,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public void removeKeyguardDoneMsg() {
+    private void removeKeyguardDoneMsg() {
         this.mHandler.removeMessages(7);
     }
 
@@ -1966,7 +1966,7 @@ public class KeyguardViewMediator extends SystemUI {
         }
     }
 
-    public AlertDialog createDialog(String str, String str2) {
+    private AlertDialog createDialog(String str, String str2) {
         AlertDialog alertDialogCreate = new AlertDialog.Builder(this.mContext).setTitle(str).setIcon(android.R.drawable.ic_dialog_alert).setCancelable(false).setMessage(str2).setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {

@@ -208,7 +208,7 @@ public class PluginInstanceManager<T extends Plugin> {
             }
         }
 
-        public void handleQueryPlugins(String str) {
+        private void handleQueryPlugins(String str) {
             Intent intent = new Intent(PluginInstanceManager.this.mAction);
             if (str != null) {
                 intent.setPackage(str);

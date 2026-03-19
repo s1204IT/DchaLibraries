@@ -171,7 +171,7 @@ public class ViewTransformationHelper implements TransformableView, TransformSta
         }
     }
 
-    public void abortTransformations() {
+    private void abortTransformations() {
         Iterator<Integer> it = this.mTransformedViews.keySet().iterator();
         while (it.hasNext()) {
             TransformState currentState = getCurrentState(it.next().intValue());

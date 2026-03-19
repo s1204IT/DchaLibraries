@@ -437,7 +437,7 @@ public class WifiP2pSettings extends DashboardFragment implements WifiP2pManager
         }
     }
 
-    public void handlePeersChanged() {
+    private void handlePeersChanged() {
         this.mPeerCategoryController.removeAllChildren();
         this.mConnectedDevices = 0;
         Log.d("WifiP2pSettings", "List of available peers");
@@ -475,14 +475,14 @@ public class WifiP2pSettings extends DashboardFragment implements WifiP2pManager
         handlePeersChanged();
     }
 
-    public void handleP2pStateChanged() {
+    private void handleP2pStateChanged() {
         updateSearchMenu(false);
         this.mThisDevicePreferenceController.setEnabled(this.mWifiP2pEnabled);
         this.mPersistentCategoryController.setEnabled(this.mWifiP2pEnabled);
         this.mPeerCategoryController.setEnabled(this.mWifiP2pEnabled);
     }
 
-    public void updateSearchMenu(boolean z) {
+    private void updateSearchMenu(boolean z) {
         this.mWifiP2pSearching = z;
         Activity activity = getActivity();
         if (activity != null) {
@@ -490,7 +490,7 @@ public class WifiP2pSettings extends DashboardFragment implements WifiP2pManager
         }
     }
 
-    public void startSearch() {
+    private void startSearch() {
         if (this.mWifiP2pManager != null && !this.mWifiP2pSearching) {
             this.mWifiP2pManager.discoverPeers(this.mChannel, new WifiP2pManager.ActionListener() {
                 @Override

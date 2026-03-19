@@ -246,7 +246,7 @@ public class KeyButtonRipple extends Drawable {
         exitSoftware();
     }
 
-    public void enterSoftware() {
+    private void enterSoftware() {
         cancelAnimations();
         this.mVisible = true;
         this.mGlowAlpha = getMaxGlowAlpha();
@@ -328,7 +328,7 @@ public class KeyButtonRipple extends Drawable {
         return Math.min(isHorizontal() ? getBounds().width() : getBounds().height(), this.mMaxWidth);
     }
 
-    public void enterHardware() {
+    private void enterHardware() {
         cancelAnimations();
         this.mVisible = true;
         this.mDrawingHardwareGlow = true;

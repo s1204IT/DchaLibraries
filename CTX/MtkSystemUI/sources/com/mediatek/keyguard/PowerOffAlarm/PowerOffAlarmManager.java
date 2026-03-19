@@ -115,7 +115,7 @@ public class PowerOffAlarmManager {
         return sInstance;
     }
 
-    public void handleAlarmBoot() {
+    private void handleAlarmBoot() {
         Log.d("PowerOffAlarmManager", "handleAlarmBoot");
         this.mNeedToShowAlarmView = true;
         maybeShowAlarmView();

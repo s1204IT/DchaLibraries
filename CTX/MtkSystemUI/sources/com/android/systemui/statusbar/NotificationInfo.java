@@ -254,7 +254,7 @@ public class NotificationInfo extends LinearLayout implements NotificationGuts.G
         }
     }
 
-    public void updateImportance() {
+    private void updateImportance() {
         MetricsLogger.action(this.mContext, 291, this.mChosenImportance - this.mStartingUserImportance);
         new Handler((Looper) Dependency.get(Dependency.BG_LOOPER)).post(new UpdateImportanceRunnable(this.mINotificationManager, this.mPackageName, this.mAppUid, this.mNumUniqueChannelsInRow == 1 ? this.mSingleNotificationChannel : null, this.mStartingUserImportance, this.mChosenImportance));
     }

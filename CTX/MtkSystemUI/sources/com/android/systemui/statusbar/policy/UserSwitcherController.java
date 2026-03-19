@@ -215,7 +215,7 @@ public class UserSwitcherController {
         refreshUsers(-10000);
     }
 
-    public void refreshUsers(int i) {
+    private void refreshUsers(int i) {
         if (i != -10000) {
             this.mForcePictureLoadForUserId.put(i, true);
         }
@@ -235,7 +235,7 @@ public class UserSwitcherController {
         final boolean z2 = this.mAddUsersWhenLocked;
         new AsyncTask<SparseArray<Bitmap>, Void, ArrayList<UserRecord>>() {
             @Override
-            public ArrayList<UserRecord> doInBackground(SparseArray<Bitmap>... sparseArrayArr) {
+            protected ArrayList<UserRecord> doInBackground(SparseArray<Bitmap>... sparseArrayArr) {
                 int size2;
                 SparseArray<Bitmap> sparseArray2 = sparseArrayArr[0];
                 List<UserInfo> users = UserSwitcherController.this.mUserManager.getUsers(true);
@@ -300,7 +300,7 @@ public class UserSwitcherController {
             }
 
             @Override
-            public void onPostExecute(ArrayList<UserRecord> arrayList) {
+            protected void onPostExecute(ArrayList<UserRecord> arrayList) {
                 if (arrayList != null) {
                     UserSwitcherController.this.mUsers = arrayList;
                     UserSwitcherController.this.notifyAdapters();
@@ -316,7 +316,7 @@ public class UserSwitcherController {
         }
     }
 
-    public void notifyAdapters() {
+    private void notifyAdapters() {
         for (int size = this.mAdapters.size() - 1; size >= 0; size--) {
             BaseUserAdapter baseUserAdapter = this.mAdapters.get(size).get();
             if (baseUserAdapter != null) {
@@ -512,7 +512,7 @@ public class UserSwitcherController {
         }
     }
 
-    public void checkIfAddUserDisallowedByAdminOnly(UserRecord userRecord) {
+    private void checkIfAddUserDisallowedByAdminOnly(UserRecord userRecord) {
         RestrictedLockUtils.EnforcedAdmin enforcedAdminCheckIfRestrictionEnforced = RestrictedLockUtils.checkIfRestrictionEnforced(this.mContext, "no_add_user", ActivityManager.getCurrentUser());
         if (enforcedAdminCheckIfRestrictionEnforced != null && !RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_add_user", ActivityManager.getCurrentUser())) {
             userRecord.isDisabledByAdmin = true;

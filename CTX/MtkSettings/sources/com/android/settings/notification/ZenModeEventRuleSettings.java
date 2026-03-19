@@ -205,7 +205,7 @@ public class ZenModeEventRuleSettings extends ZenModeRuleSettingsBase {
         return key(calendarInfo.userId, calendarInfo.name);
     }
 
-    public static String key(ZenModeConfig.EventInfo eventInfo) {
+    private static String key(ZenModeConfig.EventInfo eventInfo) {
         return key(eventInfo.userId, eventInfo.calendar);
     }
 

@@ -105,7 +105,7 @@ class GlobalScreenshot {
         this.mCameraSound.load(0);
     }
 
-    public void saveScreenshotInWorkerThread(Runnable runnable) {
+    private void saveScreenshotInWorkerThread(Runnable runnable) {
         SaveImageInBackgroundData saveImageInBackgroundData = new SaveImageInBackgroundData();
         saveImageInBackgroundData.context = this.mContext;
         saveImageInBackgroundData.image = this.mScreenBitmap;
@@ -119,7 +119,7 @@ class GlobalScreenshot {
         this.mSaveInBgTask = new SaveImageInBackgroundTask(this.mContext, saveImageInBackgroundData, this.mNotificationManager).execute(new Void[0]);
     }
 
-    public void takeScreenshot(Runnable runnable, boolean z, boolean z2, Rect rect) {
+    private void takeScreenshot(Runnable runnable, boolean z, boolean z2, Rect rect) {
         this.mScreenBitmap = SurfaceControl.screenshot(rect, rect.width(), rect.height(), this.mDisplay.getRotation());
         if (this.mScreenBitmap == null) {
             notifyScreenshotError(this.mContext, this.mNotificationManager, R.string.screenshot_failed_to_capture_text);

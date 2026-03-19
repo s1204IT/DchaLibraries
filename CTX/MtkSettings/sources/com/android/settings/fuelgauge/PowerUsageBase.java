@@ -56,7 +56,7 @@ public abstract class PowerUsageBase extends DashboardFragment {
         this.mBatteryBroadcastReceiver.unRegister();
     }
 
-    public void restartBatteryStatsLoader(int i) {
+    protected void restartBatteryStatsLoader(int i) {
         Bundle bundle = new Bundle();
         bundle.putInt("refresh_type", i);
         getLoaderManager().restartLoader(0, bundle, new PowerLoaderCallback());

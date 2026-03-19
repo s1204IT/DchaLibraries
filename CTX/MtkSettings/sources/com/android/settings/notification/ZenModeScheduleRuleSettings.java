@@ -118,7 +118,7 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
         });
     }
 
-    public void updateDays() {
+    private void updateDays() {
         int[] iArr = this.mSchedule.days;
         if (iArr != null && iArr.length > 0) {
             StringBuilder sb = new StringBuilder();
@@ -178,7 +178,7 @@ public class ZenModeScheduleRuleSettings extends ZenModeRuleSettingsBase {
         return 144;
     }
 
-    public void showDaysDialog() {
+    private void showDaysDialog() {
         new AlertDialog.Builder(this.mContext).setTitle(R.string.zen_mode_schedule_rule_days).setView(new ZenModeScheduleDaysSelection(this.mContext, this.mSchedule.days) {
             @Override
             protected void onChanged(int[] iArr) {

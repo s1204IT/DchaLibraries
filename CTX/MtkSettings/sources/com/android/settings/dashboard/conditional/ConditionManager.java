@@ -57,7 +57,7 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         }
     }
 
-    public void readFromXml(File file, ArrayList<Condition> arrayList) {
+    private void readFromXml(File file, ArrayList<Condition> arrayList) {
         try {
             XmlPullParser xmlPullParserNewPullParser = Xml.newPullParser();
             FileReader fileReader = new FileReader(file);
@@ -113,7 +113,7 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         }
     }
 
-    public void addMissingConditions(ArrayList<Condition> arrayList) {
+    private void addMissingConditions(ArrayList<Condition> arrayList) {
         addIfMissing(AirplaneModeCondition.class, arrayList);
         addIfMissing(HotspotCondition.class, arrayList);
         addIfMissing(DndCondition.class, arrayList);
@@ -230,7 +230,7 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         }
 
         @Override
-        public ArrayList<Condition> doInBackground(Void... voidArr) {
+        protected ArrayList<Condition> doInBackground(Void... voidArr) {
             Log.d("ConditionManager", "loading conditions from xml");
             ArrayList<Condition> arrayList = new ArrayList<>();
             ConditionManager.this.mXmlFile = new File(ConditionManager.this.mContext.getFilesDir(), "condition_state.xml");
@@ -242,7 +242,7 @@ public class ConditionManager implements LifecycleObserver, OnPause, OnResume {
         }
 
         @Override
-        public void onPostExecute(ArrayList<Condition> arrayList) {
+        protected void onPostExecute(ArrayList<Condition> arrayList) {
             Log.d("ConditionManager", "conditions loaded from xml, refreshing conditions");
             ConditionManager.this.mConditions.clear();
             ConditionManager.this.mConditions.addAll(arrayList);

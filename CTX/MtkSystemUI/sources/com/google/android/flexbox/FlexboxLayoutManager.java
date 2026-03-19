@@ -1885,7 +1885,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
             this.mPerpendicularCoordinate = 0;
         }
 
-        public void reset() {
+        private void reset() {
             this.mPosition = -1;
             this.mFlexLinePosition = -1;
             this.mCoordinate = Integer.MIN_VALUE;
@@ -1907,7 +1907,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
             }
         }
 
-        public void assignCoordinateFromPadding() {
+        private void assignCoordinateFromPadding() {
             if (!FlexboxLayoutManager.this.isMainAxisDirectionHorizontal() && FlexboxLayoutManager.this.mIsRtl) {
                 this.mCoordinate = this.mLayoutFromEnd ? FlexboxLayoutManager.this.mOrientationHelper.getEndAfterPadding() : FlexboxLayoutManager.this.getWidth() - FlexboxLayoutManager.this.mOrientationHelper.getStartAfterPadding();
             } else {
@@ -1915,7 +1915,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
             }
         }
 
-        public void assignFromView(View anchor) {
+        private void assignFromView(View anchor) {
             if (!FlexboxLayoutManager.this.isMainAxisDirectionHorizontal() && FlexboxLayoutManager.this.mIsRtl) {
                 if (this.mLayoutFromEnd) {
                     this.mCoordinate = FlexboxLayoutManager.this.mOrientationHelper.getDecoratedStart(anchor) + FlexboxLayoutManager.this.mOrientationHelper.getTotalSpaceChange();
@@ -1970,7 +1970,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
             return i;
         }
 
-        public boolean hasMore(RecyclerView.State state, List<FlexLine> flexLines) {
+        private boolean hasMore(RecyclerView.State state, List<FlexLine> flexLines) {
             return this.mPosition >= 0 && this.mPosition < state.getItemCount() && this.mFlexLinePosition >= 0 && this.mFlexLinePosition < flexLines.size();
         }
 
@@ -2018,11 +2018,11 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
             this.mAnchorOffset = savedState.mAnchorOffset;
         }
 
-        public void invalidateAnchor() {
+        private void invalidateAnchor() {
             this.mAnchorPosition = -1;
         }
 
-        public boolean hasValidAnchor(int itemCount) {
+        private boolean hasValidAnchor(int itemCount) {
             return this.mAnchorPosition >= 0 && this.mAnchorPosition < itemCount;
         }
 

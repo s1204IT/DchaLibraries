@@ -568,7 +568,7 @@ public class Launcher extends BaseDraggingActivity implements LauncherExterns, L
         UiFactory.onStart(this);
     }
 
-    public void logOnDelayedResume() {
+    private void logOnDelayedResume() {
         if (hasBeenResumed()) {
             getUserEventDispatcher().logActionCommand(7, this.mStateManager.getState().containerType, -1);
             getUserEventDispatcher().startSession();

@@ -119,7 +119,7 @@ public class KeyboardLayoutDialogFragment extends InstrumentedDialogFragment imp
         dismiss();
     }
 
-    public void onSetupLayoutsButtonClicked() {
+    private void onSetupLayoutsButtonClicked() {
         ((OnSetupKeyboardLayoutsListener) getTargetFragment()).onSetupKeyboardLayouts(this.mInputDeviceIdentifier);
     }
 
@@ -129,7 +129,7 @@ public class KeyboardLayoutDialogFragment extends InstrumentedDialogFragment imp
         show(getActivity().getFragmentManager(), "layout");
     }
 
-    public void onKeyboardLayoutClicked(int i) {
+    private void onKeyboardLayoutClicked(int i) {
         if (i >= 0 && i < this.mAdapter.getCount()) {
             KeyboardLayout item = this.mAdapter.getItem(i);
             if (item != null) {

@@ -394,7 +394,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
         updateOutlineAlpha();
     }
 
-    public void updateOutlineAlpha() {
+    private void updateOutlineAlpha() {
         if (this.mDark) {
             setOutlineAlpha(0.0f);
             return;
@@ -759,7 +759,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
         enableAppearDrawing(false);
     }
 
-    public void updateAppearRect() {
+    private void updateAppearRect() {
         float width;
         float width2;
         float f;
@@ -792,7 +792,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
         setOutlineRect(width, f2 + this.mAppearAnimationTranslation, width2, f + this.mAppearAnimationTranslation);
     }
 
-    public void updateAppearAnimationAlpha() {
+    private void updateAppearAnimationAlpha() {
         setContentAlpha(this.mCurrentAlphaInterpolator.getInterpolation(Math.min(1.0f, this.mAppearAnimationFraction / 1.0f)));
     }
 
@@ -861,7 +861,7 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
         return this.mNormalRippleColor;
     }
 
-    public void enableAppearDrawing(boolean z) {
+    private void enableAppearDrawing(boolean z) {
         if (z != this.mDrawingAppearAnimation) {
             this.mDrawingAppearAnimation = z;
             if (!z) {

@@ -101,14 +101,14 @@ public class TempDataServiceDialogActivity extends Activity {
         this.mDialog.show();
     }
 
-    public void dismissTempDataDialog() {
+    private void dismissTempDataDialog() {
         if (this.mDialog != null && this.mDialog.isShowing()) {
             this.mDialog.dismiss();
             this.mDialog = null;
         }
     }
 
-    public void setDataService(int i) {
+    private void setDataService(int i) {
         Log.d("TempDataServiceDialogActivity", "setDataService, value=" + i);
         Settings.Global.putInt(getContentResolver(), "data_service_enabled", i);
     }

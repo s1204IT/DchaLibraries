@@ -375,7 +375,7 @@ public class StatusBarWindowView extends FrameLayout {
     }
 
     @Override
-    public FrameLayout.LayoutParams generateDefaultLayoutParams() {
+    protected FrameLayout.LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-1, -1);
     }
 
@@ -648,7 +648,7 @@ public class StatusBarWindowView extends FrameLayout {
         this.mFloatingActionModeOriginatingView.getViewTreeObserver().addOnPreDrawListener(this.mFloatingToolbarPreDrawListener);
     }
 
-    public void cleanupFloatingActionModeViews() {
+    private void cleanupFloatingActionModeViews() {
         if (this.mFloatingToolbar != null) {
             this.mFloatingToolbar.dismiss();
             this.mFloatingToolbar = null;

@@ -113,7 +113,7 @@ public class KeyguardIndicationController {
         return this.mUpdateMonitorCallback;
     }
 
-    public void updateDisclosure() {
+    private void updateDisclosure() {
         if (this.mDevicePolicyManager == null) {
             return;
         }
@@ -263,7 +263,7 @@ public class KeyguardIndicationController {
         });
     }
 
-    public String computePowerIndication() {
+    private String computePowerIndication() {
         long jComputeChargeTimeRemaining;
         int i;
         if (this.mPowerCharged) {

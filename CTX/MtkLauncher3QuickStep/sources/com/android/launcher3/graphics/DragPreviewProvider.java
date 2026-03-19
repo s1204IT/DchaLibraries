@@ -45,7 +45,7 @@ public class DragPreviewProvider {
         }
     }
 
-    public void drawDragView(Canvas canvas, float f) {
+    protected void drawDragView(Canvas canvas, float f) {
         canvas.save();
         canvas.scale(f, f);
         if (this.mView instanceof BubbleTextView) {

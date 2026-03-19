@@ -47,7 +47,7 @@ public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCo
     }
 
     @UiThread
-    public void finishExistingAnimation() {
+    private void finishExistingAnimation() {
         if (this.mAnimationResult == null) {
             return;
         }
@@ -79,7 +79,7 @@ public abstract class LauncherAnimationRunner implements RemoteAnimationRunnerCo
         }
 
         @UiThread
-        public void finish() {
+        private void finish() {
             if (!this.mFinished) {
                 this.mFinishRunnable.run();
                 this.mFinished = true;

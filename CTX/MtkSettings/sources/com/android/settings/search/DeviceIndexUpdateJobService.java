@@ -47,7 +47,7 @@ public class DeviceIndexUpdateJobService extends JobService {
     }
 
     @VisibleForTesting
-    public void updateIndex(JobParameters jobParameters) {
+    protected void updateIndex(JobParameters jobParameters) {
         DeviceIndexFeatureProvider deviceIndexFeatureProvider = FeatureFactory.getFactory(this).getDeviceIndexFeatureProvider();
         SliceViewManager sliceViewManager = getSliceViewManager();
         Uri uriBuild = new Uri.Builder().scheme("content").authority("com.android.settings.slices").build();

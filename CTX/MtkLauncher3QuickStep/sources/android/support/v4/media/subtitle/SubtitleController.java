@@ -133,7 +133,7 @@ public class SubtitleController {
         return true;
     }
 
-    public void doSelectTrack(SubtitleTrack track) {
+    private void doSelectTrack(SubtitleTrack track) {
         this.mTrackIsExplicit = true;
         if (this.mSelectedTrack == track) {
             return;
@@ -204,7 +204,7 @@ public class SubtitleController {
         processOnAnchor(this.mHandler.obtainMessage(4));
     }
 
-    public void doSelectDefaultTrack() {
+    private void doSelectDefaultTrack() {
         if (this.mTrackIsExplicit) {
             if (this.mVisibilityIsExplicit) {
                 return;
@@ -259,7 +259,7 @@ public class SubtitleController {
         processOnAnchor(this.mHandler.obtainMessage(1));
     }
 
-    public void doShow() {
+    private void doShow() {
         this.mShowing = true;
         this.mVisibilityIsExplicit = true;
         if (this.mSelectedTrack != null) {
@@ -271,7 +271,7 @@ public class SubtitleController {
         processOnAnchor(this.mHandler.obtainMessage(2));
     }
 
-    public void doHide() {
+    private void doHide() {
         this.mVisibilityIsExplicit = true;
         if (this.mSelectedTrack != null) {
             this.mSelectedTrack.hide();

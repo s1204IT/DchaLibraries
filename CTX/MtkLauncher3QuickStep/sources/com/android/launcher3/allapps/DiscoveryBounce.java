@@ -89,7 +89,7 @@ public class DiscoveryBounce extends AbstractFloatingView {
         showForHomeIfNeeded(launcher, true);
     }
 
-    public static void showForHomeIfNeeded(final Launcher launcher, boolean z) {
+    private static void showForHomeIfNeeded(final Launcher launcher, boolean z) {
         if (!launcher.isInState(LauncherState.NORMAL) || launcher.getSharedPrefs().getBoolean(HOME_BOUNCE_SEEN, false) || AbstractFloatingView.getTopOpenView(launcher) != null || UserManagerCompat.getInstance(launcher).isDemoUser() || ActivityManager.isRunningInTestHarness()) {
             return;
         }
@@ -109,7 +109,7 @@ public class DiscoveryBounce extends AbstractFloatingView {
         showForOverviewIfNeeded(launcher, true);
     }
 
-    public static void showForOverviewIfNeeded(final Launcher launcher, boolean z) {
+    private static void showForOverviewIfNeeded(final Launcher launcher, boolean z) {
         if (!launcher.isInState(LauncherState.OVERVIEW) || !launcher.hasBeenResumed() || launcher.isForceInvisible() || launcher.getDeviceProfile().isVerticalBarLayout() || launcher.getSharedPrefs().getBoolean(SHELF_BOUNCE_SEEN, false) || UserManagerCompat.getInstance(launcher).isDemoUser() || ActivityManager.isRunningInTestHarness()) {
             return;
         }

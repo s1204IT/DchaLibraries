@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:textAppearance="@style/body"
+    android:gravity="center_vertical"
+    android:id="@+id/preemptive_dismiss_button"
+    android:visibility="gone"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/touch_target_min_size"
+    android:drawablePadding="@dimen/alarm_horizontal_padding"
+    android:textAllCaps="false"
+    android:drawableStart="@drawable/ic_alarm_off_white_24dp"
+    android:paddingStart="@dimen/icon_margin"
+    style="?attr/borderlessButtonStyle"/>

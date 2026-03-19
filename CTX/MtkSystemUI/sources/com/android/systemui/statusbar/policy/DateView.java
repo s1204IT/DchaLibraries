@@ -84,7 +84,7 @@ public class DateView extends TextView {
         getContext().unregisterReceiver(this.mIntentReceiver);
     }
 
-    public void updateClock() {
+    protected void updateClock() {
         if (this.mDateFormat == null) {
             DateFormat instanceForSkeleton = DateFormat.getInstanceForSkeleton(this.mDatePattern, Locale.getDefault());
             instanceForSkeleton.setContext(DisplayContext.CAPITALIZATION_FOR_STANDALONE);

@@ -173,7 +173,7 @@ public class HdmiSettings extends SettingsPreferenceFragment implements Preferen
         super.onDestroy();
     }
 
-    public void updatePref() {
+    private void updatePref() {
         Log.i("@M_HDMISettings", "updatePref");
         updatePrefStatus();
         updateSelectedResolution();

@@ -401,7 +401,7 @@ public class SignalClusterView extends LinearLayout implements DarkIconDispatche
         return false;
     }
 
-    public void apply() {
+    private void apply() {
         if (this.mWifiGroup == null) {
             return;
         }
@@ -540,11 +540,11 @@ public class SignalClusterView extends LinearLayout implements DarkIconDispatche
         view2.setAlpha(f);
     }
 
-    public void setTint(ImageView imageView, int i) {
+    private void setTint(ImageView imageView, int i) {
         imageView.setImageTintList(ColorStateList.valueOf(i));
     }
 
-    public int currentVpnIconId(boolean z) {
+    private int currentVpnIconId(boolean z) {
         return z ? R.drawable.stat_sys_branded_vpn : R.drawable.stat_sys_vpn_ic;
     }
 

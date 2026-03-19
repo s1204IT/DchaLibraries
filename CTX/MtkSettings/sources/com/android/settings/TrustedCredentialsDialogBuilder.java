@@ -72,7 +72,7 @@ class TrustedCredentialsDialogBuilder extends AlertDialog.Builder {
         setNegativeButton(android.R.string.ok, (DialogInterface.OnClickListener) null);
     }
 
-    static class DialogEventHandler implements DialogInterface.OnShowListener, View.OnClickListener {
+    private static class DialogEventHandler implements DialogInterface.OnShowListener, View.OnClickListener {
         private final Activity mActivity;
         private final DelegateInterface mDelegate;
         private AlertDialog mDialog;
@@ -157,7 +157,7 @@ class TrustedCredentialsDialogBuilder extends AlertDialog.Builder {
             }
         }
 
-        public void onCredentialConfirmed(int i) {
+        private void onCredentialConfirmed(int i) {
             if (this.mDialog.isShowing() && this.mNeedsApproval && getCurrentCertInfo() != null && getCurrentCertInfo().getUserId() == i) {
                 onClickTrust();
             }
@@ -170,7 +170,7 @@ class TrustedCredentialsDialogBuilder extends AlertDialog.Builder {
             return null;
         }
 
-        public void nextOrDismiss() {
+        private void nextOrDismiss() {
             this.mCurrentCertIndex++;
             while (this.mCurrentCertIndex < this.mCertHolders.length && getCurrentCertInfo() == null) {
                 this.mCurrentCertIndex++;
@@ -301,7 +301,7 @@ class TrustedCredentialsDialogBuilder extends AlertDialog.Builder {
             this.mCurrentCertLayout.animate().alpha(0.0f).setDuration(300L).setInterpolator(AnimationUtils.loadInterpolator(this.mActivity, android.R.interpolator.fast_out_linear_in)).withEndAction(runnable).start();
         }
 
-        public void addAndAnimateNewContent(View view) {
+        private void addAndAnimateNewContent(View view) {
             this.mCurrentCertLayout = view;
             this.mRootContainer.removeAllViews();
             this.mRootContainer.addView(view);

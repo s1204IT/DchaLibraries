@@ -176,7 +176,7 @@ public class TileServiceManager {
         this.mStateManager.setBindService(true);
     }
 
-    public void unbindService() {
+    private void unbindService() {
         if (!this.mBound) {
             Log.e("TileServiceManager", "Service not bound");
             return;

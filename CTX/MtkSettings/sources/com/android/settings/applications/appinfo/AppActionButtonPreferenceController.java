@@ -189,7 +189,7 @@ public class AppActionButtonPreferenceController extends BasePreferenceControlle
         return true;
     }
 
-    public void updateForceStopButton(boolean z) {
+    private void updateForceStopButton(boolean z) {
         boolean zHasBaseUserRestriction = RestrictedLockUtils.hasBaseUserRestriction(this.mContext, "no_control_apps", this.mUserId);
         ActionButtonPreference actionButtonPreference = this.mActionButtons;
         if (zHasBaseUserRestriction) {

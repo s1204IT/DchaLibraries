@@ -79,7 +79,7 @@ public final class CurrentDreamPicker extends RadioButtonPickerFragment {
     static void lambda$getDreamComponentsMap$0(Map map, DreamBackend.DreamInfo dreamInfo) {
     }
 
-    static final class DreamCandidateInfo extends CandidateInfo {
+    private static final class DreamCandidateInfo extends CandidateInfo {
         private final Drawable icon;
         private final String key;
         private final CharSequence name;

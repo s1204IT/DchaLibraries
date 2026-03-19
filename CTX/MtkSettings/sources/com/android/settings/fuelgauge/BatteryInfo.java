@@ -134,7 +134,7 @@ public class BatteryInfo {
     public static void getBatteryInfo(final Context context, final Callback callback, final BatteryStats batteryStats, final boolean z) {
         new AsyncTask<Void, Void, BatteryInfo>() {
             @Override
-            public BatteryInfo doInBackground(Void... voidArr) {
+            protected BatteryInfo doInBackground(Void... voidArr) {
                 Estimate enhancedBatteryPrediction;
                 long jCurrentTimeMillis = System.currentTimeMillis();
                 PowerUsageFeatureProvider powerUsageFeatureProvider = FeatureFactory.getFactory(context).getPowerUsageFeatureProvider(context);
@@ -151,7 +151,7 @@ public class BatteryInfo {
             }
 
             @Override
-            public void onPostExecute(BatteryInfo batteryInfo) {
+            protected void onPostExecute(BatteryInfo batteryInfo) {
                 long jCurrentTimeMillis = System.currentTimeMillis();
                 callback.onBatteryInfoLoaded(batteryInfo);
                 BatteryUtils.logRuntime("BatteryInfo", "time for callback", jCurrentTimeMillis);

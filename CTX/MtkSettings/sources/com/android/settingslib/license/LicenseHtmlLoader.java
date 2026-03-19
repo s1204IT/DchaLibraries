@@ -23,7 +23,7 @@ public class LicenseHtmlLoader extends AsyncLoader<File> {
     }
 
     @Override
-    public void onDiscardResult(File file) {
+    protected void onDiscardResult(File file) {
     }
 
     private File generateHtmlFromDefaultXmlFiles() {

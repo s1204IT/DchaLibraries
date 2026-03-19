@@ -106,7 +106,7 @@ public class SettingsDrawerActivity extends Activity {
         ((ViewGroup) findViewById(com.android.settingslib.R.id.content_frame)).addView(view, layoutParams);
     }
 
-    public void onCategoriesChanged() {
+    private void onCategoriesChanged() {
         int size = this.mCategoryListeners.size();
         for (int i = 0; i < size; i++) {
             this.mCategoryListeners.get(i).onCategoriesChanged();
@@ -144,13 +144,13 @@ public class SettingsDrawerActivity extends Activity {
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             this.mCategoryManager.reloadAllCategories(SettingsDrawerActivity.this, SettingsDrawerActivity.this.getSettingPkg());
             return null;
         }
 
         @Override
-        public void onPostExecute(Void r2) {
+        protected void onPostExecute(Void r2) {
             this.mCategoryManager.updateCategoryFromBlacklist(SettingsDrawerActivity.sTileBlacklist);
             SettingsDrawerActivity.this.onCategoriesChanged();
         }

@@ -72,7 +72,7 @@ public class NightDisplayActivationPreferenceController extends TogglePreference
         return this.mTimeFormatter.getAutoModeTimeSummary(this.mContext, this.mController);
     }
 
-    public void updateStateInternal() {
+    private void updateStateInternal() {
         int i;
         String string;
         int i2;

@@ -227,7 +227,65 @@ public class KeyguardHostView extends FrameLayout implements KeyguardSecurityCon
     }
 
     public boolean interceptMediaKey(android.view.KeyEvent r8) {
-        throw new UnsupportedOperationException("Method not decompiled: com.android.keyguard.KeyguardHostView.interceptMediaKey(android.view.KeyEvent):boolean");
+        r0 = r8.getKeyCode();
+        if (r8.getAction() == 0) {
+            if (r0 != 79 && r0 != 130) {
+                if (r0 != 164) {
+                    if (r0 != 222) {
+                        switch (r0) {
+                            case 24:
+                            case 25:
+                            default:
+                                switch (r0) {
+                                    case com.android.systemui.plugins.R.styleable.AppCompatTheme_radioButtonStyle:
+                                        if (r7.mTelephonyManager == null) {
+                                            r7.mTelephonyManager = (android.telephony.TelephonyManager) getContext().getSystemService("phone");
+                                        }
+                                        if (r7.mTelephonyManager != null && r7.mTelephonyManager.getCallState() != 0) {
+                                            return true;
+                                        }
+                                        break;
+                                    case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyle:
+                                    case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyleIndicator:
+                                    case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyleSmall:
+                                    case com.android.systemui.plugins.R.styleable.AppCompatTheme_searchViewStyle:
+                                    case com.android.systemui.plugins.R.styleable.AppCompatTheme_seekBarStyle:
+                                    case com.android.systemui.plugins.R.styleable.AppCompatTheme_selectableItemBackground:
+                                        break;
+                                    default:
+                                        switch (r0) {
+                                        }
+                                }
+                        }
+                    }
+                }
+                return false;
+            }
+            handleMediaKeyEvent(r8);
+            return true;
+        } else {
+            if (r8.getAction() == 1) {
+                if (r0 != 79 && r0 != 130 && r0 != 222) {
+                    switch (r0) {
+                        default:
+                            switch (r0) {
+                            }
+                        case com.android.systemui.plugins.R.styleable.AppCompatTheme_radioButtonStyle:
+                        case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyle:
+                        case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyleIndicator:
+                        case com.android.systemui.plugins.R.styleable.AppCompatTheme_ratingBarStyleSmall:
+                        case com.android.systemui.plugins.R.styleable.AppCompatTheme_searchViewStyle:
+                        case com.android.systemui.plugins.R.styleable.AppCompatTheme_seekBarStyle:
+                        case com.android.systemui.plugins.R.styleable.AppCompatTheme_selectableItemBackground:
+                            handleMediaKeyEvent(r8);
+                            return true;
+                    }
+                }
+                handleMediaKeyEvent(r8);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleMediaKeyEvent(KeyEvent keyEvent) {

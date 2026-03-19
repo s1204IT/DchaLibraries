@@ -1,0 +1,90 @@
+package android.net.netlink;
+
+import android.system.ErrnoException;
+import android.system.NetlinkSocketAddress;
+import android.system.Os;
+import android.system.OsConstants;
+import android.system.StructTimeval;
+import android.util.Log;
+import java.io.FileDescriptor;
+import java.io.InterruptedIOException;
+import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import libcore.io.IoUtils;
+
+public class NetlinkSocket {
+    public static final int DEFAULT_RECV_BUFSIZE = 8192;
+    public static final int SOCKET_RECV_BUFSIZE = 65536;
+    private static final String TAG = "NetlinkSocket";
+
+    public static void sendOneShotKernelMessage(int i, byte[] bArr) throws ErrnoException {
+        String string;
+        try {
+            FileDescriptor fileDescriptorForProto = forProto(i);
+            connectToKernel(fileDescriptorForProto);
+            sendMessage(fileDescriptorForProto, bArr, 0, bArr.length, 300L);
+            ByteBuffer byteBufferRecvMessage = recvMessage(fileDescriptorForProto, 8192, 300L);
+            NetlinkMessage netlinkMessage = NetlinkMessage.parse(byteBufferRecvMessage);
+            if (netlinkMessage != null && (netlinkMessage instanceof NetlinkErrorMessage) && ((NetlinkErrorMessage) netlinkMessage).getNlMsgError() != null) {
+                int i2 = ((NetlinkErrorMessage) netlinkMessage).getNlMsgError().error;
+                if (i2 != 0) {
+                    Log.e(TAG, "Error in NetlinkSocket.sendOneShotKernelMessage, errmsg=" + netlinkMessage.toString());
+                    throw new ErrnoException(netlinkMessage.toString(), Math.abs(i2));
+                }
+                IoUtils.closeQuietly(fileDescriptorForProto);
+                return;
+            }
+            if (netlinkMessage == null) {
+                byteBufferRecvMessage.position(0);
+                string = "raw bytes: " + NetlinkConstants.hexify(byteBufferRecvMessage);
+            } else {
+                string = netlinkMessage.toString();
+            }
+            Log.e(TAG, "Error in NetlinkSocket.sendOneShotKernelMessage, errmsg=" + string);
+            throw new ErrnoException(string, OsConstants.EPROTO);
+        } catch (InterruptedIOException e) {
+            Log.e(TAG, "Error in NetlinkSocket.sendOneShotKernelMessage", e);
+            throw new ErrnoException("Error in NetlinkSocket.sendOneShotKernelMessage", OsConstants.ETIMEDOUT, e);
+        } catch (SocketException e2) {
+            Log.e(TAG, "Error in NetlinkSocket.sendOneShotKernelMessage", e2);
+            throw new ErrnoException("Error in NetlinkSocket.sendOneShotKernelMessage", OsConstants.EIO, e2);
+        }
+    }
+
+    public static FileDescriptor forProto(int i) throws ErrnoException {
+        FileDescriptor fileDescriptorSocket = Os.socket(OsConstants.AF_NETLINK, OsConstants.SOCK_DGRAM, i);
+        Os.setsockoptInt(fileDescriptorSocket, OsConstants.SOL_SOCKET, OsConstants.SO_RCVBUF, 65536);
+        return fileDescriptorSocket;
+    }
+
+    public static void connectToKernel(FileDescriptor fileDescriptor) throws SocketException, ErrnoException {
+        Os.connect(fileDescriptor, new NetlinkSocketAddress(0, 0));
+    }
+
+    private static void checkTimeout(long j) {
+        if (j < 0) {
+            throw new IllegalArgumentException("Negative timeouts not permitted");
+        }
+    }
+
+    public static ByteBuffer recvMessage(FileDescriptor fileDescriptor, int i, long j) throws ErrnoException, IllegalArgumentException, InterruptedIOException {
+        checkTimeout(j);
+        Os.setsockoptTimeval(fileDescriptor, OsConstants.SOL_SOCKET, OsConstants.SO_RCVTIMEO, StructTimeval.fromMillis(j));
+        ByteBuffer byteBufferAllocate = ByteBuffer.allocate(i);
+        int i2 = Os.read(fileDescriptor, byteBufferAllocate);
+        if (i2 == i) {
+            Log.w(TAG, "maximum read");
+        }
+        byteBufferAllocate.position(0);
+        byteBufferAllocate.limit(i2);
+        byteBufferAllocate.order(ByteOrder.nativeOrder());
+        return byteBufferAllocate;
+    }
+
+    public static int sendMessage(FileDescriptor fileDescriptor, byte[] bArr, int i, int i2, long j) throws ErrnoException, IllegalArgumentException, InterruptedIOException {
+        checkTimeout(j);
+        Os.setsockoptTimeval(fileDescriptor, OsConstants.SOL_SOCKET, OsConstants.SO_SNDTIMEO, StructTimeval.fromMillis(j));
+        return Os.write(fileDescriptor, bArr, i, i2);
+    }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_horizontal"
+    android:orientation="horizontal"
+    android:background="@color/background_main_toolbar"
+    android:padding="0dp"
+    android:layout_width="match_parent"
+    android:layout_height="120dp">
+    <ImageView
+        android:id="@+id/preview"
+        android:visibility="visible"
+        android:layout_width="180dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:cropToPadding="true"/>
+    <TextView
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:gravity="bottom|right"
+        android:id="@+id/rowTextView"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+</LinearLayout>

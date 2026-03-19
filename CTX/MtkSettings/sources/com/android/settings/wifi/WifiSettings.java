@@ -534,7 +534,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         return (config == null || (networkSelectionStatus = config.getNetworkSelectionStatus()) == null || networkSelectionStatus.isNetworkEnabled() || 13 != networkSelectionStatus.getNetworkSelectionDisableReason()) ? false : true;
     }
 
-    public void updateAccessPointPreferences() {
+    private void updateAccessPointPreferences() {
         if (!this.mWifiManager.isWifiEnabled()) {
             return;
         }
@@ -751,7 +751,7 @@ public class WifiSettings extends RestrictedSettingsFragment implements Indexabl
         this.mWifiSettingsExt.addPreference(getPreferenceScreen(), this.mAccessPointsPreferenceCategory, this.mStatusMessagePreference, false);
     }
 
-    public void setProgressBarVisible(boolean z) {
+    protected void setProgressBarVisible(boolean z) {
         if (this.mProgressHeader != null) {
             this.mProgressHeader.setVisibility(z ? 0 : 8);
         }

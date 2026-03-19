@@ -113,7 +113,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     }
 
-    public void scheduleRefreshList() {
+    private void scheduleRefreshList() {
         if (this.mHandler != null) {
             this.mHandler.removeCallbacks(this.mRefreshListRunnable);
             this.mHandler.postDelayed(this.mRefreshListRunnable, 100L);
@@ -172,7 +172,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         refreshList();
     }
 
-    public void refreshList() {
+    private void refreshList() {
         List<HistoricalNotificationInfo> listLoadNotifications = loadNotifications();
         if (listLoadNotifications != null) {
             int size = listLoadNotifications.size();
@@ -188,7 +188,7 @@ public class NotificationStation extends SettingsPreferenceFragment {
         }
     }
 
-    public static void logd(String str, Object... objArr) {
+    private static void logd(String str, Object... objArr) {
         String str2 = TAG;
         if (objArr != null && objArr.length != 0) {
             str = String.format(str, objArr);

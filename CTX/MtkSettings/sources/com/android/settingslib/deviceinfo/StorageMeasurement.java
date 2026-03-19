@@ -76,12 +76,12 @@ public class StorageMeasurement {
         }
 
         @Override
-        public MeasurementDetails doInBackground(Void... voidArr) {
+        protected MeasurementDetails doInBackground(Void... voidArr) {
             return StorageMeasurement.this.measureExactStorage();
         }
 
         @Override
-        public void onPostExecute(MeasurementDetails measurementDetails) {
+        protected void onPostExecute(MeasurementDetails measurementDetails) {
             MeasurementReceiver measurementReceiver = StorageMeasurement.this.mReceiver != null ? (MeasurementReceiver) StorageMeasurement.this.mReceiver.get() : null;
             if (measurementReceiver != null) {
                 measurementReceiver.onDetailsChanged(measurementDetails);
@@ -89,7 +89,7 @@ public class StorageMeasurement {
         }
     }
 
-    public MeasurementDetails measureExactStorage() {
+    private MeasurementDetails measureExactStorage() {
         List<UserInfo> users = this.mUser.getUsers();
         long jElapsedRealtime = SystemClock.elapsedRealtime();
         MeasurementDetails measurementDetails = new MeasurementDetails();

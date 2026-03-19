@@ -108,7 +108,7 @@ public class CaptionPropertiesFragment extends SettingsPreferenceFragment implem
         removeSwitchBarToggleSwitch();
     }
 
-    public void refreshPreviewText() {
+    private void refreshPreviewText() {
         SubtitleView subtitleView;
         Activity activity = getActivity();
         if (activity != null && (subtitleView = this.mPreviewText) != null) {

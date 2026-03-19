@@ -201,7 +201,7 @@ public class DataUsageList extends DataUsageBase {
         updateBody();
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) {
                 try {
                     Thread.sleep(2000L);
                     DataUsageList.this.services.mStatsService.forceUpdate();
@@ -214,7 +214,7 @@ public class DataUsageList extends DataUsageBase {
             }
 
             @Override
-            public void onPostExecute(Void r1) {
+            protected void onPostExecute(Void r1) {
                 if (DataUsageList.this.isAdded()) {
                     DataUsageList.this.updateBody();
                 }
@@ -249,7 +249,7 @@ public class DataUsageList extends DataUsageBase {
         }
     }
 
-    public void updateBody() {
+    private void updateBody() {
         SubscriptionInfo activeSubscriptionInfo;
         if (isAdded()) {
             Activity activity = getActivity();
@@ -263,7 +263,7 @@ public class DataUsageList extends DataUsageBase {
         }
     }
 
-    public void updatePolicy() {
+    private void updatePolicy() {
         NetworkPolicy policy = this.services.mPolicyEditor.getPolicy(this.mTemplate);
         View viewFindViewById = this.mHeader.findViewById(R.id.filter_settings);
         if (isNetworkPolicyModifiable(policy, this.mSubId) && isMobileDataAvailable(this.mSubId)) {
@@ -278,7 +278,7 @@ public class DataUsageList extends DataUsageBase {
         }
     }
 
-    public void updateDetailData() {
+    private void updateDetailData() {
         NetworkStatsHistory.Entry values;
         long inspectStart = this.mChart.getInspectStart();
         long inspectEnd = this.mChart.getInspectEnd();
@@ -375,7 +375,7 @@ public class DataUsageList extends DataUsageBase {
         }
     }
 
-    public void startAppDataUsage(AppItem appItem) {
+    private void startAppDataUsage(AppItem appItem) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("app_item", appItem);
         bundle.putParcelable("network_template", this.mTemplate);

@@ -56,7 +56,7 @@ abstract class AccountPreferenceBase extends SettingsPreferenceFragment implemen
     protected void onAuthDescriptionsUpdated() {
     }
 
-    public void onSyncStateUpdated() {
+    protected void onSyncStateUpdated() {
     }
 
     @Override

@@ -93,7 +93,7 @@ public class KeyguardPasswordView extends KeyguardAbsKeyInputView implements Tex
         this.mImm.hideSoftInputFromWindow(getWindowToken(), 0);
     }
 
-    public void updateSwitchImeButton() {
+    private void updateSwitchImeButton() {
         boolean z = this.mSwitchImeButton.getVisibility() == 0;
         boolean zHasMultipleEnabledIMEsOrSubtypes = hasMultipleEnabledIMEsOrSubtypes(this.mImm, false);
         if (z != zHasMultipleEnabledIMEsOrSubtypes) {

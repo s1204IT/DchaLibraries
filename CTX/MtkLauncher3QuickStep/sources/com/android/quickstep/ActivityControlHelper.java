@@ -179,7 +179,7 @@ public interface ActivityControlHelper<T extends BaseDraggingActivity> {
             };
         }
 
-        public void createActivityControllerInternal(Launcher launcher, boolean z, LauncherState launcherState, long j, int i, Consumer<AnimatorPlaybackController> consumer) {
+        private void createActivityControllerInternal(Launcher launcher, boolean z, LauncherState launcherState, long j, int i, Consumer<AnimatorPlaybackController> consumer) {
             LauncherState launcherState2 = i == 1 ? LauncherState.FAST_OVERVIEW : LauncherState.OVERVIEW;
             if (z) {
                 DeviceProfile deviceProfile = launcher.getDeviceProfile();

@@ -111,7 +111,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         onDensityOrFontScaleChanged();
     }
 
-    public void setEnableMarquee(boolean z) {
+    private void setEnableMarquee(boolean z) {
         if (DEBUG) {
             StringBuilder sb = new StringBuilder();
             sb.append("Schedule setEnableMarquee: ");
@@ -195,7 +195,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         this.mClockView.setElegantTextHeight(false);
     }
 
-    public void onSliceContentChanged() {
+    private void onSliceContentChanged() {
         boolean z;
         if (this.mKeyguardSlice.hasHeader() || this.mPulsing) {
             z = true;
@@ -294,11 +294,11 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         this.mKeyguardSlice.refresh();
     }
 
-    public void refreshTime() {
+    private void refreshTime() {
         this.mClockView.refresh();
     }
 
-    public void refreshFormat() {
+    private void refreshFormat() {
         Patterns.update(this.mContext);
         this.mClockView.setFormat12Hour(Patterns.clockView12);
         this.mClockView.setFormat24Hour(Patterns.clockView24);
@@ -315,7 +315,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         return this.mClockView.getTextSize();
     }
 
-    public void updateLogoutView() {
+    private void updateLogoutView() {
         if (this.mLogoutView == null) {
             return;
         }
@@ -323,7 +323,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         this.mLogoutView.setText(this.mContext.getResources().getString(android.R.string.config_defaultProfcollectReportUploaderAction));
     }
 
-    public void updateOwnerInfo() {
+    private void updateOwnerInfo() {
         if (this.mOwnerInfo == null) {
             return;
         }
@@ -437,7 +437,7 @@ public class KeyguardStatusView extends GridLayout implements View.OnLayoutChang
         return KeyguardUpdateMonitor.getInstance(this.mContext).isLogoutEnabled() && KeyguardUpdateMonitor.getCurrentUser() != 0;
     }
 
-    public void onLogoutClicked(View view) {
+    private void onLogoutClicked(View view) {
         int currentUser = KeyguardUpdateMonitor.getCurrentUser();
         try {
             this.mIActivityManager.switchUser(0);

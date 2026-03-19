@@ -29,7 +29,7 @@ public class ListViewHighlighter implements AbsListView.OnScrollListener, AbsLis
         this.mListView.post(new $$Lambda$ListViewHighlighter$LHpR61dAsd_XsBT1HxobUwT3h4(this));
     }
 
-    public void tryHighlight() {
+    private void tryHighlight() {
         if (this.mPosHighlight >= 0 && this.mListView.getChildCount() != 0 && !highlightIfVisible(this.mListView.getFirstVisiblePosition(), this.mListView.getLastVisiblePosition())) {
             this.mListView.smoothScrollToPosition(this.mPosHighlight);
         }
@@ -74,7 +74,7 @@ public class ListViewHighlighter implements AbsListView.OnScrollListener, AbsLis
         }
     }
 
-    public void unhighlightView(View view) {
+    private void unhighlightView(View view) {
         if (Boolean.TRUE.equals(view.getTag(R.id.view_highlighted))) {
             Object tag = view.getTag(R.id.view_unhighlight_background);
             if (tag instanceof Drawable) {

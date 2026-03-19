@@ -77,7 +77,7 @@ public class PageIndicator extends ViewGroup {
         }
     }
 
-    public void setPosition(int i) {
+    private void setPosition(int i) {
         if (isVisibleToUser() && Math.abs(this.mPosition - i) == 1) {
             animate(this.mPosition, i);
         } else {

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="alarm_alert_snooze_duration">
+        <item quantity="one">1 min</item>
+        <item quantity="other">%d min</item>
+    </plurals>
+    <plurals name="alarm_alert_snooze_set">
+        <item quantity="one">Snoozing for 1 minute.</item>
+        <item quantity="other">Snoozing for %d minutes.</item>
+    </plurals>
+    <plurals name="auto_silence_summary">
+        <item quantity="one">1 minute</item>
+        <item quantity="other">%s minutes</item>
+    </plurals>
+    <plurals name="days">
+        <item quantity="one">1 day</item>
+        <item quantity="other">%s days</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">1 hour</item>
+        <item quantity="other">%s hours</item>
+    </plurals>
+    <plurals name="hours_short">
+        <item quantity="one">1 hr</item>
+        <item quantity="other">%s hr</item>
+    </plurals>
+    <plurals name="minutes">
+        <item quantity="one">1 minute</item>
+        <item quantity="other">%s minutes</item>
+    </plurals>
+    <plurals name="minutes_short">
+        <item quantity="one">1 min</item>
+        <item quantity="other">%s min</item>
+    </plurals>
+    <plurals name="seconds">
+        <item quantity="one">1 second</item>
+        <item quantity="other">%s seconds</item>
+    </plurals>
+</resources>

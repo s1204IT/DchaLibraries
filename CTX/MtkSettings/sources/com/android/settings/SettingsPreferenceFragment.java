@@ -344,7 +344,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         getActivity().onBackPressed();
     }
 
-    public ContentResolver getContentResolver() {
+    protected ContentResolver getContentResolver() {
         Activity activity = getActivity();
         if (activity != null) {
             this.mContentResolver = activity.getContentResolver();
@@ -385,7 +385,7 @@ public abstract class SettingsPreferenceFragment extends InstrumentedPreferenceF
         return 0;
     }
 
-    public void removeDialog(int i) {
+    protected void removeDialog(int i) {
         if (this.mDialogFragment != null && this.mDialogFragment.getDialogId() == i) {
             this.mDialogFragment.dismissAllowingStateLoss();
         }

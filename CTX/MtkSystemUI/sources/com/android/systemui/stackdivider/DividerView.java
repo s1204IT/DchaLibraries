@@ -746,7 +746,7 @@ public class DividerView extends FrameLayout implements View.OnTouchListener, Vi
         this.mState.mRatioPositionBeforeMinimized = snapTarget.position / (isHorizontalDivision() ? this.mDisplayHeight : this.mDisplayWidth);
     }
 
-    public void resetBackground() {
+    private void resetBackground() {
         this.mBackground.setPivotX(this.mBackground.getWidth() / 2);
         this.mBackground.setPivotY(this.mBackground.getHeight() / 2);
         this.mBackground.setScaleX(1.0f);

@@ -77,7 +77,7 @@ public class TunerZenModePanel extends LinearLayout implements View.OnClickListe
         postDelayed(this.mUpdate, 40L);
     }
 
-    public void updatePanel() {
+    private void updatePanel() {
         boolean z = this.mZenMode != 0;
         ((Checkable) this.mHeaderSwitch.findViewById(R.id.toggle)).setChecked(z);
         this.mZenModePanel.setVisibility(z ? 0 : 8);

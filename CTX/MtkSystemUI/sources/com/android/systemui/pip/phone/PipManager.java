@@ -77,7 +77,7 @@ public class PipManager implements BasePipManager {
         }
     };
 
-    class PinnedStackListener extends IPinnedStackListener.Stub {
+    private class PinnedStackListener extends IPinnedStackListener.Stub {
         private PinnedStackListener() {
         }
 

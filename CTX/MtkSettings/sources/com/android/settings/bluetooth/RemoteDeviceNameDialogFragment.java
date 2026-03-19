@@ -87,7 +87,7 @@ public class RemoteDeviceNameDialogFragment extends BluetoothNameDialogFragment 
     }
 
     @Override
-    public void setDeviceName(String str) {
+    protected void setDeviceName(String str) {
         if (this.mDevice != null) {
             this.mDevice.setName(str);
         }

@@ -143,7 +143,7 @@ public class StorageNotification extends SystemUI {
         }
     }
 
-    public void onDiskScannedInternal(DiskInfo diskInfo, int i) {
+    private void onDiskScannedInternal(DiskInfo diskInfo, int i) {
         if (i != 0 || diskInfo.size <= 0) {
             this.mNotificationManager.cancelAsUser(diskInfo.getId(), 1396986699, UserHandle.ALL);
             return;
@@ -155,11 +155,11 @@ public class StorageNotification extends SystemUI {
         this.mNotificationManager.notifyAsUser(diskInfo.getId(), 1396986699, builderExtend.build(), UserHandle.ALL);
     }
 
-    public void onDiskDestroyedInternal(DiskInfo diskInfo) {
+    private void onDiskDestroyedInternal(DiskInfo diskInfo) {
         this.mNotificationManager.cancelAsUser(diskInfo.getId(), 1396986699, UserHandle.ALL);
     }
 
-    public void onVolumeStateChangedInternal(VolumeInfo volumeInfo) {
+    private void onVolumeStateChangedInternal(VolumeInfo volumeInfo) {
         switch (volumeInfo.getType()) {
             case 0:
                 onPublicVolumeStateChangedInternal(volumeInfo);
@@ -276,7 +276,7 @@ public class StorageNotification extends SystemUI {
         return buildNotificationBuilder(volumeInfo, this.mContext.getString(R.string.cfTemplateRegistered, disk.getDescription()), this.mContext.getString(R.string.cfTemplateNotForwarded, disk.getDescription())).setCategory("err").build();
     }
 
-    public void onMoveProgress(MoveInfo moveInfo, int i, long j) {
+    private void onMoveProgress(MoveInfo moveInfo, int i, long j) {
         String string;
         CharSequence duration;
         PendingIntent pendingIntentBuildWizardMigratePendingIntent;
@@ -300,7 +300,7 @@ public class StorageNotification extends SystemUI {
         this.mNotificationManager.notifyAsUser(moveInfo.packageName, 1397575510, ongoing.build(), UserHandle.ALL);
     }
 
-    public void onMoveFinished(MoveInfo moveInfo, int i) {
+    private void onMoveFinished(MoveInfo moveInfo, int i) {
         String string;
         String string2;
         PendingIntent pendingIntentBuildVolumeSettingsPendingIntent;

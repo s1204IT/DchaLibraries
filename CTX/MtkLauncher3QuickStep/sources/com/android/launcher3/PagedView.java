@@ -93,7 +93,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
     private static final float[] sTmpPoint = new float[2];
     private static final Rect sTmpRect = new Rect();
 
-    public interface ComputePageScrollsLogic {
+    protected interface ComputePageScrollsLogic {
         boolean shouldIncludeView(View view);
     }
 
@@ -508,7 +508,7 @@ public abstract class PagedView<T extends View & PageIndicator> extends ViewGrou
         return 0;
     }
 
-    public void updateMaxScrollX() {
+    private void updateMaxScrollX() {
         this.mMaxScrollX = computeMaxScrollX();
     }
 

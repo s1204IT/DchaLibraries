@@ -74,18 +74,18 @@ public class AutoSizingList extends LinearLayout {
         return this.mEnableAutoSizing ? Math.min(i / this.mItemSize, desiredCount) : desiredCount;
     }
 
-    public int getDesiredCount() {
+    private int getDesiredCount() {
         if (this.mAdapter != null) {
             return this.mAdapter.getCount();
         }
         return 0;
     }
 
-    public void postRebindChildren() {
+    private void postRebindChildren() {
         this.mHandler.post(this.mBindChildren);
     }
 
-    public void rebindChildren() {
+    private void rebindChildren() {
         if (this.mAdapter == null) {
             return;
         }

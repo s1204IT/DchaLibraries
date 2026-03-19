@@ -64,7 +64,7 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
         this.mSecurityController.addCallback(this);
     }
 
-    public void updateVpn() {
+    private void updateVpn() {
         boolean zIsVpnEnabled = this.mSecurityController.isVpnEnabled();
         this.mIconController.setIcon(this.mSlotVpn, currentVpnIconId(this.mSecurityController.isVpnBranded()), null);
         this.mIconController.setIconVisibility(this.mSlotVpn, zIsVpnEnabled);
@@ -263,7 +263,7 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
     public void setMobileDataEnabled(boolean z) {
     }
 
-    public static abstract class SignalIconState {
+    private static abstract class SignalIconState {
         public boolean activityIn;
         public boolean activityOut;
         public String contentDescription;
@@ -395,7 +395,7 @@ public class StatusBarSignalPolicy implements NetworkController.SignalCallback, 
             mobileIconState.phoneId = this.phoneId;
         }
 
-        public static List<MobileIconState> copyStates(List<MobileIconState> list) {
+        private static List<MobileIconState> copyStates(List<MobileIconState> list) {
             ArrayList arrayList = new ArrayList();
             for (MobileIconState mobileIconState : list) {
                 MobileIconState mobileIconState2 = new MobileIconState(mobileIconState.subId);

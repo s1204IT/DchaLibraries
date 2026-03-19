@@ -251,7 +251,7 @@ public class PreviewBackground {
         this.mPaint.setShader(null);
     }
 
-    public void delegateDrawing(CellLayout cellLayout, int i, int i2) {
+    private void delegateDrawing(CellLayout cellLayout, int i, int i2) {
         if (this.mDrawingDelegate != cellLayout) {
             cellLayout.addFolderBackground(this);
         }
@@ -261,7 +261,7 @@ public class PreviewBackground {
         invalidate();
     }
 
-    public void clearDrawingDelegate() {
+    private void clearDrawingDelegate() {
         if (this.mDrawingDelegate != null) {
             this.mDrawingDelegate.removeFolderBackground(this);
         }

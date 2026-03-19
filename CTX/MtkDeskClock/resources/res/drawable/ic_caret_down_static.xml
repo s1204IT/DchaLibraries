@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="caret_toclose"
+    android:height="24dp"
+    android:width="24dp">
+    <group
+        android:name="caret01"
+        android:rotation="90">
+        <group
+            android:name="caret_l"
+            android:rotation="45">
+            <group android:name="caret_l_pivot">
+                <group android:name="caret_l_rect_position">
+                    <path android:name="caret_l_rect"/>
+                </group>
+            </group>
+        </group>
+        <group
+            android:name="caret_r"
+            android:rotation="-45">
+            <group android:name="caret_r_pivot">
+                <group android:name="caret_r_rect_position">
+                    <path android:name="caret_r_rect"/>
+                </group>
+            </group>
+        </group>
+    </group>
+</vector>

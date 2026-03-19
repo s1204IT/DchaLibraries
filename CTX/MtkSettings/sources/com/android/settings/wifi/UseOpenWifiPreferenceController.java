@@ -45,7 +45,7 @@ public class UseOpenWifiPreferenceController extends AbstractPreferenceControlle
         lifecycle.addObserver(this);
     }
 
-    public void updateEnableUseWifiComponentName() {
+    private void updateEnableUseWifiComponentName() {
         NetworkScorerAppData activeScorer = this.mNetworkScoreManager.getActiveScorer();
         this.mEnableUseWifiComponentName = activeScorer == null ? null : activeScorer.getEnableUseOpenWifiActivity();
     }

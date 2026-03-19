@@ -37,7 +37,7 @@ public class ZenModeMsgEventReminderSettings extends ZenModeSettingsBase impleme
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeEventsPreferenceController(context, lifecycle));
         arrayList.add(new ZenModeRemindersPreferenceController(context, lifecycle));

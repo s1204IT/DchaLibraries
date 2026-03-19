@@ -30,7 +30,7 @@ public class RecentsActivityTracker implements ActivityControlHelper.ActivityIni
         sScheduler.clearReference(this);
     }
 
-    public boolean init(RecentsActivity recentsActivity, boolean z) {
+    private boolean init(RecentsActivity recentsActivity, boolean z) {
         return this.mOnInitListener.test(recentsActivity, Boolean.valueOf(z));
     }
 

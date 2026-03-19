@@ -18,7 +18,7 @@ public class SavedQueryRecorder extends AsyncLoader<Void> {
     }
 
     @Override
-    public void onDiscardResult(Void r1) {
+    protected void onDiscardResult(Void r1) {
     }
 
     @Override

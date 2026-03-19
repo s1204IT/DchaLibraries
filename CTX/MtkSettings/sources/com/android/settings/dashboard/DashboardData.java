@@ -107,7 +107,7 @@ public class DashboardData {
         }
     }
 
-    public static int sizeOf(List<?> list) {
+    private static int sizeOf(List<?> list) {
         if (list == null) {
             return 0;
         }

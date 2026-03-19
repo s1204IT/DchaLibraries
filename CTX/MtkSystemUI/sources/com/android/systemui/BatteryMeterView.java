@@ -178,7 +178,7 @@ public class BatteryMeterView extends LinearLayout implements BatteryController.
         }
     }
 
-    public void updateShowPercent() {
+    private void updateShowPercent() {
         boolean z = this.mBatteryPercentView != null;
         if (Settings.System.getIntForUser(getContext().getContentResolver(), "status_bar_show_battery_percent", 0, this.mUser) != 0 || this.mForceShowPercent) {
             if (!z) {

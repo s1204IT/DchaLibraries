@@ -105,7 +105,7 @@ public class WfdChangeResolution {
         }
     }
 
-    public void updateDeviceName() {
+    private void updateDeviceName() {
         if (this.mP2pDevice != null && this.mDevicePref != null) {
             if (TextUtils.isEmpty(this.mP2pDevice.deviceName)) {
                 this.mDevicePref.setTitle(this.mP2pDevice.deviceAddress);

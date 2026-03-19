@@ -171,7 +171,7 @@ public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
         return zenRuleInfo;
     }
 
-    public void bindExternalRules(Set<ZenRuleInfo> set) {
+    private void bindExternalRules(Set<ZenRuleInfo> set) {
         Iterator<ZenRuleInfo> it = set.iterator();
         while (it.hasNext()) {
             bindType(it.next());
@@ -186,12 +186,12 @@ public class ZenRuleSelectionDialog extends InstrumentedDialogFragment {
         }
 
         @Override
-        public Drawable doInBackground(ApplicationInfo... applicationInfoArr) {
+        protected Drawable doInBackground(ApplicationInfo... applicationInfoArr) {
             return applicationInfoArr[0].loadIcon(ZenRuleSelectionDialog.mPm);
         }
 
         @Override
-        public void onPostExecute(Drawable drawable) {
+        protected void onPostExecute(Drawable drawable) {
             ImageView imageView;
             if (drawable != null && (imageView = this.viewReference.get()) != null) {
                 imageView.setImageDrawable(drawable);

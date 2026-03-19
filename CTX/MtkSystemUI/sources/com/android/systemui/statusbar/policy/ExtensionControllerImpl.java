@@ -20,7 +20,7 @@ import java.util.function.ToIntFunction;
 public class ExtensionControllerImpl implements ExtensionController {
     private final Context mDefaultContext;
 
-    interface Item<T> extends Producer<T> {
+    private interface Item<T> extends Producer<T> {
         int sortOrder();
     }
 
@@ -139,7 +139,7 @@ public class ExtensionControllerImpl implements ExtensionController {
             this.mItem = null;
         }
 
-        public void notifyChanged() {
+        private void notifyChanged() {
             if (this.mItem != null) {
                 ((LeakDetector) Dependency.get(LeakDetector.class)).trackGarbage(this.mItem);
             }

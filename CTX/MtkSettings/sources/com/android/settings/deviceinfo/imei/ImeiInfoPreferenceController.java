@@ -82,7 +82,7 @@ public class ImeiInfoPreferenceController extends AbstractSimStatusImeiInfoPrefe
         return true;
     }
 
-    public void updatePreference(Preference preference, int i) {
+    private void updatePreference(Preference preference, int i) {
         if (this.mTelephonyManager.getCurrentPhoneTypeForSlot(i) == 2) {
             preference.setTitle(getTitleForCdmaPhone(i));
             preference.setSummary(getMeid(i));

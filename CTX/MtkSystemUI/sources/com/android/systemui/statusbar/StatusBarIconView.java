@@ -513,7 +513,7 @@ public class StatusBarIconView extends AnimatedImageView implements StatusIconDi
         this.mDozer.setColor(i);
     }
 
-    public void setColorInternal(int i) {
+    private void setColorInternal(int i) {
         this.mCurrentSetColor = i;
         updateIconColor();
     }
@@ -700,7 +700,7 @@ public class StatusBarIconView extends AnimatedImageView implements StatusIconDi
         }
     }
 
-    public void runRunnable(Runnable runnable) {
+    private void runRunnable(Runnable runnable) {
         if (runnable != null) {
             runnable.run();
         }

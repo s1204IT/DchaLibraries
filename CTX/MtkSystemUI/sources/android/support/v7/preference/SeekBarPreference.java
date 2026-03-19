@@ -161,7 +161,7 @@ public class SeekBarPreference extends Preference {
         }
     }
 
-    public void syncValueInternal(SeekBar seekBar) {
+    private void syncValueInternal(SeekBar seekBar) {
         int seekBarValue = this.mMin + seekBar.getProgress();
         if (seekBarValue != this.mSeekBarValue) {
             if (callChangeListener(Integer.valueOf(seekBarValue))) {

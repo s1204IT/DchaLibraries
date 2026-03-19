@@ -200,7 +200,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView imple
         void onExpandClicked(NotificationData.Entry entry, boolean z);
     }
 
-    public static Boolean isSystemNotification(Context context, StatusBarNotification statusBarNotification) {
+    private static Boolean isSystemNotification(Context context, StatusBarNotification statusBarNotification) {
         PackageManager packageManagerForUser = StatusBar.getPackageManagerForUser(context, statusBarNotification.getUser().getIdentifier());
         try {
             return Boolean.valueOf(Utils.isSystemPackage(context.getResources(), packageManagerForUser, packageManagerForUser.getPackageInfo(statusBarNotification.getPackageName(), 64)));
@@ -1970,7 +1970,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView imple
         return isClearable() && !(shouldShowPublic() && this.mSensitiveHiddenInGeneral);
     }
 
-    public boolean shouldShowPublic() {
+    private boolean shouldShowPublic() {
         return this.mSensitive && this.mHideSensitiveForIntrinsicHeight;
     }
 
@@ -2245,7 +2245,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView imple
         return super.disallowSingleClick(motionEvent);
     }
 
-    public void onExpansionChanged(boolean z, boolean z2) {
+    private void onExpansionChanged(boolean z, boolean z2) {
         boolean zIsExpanded = isExpanded();
         if (this.mIsSummaryWithChildren && (!this.mIsLowPriority || z2)) {
             zIsExpanded = this.mGroupManager.isGroupExpanded(this.mStatusBarNotification);
@@ -2493,12 +2493,12 @@ public class ExpandableNotificationRow extends ActivatableNotificationView imple
         }
 
         @Override
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             return ExpandableNotificationRow.isSystemNotification(ExpandableNotificationRow.this.mContext, ExpandableNotificationRow.this.mStatusBarNotification);
         }
 
         @Override
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             if (ExpandableNotificationRow.this.mEntry != null) {
                 ExpandableNotificationRow.this.mEntry.mIsSystemNotification = bool;
             }

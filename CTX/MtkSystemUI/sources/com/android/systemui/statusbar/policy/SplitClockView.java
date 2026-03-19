@@ -58,7 +58,7 @@ public class SplitClockView extends LinearLayout {
         getContext().unregisterReceiver(this.mIntentReceiver);
     }
 
-    public void updatePatterns() {
+    private void updatePatterns() {
         String strSubstring;
         String strSubstring2;
         String timeFormatString = DateFormat.getTimeFormatString(getContext(), ActivityManager.getCurrentUser());

@@ -88,7 +88,7 @@ public class ColorModePreference extends SwitchPreference implements DisplayMana
     }
 
     @Override
-    public boolean persistBoolean(boolean z) {
+    protected boolean persistBoolean(boolean z) {
         if (this.mDescriptions.size() == 2) {
             ColorModeDescription colorModeDescription = this.mDescriptions.get(z ? 1 : 0);
             this.mDisplay.requestColorMode(colorModeDescription.colorMode);
@@ -98,7 +98,7 @@ public class ColorModePreference extends SwitchPreference implements DisplayMana
         return true;
     }
 
-    static class ColorModeDescription {
+    private static class ColorModeDescription {
         private int colorMode;
         private String summary;
         private String title;

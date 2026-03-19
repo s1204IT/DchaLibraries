@@ -109,7 +109,7 @@ public class SettingsActivity extends Activity {
             }
         }
 
-        public void highlightPreference() {
+        private void highlightPreference() {
             Preference preferenceFindPreference = findPreference(this.mPreferenceKey);
             if (preferenceFindPreference == null || getPreferenceScreen() == null) {
                 return;

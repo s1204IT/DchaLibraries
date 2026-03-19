@@ -59,7 +59,7 @@ public class BatterySaverTile extends QSTileImpl<QSTile.BooleanState> implements
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         int i;
         if (this.mPluggedIn) {
             i = 0;

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="28"
+    android:versionName="9"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.bookmarkprovider"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <application
+        android:label="@string/application_name"
+        android:icon="@mipmap/ic_launcher_shortcut_browser_bookmark">
+        <provider
+            android:name=".BookmarkProvider"
+            android:exported="true"
+            android:multiprocess="false"
+            android:authorities="com.android.browser;browser"/>
+    </application>
+</manifest>

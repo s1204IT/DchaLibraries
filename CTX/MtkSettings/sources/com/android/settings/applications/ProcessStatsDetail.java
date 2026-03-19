@@ -256,7 +256,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
         }
     }
 
-    public void stopService(String str, String str2) {
+    private void stopService(String str, String str2) {
         try {
             if ((getActivity().getPackageManager().getApplicationInfo(str, 0).flags & 1) != 0) {
                 showStopServiceDialog(str, str2);
@@ -277,7 +277,7 @@ public class ProcessStatsDetail extends SettingsPreferenceFragment {
         }).setNegativeButton(R.string.dlg_cancel, (DialogInterface.OnClickListener) null).show();
     }
 
-    public void doStopService(String str, String str2) {
+    private void doStopService(String str, String str2) {
         getActivity().stopService(new Intent().setClassName(str, str2));
         updateRunningServices();
     }

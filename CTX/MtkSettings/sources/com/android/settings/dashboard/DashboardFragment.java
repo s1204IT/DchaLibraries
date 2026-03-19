@@ -238,7 +238,7 @@ public abstract class DashboardFragment extends SettingsPreferenceFragment imple
         });
     }
 
-    public void updatePreferenceStates() {
+    protected void updatePreferenceStates() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         Iterator<List<AbstractPreferenceController>> it = this.mPreferenceControllers.values().iterator();
         while (it.hasNext()) {

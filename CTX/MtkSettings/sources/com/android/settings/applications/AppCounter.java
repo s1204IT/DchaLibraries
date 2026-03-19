@@ -23,7 +23,7 @@ public abstract class AppCounter extends AsyncTask<Void, Void, Integer> {
     }
 
     @Override
-    public Integer doInBackground(Void... voidArr) {
+    protected Integer doInBackground(Void... voidArr) {
         int i = 0;
         for (UserInfo userInfo : this.mUm.getProfiles(UserHandle.myUserId())) {
             Iterator<ApplicationInfo> it = this.mPm.getInstalledApplicationsAsUser(33280 | (userInfo.isAdmin() ? 4194304 : 0), userInfo.id).iterator();
@@ -37,7 +37,7 @@ public abstract class AppCounter extends AsyncTask<Void, Void, Integer> {
     }
 
     @Override
-    public void onPostExecute(Integer num) {
+    protected void onPostExecute(Integer num) {
         onCountComplete(num.intValue());
     }
 

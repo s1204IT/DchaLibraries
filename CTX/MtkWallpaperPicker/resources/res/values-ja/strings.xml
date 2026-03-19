@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallpaper_instructions">壁紙を設定</string>
+    <string name="image_load_fail">画像を読み込めませんでした</string>
+    <string name="wallpaper_load_fail">画像を壁紙として読み込めませんでした</string>
+    <string name="wallpaper_set_fail">画像を壁紙として設定できませんでした</string>
+    <string name="wallpaper_accessibility_name">壁紙: %1$d/%2$d</string>
+    <string name="announce_selection">選択: %1$s</string>
+    <string name="wallpaper_delete">削除</string>
+    <string name="pick_image">マイフォト</string>
+    <string name="pick_wallpaper">壁紙</string>
+    <string name="crop_wallpaper">壁紙のトリミング</string>
+    <string name="which_wallpaper_option_home_screen">ホーム画面</string>
+    <string name="which_wallpaper_option_lock_screen">ロック画面</string>
+    <string name="which_wallpaper_option_home_screen_and_lock_screen">ホーム画面とロック画面</string>
+</resources>

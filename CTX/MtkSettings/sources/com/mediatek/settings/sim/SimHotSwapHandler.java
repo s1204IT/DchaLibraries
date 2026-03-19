@@ -48,7 +48,7 @@ public class SimHotSwapHandler {
         this.mListener = null;
     }
 
-    public void handleHotSwap() {
+    private void handleHotSwap() {
         List<SubscriptionInfo> activeSubscriptionInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
         Log.d("SimHotSwapHandler", "handleHotSwap, handler=" + this + ", currentSubIdList=" + activeSubscriptionInfoList);
         if (hasHotSwapHappened(this.mSubscriptionInfoList, activeSubscriptionInfoList) && this.mListener != null) {

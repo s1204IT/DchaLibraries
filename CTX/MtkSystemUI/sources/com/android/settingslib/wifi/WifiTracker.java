@@ -84,7 +84,7 @@ public class WifiTracker implements LifecycleObserver, OnDestroy, OnStart, OnSto
         return Log.isLoggable("WifiTracker", 3);
     }
 
-    public static boolean isVerboseLoggingEnabled() {
+    private static boolean isVerboseLoggingEnabled() {
         return sVerboseLogging || Log.isLoggable("WifiTracker", 2);
     }
 
@@ -322,7 +322,7 @@ public class WifiTracker implements LifecycleObserver, OnDestroy, OnStart, OnSto
         return null;
     }
 
-    public void fetchScansAndConfigsAndUpdateAccessPoints() {
+    private void fetchScansAndConfigsAndUpdateAccessPoints() {
         List<ScanResult> scanResults = this.mWifiManager.getScanResults();
         if (isVerboseLoggingEnabled()) {
             Log.i("WifiTracker", "Fetched scan results: " + scanResults);
@@ -415,7 +415,7 @@ public class WifiTracker implements LifecycleObserver, OnDestroy, OnStart, OnSto
         return new AccessPoint(this.mContext, list);
     }
 
-    public void updateNetworkInfo(NetworkInfo networkInfo) {
+    private void updateNetworkInfo(NetworkInfo networkInfo) {
         if (!this.mWifiManager.isWifiEnabled()) {
             clearAccessPointsAndConditionallyUpdate();
             return;
@@ -474,7 +474,7 @@ public class WifiTracker implements LifecycleObserver, OnDestroy, OnStart, OnSto
         }
     }
 
-    public void updateNetworkScores() {
+    private void updateNetworkScores() {
         synchronized (this.mLock) {
             boolean z = false;
             for (int i = 0; i < this.mInternalAccessPoints.size(); i++) {
@@ -489,7 +489,7 @@ public class WifiTracker implements LifecycleObserver, OnDestroy, OnStart, OnSto
         }
     }
 
-    public void updateWifiState(int i) {
+    private void updateWifiState(int i) {
         if (i == 3) {
             if (this.mScanner != null) {
                 this.mScanner.resume();

@@ -1,0 +1,18 @@
+package org.apache.http.impl.cookie;
+
+import org.apache.http.cookie.Cookie;
+import org.apache.http.cookie.CookieAttributeHandler;
+import org.apache.http.cookie.CookieOrigin;
+import org.apache.http.cookie.MalformedCookieException;
+
+@Deprecated
+public abstract class AbstractCookieAttributeHandler implements CookieAttributeHandler {
+    @Override
+    public void validate(Cookie cookie, CookieOrigin cookieOrigin) throws MalformedCookieException {
+    }
+
+    @Override
+    public boolean match(Cookie cookie, CookieOrigin cookieOrigin) {
+        return true;
+    }
+}

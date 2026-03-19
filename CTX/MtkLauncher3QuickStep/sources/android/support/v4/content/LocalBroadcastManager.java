@@ -242,7 +242,7 @@ public final class LocalBroadcastManager {
         }
     }
 
-    public void executePendingBroadcasts() {
+    private void executePendingBroadcasts() {
         BroadcastRecord[] brs;
         while (true) {
             synchronized (this.mReceivers) {

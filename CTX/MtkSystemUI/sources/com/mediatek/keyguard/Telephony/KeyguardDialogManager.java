@@ -132,7 +132,7 @@ public class KeyguardDialogManager {
             return this.mInnerDialogShowing;
         }
 
-        public void setLocked(boolean z) {
+        private void setLocked(boolean z) {
             this.mLocked = z;
         }
 
@@ -140,7 +140,7 @@ public class KeyguardDialogManager {
             return this.mLocked;
         }
 
-        public int queryDialogSequenceSeetings() {
+        private int queryDialogSequenceSeetings() {
             return Settings.System.getInt(KeyguardDialogManager.this.mContext.getContentResolver(), "dialog_sequence_settings", 0);
         }
     }

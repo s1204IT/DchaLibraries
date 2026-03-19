@@ -219,7 +219,7 @@ public class DirectoryAccessDetails extends AppInfoBase {
         return 1284;
     }
 
-    static class ExternalVolume {
+    private static class ExternalVolume {
         final List<Pair<String, Boolean>> children = new ArrayList();
         boolean granted;
         final String uuid;

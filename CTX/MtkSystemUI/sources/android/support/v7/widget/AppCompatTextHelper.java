@@ -198,7 +198,7 @@ class AppCompatTextHelper {
         }
     }
 
-    public void onAsyncTypefaceReceived(WeakReference<TextView> textViewWeak, Typeface typeface) {
+    private void onAsyncTypefaceReceived(WeakReference<TextView> textViewWeak, Typeface typeface) {
         if (this.mAsyncFontPending) {
             this.mFontTypeface = typeface;
             TextView textView = textViewWeak.get();

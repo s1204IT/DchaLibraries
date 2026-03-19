@@ -362,7 +362,7 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         }
     }
 
-    public void updateIconClipAmount(ExpandableNotificationRow expandableNotificationRow) {
+    private void updateIconClipAmount(ExpandableNotificationRow expandableNotificationRow) {
         float translationY = expandableNotificationRow.getTranslationY();
         StatusBarIconView statusBarIconView = expandableNotificationRow.getEntry().expandedIcon;
         float translationY2 = getTranslationY() + statusBarIconView.getTop() + statusBarIconView.getTranslationY();
@@ -637,7 +637,7 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         this.mRelativeOffset -= this.mTmp[0];
     }
 
-    public void setOpenedAmount(float f) {
+    private void setOpenedAmount(float f) {
         int partialOverflowExtraPadding;
         this.mNoAnimationsInThisFrame = f == 1.0f && this.mOpenedAmount == 0.0f;
         this.mOpenedAmount = f;
@@ -669,7 +669,7 @@ public class NotificationShelf extends ActivatableNotificationView implements Vi
         return this.mNotGoneIndex;
     }
 
-    public void setHasItemsInStableShelf(boolean z) {
+    private void setHasItemsInStableShelf(boolean z) {
         if (this.mHasItemsInStableShelf != z) {
             this.mHasItemsInStableShelf = z;
             updateInteractiveness();

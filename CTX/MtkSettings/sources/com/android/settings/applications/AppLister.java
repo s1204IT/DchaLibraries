@@ -23,7 +23,7 @@ public abstract class AppLister extends AsyncTask<Void, Void, List<UserAppInfo>>
     }
 
     @Override
-    public List<UserAppInfo> doInBackground(Void... voidArr) {
+    protected List<UserAppInfo> doInBackground(Void... voidArr) {
         ArrayList arrayList = new ArrayList();
         for (UserInfo userInfo : this.mUm.getProfiles(UserHandle.myUserId())) {
             for (ApplicationInfo applicationInfo : this.mPm.getInstalledApplicationsAsUser(33280 | (userInfo.isAdmin() ? 4194304 : 0), userInfo.id)) {
@@ -36,7 +36,7 @@ public abstract class AppLister extends AsyncTask<Void, Void, List<UserAppInfo>>
     }
 
     @Override
-    public void onPostExecute(List<UserAppInfo> list) {
+    protected void onPostExecute(List<UserAppInfo> list) {
         onAppListBuilt(list);
     }
 }

@@ -139,7 +139,7 @@ public class EncryptionInterstitial extends SettingsActivity {
             startLockIntent();
         }
 
-        public void setRequirePasswordState(boolean z) {
+        private void setRequirePasswordState(boolean z) {
             this.mPasswordRequired = z;
         }
 

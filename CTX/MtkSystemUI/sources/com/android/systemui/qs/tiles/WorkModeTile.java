@@ -64,7 +64,7 @@ public class WorkModeTile extends QSTileImpl<QSTile.BooleanState> implements Man
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (!isAvailable()) {
             onManagedProfileRemoved();
         }

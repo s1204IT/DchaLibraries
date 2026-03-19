@@ -32,7 +32,7 @@ public class ItemClickHandler {
         }
     };
 
-    public static void onClick(View view) {
+    private static void onClick(View view) {
         if (view.getWindowToken() == null) {
             return;
         }
@@ -106,7 +106,7 @@ public class ItemClickHandler {
         }
     }
 
-    public static void startMarketIntentForPackage(View view, Launcher launcher, String str) {
+    private static void startMarketIntentForPackage(View view, Launcher launcher, String str) {
         launcher.startActivitySafely(view, new PackageManagerHelper(launcher).getMarketIntent(str), (ItemInfo) view.getTag());
     }
 

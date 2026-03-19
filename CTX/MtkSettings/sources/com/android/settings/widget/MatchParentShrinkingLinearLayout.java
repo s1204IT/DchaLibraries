@@ -957,7 +957,7 @@ public class MatchParentShrinkingLinearLayout extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         if (this.mOrientation == 0) {
             return new LayoutParams(-2, -2);
         }
@@ -968,7 +968,7 @@ public class MatchParentShrinkingLinearLayout extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
         return new LayoutParams(layoutParams);
     }
 

@@ -87,7 +87,7 @@ public class LanguageAndInputSettings extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new PhoneLanguagePreferenceController(context));
         VirtualKeyboardPreferenceController virtualKeyboardPreferenceController = new VirtualKeyboardPreferenceController(context);
@@ -107,7 +107,7 @@ public class LanguageAndInputSettings extends DashboardFragment {
         return arrayList;
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mSummaryLoader;
 

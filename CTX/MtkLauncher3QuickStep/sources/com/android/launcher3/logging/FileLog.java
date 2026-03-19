@@ -164,7 +164,7 @@ public final class FileLog {
         }
     }
 
-    public static void dumpFile(PrintWriter printWriter, String str) throws Throwable {
+    private static void dumpFile(PrintWriter printWriter, String str) throws Throwable {
         BufferedReader bufferedReader;
         File file = new File(sLogsDirectory, str);
         if (file.exists()) {

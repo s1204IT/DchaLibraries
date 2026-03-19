@@ -343,7 +343,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         this.mScrimStateListener.accept(this.mState, Float.valueOf(f), this.mScrimInFront.getColors());
     }
 
-    public void dispatchScrimsVisible() {
+    private void dispatchScrimsVisible() {
         int i;
         if (this.mScrimInFront.getViewAlpha() == 1.0f || this.mScrimBehind.getViewAlpha() == 1.0f) {
             i = 2;
@@ -473,7 +473,7 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Colo
         return true;
     }
 
-    public void onFinished() {
+    private void onFinished() {
         if (this.mWakeLockHeld) {
             this.mWakeLock.release();
             this.mWakeLockHeld = false;

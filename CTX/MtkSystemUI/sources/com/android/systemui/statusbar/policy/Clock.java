@@ -244,7 +244,7 @@ public class Clock extends TextView implements DemoMode, CommandQueue.Callbacks,
         setVisibility(z ? 0 : 8);
     }
 
-    public final void updateClock() {
+    final void updateClock() {
         if (this.mDemoMode) {
             return;
         }

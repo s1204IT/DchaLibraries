@@ -145,7 +145,7 @@ public class RecentsActivity extends BaseDraggingActivity {
         }, 336L, 216L));
     }
 
-    public AnimatorSet composeRecentsLaunchAnimator(TaskView taskView, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
+    private AnimatorSet composeRecentsLaunchAnimator(TaskView taskView, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
         AnimatorSet animatorSet = new AnimatorSet();
         boolean zTaskIsATargetWithMode = TaskUtils.taskIsATargetWithMode(remoteAnimationTargetCompatArr, getTaskId(), 1);
         ClipAnimationHelper clipAnimationHelper = new ClipAnimationHelper();

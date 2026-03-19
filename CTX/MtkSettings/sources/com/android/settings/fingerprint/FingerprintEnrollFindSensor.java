@@ -115,7 +115,7 @@ public class FingerprintEnrollFindSensor extends FingerprintEnrollBase {
         finish();
     }
 
-    public void proceedToEnrolling(boolean z) {
+    private void proceedToEnrolling(boolean z) {
         if (this.mSidecar != null) {
             if (z && this.mSidecar.cancelEnrollment()) {
                 return;

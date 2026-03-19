@@ -98,7 +98,7 @@ public class DefaultVoiceInputPreferenceController extends DefaultAppPreferenceC
         return ((DefaultVoiceInputPicker.VoiceInputDefaultAppInfo) defaultAppInfo2).getSettingIntent();
     }
 
-    public void updatePreference() throws Throwable {
+    private void updatePreference() throws Throwable {
         if (this.mPreference == null) {
             return;
         }

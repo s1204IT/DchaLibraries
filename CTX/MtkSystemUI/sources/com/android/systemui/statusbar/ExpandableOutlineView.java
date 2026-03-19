@@ -63,7 +63,7 @@ public abstract class ExpandableOutlineView extends ExpandableView {
     private static final AnimationProperties ROUNDNESS_PROPERTIES = new AnimationProperties().setDuration(360);
     private static final Path EMPTY_PATH = new Path();
 
-    public Path getClipPath() {
+    private Path getClipPath() {
         return getClipPath(false, false);
     }
 
@@ -315,12 +315,12 @@ public abstract class ExpandableOutlineView extends ExpandableView {
         }
     }
 
-    public void setTopRoundnessInternal(float f) {
+    private void setTopRoundnessInternal(float f) {
         this.mCurrentTopRoundness = f;
         applyRoundness();
     }
 
-    public void setBottomRoundnessInternal(float f) {
+    private void setBottomRoundnessInternal(float f) {
         this.mCurrentBottomRoundness = f;
         applyRoundness();
     }

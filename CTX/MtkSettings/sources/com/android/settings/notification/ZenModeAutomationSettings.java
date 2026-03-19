@@ -46,7 +46,7 @@ public class ZenModeAutomationSettings extends ZenModeSettingsBase {
         return buildPreferenceControllers(context, this, zenServiceListing, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, ZenServiceListing zenServiceListing, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, ZenServiceListing zenServiceListing, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeAddAutomaticRulePreferenceController(context, fragment, zenServiceListing, lifecycle));
         arrayList.add(new ZenModeAutomaticRulesPreferenceController(context, fragment, lifecycle));

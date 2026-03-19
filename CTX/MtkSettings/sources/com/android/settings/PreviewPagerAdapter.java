@@ -145,7 +145,7 @@ public class PreviewPagerAdapter extends PagerAdapter {
         }
     }
 
-    public void runAnimationEndAction() {
+    private void runAnimationEndAction() {
         if (this.mAnimationEndAction != null && !isAnimating()) {
             this.mAnimationEndAction.run();
             this.mAnimationEndAction = null;

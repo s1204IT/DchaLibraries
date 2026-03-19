@@ -261,7 +261,7 @@ public class WidgetPreviewLoader {
         return null;
     }
 
-    public Bitmap generatePreview(BaseActivity baseActivity, WidgetItem widgetItem, Bitmap bitmap, int i, int i2) {
+    private Bitmap generatePreview(BaseActivity baseActivity, WidgetItem widgetItem, Bitmap bitmap, int i, int i2) {
         if (widgetItem.widgetInfo != null) {
             return generateWidgetPreview(baseActivity, widgetItem.widgetInfo, i, bitmap, null);
         }
@@ -466,7 +466,7 @@ public class WidgetPreviewLoader {
         }
 
         @Override
-        public Bitmap doInBackground(Void... voidArr) throws Throwable {
+        protected Bitmap doInBackground(Void... voidArr) throws Throwable {
             Bitmap bitmapCreateBitmap;
             if (isCancelled()) {
                 return null;
@@ -502,7 +502,7 @@ public class WidgetPreviewLoader {
         }
 
         @Override
-        public void onPostExecute(final Bitmap bitmap) {
+        protected void onPostExecute(final Bitmap bitmap) {
             this.mCaller.applyPreview(bitmap);
             if (this.mVersions != null) {
                 WidgetPreviewLoader.this.mWorkerHandler.post(new Runnable() {
@@ -524,7 +524,7 @@ public class WidgetPreviewLoader {
         }
 
         @Override
-        public void onCancelled(final Bitmap bitmap) {
+        protected void onCancelled(final Bitmap bitmap) {
             if (bitmap != null) {
                 WidgetPreviewLoader.this.mWorkerHandler.post(new Runnable() {
                     @Override

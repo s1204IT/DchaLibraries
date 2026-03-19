@@ -82,7 +82,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         super.onStop();
     }
 
-    public void disconnect() {
+    private void disconnect() {
         if (this.mSurfaceShowing) {
             this.mExt.disconnectWfdSinkConnection();
         }
@@ -125,7 +125,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         this.mGuideShowing = true;
     }
 
-    public void removeWfdSinkGuide() {
+    private void removeWfdSinkGuide() {
         View view;
         if (this.mGuideShowing && (view = (View) this.mSinkViewLayout.getTag(R.string.wfd_sink_guide_content)) != null) {
             this.mSinkViewLayout.removeView(view);
@@ -135,7 +135,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         this.mGuideShowing = false;
     }
 
-    public void addCountdownView(String str) {
+    private void addCountdownView(String str) {
         if (this.mCountdownShowing) {
             return;
         }
@@ -146,7 +146,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         this.mCountdownShowing = true;
     }
 
-    public void removeCountDown() {
+    private void removeCountDown() {
         View view;
         if (this.mCountdownShowing && (view = (View) this.mSinkViewLayout.getTag(R.id.wfd_sink_countdown_num)) != null) {
             this.mSinkViewLayout.removeView(view);
@@ -250,7 +250,7 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
         }
     }
 
-    public void requestFullScreen(final int i) {
+    private void requestFullScreen(final int i) {
         if (Build.VERSION.SDK_INT >= 14) {
             i |= 2;
         }
@@ -433,15 +433,15 @@ public final class WfdSinkSurfaceFragment extends DialogFragment implements Surf
             }
         }
 
-        public void setCatchEvents(boolean z) {
+        private void setCatchEvents(boolean z) {
             this.mCatchEvents = z;
         }
 
-        public void setFullScreenFlag(boolean z) {
+        private void setFullScreenFlag(boolean z) {
             this.mFullScreenFlag = z;
         }
 
-        public void setOnFocusGetCallback(Runnable runnable) {
+        private void setOnFocusGetCallback(Runnable runnable) {
             this.mFocusGetCallback = runnable;
         }
 

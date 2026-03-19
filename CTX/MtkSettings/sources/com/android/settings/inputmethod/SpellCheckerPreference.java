@@ -85,7 +85,7 @@ class SpellCheckerPreference extends CustomListPreference {
         });
     }
 
-    public void onSettingsButtonClicked() {
+    private void onSettingsButtonClicked() {
         Context context = getContext();
         try {
             Intent intent = this.mIntent;

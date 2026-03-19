@@ -141,14 +141,14 @@ public class PowerOffAlarmView extends RelativeLayout implements KeyguardSecurit
         }
     }
 
-    public void triggerPing() {
+    private void triggerPing() {
         if (this.mPingEnabled) {
             this.mGlowPadView.ping();
             this.mHandler.sendEmptyMessageDelayed(com.android.systemui.plugins.R.styleable.AppCompatTheme_textAppearanceSearchResultSubtitle, 1200L);
         }
     }
 
-    public void snooze() {
+    private void snooze() {
         Log.d("PowerOffAlarmView", "snooze selected");
         sendBR("com.android.deskclock.SNOOZE_ALARM");
     }

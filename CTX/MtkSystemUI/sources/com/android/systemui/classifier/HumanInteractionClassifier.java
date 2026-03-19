@@ -48,7 +48,7 @@ public class HumanInteractionClassifier extends Classifier {
         return sInstance;
     }
 
-    public void updateConfiguration() {
+    private void updateConfiguration() {
         this.mEnableClassifier = Settings.Global.getInt(this.mContext.getContentResolver(), "HIC_enable", this.mContext.getResources().getBoolean(R.bool.config_lockscreenAntiFalsingClassifierEnabled) ? 1 : 0) != 0;
     }
 

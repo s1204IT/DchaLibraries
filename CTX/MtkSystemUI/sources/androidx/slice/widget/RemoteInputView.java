@@ -79,7 +79,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         this.mEditText.mRemoteInputView = this;
     }
 
-    public void sendRemoteInput() {
+    private void sendRemoteInput() {
         Bundle results = new Bundle();
         results.putString(this.mRemoteInput.getResultKey(), this.mEditText.getText().toString());
         Intent fillInIntent = new Intent().addFlags(268435456);
@@ -117,7 +117,7 @@ public class RemoteInputView extends LinearLayout implements TextWatcher, View.O
         return true;
     }
 
-    public void onDefocus() {
+    private void onDefocus() {
         setVisibility(4);
     }
 

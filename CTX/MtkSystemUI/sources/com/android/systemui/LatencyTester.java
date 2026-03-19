@@ -34,7 +34,7 @@ public class LatencyTester extends SystemUI {
         }, intentFilter);
     }
 
-    public void fakeTurnOnScreen() {
+    private void fakeTurnOnScreen() {
         PowerManager powerManager = (PowerManager) this.mContext.getSystemService(PowerManager.class);
         if (LatencyTracker.isEnabled(this.mContext)) {
             LatencyTracker.getInstance(this.mContext).onActionStart(5);
@@ -42,7 +42,7 @@ public class LatencyTester extends SystemUI {
         powerManager.wakeUp(SystemClock.uptimeMillis(), "android.policy:LATENCY_TESTS");
     }
 
-    public void fakeWakeAndUnlock() {
+    private void fakeWakeAndUnlock() {
         FingerprintUnlockController fingerprintUnlockController = ((StatusBar) getComponent(StatusBar.class)).getFingerprintUnlockController();
         fingerprintUnlockController.onFingerprintAcquired();
         fingerprintUnlockController.onFingerprintAuthenticated(KeyguardUpdateMonitor.getCurrentUser());

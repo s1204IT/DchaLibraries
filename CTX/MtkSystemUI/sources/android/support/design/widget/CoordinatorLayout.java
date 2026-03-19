@@ -1174,7 +1174,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         if (p instanceof LayoutParams) {
             return new LayoutParams((LayoutParams) p);
         }
@@ -1185,7 +1185,7 @@ public class CoordinatorLayout extends ViewGroup implements NestedScrollingParen
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-2, -2);
     }
 

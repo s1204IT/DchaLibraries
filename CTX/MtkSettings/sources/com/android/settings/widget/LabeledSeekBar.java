@@ -81,7 +81,7 @@ public class LabeledSeekBar extends SeekBar {
         return this.mAccessHelper.dispatchHoverEvent(motionEvent) || super.dispatchHoverEvent(motionEvent);
     }
 
-    public void sendClickEventForAccessibility(int i) {
+    private void sendClickEventForAccessibility(int i) {
         this.mAccessHelper.invalidateRoot();
         this.mAccessHelper.sendEventForVirtualView(i, 1);
     }

@@ -1,0 +1,202 @@
+package com.google.android.mms.util;
+
+import android.content.ContentUris;
+import android.content.UriMatcher;
+import android.net.Uri;
+import android.provider.Telephony;
+import java.util.HashMap;
+import java.util.HashSet;
+
+public final class PduCache extends AbstractCache<Uri, PduCacheEntry> {
+    private static final boolean DEBUG = false;
+    private static final boolean LOCAL_LOGV = false;
+    private static final HashMap<Integer, Integer> MATCH_TO_MSGBOX_ID_MAP;
+    private static final int MMS_ALL = 0;
+    private static final int MMS_ALL_ID = 1;
+    private static final int MMS_CONVERSATION = 10;
+    private static final int MMS_CONVERSATION_ID = 11;
+    private static final int MMS_DRAFTS = 6;
+    private static final int MMS_DRAFTS_ID = 7;
+    private static final int MMS_INBOX = 2;
+    private static final int MMS_INBOX_ID = 3;
+    private static final int MMS_OUTBOX = 8;
+    private static final int MMS_OUTBOX_ID = 9;
+    private static final int MMS_SENT = 4;
+    private static final int MMS_SENT_ID = 5;
+    private static final String TAG = "PduCache";
+    private static final UriMatcher URI_MATCHER = new UriMatcher(-1);
+    private static PduCache sInstance;
+    private final HashMap<Integer, HashSet<Uri>> mMessageBoxes = new HashMap<>();
+    private final HashMap<Long, HashSet<Uri>> mThreads = new HashMap<>();
+    private final HashSet<Uri> mUpdating = new HashSet<>();
+
+    static {
+        URI_MATCHER.addURI("mms", null, 0);
+        URI_MATCHER.addURI("mms", "#", 1);
+        URI_MATCHER.addURI("mms", "inbox", 2);
+        URI_MATCHER.addURI("mms", "inbox/#", 3);
+        URI_MATCHER.addURI("mms", "sent", 4);
+        URI_MATCHER.addURI("mms", "sent/#", 5);
+        URI_MATCHER.addURI("mms", "drafts", 6);
+        URI_MATCHER.addURI("mms", "drafts/#", 7);
+        URI_MATCHER.addURI("mms", "outbox", 8);
+        URI_MATCHER.addURI("mms", "outbox/#", 9);
+        URI_MATCHER.addURI("mms-sms", "conversations", 10);
+        URI_MATCHER.addURI("mms-sms", "conversations/#", 11);
+        MATCH_TO_MSGBOX_ID_MAP = new HashMap<>();
+        MATCH_TO_MSGBOX_ID_MAP.put(2, 1);
+        MATCH_TO_MSGBOX_ID_MAP.put(4, 2);
+        MATCH_TO_MSGBOX_ID_MAP.put(6, 3);
+        MATCH_TO_MSGBOX_ID_MAP.put(8, 4);
+    }
+
+    private PduCache() {
+    }
+
+    public static final synchronized PduCache getInstance() {
+        if (sInstance == null) {
+            sInstance = new PduCache();
+        }
+        return sInstance;
+    }
+
+    @Override
+    public synchronized boolean put(Uri uri, PduCacheEntry pduCacheEntry) {
+        boolean zPut;
+        int messageBox = pduCacheEntry.getMessageBox();
+        HashSet<Uri> hashSet = this.mMessageBoxes.get(Integer.valueOf(messageBox));
+        if (hashSet == null) {
+            hashSet = new HashSet<>();
+            this.mMessageBoxes.put(Integer.valueOf(messageBox), hashSet);
+        }
+        long threadId = pduCacheEntry.getThreadId();
+        HashSet<Uri> hashSet2 = this.mThreads.get(Long.valueOf(threadId));
+        if (hashSet2 == null) {
+            hashSet2 = new HashSet<>();
+            this.mThreads.put(Long.valueOf(threadId), hashSet2);
+        }
+        Uri uriNormalizeKey = normalizeKey(uri);
+        zPut = super.put(uriNormalizeKey, pduCacheEntry);
+        if (zPut) {
+            hashSet.add(uriNormalizeKey);
+            hashSet2.add(uriNormalizeKey);
+        }
+        setUpdating(uri, false);
+        return zPut;
+    }
+
+    public synchronized void setUpdating(Uri uri, boolean z) {
+        try {
+            if (z) {
+                this.mUpdating.add(uri);
+            } else {
+                this.mUpdating.remove(uri);
+            }
+        } catch (Throwable th) {
+            throw th;
+        }
+    }
+
+    public synchronized boolean isUpdating(Uri uri) {
+        return this.mUpdating.contains(uri);
+    }
+
+    @Override
+    public synchronized PduCacheEntry purge(Uri uri) {
+        int iMatch = URI_MATCHER.match(uri);
+        switch (iMatch) {
+            case 0:
+            case 10:
+                purgeAll();
+                return null;
+            case 1:
+                return purgeSingleEntry(uri);
+            case 2:
+            case 4:
+            case 6:
+            case 8:
+                purgeByMessageBox(MATCH_TO_MSGBOX_ID_MAP.get(Integer.valueOf(iMatch)));
+                return null;
+            case 3:
+            case 5:
+            case 7:
+            case 9:
+                return purgeSingleEntry(Uri.withAppendedPath(Telephony.Mms.CONTENT_URI, uri.getLastPathSegment()));
+            case 11:
+                purgeByThreadId(ContentUris.parseId(uri));
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    private PduCacheEntry purgeSingleEntry(Uri uri) {
+        this.mUpdating.remove(uri);
+        PduCacheEntry pduCacheEntry = (PduCacheEntry) super.purge(uri);
+        if (pduCacheEntry != null) {
+            removeFromThreads(uri, pduCacheEntry);
+            removeFromMessageBoxes(uri, pduCacheEntry);
+            return pduCacheEntry;
+        }
+        return null;
+    }
+
+    @Override
+    public synchronized void purgeAll() {
+        super.purgeAll();
+        this.mMessageBoxes.clear();
+        this.mThreads.clear();
+        this.mUpdating.clear();
+    }
+
+    private Uri normalizeKey(Uri uri) {
+        int iMatch = URI_MATCHER.match(uri);
+        if (iMatch == 1) {
+            return uri;
+        }
+        if (iMatch == 3 || iMatch == 5 || iMatch == 7 || iMatch == 9) {
+            return Uri.withAppendedPath(Telephony.Mms.CONTENT_URI, uri.getLastPathSegment());
+        }
+        return null;
+    }
+
+    private void purgeByMessageBox(Integer num) {
+        HashSet<Uri> hashSetRemove;
+        if (num != null && (hashSetRemove = this.mMessageBoxes.remove(num)) != null) {
+            for (Uri uri : hashSetRemove) {
+                this.mUpdating.remove(uri);
+                PduCacheEntry pduCacheEntry = (PduCacheEntry) super.purge(uri);
+                if (pduCacheEntry != null) {
+                    removeFromThreads(uri, pduCacheEntry);
+                }
+            }
+        }
+    }
+
+    private void removeFromThreads(Uri uri, PduCacheEntry pduCacheEntry) {
+        HashSet<Uri> hashSet = this.mThreads.get(Long.valueOf(pduCacheEntry.getThreadId()));
+        if (hashSet != null) {
+            hashSet.remove(uri);
+        }
+    }
+
+    private void purgeByThreadId(long j) {
+        HashSet<Uri> hashSetRemove = this.mThreads.remove(Long.valueOf(j));
+        if (hashSetRemove != null) {
+            for (Uri uri : hashSetRemove) {
+                this.mUpdating.remove(uri);
+                PduCacheEntry pduCacheEntry = (PduCacheEntry) super.purge(uri);
+                if (pduCacheEntry != null) {
+                    removeFromMessageBoxes(uri, pduCacheEntry);
+                }
+            }
+        }
+    }
+
+    private void removeFromMessageBoxes(Uri uri, PduCacheEntry pduCacheEntry) {
+        HashSet<Uri> hashSet = this.mThreads.get(Long.valueOf(pduCacheEntry.getMessageBox()));
+        if (hashSet != null) {
+            hashSet.remove(uri);
+        }
+    }
+}

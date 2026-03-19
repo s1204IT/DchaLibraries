@@ -68,7 +68,7 @@ public class ZenModeSettings extends ZenModeSettingsBase {
         return R.string.help_uri_interruptions;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, FragmentManager fragmentManager) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, FragmentManager fragmentManager) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeBehaviorMsgEventReminderPreferenceController(context, lifecycle));
         arrayList.add(new ZenModeBehaviorSoundPreferenceController(context, lifecycle));

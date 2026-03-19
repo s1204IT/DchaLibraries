@@ -38,6 +38,6 @@ public class AppPrefLoader extends AsyncLoader<ArraySet<Preference>> {
     }
 
     @Override
-    public void onDiscardResult(ArraySet<Preference> arraySet) {
+    protected void onDiscardResult(ArraySet<Preference> arraySet) {
     }
 }

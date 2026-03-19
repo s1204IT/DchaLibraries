@@ -254,7 +254,7 @@ public class GlowPadView extends View {
         setMeasuredDimension(iResolveMeasured, iResolveMeasured2);
     }
 
-    public void switchToState(int i, float f, float f2) {
+    private void switchToState(int i, float f, float f2) {
         switch (i) {
             case 0:
                 deactivateTargets();
@@ -317,7 +317,7 @@ public class GlowPadView extends View {
         }
     }
 
-    public void dispatchOnFinishFinalAnimation() {
+    private void dispatchOnFinishFinalAnimation() {
         if (this.mOnTriggerListener != null) {
             this.mOnTriggerListener.onFinishFinalAnimation();
         }
@@ -352,7 +352,7 @@ public class GlowPadView extends View {
         }
     }
 
-    public void hideTargets(boolean z, boolean z2) {
+    private void hideTargets(boolean z, boolean z2) {
         float f;
         this.mTargetAnimations.cancel();
         this.mAnimatingTargets = z;
@@ -413,7 +413,7 @@ public class GlowPadView extends View {
         return arrayList;
     }
 
-    public void internalSetTargetResources(int i) {
+    private void internalSetTargetResources(int i) {
         ArrayList<TargetDrawable> arrayListLoadDrawableArray = loadDrawableArray(i);
         this.mTargetDrawables = arrayListLoadDrawableArray;
         this.mTargetResourceId = i;

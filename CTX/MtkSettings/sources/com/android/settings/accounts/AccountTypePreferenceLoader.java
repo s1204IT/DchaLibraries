@@ -101,7 +101,7 @@ public class AccountTypePreferenceLoader {
         }
     }
 
-    public boolean isSafeIntent(PackageManager packageManager, Intent intent, String str) {
+    private boolean isSafeIntent(PackageManager packageManager, Intent intent, String str) {
         AuthenticatorDescription accountTypeDescription = this.mAuthenticatorHelper.getAccountTypeDescription(str);
         ResolveInfo resolveInfoResolveActivityAsUser = packageManager.resolveActivityAsUser(intent, 0, this.mUserHandle.getIdentifier());
         if (resolveInfoResolveActivityAsUser == null) {

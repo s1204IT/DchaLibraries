@@ -168,7 +168,7 @@ public class PreloadIconDrawable extends FastBitmapDrawable {
         this.mCurrentAnim.start();
     }
 
-    public void setInternalProgress(float f) {
+    private void setInternalProgress(float f) {
         this.mInternalStateProgress = f;
         if (f <= 0.0f) {
             this.mIconScale = SMALL_SCALE;

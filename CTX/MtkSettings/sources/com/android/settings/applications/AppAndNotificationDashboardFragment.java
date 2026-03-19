@@ -69,7 +69,7 @@ public class AppAndNotificationDashboardFragment extends DashboardFragment {
         return buildPreferenceControllers(context, application, this);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Application application, Fragment fragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Application application, Fragment fragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new EmergencyBroadcastPreferenceController(context, "app_and_notif_cell_broadcast_settings"));
         arrayList.add(new SpecialAppAccessPreferenceController(context));

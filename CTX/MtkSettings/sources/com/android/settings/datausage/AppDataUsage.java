@@ -286,7 +286,7 @@ public class AppDataUsage extends DataUsageBase implements Preference.OnPreferen
         }
     }
 
-    public void bindData() {
+    private void bindData() {
         long j;
         long j2 = 0;
         if (this.mChartData == null || this.mStart == 0) {

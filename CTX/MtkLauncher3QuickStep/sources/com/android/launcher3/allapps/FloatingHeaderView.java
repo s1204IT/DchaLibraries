@@ -109,7 +109,7 @@ public class FloatingHeaderView extends LinearLayout implements ValueAnimator.An
         return Math.abs(i) <= this.mMaxTranslation;
     }
 
-    public void moved(int i) {
+    private void moved(int i) {
         if (this.mHeaderCollapsed) {
             if (i <= this.mSnappedScrolledY) {
                 if (canSnapAt(i)) {

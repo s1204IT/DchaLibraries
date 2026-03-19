@@ -99,7 +99,7 @@ public class DiscoverableFooterPreferenceController extends BasePreferenceContro
         this.mAlwaysDiscoverable.stop();
     }
 
-    public void updateFooterPreferenceTitle(int i) {
+    private void updateFooterPreferenceTitle(int i) {
         if (i == 12) {
             this.mPreference.setTitle(getPreferenceTitle());
         } else {

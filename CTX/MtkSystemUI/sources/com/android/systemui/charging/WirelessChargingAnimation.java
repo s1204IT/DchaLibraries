@@ -86,7 +86,7 @@ public class WirelessChargingAnimation {
             this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 1), j);
         }
 
-        public void handleShow() {
+        private void handleShow() {
             if (this.mView != this.mNextView) {
                 handleHide();
                 this.mView = this.mNextView;
@@ -112,7 +112,7 @@ public class WirelessChargingAnimation {
             }
         }
 
-        public void handleHide() {
+        private void handleHide() {
             if (this.mView != null) {
                 if (this.mView.getParent() != null) {
                     if (this.mCallback != null) {

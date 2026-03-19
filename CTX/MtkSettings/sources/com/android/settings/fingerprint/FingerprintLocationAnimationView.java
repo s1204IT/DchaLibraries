@@ -93,7 +93,7 @@ public class FingerprintLocationAnimationView extends View implements Fingerprin
         stopAnimation();
     }
 
-    public void startPhase() {
+    private void startPhase() {
         startRadiusAnimation();
         startAlphaAnimation();
     }

@@ -264,7 +264,7 @@ public class RecentsOnboarding {
         recentsOnboarding.notifyOnTip(1, 1);
     }
 
-    public void notifyOnTip(int i, int i2) {
+    private void notifyOnTip(int i, int i2) {
         try {
             IOverviewProxy proxy = this.mOverviewProxyService.getProxy();
             if (proxy != null) {
@@ -386,29 +386,29 @@ public class RecentsOnboarding {
         return layoutParams;
     }
 
-    public boolean hasSeenSwipeUpOnboarding() {
+    private boolean hasSeenSwipeUpOnboarding() {
         return Prefs.getBoolean(this.mContext, "HasSeenRecentsSwipeUpOnboarding", false);
     }
 
-    public void setHasSeenSwipeUpOnboarding(boolean z) {
+    private void setHasSeenSwipeUpOnboarding(boolean z) {
         Prefs.putBoolean(this.mContext, "HasSeenRecentsSwipeUpOnboarding", z);
         if (z && hasSeenQuickScrubOnboarding()) {
             onDisconnectedFromLauncher();
         }
     }
 
-    public boolean hasSeenQuickScrubOnboarding() {
+    private boolean hasSeenQuickScrubOnboarding() {
         return Prefs.getBoolean(this.mContext, "HasSeenRecentsQuickScrubOnboarding", false);
     }
 
-    public void setHasSeenQuickScrubOnboarding(boolean z) {
+    private void setHasSeenQuickScrubOnboarding(boolean z) {
         Prefs.putBoolean(this.mContext, "HasSeenRecentsQuickScrubOnboarding", z);
         if (z && hasSeenSwipeUpOnboarding()) {
             onDisconnectedFromLauncher();
         }
     }
 
-    public int getDismissedSwipeUpOnboardingCount() {
+    private int getDismissedSwipeUpOnboardingCount() {
         return Prefs.getInt(this.mContext, "DismissedRecentsSwipeUpOnboardingCount", 0);
     }
 
@@ -416,19 +416,19 @@ public class RecentsOnboarding {
         Prefs.putInt(this.mContext, "DismissedRecentsSwipeUpOnboardingCount", i);
     }
 
-    public boolean hasDismissedQuickScrubOnboardingOnce() {
+    private boolean hasDismissedQuickScrubOnboardingOnce() {
         return Prefs.getBoolean(this.mContext, "HasDismissedRecentsQuickScrubOnboardingOnce", false);
     }
 
-    public void setHasDismissedQuickScrubOnboardingOnce(boolean z) {
+    private void setHasDismissedQuickScrubOnboardingOnce(boolean z) {
         Prefs.putBoolean(this.mContext, "HasDismissedRecentsQuickScrubOnboardingOnce", z);
     }
 
-    public int getOpenedOverviewFromHomeCount() {
+    private int getOpenedOverviewFromHomeCount() {
         return Prefs.getInt(this.mContext, "OverviewOpenedFromHomeCount", 0);
     }
 
-    public void incrementOpenedOverviewFromHomeCount() {
+    private void incrementOpenedOverviewFromHomeCount() {
         int openedOverviewFromHomeCount = getOpenedOverviewFromHomeCount();
         if (openedOverviewFromHomeCount >= 3) {
             return;
@@ -440,11 +440,11 @@ public class RecentsOnboarding {
         Prefs.putInt(this.mContext, "OverviewOpenedFromHomeCount", i);
     }
 
-    public int getOpenedOverviewCount() {
+    private int getOpenedOverviewCount() {
         return Prefs.getInt(this.mContext, "OverviewOpenedCount", 0);
     }
 
-    public void incrementOpenedOverviewCount() {
+    private void incrementOpenedOverviewCount() {
         int openedOverviewCount = getOpenedOverviewCount();
         if (openedOverviewCount >= 10) {
             return;

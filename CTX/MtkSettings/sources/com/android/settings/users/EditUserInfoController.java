@@ -112,7 +112,7 @@ public class EditUserInfoController {
                             }
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
-                                public Void doInBackground(Void... voidArr) {
+                                protected Void doInBackground(Void... voidArr) {
                                     EditUserInfoController.this.mUserManager.setUserIcon(EditUserInfoController.this.mUser.getIdentifier(), EditUserInfoController.this.mEditUserPhotoController.getNewUserPhotoBitmap());
                                     return null;
                                 }
@@ -153,7 +153,7 @@ public class EditUserInfoController {
                         }
                         new AsyncTask<Void, Void, Void>() {
                             @Override
-                            public Void doInBackground(Void... voidArr) {
+                            protected Void doInBackground(Void... voidArr) {
                                 EditUserInfoController.this.mUserManager.setUserIcon(EditUserInfoController.this.mUser.getIdentifier(), EditUserInfoController.this.mEditUserPhotoController.getNewUserPhotoBitmap());
                                 return null;
                             }

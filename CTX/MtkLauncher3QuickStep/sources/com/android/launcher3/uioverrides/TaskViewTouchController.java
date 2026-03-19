@@ -234,7 +234,7 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity> ex
         animationPlayer.start();
     }
 
-    public void onCurrentAnimationEnd(boolean z, int i) {
+    private void onCurrentAnimationEnd(boolean z, int i) {
         if (this.mPendingAnimation != null) {
             this.mPendingAnimation.finish(z, i);
             this.mPendingAnimation = null;
@@ -242,7 +242,7 @@ public abstract class TaskViewTouchController<T extends BaseDraggingActivity> ex
         clearState();
     }
 
-    public void clearState() {
+    private void clearState() {
         this.mDetector.finishedScrolling();
         this.mDetector.setDetectableScrollConditions(0, false);
         this.mTaskBeingDragged = null;

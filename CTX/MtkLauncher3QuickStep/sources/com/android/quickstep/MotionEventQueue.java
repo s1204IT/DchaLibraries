@@ -89,11 +89,11 @@ public class MotionEventQueue {
         }
     }
 
-    public void frameCallbackForMainChoreographer() {
+    private void frameCallbackForMainChoreographer() {
         runFor(this.mMainChoreographer);
     }
 
-    public void frameCallbackForInterimChoreographer() {
+    private void frameCallbackForInterimChoreographer() {
         runFor(this.mInterimChoreographer);
     }
 

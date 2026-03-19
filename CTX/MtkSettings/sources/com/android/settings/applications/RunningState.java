@@ -692,7 +692,7 @@ public class RunningState {
         return (runningAppProcessInfo.flags & 2) == 0 && runningAppProcessInfo.importance >= 100 && runningAppProcessInfo.importance < 350 && runningAppProcessInfo.importanceReasonCode == 0;
     }
 
-    public void reset() {
+    private void reset() {
         this.mServiceProcessesByName.clear();
         this.mServiceProcessesByPid.clear();
         this.mInterestingProcesses.clear();
@@ -727,7 +727,7 @@ public class RunningState {
         mergedItem2.mChildren.add(mergedItem);
     }
 
-    public boolean update(Context context, ActivityManager activityManager) {
+    private boolean update(Context context, ActivityManager activityManager) {
         int i;
         boolean z;
         long j;

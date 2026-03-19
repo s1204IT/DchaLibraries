@@ -94,7 +94,7 @@ public class CryptKeeperSettings extends InstrumentedPreferenceFragment {
         activity.setTitle(R.string.crypt_keeper_encrypt_title);
     }
 
-    public boolean runKeyguardConfirmation(int i) {
+    private boolean runKeyguardConfirmation(int i) {
         Resources resources = getActivity().getResources();
         ChooseLockSettingsHelper chooseLockSettingsHelper = new ChooseLockSettingsHelper(getActivity(), this);
         if (chooseLockSettingsHelper.utils().getKeyguardStoredPasswordQuality(UserHandle.myUserId()) == 0) {

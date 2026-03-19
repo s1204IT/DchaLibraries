@@ -42,7 +42,7 @@ public class DozePauser implements DozeMachine.Part {
         }
     }
 
-    public void onTimeout() {
+    private void onTimeout() {
         this.mMachine.requestState(DozeMachine.State.DOZE_AOD_PAUSED);
     }
 }

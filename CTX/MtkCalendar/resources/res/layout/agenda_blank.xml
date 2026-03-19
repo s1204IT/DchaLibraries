@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/agenda_day_bar_background_color"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <View
+        android:background="@color/agenda_list_separator_color"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+    <TextView
+        android:textColor="?android:attr/textColorSecondary"
+        android:gravity="center"
+        android:id="@+id/blank_text"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        style="?android:attr/textAppearanceMediumInverse"/>
+    <View
+        android:background="@color/agenda_list_separator_color"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+</LinearLayout>

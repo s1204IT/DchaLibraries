@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="startYear" format="integer">
+    </attr>
+    <attr name="endYear" format="integer">
+    </attr>
+    <attr name="spinnersShown" format="boolean">
+    </attr>
+    <attr name="calendarViewShown" format="boolean">
+    </attr>
+    <attr name="minDate" format="string">
+    </attr>
+    <attr name="maxDate" format="string">
+    </attr>
+    <attr name="datePickerStyle" format="reference">
+    </attr>
+    <attr name="invalidChipBackground" format="reference">
+    </attr>
+    <attr name="chipBackground" format="reference">
+    </attr>
+    <attr name="chipBackgroundPressed" format="reference">
+    </attr>
+    <attr name="chipDelete" format="reference">
+    </attr>
+    <attr name="chipAlternatesLayout" format="reference">
+    </attr>
+    <attr name="chipPadding" format="reference">
+    </attr>
+    <attr name="chipHeight" format="reference">
+    </attr>
+    <attr name="chipFontSize" format="reference">
+    </attr>
+</resources>

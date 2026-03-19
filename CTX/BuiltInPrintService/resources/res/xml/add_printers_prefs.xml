@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:icon="@drawable/ic_menu_add"
+        android:persistent="false"
+        android:title="@string/add_printer_by_ip"
+        android:key="add_by_ip"
+        android:order="1"/>
+    <Preference
+        android:icon="@drawable/ic_menu_search"
+        android:persistent="false"
+        android:title="@string/find_wifi_direct"
+        android:key="find_wifi_direct"
+        android:order="2"/>
+    <PreferenceCategory
+        android:persistent="false"
+        android:title="@string/saved_printers"
+        android:key="saved_printers"
+        android:order="3"/>
+</PreferenceScreen>

@@ -60,7 +60,7 @@ public class WifiP2pPreferenceController extends AbstractPreferenceController im
         return "wifi_direct";
     }
 
-    public void togglePreferences() {
+    private void togglePreferences() {
         if (this.mWifiDirectPref != null) {
             this.mWifiDirectPref.setEnabled(this.mWifiManager.isWifiEnabled());
         }

@@ -87,7 +87,7 @@ public class BandMode extends Activity {
         this.mPhone.queryAvailableBandMode(this.mHandler.obtainMessage(100));
     }
 
-    public void bandListLoaded(AsyncResult asyncResult) {
+    private void bandListLoaded(AsyncResult asyncResult) {
         if (this.mProgressPanel != null) {
             this.mProgressPanel.dismiss();
         }
@@ -119,7 +119,7 @@ public class BandMode extends Activity {
         this.mBandList.requestFocus();
     }
 
-    public void displayBandSelectionResult(Throwable th) {
+    private void displayBandSelectionResult(Throwable th) {
         String str;
         String str2 = getString(R.string.band_mode_set) + " [" + this.mTargetBand.toString() + "] ";
         if (th != null) {

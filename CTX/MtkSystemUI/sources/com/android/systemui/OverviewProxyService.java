@@ -277,7 +277,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         }
     }
 
-    public void internalConnectToCurrentUser() {
+    private void internalConnectToCurrentUser() {
         boolean zBindServiceAsUser;
         disconnectFromLauncherService();
         if (!this.mDeviceProvisionedController.isCurrentUserSetup() || !isEnabled()) {
@@ -339,13 +339,13 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         }
     }
 
-    public void notifyBackButtonAlphaChanged(float f, boolean z) {
+    private void notifyBackButtonAlphaChanged(float f, boolean z) {
         for (int size = this.mConnectionCallbacks.size() - 1; size >= 0; size--) {
             this.mConnectionCallbacks.get(size).onBackButtonAlphaChanged(f, z);
         }
     }
 
-    public void notifyConnectionChanged() {
+    private void notifyConnectionChanged() {
         for (int size = this.mConnectionCallbacks.size() - 1; size >= 0; size--) {
             this.mConnectionCallbacks.get(size).onConnectionChanged(this.mOverviewProxy != null);
         }
@@ -363,7 +363,7 @@ public class OverviewProxyService implements Dumpable, CallbackController<Overvi
         }
     }
 
-    public void updateEnabledState() {
+    private void updateEnabledState() {
         this.mIsEnabled = this.mContext.getPackageManager().resolveServiceAsUser(this.mQuickStepIntent, 262144, ActivityManagerWrapper.getInstance().getCurrentUserId()) != null;
     }
 

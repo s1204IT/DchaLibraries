@@ -63,7 +63,7 @@ public class QSIconViewImpl extends QSIconView {
         setIcon((ImageView) this.mIcon, state);
     }
 
-    public void updateIcon(ImageView imageView, QSTile.State state) {
+    protected void updateIcon(ImageView imageView, QSTile.State state) {
         Drawable drawable;
         QSTile.Icon icon = state.iconSupplier != null ? state.iconSupplier.get() : state.icon;
         if (!Objects.equals(icon, imageView.getTag(R.id.qs_icon_tag)) || !Objects.equals(state.slash, imageView.getTag(R.id.qs_slash_tag))) {

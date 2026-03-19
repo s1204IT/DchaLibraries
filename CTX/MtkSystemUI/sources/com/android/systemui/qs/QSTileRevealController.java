@@ -70,7 +70,7 @@ public class QSTileRevealController {
         }
     }
 
-    public void addTileSpecsToRevealed(ArraySet<String> arraySet) {
+    private void addTileSpecsToRevealed(ArraySet<String> arraySet) {
         ArraySet arraySet2 = new ArraySet(Prefs.getStringSet(this.mContext, "QsTileSpecsRevealed", Collections.EMPTY_SET));
         arraySet2.addAll((ArraySet) arraySet);
         Prefs.putStringSet(this.mContext, "QsTileSpecsRevealed", arraySet2);

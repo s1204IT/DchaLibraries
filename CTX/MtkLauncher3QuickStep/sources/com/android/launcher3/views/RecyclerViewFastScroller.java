@@ -132,7 +132,7 @@ public class RecyclerViewFastScroller extends View {
         return this.mThumbOffsetY;
     }
 
-    public void setTrackWidth(int i) {
+    private void setTrackWidth(int i) {
         if (this.mWidth == i) {
             return;
         }

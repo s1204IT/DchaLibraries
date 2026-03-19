@@ -58,7 +58,7 @@ public class NotificationAccessConfirmationActivity extends Activity implements 
         super.onPause();
     }
 
-    public void onAllow() {
+    private void onAllow() {
         try {
             if (!"android.permission.BIND_NOTIFICATION_LISTENER_SERVICE".equals(getPackageManager().getServiceInfo(this.mComponentName, 0).permission)) {
                 Slog.e("NotificationAccessConfirmationActivity", "Service " + this.mComponentName + " lacks permission android.permission.BIND_NOTIFICATION_LISTENER_SERVICE");

@@ -15,7 +15,7 @@ public class SuggestionLoader extends AsyncLoader<List<Suggestion>> {
     }
 
     @Override
-    public void onDiscardResult(List<Suggestion> list) {
+    protected void onDiscardResult(List<Suggestion> list) {
     }
 
     @Override

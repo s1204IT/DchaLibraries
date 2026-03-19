@@ -351,7 +351,7 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         }
     }
 
-    public void uninstallPkg(String str, boolean z, boolean z2) {
+    private void uninstallPkg(String str, boolean z, boolean z2) {
         stopListeningToPackageRemove();
         Intent intent = new Intent("android.intent.action.UNINSTALL_PACKAGE", Uri.parse("package:" + str));
         intent.putExtra("android.intent.extra.UNINSTALL_ALL_USERS", z);
@@ -360,7 +360,7 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         this.mDisableAfterUninstall = z2;
     }
 
-    public void forceStopPackage(String str) {
+    private void forceStopPackage(String str) {
         this.mMetricsFeatureProvider.action(getContext(), 807, str, new Pair[0]);
         ActivityManager activityManager = (ActivityManager) getActivity().getSystemService("activity");
         Log.d("AppInfoDashboard", "Stopping package " + str);
@@ -383,7 +383,7 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         new SubSettingLauncher(settingsPreferenceFragment.getContext()).setDestination(cls.getName()).setArguments(bundle).setTitle(i).setResultListener(settingsPreferenceFragment, 1).setSourceMetricsCategory(settingsPreferenceFragment.getMetricsCategory()).launch();
     }
 
-    public void handleUninstallButtonClick() {
+    void handleUninstallButtonClick() {
         if (this.mAppEntry == null) {
             setIntentAndFinish(true, true);
             return;
@@ -425,7 +425,7 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         }
     }
 
-    public void handleForceStopButtonClick() {
+    void handleForceStopButtonClick() {
         if (this.mAppEntry == null) {
             setIntentAndFinish(true, true);
         } else if (this.mAppsControlDisallowedAdmin != null && !this.mAppsControlDisallowedBySystem) {
@@ -444,7 +444,7 @@ public class AppInfoDashboardFragment extends DashboardFragment implements Appli
         return UserManager.isSplitSystemUser() && userCount == 2;
     }
 
-    public void onPackageRemoved() {
+    private void onPackageRemoved() {
         getActivity().finishActivity(1);
         getActivity().finishAndRemoveTask();
     }

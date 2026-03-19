@@ -191,7 +191,7 @@ public class BluetoothEventManager {
         }
     }
 
-    public void dispatchConnectionStateChanged(CachedBluetoothDevice cachedBluetoothDevice, int i) {
+    private void dispatchConnectionStateChanged(CachedBluetoothDevice cachedBluetoothDevice, int i) {
         synchronized (this.mCallbacks) {
             Iterator<BluetoothCallback> it = this.mCallbacks.iterator();
             while (it.hasNext()) {
@@ -406,7 +406,7 @@ public class BluetoothEventManager {
         }
     }
 
-    public void dispatchActiveDeviceChanged(CachedBluetoothDevice cachedBluetoothDevice, int i) {
+    private void dispatchActiveDeviceChanged(CachedBluetoothDevice cachedBluetoothDevice, int i) {
         this.mDeviceManager.onActiveDeviceChanged(cachedBluetoothDevice, i);
         synchronized (this.mCallbacks) {
             Iterator<BluetoothCallback> it = this.mCallbacks.iterator();
@@ -430,7 +430,7 @@ public class BluetoothEventManager {
         }
     }
 
-    public void dispatchAudioModeChanged() {
+    private void dispatchAudioModeChanged() {
         this.mDeviceManager.dispatchAudioModeChanged();
         synchronized (this.mCallbacks) {
             Iterator<BluetoothCallback> it = this.mCallbacks.iterator();

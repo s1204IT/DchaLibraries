@@ -436,17 +436,17 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         return Utils.isSystemPackage(resources, packageManager, packageInfo);
     }
 
-    public boolean isDisabledUntilUsed() {
+    private boolean isDisabledUntilUsed() {
         return this.mAppEntry.info.enabledSetting == 4;
     }
 
-    public void showDialogInner(int i) {
+    private void showDialogInner(int i) {
         ButtonActionDialogFragment buttonActionDialogFragmentNewInstance = ButtonActionDialogFragment.newInstance(i);
         buttonActionDialogFragmentNewInstance.setTargetFragment(this.mFragment, 0);
         buttonActionDialogFragmentNewInstance.show(this.mActivity.getFragmentManager(), "dialog " + i);
     }
 
-    public boolean isSingleUser() {
+    private boolean isSingleUser() {
         int userCount = this.mUserManager.getUserCount();
         if (userCount == 1) {
             return true;
@@ -508,7 +508,7 @@ public class AppButtonsPreferenceController extends AbstractPreferenceController
         this.mActivity.registerReceiver(this.mPackageRemovedReceiver, intentFilter);
     }
 
-    public void stopListeningToPackageRemove() {
+    private void stopListeningToPackageRemove() {
         if (!this.mListeningToPackageRemove) {
             return;
         }

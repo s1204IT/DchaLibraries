@@ -100,7 +100,7 @@ public class OverviewInteractionState {
         this.mBgHandler.obtainMessage(200, iSystemUiProxy).sendToTarget();
     }
 
-    public boolean handleUiMessage(Message message) {
+    private boolean handleUiMessage(Message message) {
         if (message.what == MSG_SET_BACK_BUTTON_ALPHA) {
             this.mBackButtonAlpha = ((Float) message.obj).floatValue();
         }
@@ -108,7 +108,7 @@ public class OverviewInteractionState {
         return true;
     }
 
-    public boolean handleBgMessage(Message message) {
+    private boolean handleBgMessage(Message message) {
         switch (message.what) {
             case 200:
                 this.mISystemUiProxy = (ISystemUiProxy) message.obj;
@@ -190,7 +190,7 @@ public class OverviewInteractionState {
         }
     }
 
-    public boolean getSystemBooleanRes(String str) {
+    private boolean getSystemBooleanRes(String str) {
         Resources system = Resources.getSystem();
         int identifier = system.getIdentifier(str, "bool", "android");
         if (identifier != 0) {
@@ -200,7 +200,7 @@ public class OverviewInteractionState {
         return false;
     }
 
-    public void resetHomeBounceSeenOnQuickstepEnabledFirstTime() {
+    private void resetHomeBounceSeenOnQuickstepEnabledFirstTime() {
         if (this.mSwipeUpEnabled && !Utilities.getPrefs(this.mContext).getBoolean(HAS_ENABLED_QUICKSTEP_ONCE, true)) {
             Utilities.getPrefs(this.mContext).edit().putBoolean(HAS_ENABLED_QUICKSTEP_ONCE, true).putBoolean(DiscoveryBounce.HOME_BOUNCE_SEEN, false).apply();
         }

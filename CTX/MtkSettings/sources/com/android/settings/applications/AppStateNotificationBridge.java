@@ -232,7 +232,7 @@ public class AppStateNotificationBridge extends AppStateBaseBridge {
         return notificationsSentState;
     }
 
-    public static NotificationsSentState getNotificationsSentState(ApplicationsState.AppEntry appEntry) {
+    private static NotificationsSentState getNotificationsSentState(ApplicationsState.AppEntry appEntry) {
         if (appEntry == null || appEntry.extraInfo == null || !(appEntry.extraInfo instanceof NotificationsSentState)) {
             return null;
         }

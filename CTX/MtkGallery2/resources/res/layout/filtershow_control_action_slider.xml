@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res/com.example.imagefilterharness" xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageButton
+        android:layout_gravity="start|center_vertical"
+        android:id="@+id/leftActionButton"
+        android:background="@drawable/filtershow_button_background"
+        android:paddingBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/filtershow_addpoint"
+        android:scaleType="centerInside"
+        android:layout_weight="0"/>
+    <SeekBar
+        android:layout_gravity="center_vertical"
+        android:id="@+id/controlValueSeekBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="@style/FilterShowSlider"/>
+    <ImageButton
+        android:layout_gravity="end|center_vertical"
+        android:id="@+id/rightActionButton"
+        android:background="@drawable/filtershow_button_background"
+        android:paddingBottom="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_menu_trash_holo_light"
+        android:scaleType="centerInside"
+        android:layout_weight="0"/>
+</LinearLayout>

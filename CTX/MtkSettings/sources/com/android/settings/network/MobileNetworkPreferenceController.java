@@ -157,7 +157,7 @@ public class MobileNetworkPreferenceController extends AbstractPreferenceControl
         return "";
     }
 
-    public void updateMobileNetworkEnabled() {
+    private void updateMobileNetworkEnabled() {
         if (this.mPreference == null) {
             return;
         }

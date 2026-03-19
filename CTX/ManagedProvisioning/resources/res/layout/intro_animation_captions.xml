@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text_animation_viewport"
+    android:layout_width="@dimen/info_view_width"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/spacer_24">
+    <FrameLayout
+        android:id="@+id/text_master"
+        android:layout_width="@dimen/info_view_width_x2.5"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/text_0"
+            style="@style/InfoAnimationTitle"/>
+        <TextView
+            android:id="@+id/text_1"
+            android:alpha="0"
+            android:translationX="@dimen/info_view_width_x0.5"
+            style="@style/InfoAnimationTitle"/>
+        <TextView
+            android:id="@+id/text_2"
+            android:alpha="0"
+            android:translationX="@dimen/info_view_width"
+            style="@style/InfoAnimationTitle"/>
+        <TextView
+            android:id="@+id/text_3"
+            android:alpha="0"
+            android:translationX="@dimen/info_view_width_x1.5"
+            style="@style/InfoAnimationTitle"/>
+    </FrameLayout>
+</FrameLayout>

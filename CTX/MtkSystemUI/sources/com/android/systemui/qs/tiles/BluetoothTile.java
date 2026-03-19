@@ -108,7 +108,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         boolean z = obj == ARG_SHOW_TRANSIENT_ENABLING;
         boolean z2 = z || this.mController.isBluetoothEnabled();
         boolean zIsBluetoothConnected = this.mController.isBluetoothConnected();
@@ -283,7 +283,7 @@ public class BluetoothTile extends QSTileImpl<QSTile.BooleanState> {
             this.mItems.setItemsVisible(z);
         }
 
-        public void updateItems() {
+        private void updateItems() {
             if (this.mItems == null) {
                 return;
             }

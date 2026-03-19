@@ -209,7 +209,7 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-2, -2);
     }
 
@@ -219,7 +219,7 @@ public abstract class BaseDragLayer<T extends BaseDraggingActivity> extends Inse
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams layoutParams) {
         return new LayoutParams(layoutParams);
     }
 

@@ -25,7 +25,7 @@ public class ItemLongClickListener {
         }
     };
 
-    public static boolean onWorkspaceItemLongClick(View view) {
+    private static boolean onWorkspaceItemLongClick(View view) {
         Launcher launcher = Launcher.getLauncher(view.getContext());
         if (!canStartDrag(launcher)) {
             return false;
@@ -51,7 +51,7 @@ public class ItemLongClickListener {
         launcher.getWorkspace().startDrag(new CellLayout.CellInfo(view, itemInfo), dragOptions);
     }
 
-    public static boolean onAllAppsItemLongClick(final View view) {
+    private static boolean onAllAppsItemLongClick(final View view) {
         Launcher launcher = Launcher.getLauncher(view.getContext());
         if (!canStartDrag(launcher)) {
             return false;

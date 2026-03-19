@@ -85,7 +85,7 @@ public class ConfigureNotificationSettings extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle(), application, this);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, Application application, Fragment fragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, Application application, Fragment fragment) {
         ArrayList arrayList = new ArrayList();
         PulseNotificationPreferenceController pulseNotificationPreferenceController = new PulseNotificationPreferenceController(context);
         LockScreenNotificationPreferenceController lockScreenNotificationPreferenceController = new LockScreenNotificationPreferenceController(context, KEY_LOCKSCREEN, KEY_LOCKSCREEN_WORK_PROFILE_HEADER, KEY_LOCKSCREEN_WORK_PROFILE);

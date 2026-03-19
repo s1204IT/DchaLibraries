@@ -115,7 +115,7 @@ public class UserPreference extends RestrictedPreference {
         return (this.mDeleteClickListener == null || RestrictedLockUtils.hasBaseUserRestriction(getContext(), "no_remove_user", UserHandle.myUserId())) ? false : true;
     }
 
-    public int getSerialNumber() {
+    private int getSerialNumber() {
         if (this.mUserId == UserHandle.myUserId()) {
             return AccessPoint.UNREACHABLE_RSSI;
         }

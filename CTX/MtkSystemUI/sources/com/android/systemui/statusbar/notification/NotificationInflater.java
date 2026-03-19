@@ -102,7 +102,7 @@ public class NotificationInflater {
         return inflationProgressCreateRemoteViews;
     }
 
-    public static InflationProgress createRemoteViews(int i, Notification.Builder builder, boolean z, boolean z2, boolean z3, boolean z4, boolean z5, Context context) {
+    private static InflationProgress createRemoteViews(int i, Notification.Builder builder, boolean z, boolean z2, boolean z3, boolean z4, boolean z5, Context context) {
         InflationProgress inflationProgress = new InflationProgress();
         boolean z6 = z && !z2;
         if ((i & 1) != 0) {
@@ -334,7 +334,7 @@ public class NotificationInflater {
         map.put(Integer.valueOf(i2), cancellationSignalReapplyAsync);
     }
 
-    public static void handleInflationError(HashMap<Integer, CancellationSignal> map, Exception exc, StatusBarNotification statusBarNotification, InflationCallback inflationCallback) {
+    private static void handleInflationError(HashMap<Integer, CancellationSignal> map, Exception exc, StatusBarNotification statusBarNotification, InflationCallback inflationCallback) {
         Assert.isMainThread();
         map.values().forEach($$Lambda$NotificationInflater$POlPJz26zF5Nt5Z2kVGSqFxN8Co.INSTANCE);
         if (inflationCallback != null) {
@@ -342,7 +342,7 @@ public class NotificationInflater {
         }
     }
 
-    public static boolean finishIfDone(InflationProgress inflationProgress, int i, HashMap<Integer, CancellationSignal> map, InflationCallback inflationCallback, ExpandableNotificationRow expandableNotificationRow, boolean z) {
+    private static boolean finishIfDone(InflationProgress inflationProgress, int i, HashMap<Integer, CancellationSignal> map, InflationCallback inflationCallback, ExpandableNotificationRow expandableNotificationRow, boolean z) {
         Assert.isMainThread();
         NotificationData.Entry entry = expandableNotificationRow.getEntry();
         NotificationContentView privateLayout = expandableNotificationRow.getPrivateLayout();
@@ -487,7 +487,7 @@ public class NotificationInflater {
         }
 
         @Override
-        public InflationProgress doInBackground(Void... voidArr) {
+        protected InflationProgress doInBackground(Void... voidArr) {
             try {
                 Notification.Builder builderRecoverBuilder = Notification.Builder.recoverBuilder(this.mContext, this.mSbn.getNotification());
                 Context packageContext = this.mSbn.getPackageContext(this.mContext);
@@ -503,7 +503,7 @@ public class NotificationInflater {
         }
 
         @Override
-        public void onPostExecute(InflationProgress inflationProgress) {
+        protected void onPostExecute(InflationProgress inflationProgress) {
             if (this.mError == null) {
                 this.mCancellationSignal = NotificationInflater.apply(inflationProgress, this.mReInflateFlags, this.mRow, this.mRedactAmbient, this.mRemoteViewClickHandler, this);
             } else {

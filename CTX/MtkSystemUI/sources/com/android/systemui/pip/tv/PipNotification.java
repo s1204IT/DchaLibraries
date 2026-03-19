@@ -132,7 +132,7 @@ public class PipNotification {
         }
     }
 
-    public void notifyPipNotification() {
+    private void notifyPipNotification() {
         this.mNotified = true;
         this.mNotificationBuilder.setShowWhen(true).setWhen(System.currentTimeMillis()).setSmallIcon(this.mDefaultIconResId).setContentTitle(!TextUtils.isEmpty(this.mTitle) ? this.mTitle : this.mDefaultTitle);
         if (this.mArt != null) {
@@ -143,12 +143,12 @@ public class PipNotification {
         this.mNotificationManager.notify(NOTIFICATION_TAG, 1100, this.mNotificationBuilder.build());
     }
 
-    public void dismissPipNotification() {
+    private void dismissPipNotification() {
         this.mNotified = false;
         this.mNotificationManager.cancel(NOTIFICATION_TAG, 1100);
     }
 
-    public boolean updateMediaControllerMetadata() {
+    private boolean updateMediaControllerMetadata() {
         Bitmap bitmap;
         MediaMetadata metadata;
         String string = null;

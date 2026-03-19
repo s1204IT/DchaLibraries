@@ -635,7 +635,7 @@ public class NotificationData {
         printWriter.println(sb.toString());
     }
 
-    public static boolean isSystemNotification(StatusBarNotification statusBarNotification) {
+    private static boolean isSystemNotification(StatusBarNotification statusBarNotification) {
         String packageName = statusBarNotification.getPackageName();
         return "android".equals(packageName) || "com.android.systemui".equals(packageName);
     }

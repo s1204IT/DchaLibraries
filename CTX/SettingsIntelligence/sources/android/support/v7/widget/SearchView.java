@@ -1165,7 +1165,7 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
             this.mThreshold = threshold;
         }
 
-        public boolean isEmpty() {
+        private boolean isEmpty() {
             return TextUtils.getTrimmedLength(getText()) == 0;
         }
 
@@ -1250,7 +1250,7 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
             return ic;
         }
 
-        public void showSoftInputIfNecessary() {
+        private void showSoftInputIfNecessary() {
             if (this.mHasPendingShowSoftInputRequest) {
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService("input_method");
                 imm.showSoftInput(this, 0);
@@ -1258,7 +1258,7 @@ public class SearchView extends LinearLayoutCompat implements CollapsibleActionV
             }
         }
 
-        public void setImeVisibility(boolean visible) {
+        private void setImeVisibility(boolean visible) {
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService("input_method");
             if (!visible) {
                 this.mHasPendingShowSoftInputRequest = false;

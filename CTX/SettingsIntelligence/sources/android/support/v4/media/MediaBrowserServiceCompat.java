@@ -141,7 +141,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
         public void onLoadChildren(String parentId, final MediaBrowserServiceCompatApi21.ResultWrapper<List<Parcel>> resultWrapper) {
             Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(parentId) {
                 @Override
-                public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+                void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                     ArrayList arrayList = null;
                     if (list != null) {
                         arrayList = new ArrayList();
@@ -173,7 +173,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
         public void onLoadItem(String itemId, final MediaBrowserServiceCompatApi21.ResultWrapper<Parcel> resultWrapper) {
             Result<MediaBrowserCompat.MediaItem> result = new Result<MediaBrowserCompat.MediaItem>(itemId) {
                 @Override
-                public void onResultSent(MediaBrowserCompat.MediaItem item) {
+                void onResultSent(MediaBrowserCompat.MediaItem item) {
                     if (item == null) {
                         resultWrapper.sendResult(null);
                         return;
@@ -202,7 +202,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
         public void onLoadChildren(String parentId, final MediaBrowserServiceCompatApi26.ResultWrapper resultWrapper, Bundle options) {
             Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(parentId) {
                 @Override
-                public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+                void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                     List<Parcel> parcelList = null;
                     if (list != null) {
                         parcelList = new ArrayList<>();
@@ -679,7 +679,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
     void performLoadChildren(final String parentId, final ConnectionRecord connection, final Bundle subscribeOptions, final Bundle notifyChildrenChangedOptions) {
         Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(parentId) {
             @Override
-            public void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
+            void onResultSent(List<MediaBrowserCompat.MediaItem> list) {
                 if (MediaBrowserServiceCompat.this.mConnections.get(connection.callbacks.asBinder()) != connection) {
                     if (MediaBrowserServiceCompat.DEBUG) {
                         Log.d("MBServiceCompat", "Not sending onLoadChildren result for connection that has been disconnected. pkg=" + connection.pkg + " id=" + parentId);
@@ -730,7 +730,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
     void performLoadItem(String itemId, ConnectionRecord connection, final ResultReceiver receiver) {
         Result<MediaBrowserCompat.MediaItem> result = new Result<MediaBrowserCompat.MediaItem>(itemId) {
             @Override
-            public void onResultSent(MediaBrowserCompat.MediaItem item) {
+            void onResultSent(MediaBrowserCompat.MediaItem item) {
                 if ((getFlags() & 2) != 0) {
                     receiver.send(-1, null);
                     return;
@@ -751,7 +751,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
     void performSearch(String query, Bundle extras, ConnectionRecord connection, final ResultReceiver receiver) {
         Result<List<MediaBrowserCompat.MediaItem>> result = new Result<List<MediaBrowserCompat.MediaItem>>(query) {
             @Override
-            public void onResultSent(List<MediaBrowserCompat.MediaItem> items) {
+            void onResultSent(List<MediaBrowserCompat.MediaItem> items) {
                 if ((getFlags() & 4) != 0 || items == null) {
                     receiver.send(-1, null);
                     return;
@@ -772,7 +772,7 @@ public abstract class MediaBrowserServiceCompat extends Service {
     void performCustomAction(String action, Bundle extras, ConnectionRecord connection, final ResultReceiver receiver) {
         Result<Bundle> result = new Result<Bundle>(action) {
             @Override
-            public void onResultSent(Bundle result2) {
+            void onResultSent(Bundle result2) {
                 receiver.send(0, result2);
             }
 

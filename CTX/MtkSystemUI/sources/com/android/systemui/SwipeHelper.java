@@ -127,7 +127,7 @@ public class SwipeHelper {
         return 1.0f - Math.max(0.0f, Math.min(1.0f, f / 0.5f));
     }
 
-    public void updateSwipeProgressFromOffset(View view, boolean z) {
+    private void updateSwipeProgressFromOffset(View view, boolean z) {
         updateSwipeProgressFromOffset(view, z, getTranslation(view));
     }
 

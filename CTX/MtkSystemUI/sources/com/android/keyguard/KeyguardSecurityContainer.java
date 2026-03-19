@@ -264,7 +264,7 @@ public class KeyguardSecurityContainer extends FrameLayout implements KeyguardSe
         showDialog(null, string);
     }
 
-    public void reportFailedUnlockAttempt(int i, int i2) {
+    private void reportFailedUnlockAttempt(int i, int i2) {
         int i3;
         KeyguardUpdateMonitor keyguardUpdateMonitor = KeyguardUpdateMonitor.getInstance(this.mContext);
         int i4 = 1;

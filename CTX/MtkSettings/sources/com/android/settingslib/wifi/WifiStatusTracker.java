@@ -121,7 +121,7 @@ public class WifiStatusTracker extends ConnectivityManager.NetworkCallback {
         }
     }
 
-    public void updateStatusLabel() {
+    private void updateStatusLabel() {
         NetworkCapabilities networkCapabilities = this.mConnectivityManager.getNetworkCapabilities(this.mWifiManager.getCurrentNetwork());
         if (networkCapabilities != null) {
             if (networkCapabilities.hasCapability(17)) {

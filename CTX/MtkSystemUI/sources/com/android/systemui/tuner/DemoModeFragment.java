@@ -77,13 +77,13 @@ public class DemoModeFragment extends PreferenceFragment implements Preference.O
         super.onDestroy();
     }
 
-    public void updateDemoModeEnabled() {
+    private void updateDemoModeEnabled() {
         boolean z = Settings.Global.getInt(getContext().getContentResolver(), "sysui_demo_allowed", 0) != 0;
         this.mEnabledSwitch.setChecked(z);
         this.mOnSwitch.setEnabled(z);
     }
 
-    public void updateDemoModeOn() {
+    private void updateDemoModeOn() {
         this.mOnSwitch.setChecked(Settings.Global.getInt(getContext().getContentResolver(), "sysui_tuner_demo_on", 0) != 0);
     }
 

@@ -374,7 +374,7 @@ public class StatusBarWindowManager implements Dumpable, RemoteInputController.C
         private State() {
         }
 
-        public boolean isKeyguardShowingAndNotOccluded() {
+        private boolean isKeyguardShowingAndNotOccluded() {
             return this.keyguardShowing && !this.keyguardOccluded;
         }
 

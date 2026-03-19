@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="android.uid.shared"
+    android:versionCode="28"
+    android:versionName="9"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.providers.blockednumber"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <application
+        android:label="@string/app_label"
+        android:process="android.process.acore"
+        android:backupAgent=".BlockedNumberBackupAgent"
+        android:allowBackup="true"
+        android:killAfterRestore="false"
+        android:usesCleartextTraffic="false"
+        android:defaultToDeviceProtectedStorage="true"
+        android:directBootAware="true">
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIRdCykcev-SjrWshQG1Fq5-ZbktewFXgOnb3U5g"/>
+        <provider
+            android:name="BlockedNumberProvider"
+            android:exported="true"
+            android:multiprocess="false"
+            android:authorities="com.android.blockednumber"/>
+    </application>
+</manifest>

@@ -29,7 +29,7 @@ public class DrmSettings extends SettingsPreferenceFragment {
     }
 
     @Override
-    public void showDialog(int i) {
+    protected void showDialog(int i) {
         if (this.mDialogFragment != null) {
             Log.e("DrmSettings", "Old dialog fragment not null!");
         }

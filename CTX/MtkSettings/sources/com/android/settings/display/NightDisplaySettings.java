@@ -158,7 +158,7 @@ public class NightDisplaySettings extends DashboardFragment implements ColorDisp
         return buildPreferenceControllers(context);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList(1);
         arrayList.add(new NightDisplayFooterPreferenceController(context));
         return arrayList;

@@ -1,0 +1,86 @@
+package android.hardware.radio.V1_2;
+
+import android.hardware.radio.V1_0.CdmaSignalStrength;
+import android.hardware.radio.V1_0.EvdoSignalStrength;
+import android.os.HidlSupport;
+import android.os.HwBlob;
+import android.os.HwParcel;
+import java.util.ArrayList;
+import java.util.Objects;
+
+public final class CellInfoCdma {
+    public final CellIdentityCdma cellIdentityCdma = new CellIdentityCdma();
+    public final CdmaSignalStrength signalStrengthCdma = new CdmaSignalStrength();
+    public final EvdoSignalStrength signalStrengthEvdo = new EvdoSignalStrength();
+
+    public final boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != CellInfoCdma.class) {
+            return false;
+        }
+        CellInfoCdma cellInfoCdma = (CellInfoCdma) obj;
+        if (HidlSupport.deepEquals(this.cellIdentityCdma, cellInfoCdma.cellIdentityCdma) && HidlSupport.deepEquals(this.signalStrengthCdma, cellInfoCdma.signalStrengthCdma) && HidlSupport.deepEquals(this.signalStrengthEvdo, cellInfoCdma.signalStrengthEvdo)) {
+            return true;
+        }
+        return false;
+    }
+
+    public final int hashCode() {
+        return Objects.hash(Integer.valueOf(HidlSupport.deepHashCode(this.cellIdentityCdma)), Integer.valueOf(HidlSupport.deepHashCode(this.signalStrengthCdma)), Integer.valueOf(HidlSupport.deepHashCode(this.signalStrengthEvdo)));
+    }
+
+    public final String toString() {
+        return "{.cellIdentityCdma = " + this.cellIdentityCdma + ", .signalStrengthCdma = " + this.signalStrengthCdma + ", .signalStrengthEvdo = " + this.signalStrengthEvdo + "}";
+    }
+
+    public final void readFromParcel(HwParcel hwParcel) {
+        readEmbeddedFromParcel(hwParcel, hwParcel.readBuffer(80L), 0L);
+    }
+
+    public static final ArrayList<CellInfoCdma> readVectorFromParcel(HwParcel hwParcel) {
+        ArrayList<CellInfoCdma> arrayList = new ArrayList<>();
+        HwBlob buffer = hwParcel.readBuffer(16L);
+        int int32 = buffer.getInt32(8L);
+        HwBlob embeddedBuffer = hwParcel.readEmbeddedBuffer(int32 * 80, buffer.handle(), 0L, true);
+        arrayList.clear();
+        for (int i = 0; i < int32; i++) {
+            CellInfoCdma cellInfoCdma = new CellInfoCdma();
+            cellInfoCdma.readEmbeddedFromParcel(hwParcel, embeddedBuffer, i * 80);
+            arrayList.add(cellInfoCdma);
+        }
+        return arrayList;
+    }
+
+    public final void readEmbeddedFromParcel(HwParcel hwParcel, HwBlob hwBlob, long j) {
+        this.cellIdentityCdma.readEmbeddedFromParcel(hwParcel, hwBlob, 0 + j);
+        this.signalStrengthCdma.readEmbeddedFromParcel(hwParcel, hwBlob, 56 + j);
+        this.signalStrengthEvdo.readEmbeddedFromParcel(hwParcel, hwBlob, j + 64);
+    }
+
+    public final void writeToParcel(HwParcel hwParcel) {
+        HwBlob hwBlob = new HwBlob(80);
+        writeEmbeddedToBlob(hwBlob, 0L);
+        hwParcel.writeBuffer(hwBlob);
+    }
+
+    public static final void writeVectorToParcel(HwParcel hwParcel, ArrayList<CellInfoCdma> arrayList) {
+        HwBlob hwBlob = new HwBlob(16);
+        int size = arrayList.size();
+        hwBlob.putInt32(8L, size);
+        hwBlob.putBool(12L, false);
+        HwBlob hwBlob2 = new HwBlob(size * 80);
+        for (int i = 0; i < size; i++) {
+            arrayList.get(i).writeEmbeddedToBlob(hwBlob2, i * 80);
+        }
+        hwBlob.putBlob(0L, hwBlob2);
+        hwParcel.writeBuffer(hwBlob);
+    }
+
+    public final void writeEmbeddedToBlob(HwBlob hwBlob, long j) {
+        this.cellIdentityCdma.writeEmbeddedToBlob(hwBlob, 0 + j);
+        this.signalStrengthCdma.writeEmbeddedToBlob(hwBlob, 56 + j);
+        this.signalStrengthEvdo.writeEmbeddedToBlob(hwBlob, j + 64);
+    }
+}

@@ -395,7 +395,7 @@ public class MediaSessionCompat {
         return null;
     }
 
-    public static PlaybackStateCompat getStateWithUpdatedPosition(PlaybackStateCompat state, MediaMetadataCompat metadata) {
+    private static PlaybackStateCompat getStateWithUpdatedPosition(PlaybackStateCompat state, MediaMetadataCompat metadata) {
         long position;
         if (state == null || state.getPosition() == -1) {
             return state;
@@ -443,7 +443,7 @@ public class MediaSessionCompat {
             }
         }
 
-        public void setSessionImpl(MediaSessionImpl impl, Handler handler) {
+        private void setSessionImpl(MediaSessionImpl impl, Handler handler) {
             this.mSessionImpl = new WeakReference<>(impl);
             if (this.mCallbackHandler != null) {
                 this.mCallbackHandler.removeCallbacksAndMessages(null);
@@ -482,7 +482,7 @@ public class MediaSessionCompat {
             return false;
         }
 
-        public void handleMediaPlayPauseKeySingleTapIfPending() {
+        private void handleMediaPlayPauseKeySingleTapIfPending() {
             if (!this.mMediaPlayPauseKeyPending) {
                 return;
             }

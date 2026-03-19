@@ -206,7 +206,7 @@ public class TetherPreferenceController extends AbstractPreferenceController imp
         }
     }
 
-    public void updateSummaryToOff() {
+    private void updateSummaryToOff() {
         if (this.mPreference == null) {
             return;
         }

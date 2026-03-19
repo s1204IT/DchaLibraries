@@ -139,7 +139,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         return super.getActivityLaunchOptions(launcher, view);
     }
 
-    public Rect getWindowTargetBounds(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
+    private Rect getWindowTargetBounds(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
         Rect rect = new Rect(0, 0, this.mDeviceProfile.widthPx, this.mDeviceProfile.heightPx);
         if (this.mLauncher.isInMultiWindowModeCompat()) {
             for (RemoteAnimationTargetCompat remoteAnimationTargetCompat : remoteAnimationTargetCompatArr) {
@@ -169,7 +169,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         }
     }
 
-    public boolean composeRecentsLaunchAnimator(View view, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, AnimatorSet animatorSet) {
+    private boolean composeRecentsLaunchAnimator(View view, RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, AnimatorSet animatorSet) {
         int i;
         Animator duration;
         AnimatorListenerAdapter animatorListenerAdapter;
@@ -223,7 +223,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         return true;
     }
 
-    public Pair<AnimatorSet, Runnable> getLauncherContentAnimator(boolean z) {
+    private Pair<AnimatorSet, Runnable> getLauncherContentAnimator(boolean z) {
         float[] fArr;
         float[] fArr2;
         Runnable runnable;
@@ -321,7 +321,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         launcherAppTransitionManagerImpl.mLauncher.getStateManager().reapplyState();
     }
 
-    public AnimatorSet getIconAnimator(final View view, Rect rect) {
+    private AnimatorSet getIconAnimator(final View view, Rect rect) {
         int iWidth;
         float marginStart;
         boolean z = view instanceof BubbleTextView;
@@ -416,7 +416,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         return animatorSet;
     }
 
-    public ValueAnimator getOpeningWindowAnimators(View view, final RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, final Rect rect) {
+    private ValueAnimator getOpeningWindowAnimators(View view, final RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, final Rect rect) {
         final Rect rect2 = new Rect();
         if (view.getParent() instanceof DeepShortcutView) {
             this.mDragLayer.getDescendantRectRelativeToSelf(((DeepShortcutView) view.getParent()).getIconView(), rect2);
@@ -485,7 +485,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         }
     }
 
-    public boolean launcherIsATargetWithMode(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, int i) {
+    private boolean launcherIsATargetWithMode(RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr, int i) {
         return TaskUtils.taskIsATargetWithMode(remoteAnimationTargetCompatArr, this.mLauncher.getTaskId(), i);
     }
 
@@ -533,7 +533,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         return new AnonymousClass8(this.mHandler, false);
     }
 
-    public Animator getClosingWindowAnimators(final RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
+    private Animator getClosingWindowAnimators(final RemoteAnimationTargetCompat[] remoteAnimationTargetCompatArr) {
         final Matrix matrix = new Matrix();
         ValueAnimator valueAnimatorOfFloat = ValueAnimator.ofFloat(0.0f, 1.0f);
         final int i = 250;
@@ -573,7 +573,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         return valueAnimatorOfFloat;
     }
 
-    public void createLauncherResumeAnimation(AnimatorSet animatorSet) {
+    private void createLauncherResumeAnimation(AnimatorSet animatorSet) {
         if (this.mLauncher.isInState(LauncherState.ALL_APPS)) {
             final Pair<AnimatorSet, Runnable> launcherContentAnimator = getLauncherContentAnimator(false);
             ((AnimatorSet) launcherContentAnimator.first).setStartDelay(100L);
@@ -606,7 +606,7 @@ public class LauncherAppTransitionManagerImpl extends LauncherAppTransitionManag
         animatorSet.play(animatorSet2);
     }
 
-    public void resetContentView() {
+    private void resetContentView() {
         this.mLauncher.getWorkspace().getPageIndicator().skipAnimationsToEnd();
         this.mDragLayerAlpha.setValue(1.0f);
         this.mDragLayer.setLayerType(0, null);

@@ -14,7 +14,7 @@ public class ItemInflater extends ReflectionInflater<ItemHierarchy> {
     }
 
     @Override
-    public void onAddChildItem(ItemHierarchy itemHierarchy, ItemHierarchy itemHierarchy2) {
+    protected void onAddChildItem(ItemHierarchy itemHierarchy, ItemHierarchy itemHierarchy2) {
         if (itemHierarchy instanceof ItemParent) {
             ((ItemParent) itemHierarchy).addChild(itemHierarchy2);
             return;

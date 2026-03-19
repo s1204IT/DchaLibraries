@@ -122,7 +122,7 @@ public class ChartDataUsageView extends ChartView {
         this.mListener = dataUsageChartListener;
     }
 
-    public void updateVertAxisBounds(ChartSweepView chartSweepView) {
+    private void updateVertAxisBounds(ChartSweepView chartSweepView) {
         long j = this.mVertMax;
         if (chartSweepView != null) {
             int iShouldAdjustAxis = chartSweepView.shouldAdjustAxis();
@@ -157,7 +157,7 @@ public class ChartDataUsageView extends ChartView {
         }
     }
 
-    public void updateEstimateVisible() {
+    private void updateEstimateVisible() {
         long value;
         long maxEstimate = this.mSeries.getMaxEstimate();
         if (this.mSweepWarning.isEnabled()) {
@@ -170,13 +170,13 @@ public class ChartDataUsageView extends ChartView {
         this.mSeries.setEstimateVisible(maxEstimate >= ((value >= 0 ? value : Long.MAX_VALUE) * 7) / 10);
     }
 
-    public void sendUpdateAxisDelayed(ChartSweepView chartSweepView, boolean z) {
+    private void sendUpdateAxisDelayed(ChartSweepView chartSweepView, boolean z) {
         if (z || !this.mHandler.hasMessages(100, chartSweepView)) {
             this.mHandler.sendMessageDelayed(this.mHandler.obtainMessage(100, chartSweepView), 250L);
         }
     }
 
-    public void clearUpdateAxisDelayed(ChartSweepView chartSweepView) {
+    private void clearUpdateAxisDelayed(ChartSweepView chartSweepView) {
         this.mHandler.removeMessages(100, chartSweepView);
     }
 
@@ -361,7 +361,7 @@ public class ChartDataUsageView extends ChartView {
         }
     }
 
-    public static void setText(SpannableStringBuilder spannableStringBuilder, Object obj, CharSequence charSequence, String str) {
+    private static void setText(SpannableStringBuilder spannableStringBuilder, Object obj, CharSequence charSequence, String str) {
         int spanStart = spannableStringBuilder.getSpanStart(obj);
         int spanEnd = spannableStringBuilder.getSpanEnd(obj);
         if (spanStart == -1) {
@@ -372,7 +372,7 @@ public class ChartDataUsageView extends ChartView {
         spannableStringBuilder.replace(spanStart, spanEnd, charSequence);
     }
 
-    public static long roundUpToPowerOfTwo(long j) {
+    private static long roundUpToPowerOfTwo(long j) {
         long j2 = j - 1;
         long j3 = j2 | (j2 >>> 1);
         long j4 = j3 | (j3 >>> 2);

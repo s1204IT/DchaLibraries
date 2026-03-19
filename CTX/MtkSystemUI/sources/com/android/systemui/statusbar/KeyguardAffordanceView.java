@@ -145,7 +145,7 @@ public class KeyguardAffordanceView extends ImageView {
         }
     }
 
-    public void updateIconColor() {
+    private void updateIconColor() {
         if (this.mShouldTint) {
             getDrawable().mutate().setColorFilter(((Integer) this.mColorInterpolator.evaluate(Math.min(1.0f, this.mCircleRadius / this.mMinBackgroundRadius), Integer.valueOf(this.mNormalColor), Integer.valueOf(this.mDarkIconColor))).intValue(), PorterDuff.Mode.SRC_ATOP);
         }

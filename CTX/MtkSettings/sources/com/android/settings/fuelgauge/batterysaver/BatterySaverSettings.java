@@ -58,7 +58,7 @@ public class BatterySaverSettings extends DashboardFragment {
         return R.string.help_url_battery_saver_settings;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new AutoBatterySaverPreferenceController(context));
         arrayList.add(new AutoBatterySeekBarPreferenceController(context, lifecycle));

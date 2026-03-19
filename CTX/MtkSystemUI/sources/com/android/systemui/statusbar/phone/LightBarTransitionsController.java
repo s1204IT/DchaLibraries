@@ -137,7 +137,7 @@ public class LightBarTransitionsController implements Dumpable, CommandQueue.Cal
         this.mTintAnimator.start();
     }
 
-    public void setIconTintInternal(float f) {
+    private void setIconTintInternal(float f) {
         this.mDarkIntensity = f;
         this.mApplier.applyDarkIntensity(f);
     }
