@@ -1,0 +1,23 @@
+package com.android.internal.telephony.cat;
+
+import android.graphics.Bitmap;
+
+class BIPClientParams extends CommandParams {
+    boolean mHasAlphaId;
+    TextMessage mTextMsg;
+
+    BIPClientParams(CommandDetails cmdDet, TextMessage textMsg, boolean has_alpha_id) {
+        super(cmdDet);
+        this.mTextMsg = textMsg;
+        this.mHasAlphaId = has_alpha_id;
+    }
+
+    @Override
+    boolean setIcon(Bitmap icon) {
+        if (icon != null && this.mTextMsg != null) {
+            this.mTextMsg.icon = icon;
+            return true;
+        }
+        return false;
+    }
+}

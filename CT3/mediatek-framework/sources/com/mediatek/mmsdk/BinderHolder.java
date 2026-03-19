@@ -1,0 +1,60 @@
+package com.mediatek.mmsdk;
+
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class BinderHolder implements Parcelable {
+    public static final Parcelable.Creator<BinderHolder> CREATOR = new Parcelable.Creator<BinderHolder>() {
+        @Override
+        public BinderHolder createFromParcel(Parcel in) {
+            return new BinderHolder(in, null);
+        }
+
+        @Override
+        public BinderHolder[] newArray(int size) {
+            return new BinderHolder[size];
+        }
+    };
+    private IBinder mBinder;
+
+    BinderHolder(Parcel in, BinderHolder binderHolder) {
+        this(in);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeStrongBinder(this.mBinder);
+    }
+
+    public void readFromParcel(Parcel src) {
+        this.mBinder = src.readStrongBinder();
+    }
+
+    public IBinder getBinder() {
+        return this.mBinder;
+    }
+
+    public void setBinder(IBinder binder) {
+        this.mBinder = binder;
+    }
+
+    public BinderHolder() {
+        this.mBinder = null;
+    }
+
+    public BinderHolder(IBinder binder) {
+        this.mBinder = null;
+        this.mBinder = binder;
+    }
+
+    private BinderHolder(Parcel in) {
+        this.mBinder = null;
+        this.mBinder = in.readStrongBinder();
+    }
+}

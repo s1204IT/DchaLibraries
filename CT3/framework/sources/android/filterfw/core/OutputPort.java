@@ -1,0 +1,115 @@
+package android.filterfw.core;
+
+public class OutputPort extends FilterPort {
+    protected InputPort mBasePort;
+    protected InputPort mTargetPort;
+
+    public OutputPort(Filter filter, String name) {
+        super(filter, name);
+    }
+
+    public void connectTo(InputPort target) {
+        if (this.mTargetPort != null) {
+            throw new RuntimeException(this + " already connected to " + this.mTargetPort + "!");
+        }
+        this.mTargetPort = target;
+        this.mTargetPort.setSourcePort(this);
+    }
+
+    public boolean isConnected() {
+        return this.mTargetPort != null;
+    }
+
+    @Override
+    public void open() {
+        super.open();
+        if (this.mTargetPort == null || this.mTargetPort.isOpen()) {
+            return;
+        }
+        this.mTargetPort.open();
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        if (this.mTargetPort == null || !this.mTargetPort.isOpen()) {
+            return;
+        }
+        this.mTargetPort.close();
+    }
+
+    public InputPort getTargetPort() {
+        return this.mTargetPort;
+    }
+
+    public Filter getTargetFilter() {
+        if (this.mTargetPort == null) {
+            return null;
+        }
+        return this.mTargetPort.getFilter();
+    }
+
+    public void setBasePort(InputPort basePort) {
+        this.mBasePort = basePort;
+    }
+
+    public InputPort getBasePort() {
+        return this.mBasePort;
+    }
+
+    @Override
+    public boolean filterMustClose() {
+        if (isOpen()) {
+            return false;
+        }
+        return isBlocking();
+    }
+
+    @Override
+    public boolean isReady() {
+        return (isOpen() && this.mTargetPort.acceptsFrame()) || !isBlocking();
+    }
+
+    @Override
+    public void clear() {
+        if (this.mTargetPort == null) {
+            return;
+        }
+        this.mTargetPort.clear();
+    }
+
+    @Override
+    public void pushFrame(Frame frame) {
+        if (this.mTargetPort == null) {
+            throw new RuntimeException("Attempting to push frame on unconnected port: " + this + "!");
+        }
+        this.mTargetPort.pushFrame(frame);
+    }
+
+    @Override
+    public void setFrame(Frame frame) {
+        assertPortIsOpen();
+        if (this.mTargetPort == null) {
+            throw new RuntimeException("Attempting to set frame on unconnected port: " + this + "!");
+        }
+        this.mTargetPort.setFrame(frame);
+    }
+
+    @Override
+    public Frame pullFrame() {
+        throw new RuntimeException("Cannot pull frame on " + this + "!");
+    }
+
+    @Override
+    public boolean hasFrame() {
+        if (this.mTargetPort == null) {
+            return false;
+        }
+        return this.mTargetPort.hasFrame();
+    }
+
+    @Override
+    public String toString() {
+        return "output " + super.toString();
+    }
+}

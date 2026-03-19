@@ -1,0 +1,54 @@
+package javax.xml.xpath;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
+
+public class XPathException extends Exception {
+    private static final long serialVersionUID = -1837080260374986980L;
+    private final Throwable cause;
+
+    public XPathException(String message) {
+        super(message);
+        if (message == null) {
+            throw new NullPointerException("message == null");
+        }
+        this.cause = null;
+    }
+
+    public XPathException(Throwable cause) {
+        super(cause != null ? cause.toString() : null);
+        this.cause = cause;
+        if (cause != null) {
+        } else {
+            throw new NullPointerException("cause == null");
+        }
+    }
+
+    @Override
+    public Throwable getCause() {
+        return this.cause;
+    }
+
+    @Override
+    public void printStackTrace(PrintStream s) {
+        if (getCause() != null) {
+            getCause().printStackTrace(s);
+            s.println("--------------- linked to ------------------");
+        }
+        super.printStackTrace(s);
+    }
+
+    @Override
+    public void printStackTrace() {
+        printStackTrace(System.err);
+    }
+
+    @Override
+    public void printStackTrace(PrintWriter s) {
+        if (getCause() != null) {
+            getCause().printStackTrace(s);
+            s.println("--------------- linked to ------------------");
+        }
+        super.printStackTrace(s);
+    }
+}

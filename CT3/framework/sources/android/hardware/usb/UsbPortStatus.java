@@ -1,0 +1,74 @@
+package android.hardware.usb;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public final class UsbPortStatus implements Parcelable {
+    public static final Parcelable.Creator<UsbPortStatus> CREATOR = new Parcelable.Creator<UsbPortStatus>() {
+        @Override
+        public UsbPortStatus createFromParcel(Parcel in) {
+            int currentMode = in.readInt();
+            int currentPowerRole = in.readInt();
+            int currentDataRole = in.readInt();
+            int supportedRoleCombinations = in.readInt();
+            return new UsbPortStatus(currentMode, currentPowerRole, currentDataRole, supportedRoleCombinations);
+        }
+
+        @Override
+        public UsbPortStatus[] newArray(int size) {
+            return new UsbPortStatus[size];
+        }
+    };
+    private final int mCurrentDataRole;
+    private final int mCurrentMode;
+    private final int mCurrentPowerRole;
+    private final int mSupportedRoleCombinations;
+
+    public UsbPortStatus(int currentMode, int currentPowerRole, int currentDataRole, int supportedRoleCombinations) {
+        this.mCurrentMode = currentMode;
+        this.mCurrentPowerRole = currentPowerRole;
+        this.mCurrentDataRole = currentDataRole;
+        this.mSupportedRoleCombinations = supportedRoleCombinations;
+    }
+
+    public boolean isConnected() {
+        return this.mCurrentMode != 0;
+    }
+
+    public int getCurrentMode() {
+        return this.mCurrentMode;
+    }
+
+    public int getCurrentPowerRole() {
+        return this.mCurrentPowerRole;
+    }
+
+    public int getCurrentDataRole() {
+        return this.mCurrentDataRole;
+    }
+
+    public boolean isRoleCombinationSupported(int powerRole, int dataRole) {
+        return (this.mSupportedRoleCombinations & UsbPort.combineRolesAsBit(powerRole, dataRole)) != 0;
+    }
+
+    public int getSupportedRoleCombinations() {
+        return this.mSupportedRoleCombinations;
+    }
+
+    public String toString() {
+        return "UsbPortStatus{connected=" + isConnected() + ", currentMode=" + UsbPort.modeToString(this.mCurrentMode) + ", currentPowerRole=" + UsbPort.powerRoleToString(this.mCurrentPowerRole) + ", currentDataRole=" + UsbPort.dataRoleToString(this.mCurrentDataRole) + ", supportedRoleCombinations=" + UsbPort.roleCombinationsToString(this.mSupportedRoleCombinations) + "}";
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.mCurrentMode);
+        dest.writeInt(this.mCurrentPowerRole);
+        dest.writeInt(this.mCurrentDataRole);
+        dest.writeInt(this.mSupportedRoleCombinations);
+    }
+}

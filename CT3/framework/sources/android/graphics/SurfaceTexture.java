@@ -1,0 +1,161 @@
+package android.graphics;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.view.Surface;
+import java.lang.ref.WeakReference;
+
+public class SurfaceTexture {
+    private final Looper mCreatorLooper;
+    private long mFrameAvailableListener;
+    private Handler mOnFrameAvailableHandler;
+    private long mProducer;
+    private long mSurfaceTexture;
+
+    public interface OnFrameAvailableListener {
+        void onFrameAvailable(SurfaceTexture surfaceTexture);
+    }
+
+    private native int nativeAttachToGLContext(int i);
+
+    private static native void nativeClassInit();
+
+    private native int nativeDetachFromGLContext();
+
+    private native void nativeFinalize();
+
+    private native int nativeGetQueuedCount();
+
+    private native long nativeGetTimestamp();
+
+    private native void nativeGetTransformMatrix(float[] fArr);
+
+    private native void nativeInit(boolean z, int i, boolean z2, WeakReference<SurfaceTexture> weakReference) throws Surface.OutOfResourcesException;
+
+    private native boolean nativeIsReleased();
+
+    private native void nativeRelease();
+
+    private native void nativeReleaseTexImage();
+
+    private native void nativeSetDefaultBufferSize(int i, int i2);
+
+    private native void nativeUpdateTexImage();
+
+    @Deprecated
+    public static class OutOfResourcesException extends Exception {
+        public OutOfResourcesException() {
+        }
+
+        public OutOfResourcesException(String name) {
+            super(name);
+        }
+    }
+
+    public SurfaceTexture(int texName) {
+        this(texName, false);
+    }
+
+    public SurfaceTexture(int texName, boolean singleBufferMode) {
+        this.mCreatorLooper = Looper.myLooper();
+        nativeInit(false, texName, singleBufferMode, new WeakReference<>(this));
+    }
+
+    public SurfaceTexture(boolean singleBufferMode) {
+        this.mCreatorLooper = Looper.myLooper();
+        nativeInit(true, 0, singleBufferMode, new WeakReference<>(this));
+    }
+
+    public void setOnFrameAvailableListener(OnFrameAvailableListener listener) {
+        setOnFrameAvailableListener(listener, null);
+    }
+
+    public void setOnFrameAvailableListener(final OnFrameAvailableListener listener, Handler handler) {
+        Looper looper;
+        Handler.Callback callback = null;
+        if (listener != null) {
+            if (handler != null) {
+                looper = handler.getLooper();
+            } else {
+                looper = this.mCreatorLooper != null ? this.mCreatorLooper : Looper.getMainLooper();
+            }
+            this.mOnFrameAvailableHandler = new Handler(looper, callback, true) {
+                @Override
+                public void handleMessage(Message msg) {
+                    listener.onFrameAvailable(SurfaceTexture.this);
+                }
+            };
+            return;
+        }
+        this.mOnFrameAvailableHandler = null;
+    }
+
+    public void setDefaultBufferSize(int width, int height) {
+        nativeSetDefaultBufferSize(width, height);
+    }
+
+    public void updateTexImage() {
+        nativeUpdateTexImage();
+    }
+
+    public void releaseTexImage() {
+        nativeReleaseTexImage();
+    }
+
+    public void detachFromGLContext() {
+        int err = nativeDetachFromGLContext();
+        if (err == 0) {
+        } else {
+            throw new RuntimeException("Error during detachFromGLContext (see logcat for details)");
+        }
+    }
+
+    public void attachToGLContext(int texName) {
+        int err = nativeAttachToGLContext(texName);
+        if (err == 0) {
+        } else {
+            throw new RuntimeException("Error during attachToGLContext (see logcat for details)");
+        }
+    }
+
+    public void getTransformMatrix(float[] mtx) {
+        if (mtx.length != 16) {
+            throw new IllegalArgumentException();
+        }
+        nativeGetTransformMatrix(mtx);
+    }
+
+    public long getTimestamp() {
+        return nativeGetTimestamp();
+    }
+
+    public void release() {
+        nativeRelease();
+    }
+
+    public boolean isReleased() {
+        return nativeIsReleased();
+    }
+
+    protected void finalize() throws Throwable {
+        try {
+            nativeFinalize();
+        } finally {
+            super.finalize();
+        }
+    }
+
+    private static void postEventFromNative(WeakReference<SurfaceTexture> weakSelf) {
+        Handler handler;
+        SurfaceTexture st = weakSelf.get();
+        if (st == null || (handler = st.mOnFrameAvailableHandler) == null) {
+            return;
+        }
+        handler.sendEmptyMessage(0);
+    }
+
+    static {
+        nativeClassInit();
+    }
+}

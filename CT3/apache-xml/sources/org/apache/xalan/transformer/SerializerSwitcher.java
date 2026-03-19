@@ -1,0 +1,53 @@
+package org.apache.xalan.transformer;
+
+import java.io.OutputStream;
+import java.io.Writer;
+import java.util.Properties;
+import javax.xml.transform.TransformerException;
+import org.apache.xalan.templates.Constants;
+import org.apache.xalan.templates.OutputProperties;
+import org.apache.xml.serializer.Serializer;
+import org.apache.xml.serializer.SerializerFactory;
+
+public class SerializerSwitcher {
+    public static void switchSerializerIfHTML(TransformerImpl transformer, String ns, String localName) throws TransformerException {
+        if (transformer == null) {
+            return;
+        }
+        if ((ns != null && ns.length() != 0) || !localName.equalsIgnoreCase("html") || transformer.getOutputPropertyNoDefault(Constants.ATTRNAME_OUTPUT_METHOD) != null) {
+            return;
+        }
+        Properties prevProperties = transformer.getOutputFormat().getProperties();
+        OutputProperties htmlOutputProperties = new OutputProperties("html");
+        htmlOutputProperties.copyFrom(prevProperties, true);
+        htmlOutputProperties.getProperties();
+    }
+
+    private static String getOutputPropertyNoDefault(String qnameString, Properties props) throws IllegalArgumentException {
+        String value = (String) props.get(qnameString);
+        return value;
+    }
+
+    public static Serializer switchSerializerIfHTML(String ns, String localName, Properties props, Serializer oldSerializer) throws TransformerException {
+        if ((ns != null && ns.length() != 0) || !localName.equalsIgnoreCase("html") || getOutputPropertyNoDefault(Constants.ATTRNAME_OUTPUT_METHOD, props) != null) {
+            return oldSerializer;
+        }
+        OutputProperties htmlOutputProperties = new OutputProperties("html");
+        htmlOutputProperties.copyFrom(props, true);
+        Properties htmlProperties = htmlOutputProperties.getProperties();
+        if (oldSerializer == null) {
+            return oldSerializer;
+        }
+        Serializer serializer = SerializerFactory.getSerializer(htmlProperties);
+        Writer writer = oldSerializer.getWriter();
+        if (writer != null) {
+            serializer.setWriter(writer);
+        } else {
+            OutputStream os = serializer.getOutputStream();
+            if (os != null) {
+                serializer.setOutputStream(os);
+            }
+        }
+        return serializer;
+    }
+}

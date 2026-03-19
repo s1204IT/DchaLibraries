@@ -1,0 +1,47 @@
+package com.mediatek.runningbooster;
+
+import android.content.Context;
+import android.content.pm.Signature;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+class b {
+    private static b D = null;
+    private static List<a> E = new ArrayList();
+    private static final Signature F = new Signature("3082036f30820257a00302010202042f03b69c300d06092a864886f70d01010b05003068310b3009060355040613025457310f300d0603550408130654616977616e310f300d060355040713065461697065693111300f060355040a13084d6564696154656b3111300f060355040b13084d6564696154656b3111300f060355040313084d6564696154656b301e170d3136303430363031323830325a170d3433303832333031323830325a3068310b3009060355040613025457310f300d0603550408130654616977616e310f300d060355040713065461697065693111300f060355040a13084d6564696154656b3111300f060355040b13084d6564696154656b3111300f060355040313084d6564696154656b30820122300d06092a864886f70d01010105000382010f003082010a028201010091bf24cd60eec0d028e79913ab843606d073ab474c8c6650915d3ba0f06f4071135af0e19b04ee45cdc754111f2de147e61e79e96b34158aba3a7ed3f1f387412fcc3a8503606a0938b098761d0fe075ebddfd82fffd6954d8b98629c5a7beeb1bc5e6cee6475a1ddef307f500414659b4b98fedd0b0403f8284d76f859809112b17e35698c91fe394786ec52e3037c72c25a44bb5f93ee2ff0557220160151fdf531ebce3f297db4ee4206b3f82e60b29f74791404d99faf8b3d3a02040501cc2b21d7b3f116de6052c4a09e6da1d4a92ab8459b0a04590e67229a49f8ce18ac692c45568721cf34358e3df5335c7946b11159721d9507c911fcb31aa053dd70203010001a321301f301d0603551d0e04160414d7e4b9dd36e16d3b0fc25f3395e225e8a7abbc7c300d06092a864886f70d01010b0500038201010004b26394caad8f9e5854c99a82c847ac0f5ef7441d62da2ea58df30ba4e6f7801a2d74c282728573519fac7c307d8bc530660af2d212078bad6efece359e604d789ed5be55bd4d4128d0a2d44e778f204fcac60d960cec5f6c87a649a2168eb4d4e228dd3c414d377c53b81c0865cb1fb058845cefd2a6f59785725788eb6e881930dff8f9ecc8a8a08e67b1fc2523ce9bca03f953e2dd7d80ddb93aa3481e5ec4af393db67154802c2847d7f9f7e7ad42ca476e9077d6c6431d18928d79060fb612e51a254d970236fa8d065cc0fcc471a88a33b122276e7bcf29320d5807b72c6ddae3c8d5b86c038128ffbe55be5f1c5c5906f4a6fcb4804641e031c80c4a");
+
+    static {
+        E.add(new a("platform", F));
+    }
+
+    static class a {
+        private Signature G;
+        private String mTag;
+
+        public a(String str, Signature signature) {
+            this.mTag = null;
+            this.G = null;
+            this.mTag = str;
+            this.G = signature;
+        }
+
+        public Signature d() {
+            return this.G;
+        }
+    }
+
+    public static void init(Context context) {
+    }
+
+    public static boolean a(Signature signature) {
+        Iterator<a> it = E.iterator();
+        while (it.hasNext()) {
+            Signature signatureD = it.next().d();
+            if (signatureD == null || signatureD.equals(signature)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

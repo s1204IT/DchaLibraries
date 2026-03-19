@@ -1,0 +1,255 @@
+package android.filterfw.core;
+
+import android.filterfw.format.ObjectFormat;
+import android.graphics.Bitmap;
+import android.os.BatteryStats;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+
+public class SerializedFrame extends Frame {
+    private static final int INITIAL_CAPACITY = 64;
+    private DirectByteOutputStream mByteOutputStream;
+    private ObjectOutputStream mObjectOut;
+
+    private class DirectByteOutputStream extends OutputStream {
+        private byte[] mBuffer;
+        private int mOffset = 0;
+        private int mDataOffset = 0;
+
+        public DirectByteOutputStream(int size) {
+            this.mBuffer = null;
+            this.mBuffer = new byte[size];
+        }
+
+        private final void ensureFit(int bytesToWrite) {
+            if (this.mOffset + bytesToWrite <= this.mBuffer.length) {
+                return;
+            }
+            byte[] oldBuffer = this.mBuffer;
+            this.mBuffer = new byte[Math.max(this.mOffset + bytesToWrite, this.mBuffer.length * 2)];
+            System.arraycopy(oldBuffer, 0, this.mBuffer, 0, this.mOffset);
+        }
+
+        public final void markHeaderEnd() {
+            this.mDataOffset = this.mOffset;
+        }
+
+        public final int getSize() {
+            return this.mOffset;
+        }
+
+        public byte[] getByteArray() {
+            return this.mBuffer;
+        }
+
+        @Override
+        public final void write(byte[] b) {
+            write(b, 0, b.length);
+        }
+
+        @Override
+        public final void write(byte[] b, int off, int len) {
+            ensureFit(len);
+            System.arraycopy(b, off, this.mBuffer, this.mOffset, len);
+            this.mOffset += len;
+        }
+
+        @Override
+        public final void write(int b) {
+            ensureFit(1);
+            byte[] bArr = this.mBuffer;
+            int i = this.mOffset;
+            this.mOffset = i + 1;
+            bArr[i] = (byte) b;
+        }
+
+        public final void reset() {
+            this.mOffset = this.mDataOffset;
+        }
+
+        public final DirectByteInputStream getInputStream() {
+            return SerializedFrame.this.new DirectByteInputStream(this.mBuffer, this.mOffset);
+        }
+    }
+
+    private class DirectByteInputStream extends InputStream {
+        private byte[] mBuffer;
+        private int mPos = 0;
+        private int mSize;
+
+        public DirectByteInputStream(byte[] buffer, int size) {
+            this.mBuffer = buffer;
+            this.mSize = size;
+        }
+
+        @Override
+        public final int available() {
+            return this.mSize - this.mPos;
+        }
+
+        @Override
+        public final int read() {
+            if (this.mPos >= this.mSize) {
+                return -1;
+            }
+            byte[] bArr = this.mBuffer;
+            int i = this.mPos;
+            this.mPos = i + 1;
+            return bArr[i] & BatteryStats.HistoryItem.CMD_NULL;
+        }
+
+        @Override
+        public final int read(byte[] b, int off, int len) {
+            if (this.mPos >= this.mSize) {
+                return -1;
+            }
+            if (this.mPos + len > this.mSize) {
+                len = this.mSize - this.mPos;
+            }
+            System.arraycopy(this.mBuffer, this.mPos, b, off, len);
+            this.mPos += len;
+            return len;
+        }
+
+        @Override
+        public final long skip(long n) {
+            if (((long) this.mPos) + n > this.mSize) {
+                n = this.mSize - this.mPos;
+            }
+            if (n < 0) {
+                return 0L;
+            }
+            this.mPos = (int) (((long) this.mPos) + n);
+            return n;
+        }
+    }
+
+    SerializedFrame(FrameFormat format, FrameManager frameManager) {
+        super(format, frameManager);
+        setReusable(false);
+        try {
+            this.mByteOutputStream = new DirectByteOutputStream(64);
+            this.mObjectOut = new ObjectOutputStream(this.mByteOutputStream);
+            this.mByteOutputStream.markHeaderEnd();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create serialization streams for SerializedFrame!", e);
+        }
+    }
+
+    static SerializedFrame wrapObject(Object object, FrameManager frameManager) {
+        FrameFormat format = ObjectFormat.fromObject(object, 1);
+        SerializedFrame result = new SerializedFrame(format, frameManager);
+        result.setObjectValue(object);
+        return result;
+    }
+
+    @Override
+    protected boolean hasNativeAllocation() {
+        return false;
+    }
+
+    @Override
+    protected void releaseNativeAllocation() {
+    }
+
+    @Override
+    public Object getObjectValue() {
+        return deserializeObjectValue();
+    }
+
+    @Override
+    public void setInts(int[] ints) {
+        assertFrameMutable();
+        setGenericObjectValue(ints);
+    }
+
+    @Override
+    public int[] getInts() {
+        ?? DeserializeObjectValue = deserializeObjectValue();
+        if (DeserializeObjectValue instanceof int[]) {
+            return DeserializeObjectValue;
+        }
+        return null;
+    }
+
+    @Override
+    public void setFloats(float[] floats) {
+        assertFrameMutable();
+        setGenericObjectValue(floats);
+    }
+
+    @Override
+    public float[] getFloats() {
+        ?? DeserializeObjectValue = deserializeObjectValue();
+        if (DeserializeObjectValue instanceof float[]) {
+            return DeserializeObjectValue;
+        }
+        return null;
+    }
+
+    @Override
+    public void setData(ByteBuffer buffer, int offset, int length) {
+        assertFrameMutable();
+        setGenericObjectValue(ByteBuffer.wrap(buffer.array(), offset, length));
+    }
+
+    @Override
+    public ByteBuffer getData() {
+        ?? DeserializeObjectValue = deserializeObjectValue();
+        if (DeserializeObjectValue instanceof ByteBuffer) {
+            return DeserializeObjectValue;
+        }
+        return null;
+    }
+
+    @Override
+    public void setBitmap(Bitmap bitmap) {
+        assertFrameMutable();
+        setGenericObjectValue(bitmap);
+    }
+
+    @Override
+    public Bitmap getBitmap() {
+        ?? DeserializeObjectValue = deserializeObjectValue();
+        if (DeserializeObjectValue instanceof Bitmap) {
+            return DeserializeObjectValue;
+        }
+        return null;
+    }
+
+    @Override
+    protected void setGenericObjectValue(Object object) {
+        serializeObjectValue(object);
+    }
+
+    private final void serializeObjectValue(Object object) {
+        try {
+            this.mByteOutputStream.reset();
+            this.mObjectOut.writeObject(object);
+            this.mObjectOut.flush();
+            this.mObjectOut.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not serialize object " + object + " in " + this + "!", e);
+        }
+    }
+
+    private final Object deserializeObjectValue() {
+        try {
+            InputStream inputStream = this.mByteOutputStream.getInputStream();
+            ObjectInputStream objectStream = new ObjectInputStream(inputStream);
+            return objectStream.readObject();
+        } catch (IOException e) {
+            throw new RuntimeException("Could not deserialize object in " + this + "!", e);
+        } catch (ClassNotFoundException e2) {
+            throw new RuntimeException("Unable to deserialize object of unknown class in " + this + "!", e2);
+        }
+    }
+
+    public String toString() {
+        return "SerializedFrame (" + getFormat() + ")";
+    }
+}

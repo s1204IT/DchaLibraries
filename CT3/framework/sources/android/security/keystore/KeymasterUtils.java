@@ -1,0 +1,128 @@
+package android.security.keystore;
+
+import android.hardware.fingerprint.FingerprintManager;
+import android.security.GateKeeper;
+import android.security.KeyStore;
+import android.security.keymaster.KeymasterArguments;
+import android.security.keymaster.KeymasterDefs;
+import android.security.keystore.KeyProperties;
+import java.security.ProviderException;
+
+public abstract class KeymasterUtils {
+    private KeymasterUtils() {
+    }
+
+    public static int getDigestOutputSizeBits(int keymasterDigest) {
+        switch (keymasterDigest) {
+            case 0:
+                return -1;
+            case 1:
+                return 128;
+            case 2:
+                return 160;
+            case 3:
+                return 224;
+            case 4:
+                return 256;
+            case 5:
+                return 384;
+            case 6:
+                return 512;
+            default:
+                throw new IllegalArgumentException("Unknown digest: " + keymasterDigest);
+        }
+    }
+
+    public static boolean isKeymasterBlockModeIndCpaCompatibleWithSymmetricCrypto(int keymasterBlockMode) {
+        switch (keymasterBlockMode) {
+            case 1:
+                return false;
+            case 2:
+            case 3:
+            case 32:
+                return true;
+            default:
+                throw new IllegalArgumentException("Unsupported block mode: " + keymasterBlockMode);
+        }
+    }
+
+    public static boolean isKeymasterPaddingSchemeIndCpaCompatibleWithAsymmetricCrypto(int keymasterPadding) {
+        switch (keymasterPadding) {
+            case 1:
+                return false;
+            case 2:
+            case 4:
+                return true;
+            case 3:
+            default:
+                throw new IllegalArgumentException("Unsupported asymmetric encryption padding scheme: " + keymasterPadding);
+        }
+    }
+
+    public static void addUserAuthArgs(KeymasterArguments args, boolean userAuthenticationRequired, int userAuthenticationValidityDurationSeconds, boolean userAuthenticationValidWhileOnBody, boolean invalidatedByBiometricEnrollment) {
+        long sid;
+        if (!userAuthenticationRequired) {
+            args.addBoolean(KeymasterDefs.KM_TAG_NO_AUTH_REQUIRED);
+            return;
+        }
+        if (userAuthenticationValidityDurationSeconds == -1) {
+            FingerprintManager fingerprintManager = (FingerprintManager) KeyStore.getApplicationContext().getSystemService(FingerprintManager.class);
+            long fingerprintOnlySid = fingerprintManager != null ? fingerprintManager.getAuthenticatorId() : 0L;
+            if (fingerprintOnlySid == 0) {
+                throw new IllegalStateException("At least one fingerprint must be enrolled to create keys requiring user authentication for every use");
+            }
+            if (invalidatedByBiometricEnrollment) {
+                sid = fingerprintOnlySid;
+            } else {
+                sid = getRootSid();
+            }
+            args.addUnsignedLong(KeymasterDefs.KM_TAG_USER_SECURE_ID, KeymasterArguments.toUint64(sid));
+            args.addEnum(KeymasterDefs.KM_TAG_USER_AUTH_TYPE, 2);
+            if (!userAuthenticationValidWhileOnBody) {
+                return;
+            } else {
+                throw new ProviderException("Key validity extension while device is on-body is not supported for keys requiring fingerprint authentication");
+            }
+        }
+        long rootSid = getRootSid();
+        args.addUnsignedLong(KeymasterDefs.KM_TAG_USER_SECURE_ID, KeymasterArguments.toUint64(rootSid));
+        args.addEnum(KeymasterDefs.KM_TAG_USER_AUTH_TYPE, 3);
+        args.addUnsignedInt(KeymasterDefs.KM_TAG_AUTH_TIMEOUT, userAuthenticationValidityDurationSeconds);
+        if (!userAuthenticationValidWhileOnBody) {
+            return;
+        }
+        args.addBoolean(KeymasterDefs.KM_TAG_ALLOW_WHILE_ON_BODY);
+    }
+
+    public static void addMinMacLengthAuthorizationIfNecessary(KeymasterArguments args, int keymasterAlgorithm, int[] keymasterBlockModes, int[] keymasterDigests) {
+        switch (keymasterAlgorithm) {
+            case 32:
+                if (!com.android.internal.util.ArrayUtils.contains(keymasterBlockModes, 32)) {
+                    return;
+                }
+                args.addUnsignedInt(KeymasterDefs.KM_TAG_MIN_MAC_LENGTH, 96L);
+                return;
+            case 128:
+                if (keymasterDigests.length != 1) {
+                    throw new ProviderException("Unsupported number of authorized digests for HMAC key: " + keymasterDigests.length + ". Exactly one digest must be authorized");
+                }
+                int keymasterDigest = keymasterDigests[0];
+                int digestOutputSizeBits = getDigestOutputSizeBits(keymasterDigest);
+                if (digestOutputSizeBits == -1) {
+                    throw new ProviderException("HMAC key authorized for unsupported digest: " + KeyProperties.Digest.fromKeymaster(keymasterDigest));
+                }
+                args.addUnsignedInt(KeymasterDefs.KM_TAG_MIN_MAC_LENGTH, digestOutputSizeBits);
+                return;
+            default:
+                return;
+        }
+    }
+
+    private static long getRootSid() {
+        long rootSid = GateKeeper.getSecureUserId();
+        if (rootSid == 0) {
+            throw new IllegalStateException("Secure lock screen must be enabled to create keys requiring user authentication");
+        }
+        return rootSid;
+    }
+}
