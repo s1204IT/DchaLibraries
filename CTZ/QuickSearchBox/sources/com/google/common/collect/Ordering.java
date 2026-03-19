@@ -7,14 +7,29 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Ordering<T> implements Comparator<T> {
 
-    static class ArbitraryOrdering extends Ordering<Object> {
-        private Map<Object, Integer> uids = Platform.tryWeakKeys(new MapMaker()).makeComputingMap(new Function<Object, Integer>(this) {
-            final AtomicInteger counter = new AtomicInteger(0);
-            final ArbitraryOrdering this$0;
+    static class IncomparableValueException extends ClassCastException {
+        private static final long serialVersionUID = 0;
+        final Object value;
+    }
 
-            {
-                this.this$0 = this;
-            }
+    @Override
+    public abstract int compare(T t, T t2);
+
+    public static <C extends Comparable> Ordering<C> natural() {
+        return NaturalOrdering.INSTANCE;
+    }
+
+    public static <T> Ordering<T> from(Comparator<T> comparator) {
+        return comparator instanceof Ordering ? comparator : new ComparatorOrdering(comparator);
+    }
+
+    public static Ordering<Object> usingToString() {
+        return UsingToStringOrdering.INSTANCE;
+    }
+
+    static class ArbitraryOrdering extends Ordering<Object> {
+        private Map<Object, Integer> uids = Platform.tryWeakKeys(new MapMaker()).makeComputingMap(new Function<Object, Integer>() {
+            final AtomicInteger counter = new AtomicInteger(0);
 
             @Override
             public Integer apply(Object obj) {
@@ -39,7 +54,10 @@ public abstract class Ordering<T> implements Comparator<T> {
             int iIdentityHashCode = identityHashCode(obj);
             int iIdentityHashCode2 = identityHashCode(obj2);
             if (iIdentityHashCode != iIdentityHashCode2) {
-                return iIdentityHashCode >= iIdentityHashCode2 ? 1 : -1;
+                if (iIdentityHashCode < iIdentityHashCode2) {
+                    return -1;
+                }
+                return 1;
             }
             int iCompareTo = this.uids.get(obj).compareTo(this.uids.get(obj2));
             if (iCompareTo == 0) {
@@ -48,47 +66,27 @@ public abstract class Ordering<T> implements Comparator<T> {
             return iCompareTo;
         }
 
-        int identityHashCode(Object obj) {
-            return System.identityHashCode(obj);
-        }
-
         public String toString() {
             return "Ordering.arbitrary()";
         }
-    }
 
-    static class IncomparableValueException extends ClassCastException {
-        private static final long serialVersionUID = 0;
-        final Object value;
+        int identityHashCode(Object obj) {
+            return System.identityHashCode(obj);
+        }
     }
 
     protected Ordering() {
     }
 
-    public static <T> Ordering<T> from(Comparator<T> comparator) {
-        return comparator instanceof Ordering ? (Ordering) comparator : new ComparatorOrdering(comparator);
-    }
-
-    public static <C extends Comparable> Ordering<C> natural() {
-        return NaturalOrdering.INSTANCE;
-    }
-
-    public static Ordering<Object> usingToString() {
-        return UsingToStringOrdering.INSTANCE;
-    }
-
-    @Override
-    public abstract int compare(T t, T t2);
-
-    <T2 extends T> Ordering<Map.Entry<T2, ?>> onKeys() {
-        return (Ordering<Map.Entry<T2, ?>>) onResultOf(Maps.keyFunction());
+    public <S extends T> Ordering<S> reverse() {
+        return new ReverseOrdering(this);
     }
 
     public <F> Ordering<F> onResultOf(Function<F, ? extends T> function) {
         return new ByFunctionOrdering(function, this);
     }
 
-    public <S extends T> Ordering<S> reverse() {
-        return new ReverseOrdering(this);
+    <T2 extends T> Ordering<Map.Entry<T2, ?>> onKeys() {
+        return (Ordering<Map.Entry<T2, ?>>) onResultOf(Maps.keyFunction());
     }
 }

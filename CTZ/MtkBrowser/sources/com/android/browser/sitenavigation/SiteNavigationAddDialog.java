@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.android.browser.R;
 import com.android.browser.UrlUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -41,94 +42,296 @@ public class SiteNavigationAddDialog extends Activity {
     private String mItemUrl;
     private Bundle mMap;
     private EditText mName;
-    private View.OnClickListener mOKListener = new View.OnClickListener(this) {
-        final SiteNavigationAddDialog this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private View.OnClickListener mOKListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (this.this$0.save()) {
-                this.this$0.setResult(-1, new Intent().putExtra("need_refresh", true));
-                this.this$0.finish();
+            if (SiteNavigationAddDialog.this.save()) {
+                SiteNavigationAddDialog.this.setResult(-1, new Intent().putExtra("need_refresh", true));
+                SiteNavigationAddDialog.this.finish();
             }
         }
     };
-    private View.OnClickListener mCancelListener = new View.OnClickListener(this) {
-        final SiteNavigationAddDialog this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private View.OnClickListener mCancelListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            this.this$0.finish();
+            SiteNavigationAddDialog.this.finish();
         }
     };
 
+    @Override
+    protected void onCreate(Bundle bundle) {
+        String string;
+        super.onCreate(bundle);
+        requestWindowFeature(1);
+        setContentView(R.layout.site_navigation_add);
+        this.mMap = getIntent().getExtras();
+        Log.d("@M_browser/AddSiteNavigationPage", "onCreate mMap is : " + this.mMap);
+        String string2 = null;
+        if (this.mMap != null) {
+            Bundle bundle2 = this.mMap.getBundle("websites");
+            if (bundle2 != null) {
+                this.mMap = bundle2;
+            }
+            string2 = this.mMap.getString("name");
+            string = this.mMap.getString("url");
+            this.mIsAdding = this.mMap.getBoolean("isAdding");
+        } else {
+            string = null;
+        }
+        this.mItemUrl = string;
+        this.mItemName = string2;
+        this.mName = (EditText) findViewById(R.id.title);
+        this.mName.setText(string2);
+        this.mAddress = (EditText) findViewById(R.id.address);
+        if (string.startsWith("about:blank")) {
+            this.mAddress.setText("about:blank");
+        } else {
+            this.mAddress.setText(string);
+        }
+        this.mDialogText = (TextView) findViewById(R.id.dialog_title);
+        if (this.mIsAdding) {
+            this.mDialogText.setText(R.string.add);
+        }
+        this.mButtonOK = (Button) findViewById(R.id.OK);
+        this.mButtonOK.setOnClickListener(this.mOKListener);
+        this.mButtonCancel = (Button) findViewById(R.id.cancel);
+        this.mButtonCancel.setOnClickListener(this.mCancelListener);
+        if (!getWindow().getDecorView().isInTouchMode()) {
+            this.mButtonOK.requestFocus();
+        }
+    }
+
     private class SaveSiteNavigationRunnable implements Runnable {
         private Message mMessage;
-        final SiteNavigationAddDialog this$0;
 
-        public SaveSiteNavigationRunnable(SiteNavigationAddDialog siteNavigationAddDialog, Message message) {
-            this.this$0 = siteNavigationAddDialog;
+        public SaveSiteNavigationRunnable(Message message) {
             this.mMessage = message;
         }
 
         @Override
         public void run() throws Throwable {
             Cursor cursorQuery;
-            Cursor cursor = null;
             Bundle data = this.mMessage.getData();
             String string = data.getString("title");
             String string2 = data.getString("url");
             String string3 = data.getString("itemUrl");
-            boolean z = data.getBoolean("toDefaultThumbnail");
-            ContentResolver contentResolver = this.this$0.getContentResolver();
+            Boolean boolValueOf = Boolean.valueOf(data.getBoolean("toDefaultThumbnail"));
+            ContentResolver contentResolver = SiteNavigationAddDialog.this.getContentResolver();
+            Cursor cursor = null;
             try {
-                cursorQuery = contentResolver.query(SiteNavigation.SITE_NAVIGATION_URI, new String[]{"_id"}, "url = ? COLLATE NOCASE", new String[]{string3}, null);
-                if (cursorQuery != null) {
-                    try {
-                        if (cursorQuery.moveToFirst()) {
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put("title", string);
-                            contentValues.put("url", string2);
-                            contentValues.put("website", "1");
-                            if (Boolean.valueOf(z).booleanValue()) {
-                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                BitmapFactory.decodeResource(this.this$0.getResources(), 2131165227).compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                                contentValues.put("thumbnail", byteArrayOutputStream.toByteArray());
-                            }
-                            Uri uriWithAppendedId = ContentUris.withAppendedId(SiteNavigation.SITE_NAVIGATION_URI, cursorQuery.getLong(0));
-                            Log.d("@M_browser/AddSiteNavigationPage", "SaveSiteNavigationRunnable uri is : " + uriWithAppendedId);
-                            contentResolver.update(uriWithAppendedId, contentValues, null, null);
-                        } else {
-                            Log.e("@M_browser/AddSiteNavigationPage", "saveSiteNavigationItem the item does not exist!");
-                        }
-                    } catch (IllegalStateException e) {
-                        e = e;
+                try {
+                    cursorQuery = contentResolver.query(SiteNavigation.SITE_NAVIGATION_URI, new String[]{"_id"}, "url = ? COLLATE NOCASE", new String[]{string3}, null);
+                    if (cursorQuery != null) {
                         try {
+                            if (cursorQuery.moveToFirst()) {
+                                ContentValues contentValues = new ContentValues();
+                                contentValues.put("title", string);
+                                contentValues.put("url", string2);
+                                contentValues.put("website", "1");
+                                if (boolValueOf.booleanValue()) {
+                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                    BitmapFactory.decodeResource(SiteNavigationAddDialog.this.getResources(), R.raw.sitenavigation_thumbnail_default).compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                                    contentValues.put("thumbnail", byteArrayOutputStream.toByteArray());
+                                }
+                                Uri uriWithAppendedId = ContentUris.withAppendedId(SiteNavigation.SITE_NAVIGATION_URI, cursorQuery.getLong(0));
+                                Log.d("@M_browser/AddSiteNavigationPage", "SaveSiteNavigationRunnable uri is : " + uriWithAppendedId);
+                                contentResolver.update(uriWithAppendedId, contentValues, null, null);
+                            } else {
+                                Log.e("@M_browser/AddSiteNavigationPage", "saveSiteNavigationItem the item does not exist!");
+                            }
+                        } catch (IllegalStateException e) {
+                            e = e;
+                            cursor = cursorQuery;
                             Log.e("@M_browser/AddSiteNavigationPage", "saveSiteNavigationItem", e);
-                            if (cursorQuery != null) {
-                                cursorQuery.close();
+                            if (cursor != null) {
+                                cursor.close();
                                 return;
                             }
                             return;
                         } catch (Throwable th) {
                             th = th;
-                            cursor = cursorQuery;
-                            cursorQuery = cursor;
                             if (cursorQuery != null) {
                                 cursorQuery.close();
                             }
                             throw th;
                         }
-                    } catch (Throwable th2) {
-                        th = th2;
-                        if (cursorQuery != null) {
+                    }
+                    if (cursorQuery != null) {
+                        cursorQuery.close();
+                    }
+                } catch (IllegalStateException e2) {
+                    e = e2;
+                }
+            } catch (Throwable th2) {
+                th = th2;
+                cursorQuery = cursor;
+            }
+        }
+    }
+
+    boolean save() {
+        String string;
+        String strTrim = this.mName.getText().toString().trim();
+        String strFixUrl = UrlUtils.fixUrl(this.mAddress.getText().toString());
+        boolean z = strTrim.length() == 0;
+        boolean z2 = strFixUrl.trim().length() == 0;
+        Resources resources = getResources();
+        if (z || z2) {
+            if (z) {
+                this.mName.setError(resources.getText(R.string.website_needs_title));
+            }
+            if (z2) {
+                this.mAddress.setError(resources.getText(R.string.website_needs_url));
+            }
+            return false;
+        }
+        if (!strTrim.equals(this.mItemName) && isSiteNavigationTitle(this, strTrim)) {
+            this.mName.setError(resources.getText(R.string.duplicate_site_navigation_title));
+            return false;
+        }
+        String strTrim2 = strFixUrl.trim();
+        try {
+            if (!strTrim2.toLowerCase().startsWith("javascript:")) {
+                String scheme = new URI(strTrim2).getScheme();
+                try {
+                    if (!urlHasAcceptableScheme(strTrim2)) {
+                        if (scheme != null) {
+                            this.mAddress.setError(resources.getText(R.string.site_navigation_cannot_save_url));
+                            return false;
+                        }
+                        try {
+                            WebAddress webAddress = new WebAddress(strFixUrl);
+                            if (webAddress.getHost().length() == 0) {
+                                throw new URISyntaxException("", "");
+                            }
+                            string = webAddress.toString();
+                        } catch (ParseException e) {
+                            throw new URISyntaxException("", "");
+                        }
+                    } else {
+                        int iIndexOf = -1;
+                        if (strTrim2 != null) {
+                            iIndexOf = strTrim2.indexOf("://");
+                        }
+                        if (iIndexOf > 0 && strTrim2.indexOf("/", iIndexOf + "://".length()) < 0) {
+                            string = strTrim2 + "/";
+                            Log.d("@M_browser/AddSiteNavigationPage", "URL=" + string);
+                        }
+                        if (strTrim2.length() == strTrim2.getBytes("UTF-8").length) {
+                            throw new URISyntaxException("", "");
+                        }
+                    }
+                    if (strTrim2.length() == strTrim2.getBytes("UTF-8").length) {
+                    }
+                } catch (UnsupportedEncodingException e2) {
+                    throw new URISyntaxException("", "");
+                }
+                strTrim2 = string;
+            }
+            try {
+                String path = new URL(strTrim2).getPath();
+                if ((path.equals("/") && strTrim2.endsWith(".")) || (path.equals("") && strTrim2.endsWith(".."))) {
+                    this.mAddress.setError(resources.getText(R.string.bookmark_url_not_valid));
+                    return false;
+                }
+                if (!this.mItemUrl.equals(strTrim2) && isSiteNavigationUrl(this, strTrim2, strTrim2)) {
+                    this.mAddress.setError(resources.getText(R.string.duplicate_site_navigation_url));
+                    return false;
+                }
+                if (strTrim2.startsWith("about:blank")) {
+                    strTrim2 = this.mItemUrl;
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("title", strTrim);
+                bundle.putString("url", strTrim2);
+                bundle.putString("itemUrl", this.mItemUrl);
+                if (!this.mItemUrl.equals(strTrim2)) {
+                    bundle.putBoolean("toDefaultThumbnail", true);
+                } else {
+                    bundle.putBoolean("toDefaultThumbnail", false);
+                }
+                Message messageObtain = Message.obtain(this.mHandler, 100);
+                messageObtain.setData(bundle);
+                new Thread(new SaveSiteNavigationRunnable(messageObtain)).start();
+                return true;
+            } catch (MalformedURLException e3) {
+                this.mAddress.setError(resources.getText(R.string.bookmark_url_not_valid));
+                return false;
+            }
+        } catch (URISyntaxException e4) {
+            this.mAddress.setError(resources.getText(R.string.bookmark_url_not_valid));
+            return false;
+        }
+    }
+
+    public static boolean isSiteNavigationUrl(Context context, String str, String str2) throws Throwable {
+        Cursor cursor = null;
+        try {
+            try {
+                Cursor cursorQuery = context.getContentResolver().query(SiteNavigation.SITE_NAVIGATION_URI, new String[]{"title"}, "url = ? COLLATE NOCASE OR url = ? COLLATE NOCASE", new String[]{str, str2}, null);
+                if (cursorQuery != null) {
+                    try {
+                        if (cursorQuery.moveToFirst()) {
+                            Log.d("@M_browser/AddSiteNavigationPage", "isSiteNavigationUrl will return true.");
+                            if (cursorQuery != null) {
+                                cursorQuery.close();
+                            }
+                            return true;
+                        }
+                    } catch (IllegalStateException e) {
+                        e = e;
+                        cursor = cursorQuery;
+                        Log.e("@M_browser/AddSiteNavigationPage", "isSiteNavigationUrl", e);
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                    } catch (Throwable th) {
+                        th = th;
+                        cursor = cursorQuery;
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                        throw th;
+                    }
+                }
+                if (cursorQuery != null) {
+                    cursorQuery.close();
+                }
+            } catch (Throwable th2) {
+                th = th2;
+            }
+        } catch (IllegalStateException e2) {
+            e = e2;
+        }
+        return false;
+    }
+
+    public static boolean isSiteNavigationTitle(Context context, String str) throws Throwable {
+        Cursor cursor = null;
+        try {
+            try {
+                Cursor cursorQuery = context.getContentResolver().query(SiteNavigation.SITE_NAVIGATION_URI, new String[]{"title"}, "title = ?", new String[]{str}, null);
+                if (cursorQuery != null) {
+                    try {
+                        if (cursorQuery.moveToFirst()) {
+                            Log.d("@M_browser/AddSiteNavigationPage", "isSiteNavigationTitle will return true.");
+                            if (cursorQuery != null) {
+                                cursorQuery.close();
+                            }
+                            return true;
+                        }
+                    } catch (IllegalStateException e) {
+                        e = e;
+                        cursor = cursorQuery;
+                        Log.e("@M_browser/AddSiteNavigationPage", "isSiteNavigationTitle", e);
+                        if (cursor != null) {
+                            cursor.close();
+                        }
+                    } catch (Throwable th) {
+                        th = th;
+                        cursor = cursorQuery;
+                        if (cursor != null) {
+                            cursor.close();
                         }
                         throw th;
                     }
@@ -138,121 +341,11 @@ public class SiteNavigationAddDialog extends Activity {
                 }
             } catch (IllegalStateException e2) {
                 e = e2;
-                cursorQuery = null;
-            } catch (Throwable th3) {
-                th = th3;
-                cursorQuery = cursor;
-                if (cursorQuery != null) {
-                }
-                throw th;
             }
+            return false;
+        } catch (Throwable th2) {
+            th = th2;
         }
-    }
-
-    public static boolean isSiteNavigationTitle(Context context, String str) throws Throwable {
-        Cursor cursorQuery;
-        Cursor cursor = null;
-        try {
-            cursorQuery = context.getContentResolver().query(SiteNavigation.SITE_NAVIGATION_URI, new String[]{"title"}, "title = ?", new String[]{str}, null);
-            if (cursorQuery != null) {
-                try {
-                    if (cursorQuery.moveToFirst()) {
-                        Log.d("@M_browser/AddSiteNavigationPage", "isSiteNavigationTitle will return true.");
-                        if (cursorQuery != null) {
-                            cursorQuery.close();
-                        }
-                        return true;
-                    }
-                } catch (IllegalStateException e) {
-                    e = e;
-                    try {
-                        Log.e("@M_browser/AddSiteNavigationPage", "isSiteNavigationTitle", e);
-                        if (cursorQuery != null) {
-                            cursorQuery.close();
-                        }
-                    } catch (Throwable th) {
-                        th = th;
-                        cursor = cursorQuery;
-                        cursorQuery = cursor;
-                        if (cursorQuery != null) {
-                            cursorQuery.close();
-                        }
-                        throw th;
-                    }
-                } catch (Throwable th2) {
-                    th = th2;
-                    if (cursorQuery != null) {
-                    }
-                    throw th;
-                }
-            }
-            if (cursorQuery != null) {
-                cursorQuery.close();
-            }
-        } catch (IllegalStateException e2) {
-            e = e2;
-            cursorQuery = null;
-        } catch (Throwable th3) {
-            th = th3;
-            cursorQuery = cursor;
-            if (cursorQuery != null) {
-            }
-            throw th;
-        }
-        return false;
-    }
-
-    public static boolean isSiteNavigationUrl(Context context, String str, String str2) throws Throwable {
-        Cursor cursorQuery;
-        Cursor cursor = null;
-        try {
-            cursorQuery = context.getContentResolver().query(SiteNavigation.SITE_NAVIGATION_URI, new String[]{"title"}, "url = ? COLLATE NOCASE OR url = ? COLLATE NOCASE", new String[]{str, str2}, null);
-            if (cursorQuery != null) {
-                try {
-                    if (cursorQuery.moveToFirst()) {
-                        Log.d("@M_browser/AddSiteNavigationPage", "isSiteNavigationUrl will return true.");
-                        if (cursorQuery != null) {
-                            cursorQuery.close();
-                        }
-                        return true;
-                    }
-                } catch (IllegalStateException e) {
-                    e = e;
-                    try {
-                        Log.e("@M_browser/AddSiteNavigationPage", "isSiteNavigationUrl", e);
-                        if (cursorQuery != null) {
-                            cursorQuery.close();
-                        }
-                    } catch (Throwable th) {
-                        th = th;
-                        cursor = cursorQuery;
-                        cursorQuery = cursor;
-                        if (cursorQuery != null) {
-                            cursorQuery.close();
-                        }
-                        throw th;
-                    }
-                } catch (Throwable th2) {
-                    th = th2;
-                    if (cursorQuery != null) {
-                    }
-                    throw th;
-                }
-            }
-            if (cursorQuery != null) {
-                cursorQuery.close();
-            }
-        } catch (IllegalStateException e2) {
-            e = e2;
-            cursorQuery = null;
-        } catch (Throwable th3) {
-            th = th3;
-            cursorQuery = cursor;
-            if (cursorQuery != null) {
-            }
-            throw th;
-        }
-        return false;
     }
 
     private static boolean urlHasAcceptableScheme(String str) {
@@ -265,140 +358,5 @@ public class SiteNavigationAddDialog extends Activity {
             }
         }
         return false;
-    }
-
-    @Override
-    protected void onCreate(Bundle bundle) {
-        String str;
-        String string;
-        super.onCreate(bundle);
-        requestWindowFeature(1);
-        setContentView(2130968621);
-        this.mMap = getIntent().getExtras();
-        Log.d("@M_browser/AddSiteNavigationPage", "onCreate mMap is : " + this.mMap);
-        if (this.mMap != null) {
-            Bundle bundle2 = this.mMap.getBundle("websites");
-            if (bundle2 != null) {
-                this.mMap = bundle2;
-            }
-            string = this.mMap.getString("name");
-            String string2 = this.mMap.getString("url");
-            this.mIsAdding = this.mMap.getBoolean("isAdding");
-            str = string2;
-        } else {
-            str = null;
-            string = null;
-        }
-        this.mItemUrl = str;
-        this.mItemName = string;
-        this.mName = (EditText) findViewById(2131558407);
-        this.mName.setText(string);
-        this.mAddress = (EditText) findViewById(2131558456);
-        if (str.startsWith("about:blank")) {
-            this.mAddress.setText("about:blank");
-        } else {
-            this.mAddress.setText(str);
-        }
-        this.mDialogText = (TextView) findViewById(2131558512);
-        if (this.mIsAdding) {
-            this.mDialogText.setText(2131492899);
-        }
-        this.mButtonOK = (Button) findViewById(2131558463);
-        this.mButtonOK.setOnClickListener(this.mOKListener);
-        this.mButtonCancel = (Button) findViewById(2131558462);
-        this.mButtonCancel.setOnClickListener(this.mCancelListener);
-        if (getWindow().getDecorView().isInTouchMode()) {
-            return;
-        }
-        this.mButtonOK.requestFocus();
-    }
-
-    boolean save() {
-        String strTrim = this.mName.getText().toString().trim();
-        String strFixUrl = UrlUtils.fixUrl(this.mAddress.getText().toString());
-        boolean z = strTrim.length() == 0;
-        boolean z2 = strFixUrl.trim().length() == 0;
-        Resources resources = getResources();
-        if (z || z2) {
-            if (z) {
-                this.mName.setError(resources.getText(2131492903));
-            }
-            if (!z2) {
-                return false;
-            }
-            this.mAddress.setError(resources.getText(2131492904));
-            return false;
-        }
-        if (!strTrim.equals(this.mItemName) && isSiteNavigationTitle(this, strTrim)) {
-            this.mName.setError(resources.getText(2131492911));
-            return false;
-        }
-        String strTrim2 = strFixUrl.trim();
-        try {
-            if (!strTrim2.toLowerCase().startsWith("javascript:")) {
-                String scheme = new URI(strTrim2).getScheme();
-                if (urlHasAcceptableScheme(strTrim2)) {
-                    int iIndexOf = strTrim2 != null ? strTrim2.indexOf("://") : -1;
-                    if (iIndexOf > 0 && strTrim2.indexOf("/", iIndexOf + "://".length()) < 0) {
-                        strTrim2 = strTrim2 + "/";
-                        Log.d("@M_browser/AddSiteNavigationPage", "URL=" + strTrim2);
-                    }
-                } else {
-                    if (scheme != null) {
-                        this.mAddress.setError(resources.getText(2131492905));
-                        return false;
-                    }
-                    try {
-                        WebAddress webAddress = new WebAddress(strFixUrl);
-                        if (webAddress.getHost().length() == 0) {
-                            throw new URISyntaxException("", "");
-                        }
-                        strTrim2 = webAddress.toString();
-                    } catch (ParseException e) {
-                        throw new URISyntaxException("", "");
-                    }
-                }
-                try {
-                    if (strTrim2.length() != strTrim2.getBytes("UTF-8").length) {
-                        throw new URISyntaxException("", "");
-                    }
-                } catch (UnsupportedEncodingException e2) {
-                    throw new URISyntaxException("", "");
-                }
-            }
-            try {
-                String path = new URL(strTrim2).getPath();
-                if ((path.equals("/") && strTrim2.endsWith(".")) || (path.equals("") && strTrim2.endsWith(".."))) {
-                    this.mAddress.setError(resources.getText(2131493015));
-                    return false;
-                }
-                if (!this.mItemUrl.equals(strTrim2) && isSiteNavigationUrl(this, strTrim2, strTrim2)) {
-                    this.mAddress.setError(resources.getText(2131492910));
-                    return false;
-                }
-                if (strTrim2.startsWith("about:blank")) {
-                    strTrim2 = this.mItemUrl;
-                }
-                Bundle bundle = new Bundle();
-                bundle.putString("title", strTrim);
-                bundle.putString("url", strTrim2);
-                bundle.putString("itemUrl", this.mItemUrl);
-                if (this.mItemUrl.equals(strTrim2)) {
-                    bundle.putBoolean("toDefaultThumbnail", false);
-                } else {
-                    bundle.putBoolean("toDefaultThumbnail", true);
-                }
-                Message messageObtain = Message.obtain(this.mHandler, 100);
-                messageObtain.setData(bundle);
-                new Thread(new SaveSiteNavigationRunnable(this, messageObtain)).start();
-                return true;
-            } catch (MalformedURLException e3) {
-                this.mAddress.setError(resources.getText(2131493015));
-                return false;
-            }
-        } catch (URISyntaxException e4) {
-            this.mAddress.setError(resources.getText(2131493015));
-            return false;
-        }
     }
 }

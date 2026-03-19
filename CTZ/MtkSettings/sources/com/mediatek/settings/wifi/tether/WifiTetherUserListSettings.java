@@ -96,7 +96,7 @@ public class WifiTetherUserListSettings extends RestrictedDashboardFragment {
         return -1;
     }
 
-    public void updateWifiApClients() {
+    private void updateWifiApClients() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         if (preferenceScreen == null) {
             return;

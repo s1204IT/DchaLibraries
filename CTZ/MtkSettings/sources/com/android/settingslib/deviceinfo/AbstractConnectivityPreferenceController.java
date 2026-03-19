@@ -51,7 +51,7 @@ public abstract class AbstractConnectivityPreferenceController extends AbstractP
         this.mContext.registerReceiver(this.mConnectivityReceiver, intentFilter, "android.permission.CHANGE_NETWORK_STATE", null);
     }
 
-    public Handler getHandler() {
+    private Handler getHandler() {
         if (this.mHandler == null) {
             this.mHandler = new ConnectivityEventHandler(this);
         }

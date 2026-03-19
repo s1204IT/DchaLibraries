@@ -68,7 +68,7 @@ public class ZenRuleNameDialog extends InstrumentedDialogFragment {
         }).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).create();
     }
 
-    public String trimmedText(EditText editText) {
+    private String trimmedText(EditText editText) {
         if (editText.getText() == null) {
             return null;
         }

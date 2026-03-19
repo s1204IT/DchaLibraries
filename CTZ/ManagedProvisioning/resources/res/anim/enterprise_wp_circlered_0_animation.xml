@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <objectAnimator
+        android:interpolator="@android:interpolator/linear"
+        android:duration="2000"
+        android:valueFrom="-18"
+        android:valueTo="378"
+        android:valueType="floatType"
+        android:propertyName="rotation"/>
+</set>

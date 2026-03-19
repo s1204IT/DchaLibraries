@@ -12,12 +12,20 @@ public class VoiceSearch {
         this.mContext = context;
     }
 
-    private ResolveInfo getResolveInfo() {
-        return this.mContext.getPackageManager().resolveActivity(createVoiceSearchIntent(), 65536);
+    public boolean shouldShowVoiceSearch() {
+        return isVoiceSearchAvailable();
     }
 
     protected Intent createVoiceSearchIntent() {
         return new Intent("android.speech.action.WEB_SEARCH");
+    }
+
+    private ResolveInfo getResolveInfo() {
+        return this.mContext.getPackageManager().resolveActivity(createVoiceSearchIntent(), 65536);
+    }
+
+    public boolean isVoiceSearchAvailable() {
+        return getResolveInfo() != null;
     }
 
     public Intent createVoiceWebSearchIntent(Bundle bundle) {
@@ -27,18 +35,9 @@ public class VoiceSearch {
         Intent intentCreateVoiceSearchIntent = createVoiceSearchIntent();
         intentCreateVoiceSearchIntent.addFlags(268435456);
         intentCreateVoiceSearchIntent.putExtra("android.speech.extra.LANGUAGE_MODEL", "web_search");
-        if (bundle == null) {
-            return intentCreateVoiceSearchIntent;
+        if (bundle != null) {
+            intentCreateVoiceSearchIntent.putExtra("app_data", bundle);
         }
-        intentCreateVoiceSearchIntent.putExtra("app_data", bundle);
         return intentCreateVoiceSearchIntent;
-    }
-
-    public boolean isVoiceSearchAvailable() {
-        return getResolveInfo() != null;
-    }
-
-    public boolean shouldShowVoiceSearch() {
-        return isVoiceSearchAvailable();
     }
 }

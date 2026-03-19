@@ -32,11 +32,11 @@ public class DataUri {
         return str.startsWith("data:");
     }
 
-    public byte[] getData() {
-        return this.mData;
-    }
-
     public String getMimeType() {
         return this.mMimeType;
+    }
+
+    public byte[] getData() {
+        return this.mData;
     }
 }

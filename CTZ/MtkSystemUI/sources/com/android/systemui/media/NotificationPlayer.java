@@ -116,7 +116,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
         }
     }
 
-    public void abandonAudioFocusAfterError() {
+    private void abandonAudioFocusAfterError() {
         synchronized (this.mQueueAudioFocusLock) {
             if (this.mAudioManagerWithAudioFocus != null) {
                 this.mAudioManagerWithAudioFocus.abandonAudioFocus(null);
@@ -125,7 +125,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
         }
     }
 
-    public void startSound(Command command) {
+    private void startSound(Command command) {
         try {
             synchronized (this.mCompletionHandlingLock) {
                 if (this.mLooper != null && this.mLooper.getThread().getState() != Thread.State.TERMINATED) {
@@ -286,7 +286,7 @@ public class NotificationPlayer implements MediaPlayer.OnCompletionListener, Med
     }
 
     @GuardedBy("mCmdQueue")
-    public void releaseWakeLock() {
+    private void releaseWakeLock() {
         if (this.mWakeLock != null) {
             this.mWakeLock.release();
         }

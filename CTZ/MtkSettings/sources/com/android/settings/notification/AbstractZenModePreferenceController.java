@@ -178,7 +178,7 @@ public abstract class AbstractZenModePreferenceController extends AbstractPrefer
         }
     }
 
-    public static long getNextAlarm(Context context) {
+    private static long getNextAlarm(Context context) {
         AlarmManager.AlarmClockInfo nextAlarmClock = ((AlarmManager) context.getSystemService("alarm")).getNextAlarmClock(ActivityManager.getCurrentUser());
         if (nextAlarmClock != null) {
             return nextAlarmClock.getTriggerTime();

@@ -20,7 +20,7 @@ public class CellTileView extends SignalTileView {
     }
 
     @Override
-    public void updateIcon(ImageView imageView, QSTile.State state) {
+    protected void updateIcon(ImageView imageView, QSTile.State state) {
         if (!(state.icon instanceof SignalIcon)) {
             super.updateIcon(imageView, state);
         } else if (!Objects.equals(state.icon, imageView.getTag(R.id.qs_icon_tag))) {

@@ -265,7 +265,7 @@ public class PipMenuActivity extends Activity {
         }
     }
 
-    public void showMenu(int i, Rect rect, Rect rect2, boolean z, boolean z2) {
+    private void showMenu(int i, Rect rect, Rect rect2, boolean z, boolean z2) {
         this.mAllowMenuTimeout = z;
         if (this.mMenuState != i) {
             this.mAllowTouches = !(z2 && (this.mMenuState == 2 || i == 2));
@@ -304,7 +304,7 @@ public class PipMenuActivity extends Activity {
         notifyUnregisterInputConsumer();
     }
 
-    public void hideMenu() {
+    private void hideMenu() {
         hideMenu(null, true, false);
     }
 
@@ -357,7 +357,7 @@ public class PipMenuActivity extends Activity {
         }
     }
 
-    public void setActions(Rect rect, List<RemoteAction> list) {
+    private void setActions(Rect rect, List<RemoteAction> list) {
         this.mActions.clear();
         this.mActions.addAll(list);
         updateActionViews(rect);
@@ -443,7 +443,7 @@ public class PipMenuActivity extends Activity {
         }
     }
 
-    public void updateDismissFraction(float f) {
+    private void updateDismissFraction(float f) {
         int i;
         float f2 = 1.0f - f;
         if (this.mMenuState == 2) {
@@ -489,7 +489,7 @@ public class PipMenuActivity extends Activity {
         }, false, false);
     }
 
-    public void dismissPip() {
+    private void dismissPip() {
         hideMenu(new Runnable() {
             @Override
             public final void run() {
@@ -504,7 +504,7 @@ public class PipMenuActivity extends Activity {
         sendMessage(messageObtain, "Could not notify controller to show PIP menu");
     }
 
-    public void showSettings() {
+    private void showSettings() {
         if (BenesseExtension.getDchaState() != 0) {
             return;
         }
@@ -525,7 +525,7 @@ public class PipMenuActivity extends Activity {
         sendMessage(messageObtain, "Could not notify controller of activity finished");
     }
 
-    public void sendEmptyMessage(int i, String str) {
+    private void sendEmptyMessage(int i, String str) {
         Message messageObtain = Message.obtain();
         messageObtain.what = i;
         sendMessage(messageObtain, str);
@@ -542,11 +542,11 @@ public class PipMenuActivity extends Activity {
         }
     }
 
-    public void cancelDelayedFinish() {
+    private void cancelDelayedFinish() {
         this.mHandler.removeCallbacks(this.mFinishRunnable);
     }
 
-    public void repostDelayedFinish(long j) {
+    private void repostDelayedFinish(long j) {
         this.mHandler.removeCallbacks(this.mFinishRunnable);
         this.mHandler.postDelayed(this.mFinishRunnable, j);
     }

@@ -9,49 +9,8 @@ class DescendingImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    public E ceiling(E e) {
-        return this.forward.floor(e);
-    }
-
-    @Override
-    ImmutableSortedSet<E> createDescendingSet() {
-        throw new AssertionError("should never be called");
-    }
-
-    @Override
-    public UnmodifiableIterator<E> descendingIterator() {
-        return this.forward.iterator();
-    }
-
-    @Override
-    public ImmutableSortedSet<E> descendingSet() {
-        return this.forward;
-    }
-
-    @Override
-    public E floor(E e) {
-        return this.forward.ceiling(e);
-    }
-
-    @Override
-    ImmutableSortedSet<E> headSetImpl(E e, boolean z) {
-        return this.forward.tailSet((Object) e, z).descendingSet();
-    }
-
-    @Override
-    public E higher(E e) {
-        return this.forward.lower(e);
-    }
-
-    @Override
-    int indexOf(Object obj) {
-        int iIndexOf = this.forward.indexOf(obj);
-        return iIndexOf == -1 ? iIndexOf : (size() - 1) - iIndexOf;
-    }
-
-    @Override
-    boolean isPartialView() {
-        return this.forward.isPartialView();
+    public int size() {
+        return this.forward.size();
     }
 
     @Override
@@ -60,13 +19,8 @@ class DescendingImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    public E lower(E e) {
-        return this.forward.higher(e);
-    }
-
-    @Override
-    public int size() {
-        return this.forward.size();
+    ImmutableSortedSet<E> headSetImpl(E e, boolean z) {
+        return this.forward.tailSet((Object) e, z).descendingSet();
     }
 
     @Override
@@ -77,5 +31,54 @@ class DescendingImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     @Override
     ImmutableSortedSet<E> tailSetImpl(E e, boolean z) {
         return this.forward.headSet((Object) e, z).descendingSet();
+    }
+
+    @Override
+    public ImmutableSortedSet<E> descendingSet() {
+        return this.forward;
+    }
+
+    @Override
+    public UnmodifiableIterator<E> descendingIterator() {
+        return this.forward.iterator();
+    }
+
+    @Override
+    ImmutableSortedSet<E> createDescendingSet() {
+        throw new AssertionError("should never be called");
+    }
+
+    @Override
+    public E lower(E e) {
+        return this.forward.higher(e);
+    }
+
+    @Override
+    public E floor(E e) {
+        return this.forward.ceiling(e);
+    }
+
+    @Override
+    public E ceiling(E e) {
+        return this.forward.floor(e);
+    }
+
+    @Override
+    public E higher(E e) {
+        return this.forward.lower(e);
+    }
+
+    @Override
+    int indexOf(Object obj) {
+        int iIndexOf = this.forward.indexOf(obj);
+        if (iIndexOf == -1) {
+            return iIndexOf;
+        }
+        return (size() - 1) - iIndexOf;
+    }
+
+    @Override
+    boolean isPartialView() {
+        return this.forward.isPartialView();
     }
 }

@@ -14,47 +14,6 @@ import java.util.List;
 class MediaBrowserServiceCompatApi26 {
     private static Field sResultFlags;
 
-    static class MediaBrowserServiceAdaptor extends MediaBrowserServiceCompatApi23.MediaBrowserServiceAdaptor {
-        MediaBrowserServiceAdaptor(Context context, ServiceCompatProxy serviceCompatProxy) {
-            super(context, serviceCompatProxy);
-        }
-
-        @Override
-        public void onLoadChildren(String str, MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result, Bundle bundle) {
-            ((ServiceCompatProxy) this.mServiceProxy).onLoadChildren(str, new ResultWrapper(result), bundle);
-        }
-    }
-
-    static class ResultWrapper {
-        MediaBrowserService.Result mResultObj;
-
-        ResultWrapper(MediaBrowserService.Result result) {
-            this.mResultObj = result;
-        }
-
-        List<MediaBrowser.MediaItem> parcelListToItemList(List<Parcel> list) {
-            if (list == null) {
-                return null;
-            }
-            ArrayList arrayList = new ArrayList();
-            for (Parcel parcel : list) {
-                parcel.setDataPosition(0);
-                arrayList.add(MediaBrowser.MediaItem.CREATOR.createFromParcel(parcel));
-                parcel.recycle();
-            }
-            return arrayList;
-        }
-
-        public void sendResult(List<Parcel> list, int i) {
-            try {
-                MediaBrowserServiceCompatApi26.sResultFlags.setInt(this.mResultObj, i);
-            } catch (IllegalAccessException e) {
-                Log.w("MBSCompatApi26", e);
-            }
-            this.mResultObj.sendResult(parcelListToItemList(list));
-        }
-    }
-
     public interface ServiceCompatProxy extends MediaBrowserServiceCompatApi23.ServiceCompatProxy {
         void onLoadChildren(String str, ResultWrapper resultWrapper, Bundle bundle);
     }
@@ -68,7 +27,48 @@ class MediaBrowserServiceCompatApi26 {
         }
     }
 
-    public static Object createService(Context context, ServiceCompatProxy serviceCompatProxy) {
-        return new MediaBrowserServiceAdaptor(context, serviceCompatProxy);
+    public static Object createService(Context context, ServiceCompatProxy serviceProxy) {
+        return new MediaBrowserServiceAdaptor(context, serviceProxy);
+    }
+
+    static class ResultWrapper {
+        MediaBrowserService.Result mResultObj;
+
+        ResultWrapper(MediaBrowserService.Result result) {
+            this.mResultObj = result;
+        }
+
+        public void sendResult(List<Parcel> result, int flags) {
+            try {
+                MediaBrowserServiceCompatApi26.sResultFlags.setInt(this.mResultObj, flags);
+            } catch (IllegalAccessException e) {
+                Log.w("MBSCompatApi26", e);
+            }
+            this.mResultObj.sendResult(parcelListToItemList(result));
+        }
+
+        List<MediaBrowser.MediaItem> parcelListToItemList(List<Parcel> parcelList) {
+            if (parcelList == null) {
+                return null;
+            }
+            ArrayList arrayList = new ArrayList();
+            for (Parcel parcel : parcelList) {
+                parcel.setDataPosition(0);
+                arrayList.add(MediaBrowser.MediaItem.CREATOR.createFromParcel(parcel));
+                parcel.recycle();
+            }
+            return arrayList;
+        }
+    }
+
+    static class MediaBrowserServiceAdaptor extends MediaBrowserServiceCompatApi23.MediaBrowserServiceAdaptor {
+        MediaBrowserServiceAdaptor(Context context, ServiceCompatProxy serviceWrapper) {
+            super(context, serviceWrapper);
+        }
+
+        @Override
+        public void onLoadChildren(String parentId, MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result, Bundle options) {
+            ((ServiceCompatProxy) this.mServiceProxy).onLoadChildren(parentId, new ResultWrapper(result), options);
+        }
     }
 }

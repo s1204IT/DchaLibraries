@@ -206,16 +206,16 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
     public void setDetailListening(boolean z) {
     }
 
-    public void handleAddCallback(QSTile.Callback callback) {
+    private void handleAddCallback(QSTile.Callback callback) {
         this.mCallbacks.add(callback);
         callback.onStateChanged(this.mState);
     }
 
-    public void handleRemoveCallback(QSTile.Callback callback) {
+    private void handleRemoveCallback(QSTile.Callback callback) {
         this.mCallbacks.remove(callback);
     }
 
-    public void handleRemoveCallbacks() {
+    private void handleRemoveCallbacks() {
         this.mCallbacks.clear();
     }
 
@@ -270,7 +270,7 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         return null;
     }
 
-    public void handleShowDetail(boolean z) {
+    private void handleShowDetail(boolean z) {
         this.mShowingDetail = z;
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             this.mCallbacks.get(i).onShowDetail(z);
@@ -281,13 +281,13 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         return this.mShowingDetail;
     }
 
-    public void handleToggleStateChanged(boolean z) {
+    private void handleToggleStateChanged(boolean z) {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             this.mCallbacks.get(i).onToggleStateChanged(z);
         }
     }
 
-    public void handleScanStateChanged(boolean z) {
+    private void handleScanStateChanged(boolean z) {
         for (int i = 0; i < this.mCallbacks.size(); i++) {
             this.mCallbacks.get(i).onScanStateChanged(z);
         }
@@ -297,7 +297,7 @@ public abstract class QSTileImpl<TState extends QSTile.State> implements QSTile 
         handleRefreshState(null);
     }
 
-    public void handleSetListeningInternal(Object obj, boolean z) {
+    private void handleSetListeningInternal(Object obj, boolean z) {
         if (z) {
             if (this.mListeners.add(obj) && this.mListeners.size() == 1) {
                 if (DEBUG) {

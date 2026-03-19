@@ -18,6 +18,52 @@ public class Suggestions {
         this.mSource = source;
     }
 
+    public void acquire() {
+        this.mRefCount++;
+    }
+
+    public void release() {
+        this.mRefCount--;
+        if (this.mRefCount <= 0) {
+            close();
+        }
+    }
+
+    public void done() {
+        this.mDone = true;
+    }
+
+    public boolean isDone() {
+        return this.mDone || this.mResult != null;
+    }
+
+    public void addResults(SourceResult sourceResult) {
+        if (isClosed()) {
+            sourceResult.close();
+            return;
+        }
+        if (!this.mQuery.equals(sourceResult.getUserQuery())) {
+            throw new IllegalArgumentException("Got result for wrong query: " + this.mQuery + " != " + sourceResult.getUserQuery());
+        }
+        this.mResult = sourceResult;
+        notifyDataSetChanged();
+    }
+
+    public void registerDataSetObserver(DataSetObserver dataSetObserver) {
+        if (this.mClosed) {
+            throw new IllegalStateException("registerDataSetObserver() when closed");
+        }
+        this.mDataSetObservable.registerObserver(dataSetObserver);
+    }
+
+    public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
+        this.mDataSetObservable.unregisterObserver(dataSetObserver);
+    }
+
+    protected void notifyDataSetChanged() {
+        this.mDataSetObservable.notifyChanged();
+    }
+
     private void close() {
         if (this.mClosed) {
             throw new IllegalStateException("Double close()");
@@ -30,32 +76,14 @@ public class Suggestions {
         this.mResult = null;
     }
 
-    public void acquire() {
-        this.mRefCount++;
-    }
-
-    public void addResults(SourceResult sourceResult) {
-        if (isClosed()) {
-            sourceResult.close();
-            return;
-        }
-        if (this.mQuery.equals(sourceResult.getUserQuery())) {
-            this.mResult = sourceResult;
-            notifyDataSetChanged();
-            return;
-        }
-        throw new IllegalArgumentException("Got result for wrong query: " + this.mQuery + " != " + sourceResult.getUserQuery());
-    }
-
-    public void done() {
-        this.mDone = true;
+    public boolean isClosed() {
+        return this.mClosed;
     }
 
     protected void finalize() {
-        if (this.mClosed) {
-            return;
+        if (!this.mClosed) {
+            Log.e("QSB.Suggestions", "LEAK! Finalized without being closed: Suggestions[" + getQuery() + "]");
         }
-        Log.e("QSB.Suggestions", "LEAK! Finalized without being closed: Suggestions[" + getQuery() + "]");
     }
 
     public String getQuery() {
@@ -63,6 +91,10 @@ public class Suggestions {
     }
 
     public SourceResult getResult() {
+        return this.mResult;
+    }
+
+    public SourceResult getWebResult() {
         return this.mResult;
     }
 
@@ -76,41 +108,7 @@ public class Suggestions {
         return this.mResult.getCount();
     }
 
-    public SourceResult getWebResult() {
-        return this.mResult;
-    }
-
-    public boolean isClosed() {
-        return this.mClosed;
-    }
-
-    public boolean isDone() {
-        return this.mDone || this.mResult != null;
-    }
-
-    protected void notifyDataSetChanged() {
-        this.mDataSetObservable.notifyChanged();
-    }
-
-    public void registerDataSetObserver(DataSetObserver dataSetObserver) {
-        if (this.mClosed) {
-            throw new IllegalStateException("registerDataSetObserver() when closed");
-        }
-        this.mDataSetObservable.registerObserver(dataSetObserver);
-    }
-
-    public void release() {
-        this.mRefCount--;
-        if (this.mRefCount <= 0) {
-            close();
-        }
-    }
-
     public String toString() {
         return "Suggestions@" + hashCode() + "{source=" + this.mSource + ",getResultCount()=" + getResultCount() + "}";
-    }
-
-    public void unregisterDataSetObserver(DataSetObserver dataSetObserver) {
-        this.mDataSetObservable.unregisterObserver(dataSetObserver);
     }
 }

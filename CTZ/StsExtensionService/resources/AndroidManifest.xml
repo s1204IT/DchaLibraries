@@ -13,7 +13,7 @@
         android:targetSdkVersion="28"/>
     <application android:label="StsExtensionService">
         <service
-            android:name=".StsExtensionService"
+            android:name="com.sts.tottori.stsextension.StsExtensionService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

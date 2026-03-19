@@ -3,9 +3,23 @@ package com.google.common.primitives;
 import java.util.Comparator;
 
 public final class UnsignedBytes {
+    public static int toInt(byte b) {
+        return b & 255;
+    }
+
+    public static int compare(byte b, byte b2) {
+        return toInt(b) - toInt(b2);
+    }
+
+    static Comparator<byte[]> lexicographicalComparatorJavaImpl() {
+        return LexicographicalComparatorHolder.PureJavaComparator.INSTANCE;
+    }
 
     static class LexicographicalComparatorHolder {
         static final Comparator<byte[]> BEST_COMPARATOR = UnsignedBytes.lexicographicalComparatorJavaImpl();
+
+        LexicographicalComparatorHolder() {
+        }
 
         enum PureJavaComparator implements Comparator<byte[]> {
             INSTANCE;
@@ -22,20 +36,5 @@ public final class UnsignedBytes {
                 return bArr.length - bArr2.length;
             }
         }
-
-        LexicographicalComparatorHolder() {
-        }
-    }
-
-    public static int compare(byte b, byte b2) {
-        return toInt(b) - toInt(b2);
-    }
-
-    static Comparator<byte[]> lexicographicalComparatorJavaImpl() {
-        return LexicographicalComparatorHolder.PureJavaComparator.INSTANCE;
-    }
-
-    public static int toInt(byte b) {
-        return b & 255;
     }
 }

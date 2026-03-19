@@ -39,18 +39,32 @@ public class QsbApplication {
     private VoiceSearch mVoiceSearch;
 
     public QsbApplication(Context context) {
-        this.mContext = new ContextThemeWrapper(context, 2131558410);
+        this.mContext = new ContextThemeWrapper(context, R.style.Theme_QuickSearchBox);
     }
 
     public static QsbApplication get(Context context) {
         return ((QsbApplicationWrapper) context.getApplicationContext()).getApp();
     }
 
-    protected void checkThread() {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
-            return;
+    protected Context getContext() {
+        return this.mContext;
+    }
+
+    public int getVersionCode() {
+        if (this.mVersionCode == 0) {
+            try {
+                this.mVersionCode = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0).versionCode;
+            } catch (PackageManager.NameNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
-        throw new IllegalStateException("Accessed Application object from thread " + Thread.currentThread().getName());
+        return this.mVersionCode;
+    }
+
+    protected void checkThread() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new IllegalStateException("Accessed Application object from thread " + Thread.currentThread().getName());
+        }
     }
 
     protected void close() {
@@ -65,159 +79,48 @@ public class QsbApplication {
         }
     }
 
-    protected Config createConfig() {
-        return new Config(getContext());
+    public synchronized Handler getMainThreadHandler() {
+        if (this.mUiThreadHandler == null) {
+            this.mUiThreadHandler = new Handler(Looper.getMainLooper());
+        }
+        return this.mUiThreadHandler;
     }
 
-    protected GoogleSource createGoogleSource() {
-        return new GoogleSuggestClient(getContext(), getMainThreadHandler(), getIconLoaderExecutor(), getConfig());
-    }
-
-    protected HttpHelper createHttpHelper() {
-        return new JavaNetHttpHelper(new JavaNetHttpHelper.PassThroughRewriter(), getConfig().getUserAgent());
+    public synchronized NamedTaskExecutor getIconLoaderExecutor() {
+        if (this.mIconLoaderExecutor == null) {
+            this.mIconLoaderExecutor = createIconLoaderExecutor();
+        }
+        return this.mIconLoaderExecutor;
     }
 
     protected NamedTaskExecutor createIconLoaderExecutor() {
         return new PerNameExecutor(SingleThreadNamedTaskExecutor.factory(new PriorityThreadFactory(10)));
     }
 
-    protected Logger createLogger() {
-        return new EventLogLogger(getContext(), getConfig());
+    public void onStartupComplete() {
     }
 
-    protected ThreadFactory createQueryThreadFactory() {
-        return new ThreadFactoryBuilder().setNameFormat("QSB #%d").setThreadFactory(new PriorityThreadFactory(getConfig().getQueryThreadPriority())).build();
+    public synchronized Config getConfig() {
+        if (this.mConfig == null) {
+            this.mConfig = createConfig();
+        }
+        return this.mConfig;
     }
 
-    protected SearchBaseUrlHelper createSearchBaseUrlHelper() {
-        return new SearchBaseUrlHelper(getContext(), getHttpHelper(), getSettings(), ((SearchSettingsImpl) getSettings()).getSearchPreferences());
+    protected Config createConfig() {
+        return new Config(getContext());
+    }
+
+    public synchronized SearchSettings getSettings() {
+        if (this.mSettings == null) {
+            this.mSettings = createSettings();
+            this.mSettings.upgradeSettingsIfNeeded();
+        }
+        return this.mSettings;
     }
 
     protected SearchSettings createSettings() {
         return new SearchSettingsImpl(getContext(), getConfig());
-    }
-
-    protected NamedTaskExecutor createSourceTaskExecutor() {
-        return new PerNameExecutor(SingleThreadNamedTaskExecutor.factory(getQueryThreadFactory()));
-    }
-
-    protected SuggestionFormatter createSuggestionFormatter() {
-        return new LevenshteinSuggestionFormatter(getTextAppearanceFactory());
-    }
-
-    protected SuggestionViewFactory createSuggestionViewFactory() {
-        return new DefaultSuggestionViewFactory(getContext());
-    }
-
-    protected SuggestionsProvider createSuggestionsProvider() {
-        return new SuggestionsProviderImpl(getConfig(), getSourceTaskExecutor(), getMainThreadHandler(), getLogger());
-    }
-
-    protected TextAppearanceFactory createTextAppearanceFactory() {
-        return new TextAppearanceFactory(getContext());
-    }
-
-    protected VoiceSearch createVoiceSearch() {
-        return new VoiceSearch(getContext());
-    }
-
-    public Config getConfig() {
-        Config config;
-        synchronized (this) {
-            if (this.mConfig == null) {
-                this.mConfig = createConfig();
-            }
-            config = this.mConfig;
-        }
-        return config;
-    }
-
-    protected Context getContext() {
-        return this.mContext;
-    }
-
-    public GoogleSource getGoogleSource() {
-        checkThread();
-        if (this.mGoogleSource == null) {
-            this.mGoogleSource = createGoogleSource();
-        }
-        return this.mGoogleSource;
-    }
-
-    public Help getHelp() {
-        return new Help(getContext(), getConfig());
-    }
-
-    public HttpHelper getHttpHelper() {
-        HttpHelper httpHelper;
-        synchronized (this) {
-            if (this.mHttpHelper == null) {
-                this.mHttpHelper = createHttpHelper();
-            }
-            httpHelper = this.mHttpHelper;
-        }
-        return httpHelper;
-    }
-
-    public NamedTaskExecutor getIconLoaderExecutor() {
-        NamedTaskExecutor namedTaskExecutor;
-        synchronized (this) {
-            if (this.mIconLoaderExecutor == null) {
-                this.mIconLoaderExecutor = createIconLoaderExecutor();
-            }
-            namedTaskExecutor = this.mIconLoaderExecutor;
-        }
-        return namedTaskExecutor;
-    }
-
-    public Logger getLogger() {
-        checkThread();
-        if (this.mLogger == null) {
-            this.mLogger = createLogger();
-        }
-        return this.mLogger;
-    }
-
-    public Handler getMainThreadHandler() {
-        Handler handler;
-        synchronized (this) {
-            if (this.mUiThreadHandler == null) {
-                this.mUiThreadHandler = new Handler(Looper.getMainLooper());
-            }
-            handler = this.mUiThreadHandler;
-        }
-        return handler;
-    }
-
-    protected ThreadFactory getQueryThreadFactory() {
-        checkThread();
-        if (this.mQueryThreadFactory == null) {
-            this.mQueryThreadFactory = createQueryThreadFactory();
-        }
-        return this.mQueryThreadFactory;
-    }
-
-    public SearchBaseUrlHelper getSearchBaseUrlHelper() {
-        SearchBaseUrlHelper searchBaseUrlHelper;
-        synchronized (this) {
-            if (this.mSearchBaseUrlHelper == null) {
-                this.mSearchBaseUrlHelper = createSearchBaseUrlHelper();
-            }
-            searchBaseUrlHelper = this.mSearchBaseUrlHelper;
-        }
-        return searchBaseUrlHelper;
-    }
-
-    public SearchSettings getSettings() {
-        SearchSettings searchSettings;
-        synchronized (this) {
-            if (this.mSettings == null) {
-                this.mSettings = createSettings();
-                this.mSettings.upgradeSettingsIfNeeded();
-            }
-            searchSettings = this.mSettings;
-        }
-        return searchSettings;
     }
 
     public NamedTaskExecutor getSourceTaskExecutor() {
@@ -228,19 +131,20 @@ public class QsbApplication {
         return this.mSourceTaskExecutor;
     }
 
-    public SuggestionFormatter getSuggestionFormatter() {
-        if (this.mSuggestionFormatter == null) {
-            this.mSuggestionFormatter = createSuggestionFormatter();
-        }
-        return this.mSuggestionFormatter;
+    protected NamedTaskExecutor createSourceTaskExecutor() {
+        return new PerNameExecutor(SingleThreadNamedTaskExecutor.factory(getQueryThreadFactory()));
     }
 
-    public SuggestionViewFactory getSuggestionViewFactory() {
+    protected ThreadFactory getQueryThreadFactory() {
         checkThread();
-        if (this.mSuggestionViewFactory == null) {
-            this.mSuggestionViewFactory = createSuggestionViewFactory();
+        if (this.mQueryThreadFactory == null) {
+            this.mQueryThreadFactory = createQueryThreadFactory();
         }
-        return this.mSuggestionViewFactory;
+        return this.mQueryThreadFactory;
+    }
+
+    protected ThreadFactory createQueryThreadFactory() {
+        return new ThreadFactoryBuilder().setNameFormat("QSB #%d").setThreadFactory(new PriorityThreadFactory(getConfig().getQueryThreadPriority())).build();
     }
 
     protected SuggestionsProvider getSuggestionsProvider() {
@@ -251,22 +155,32 @@ public class QsbApplication {
         return this.mSuggestionsProvider;
     }
 
-    public TextAppearanceFactory getTextAppearanceFactory() {
-        if (this.mTextAppearanceFactory == null) {
-            this.mTextAppearanceFactory = createTextAppearanceFactory();
-        }
-        return this.mTextAppearanceFactory;
+    protected SuggestionsProvider createSuggestionsProvider() {
+        return new SuggestionsProviderImpl(getConfig(), getSourceTaskExecutor(), getMainThreadHandler(), getLogger());
     }
 
-    public int getVersionCode() {
-        if (this.mVersionCode == 0) {
-            try {
-                this.mVersionCode = getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0).versionCode;
-            } catch (PackageManager.NameNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+    public SuggestionViewFactory getSuggestionViewFactory() {
+        checkThread();
+        if (this.mSuggestionViewFactory == null) {
+            this.mSuggestionViewFactory = createSuggestionViewFactory();
         }
-        return this.mVersionCode;
+        return this.mSuggestionViewFactory;
+    }
+
+    protected SuggestionViewFactory createSuggestionViewFactory() {
+        return new DefaultSuggestionViewFactory(getContext());
+    }
+
+    public GoogleSource getGoogleSource() {
+        checkThread();
+        if (this.mGoogleSource == null) {
+            this.mGoogleSource = createGoogleSource();
+        }
+        return this.mGoogleSource;
+    }
+
+    protected GoogleSource createGoogleSource() {
+        return new GoogleSuggestClient(getContext(), getMainThreadHandler(), getIconLoaderExecutor(), getConfig());
     }
 
     public VoiceSearch getVoiceSearch() {
@@ -277,6 +191,67 @@ public class QsbApplication {
         return this.mVoiceSearch;
     }
 
-    public void onStartupComplete() {
+    protected VoiceSearch createVoiceSearch() {
+        return new VoiceSearch(getContext());
+    }
+
+    public Logger getLogger() {
+        checkThread();
+        if (this.mLogger == null) {
+            this.mLogger = createLogger();
+        }
+        return this.mLogger;
+    }
+
+    protected Logger createLogger() {
+        return new EventLogLogger(getContext(), getConfig());
+    }
+
+    public SuggestionFormatter getSuggestionFormatter() {
+        if (this.mSuggestionFormatter == null) {
+            this.mSuggestionFormatter = createSuggestionFormatter();
+        }
+        return this.mSuggestionFormatter;
+    }
+
+    protected SuggestionFormatter createSuggestionFormatter() {
+        return new LevenshteinSuggestionFormatter(getTextAppearanceFactory());
+    }
+
+    public TextAppearanceFactory getTextAppearanceFactory() {
+        if (this.mTextAppearanceFactory == null) {
+            this.mTextAppearanceFactory = createTextAppearanceFactory();
+        }
+        return this.mTextAppearanceFactory;
+    }
+
+    protected TextAppearanceFactory createTextAppearanceFactory() {
+        return new TextAppearanceFactory(getContext());
+    }
+
+    public synchronized HttpHelper getHttpHelper() {
+        if (this.mHttpHelper == null) {
+            this.mHttpHelper = createHttpHelper();
+        }
+        return this.mHttpHelper;
+    }
+
+    protected HttpHelper createHttpHelper() {
+        return new JavaNetHttpHelper(new JavaNetHttpHelper.PassThroughRewriter(), getConfig().getUserAgent());
+    }
+
+    public synchronized SearchBaseUrlHelper getSearchBaseUrlHelper() {
+        if (this.mSearchBaseUrlHelper == null) {
+            this.mSearchBaseUrlHelper = createSearchBaseUrlHelper();
+        }
+        return this.mSearchBaseUrlHelper;
+    }
+
+    protected SearchBaseUrlHelper createSearchBaseUrlHelper() {
+        return new SearchBaseUrlHelper(getContext(), getHttpHelper(), getSettings(), ((SearchSettingsImpl) getSettings()).getSearchPreferences());
+    }
+
+    public Help getHelp() {
+        return new Help(getContext(), getConfig());
     }
 }

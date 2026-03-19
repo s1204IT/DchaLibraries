@@ -12,6 +12,31 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
     private transient ImmutableSet<K> keySet;
     private transient ImmutableCollection<V> values;
 
+    abstract ImmutableSet<Map.Entry<K, V>> createEntrySet();
+
+    public abstract V get(Object obj);
+
+    abstract boolean isPartialView();
+
+    public static <K, V> ImmutableMap<K, V> of() {
+        return ImmutableBiMap.of();
+    }
+
+    public static <K, V> ImmutableMap<K, V> of(K k, V v) {
+        return ImmutableBiMap.of((Object) k, (Object) v);
+    }
+
+    static <K, V> ImmutableMapEntry.TerminalEntry<K, V> entryOf(K k, V v) {
+        CollectPreconditions.checkEntryNotNull(k, v);
+        return new ImmutableMapEntry.TerminalEntry<>(k, v);
+    }
+
+    static void checkNoConflict(boolean z, String str, Map.Entry<?, ?> entry, Map.Entry<?, ?> entry2) {
+        if (!z) {
+            throw new IllegalArgumentException("Multiple entries with same " + str + ": " + entry + " and " + entry2);
+        }
+    }
+
     public static class Builder<K, V> {
         ImmutableMapEntry.TerminalEntry<K, V>[] entries;
         int size;
@@ -31,6 +56,16 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
             }
         }
 
+        public Builder<K, V> put(K k, V v) {
+            ensureCapacity(this.size + 1);
+            ImmutableMapEntry.TerminalEntry<K, V> terminalEntryEntryOf = ImmutableMap.entryOf(k, v);
+            ImmutableMapEntry.TerminalEntry<K, V>[] terminalEntryArr = this.entries;
+            int i = this.size;
+            this.size = i + 1;
+            terminalEntryArr[i] = terminalEntryEntryOf;
+            return this;
+        }
+
         public ImmutableMap<K, V> build() {
             switch (this.size) {
                 case 0:
@@ -41,70 +76,15 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
                     return new RegularImmutableMap(this.size, this.entries);
             }
         }
-
-        public Builder<K, V> put(K k, V v) {
-            ensureCapacity(this.size + 1);
-            ImmutableMapEntry.TerminalEntry<K, V> terminalEntryEntryOf = ImmutableMap.entryOf(k, v);
-            ImmutableMapEntry.TerminalEntry<K, V>[] terminalEntryArr = this.entries;
-            int i = this.size;
-            this.size = i + 1;
-            terminalEntryArr[i] = terminalEntryEntryOf;
-            return this;
-        }
-    }
-
-    static class SerializedForm implements Serializable {
-        private static final long serialVersionUID = 0;
-        private final Object[] keys;
-        private final Object[] values;
-
-        SerializedForm(ImmutableMap<?, ?> immutableMap) {
-            this.keys = new Object[immutableMap.size()];
-            this.values = new Object[immutableMap.size()];
-            UnmodifiableIterator<Map.Entry<?, ?>> it = immutableMap.entrySet().iterator();
-            int i = 0;
-            while (true) {
-                int i2 = i;
-                if (!it.hasNext()) {
-                    return;
-                }
-                Map.Entry<?, ?> next = it.next();
-                this.keys[i2] = next.getKey();
-                this.values[i2] = next.getValue();
-                i = i2 + 1;
-            }
-        }
-
-        Object createMap(Builder<Object, Object> builder) {
-            for (int i = 0; i < this.keys.length; i++) {
-                builder.put(this.keys[i], this.values[i]);
-            }
-            return builder.build();
-        }
-
-        Object readResolve() {
-            return createMap(new Builder<>());
-        }
-    }
-
-    ImmutableMap() {
-    }
-
-    static void checkNoConflict(boolean z, String str, Map.Entry<?, ?> entry, Map.Entry<?, ?> entry2) {
-        if (z) {
-            return;
-        }
-        throw new IllegalArgumentException("Multiple entries with same " + str + ": " + entry + " and " + entry2);
     }
 
     public static <K, V> ImmutableMap<K, V> copyOf(Map<? extends K, ? extends V> map) {
-        if ((map instanceof ImmutableMap) && !(map instanceof ImmutableSortedMap)) {
-            ImmutableMap<K, V> immutableMap = (ImmutableMap) map;
-            if (!immutableMap.isPartialView()) {
-                return immutableMap;
+        if (!(map instanceof ImmutableMap) || (map instanceof ImmutableSortedMap)) {
+            if (map instanceof EnumMap) {
+                return copyOfEnumMapUnsafe(map);
             }
-        } else if (map instanceof EnumMap) {
-            return copyOfEnumMapUnsafe(map);
+        } else if (!map.isPartialView()) {
+            return map;
         }
         Map.Entry[] entryArr = (Map.Entry[]) map.entrySet().toArray(EMPTY_ENTRY_ARRAY);
         switch (entryArr.length) {
@@ -118,6 +98,10 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         }
     }
 
+    private static <K, V> ImmutableMap<K, V> copyOfEnumMapUnsafe(Map<? extends K, ? extends V> map) {
+        return copyOfEnumMap((EnumMap) map);
+    }
+
     private static <K extends Enum<K>, V> ImmutableMap<K, V> copyOfEnumMap(Map<K, ? extends V> map) {
         EnumMap enumMap = new EnumMap(map);
         for (Map.Entry<K, V> entry : enumMap.entrySet()) {
@@ -126,27 +110,35 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         return ImmutableEnumMap.asImmutable(enumMap);
     }
 
-    private static <K, V> ImmutableMap<K, V> copyOfEnumMapUnsafe(Map<? extends K, ? extends V> map) {
-        return copyOfEnumMap((EnumMap) map);
+    ImmutableMap() {
     }
 
-    static <K, V> ImmutableMapEntry.TerminalEntry<K, V> entryOf(K k, V v) {
-        CollectPreconditions.checkEntryNotNull(k, v);
-        return new ImmutableMapEntry.TerminalEntry<>(k, v);
+    @Override
+    @Deprecated
+    public final V put(K k, V v) {
+        throw new UnsupportedOperationException();
     }
 
-    public static <K, V> ImmutableMap<K, V> of() {
-        return ImmutableBiMap.of();
+    @Override
+    @Deprecated
+    public final V remove(Object obj) {
+        throw new UnsupportedOperationException();
     }
 
-    public static <K, V> ImmutableMap<K, V> of(K k, V v) {
-        return ImmutableBiMap.of((Object) k, (Object) v);
+    @Override
+    @Deprecated
+    public final void putAll(Map<? extends K, ? extends V> map) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @Deprecated
     public final void clear() {
         throw new UnsupportedOperationException();
+    }
+
+    public boolean isEmpty() {
+        return size() == 0;
     }
 
     public boolean containsKey(Object obj) {
@@ -156,12 +148,6 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
     @Override
     public boolean containsValue(Object obj) {
         return values().contains(obj);
-    }
-
-    abstract ImmutableSet<Map.Entry<K, V>> createEntrySet();
-
-    ImmutableSet<K> createKeySet() {
-        return new ImmutableMapKeySet(this);
     }
 
     @Override
@@ -176,24 +162,6 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return Maps.equalsImpl(this, obj);
-    }
-
-    public abstract V get(Object obj);
-
-    @Override
-    public int hashCode() {
-        return entrySet().hashCode();
-    }
-
-    public boolean isEmpty() {
-        return size() == 0;
-    }
-
-    abstract boolean isPartialView();
-
-    @Override
     public ImmutableSet<K> keySet() {
         ImmutableSet<K> immutableSet = this.keySet;
         if (immutableSet != null) {
@@ -204,26 +172,8 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         return immutableSetCreateKeySet;
     }
 
-    @Override
-    @Deprecated
-    public final V put(K k, V v) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    @Deprecated
-    public final void putAll(Map<? extends K, ? extends V> map) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    @Deprecated
-    public final V remove(Object obj) {
-        throw new UnsupportedOperationException();
-    }
-
-    public String toString() {
-        return Maps.toStringImpl(this);
+    ImmutableSet<K> createKeySet() {
+        return new ImmutableMapKeySet(this);
     }
 
     @Override
@@ -235,6 +185,50 @@ public abstract class ImmutableMap<K, V> implements Serializable, Map<K, V> {
         ImmutableMapValues immutableMapValues = new ImmutableMapValues(this);
         this.values = immutableMapValues;
         return immutableMapValues;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return Maps.equalsImpl(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return entrySet().hashCode();
+    }
+
+    public String toString() {
+        return Maps.toStringImpl(this);
+    }
+
+    static class SerializedForm implements Serializable {
+        private static final long serialVersionUID = 0;
+        private final Object[] keys;
+        private final Object[] values;
+
+        SerializedForm(ImmutableMap<?, ?> immutableMap) {
+            this.keys = new Object[immutableMap.size()];
+            this.values = new Object[immutableMap.size()];
+            UnmodifiableIterator<Map.Entry<?, ?>> it = immutableMap.entrySet().iterator();
+            int i = 0;
+            while (it.hasNext()) {
+                Map.Entry<?, ?> next = it.next();
+                this.keys[i] = next.getKey();
+                this.values[i] = next.getValue();
+                i++;
+            }
+        }
+
+        Object readResolve() {
+            return createMap(new Builder<>());
+        }
+
+        Object createMap(Builder<Object, Object> builder) {
+            for (int i = 0; i < this.keys.length; i++) {
+                builder.put(this.keys[i], this.values[i]);
+            }
+            return builder.build();
+        }
     }
 
     Object writeReplace() {

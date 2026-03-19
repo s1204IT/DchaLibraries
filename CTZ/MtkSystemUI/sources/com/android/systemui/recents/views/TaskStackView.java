@@ -1564,7 +1564,7 @@ public class TaskStackView extends FrameLayout implements TaskStackLayoutAlgorit
         return -1;
     }
 
-    public void launchTask(final Task task) {
+    private void launchTask(final Task task) {
         cancelAllTaskViewAnimations();
         float stackScroll = this.mStackScroller.getStackScroll();
         float stackScrollForTaskAtInitialOffset = this.mLayoutAlgorithm.getStackScrollForTaskAtInitialOffset(task);

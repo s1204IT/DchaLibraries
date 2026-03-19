@@ -15,32 +15,18 @@ public class OpBrowserCustomizationFactoryBase {
         sOperatorFactoryInfoList.add(new OperatorCustomizationFactoryLoader.OperatorFactoryInfo("OP07Browser.apk", "com.mediatek.op07.browser.Op07BrowserCustomizationFactory", "com.mediatek.op07.browser", "OP07", "SEGDEFAULT", "SPEC0407"));
     }
 
-    public static OpBrowserCustomizationFactoryBase getOpFactory(Context context) {
-        OpBrowserCustomizationFactoryBase opBrowserCustomizationFactoryBase;
-        synchronized (OpBrowserCustomizationFactoryBase.class) {
-            try {
-                if (sFactory == null) {
-                    sFactory = (OpBrowserCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOperatorFactoryInfoList);
-                    if (sFactory == null) {
-                        sFactory = new OpBrowserCustomizationFactoryBase();
-                    }
-                }
-                opBrowserCustomizationFactoryBase = sFactory;
-            } catch (Throwable th) {
-                throw th;
+    public static synchronized OpBrowserCustomizationFactoryBase getOpFactory(Context context) {
+        if (sFactory == null) {
+            sFactory = (OpBrowserCustomizationFactoryBase) OperatorCustomizationFactoryLoader.loadFactory(context, sOperatorFactoryInfoList);
+            if (sFactory == null) {
+                sFactory = new OpBrowserCustomizationFactoryBase();
             }
         }
-        return opBrowserCustomizationFactoryBase;
+        return sFactory;
     }
 
-    public static void resetOpFactory() {
-        synchronized (OpBrowserCustomizationFactoryBase.class) {
-            try {
-                sFactory = null;
-            } catch (Throwable th) {
-                throw th;
-            }
-        }
+    public static synchronized void resetOpFactory() {
+        sFactory = null;
     }
 
     public IBrowserBookmarkExt makeBrowserBookmarkExt() {

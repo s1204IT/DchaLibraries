@@ -53,7 +53,7 @@ public class EnterprisePrivacySettings extends DashboardFragment {
         return buildPreferenceControllers(context, true);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, boolean z) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, boolean z) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new NetworkLogsPreferenceController(context));
         arrayList.add(new BugReportsPreferenceController(context));

@@ -168,7 +168,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         };
     }
 
-    public void updateIms() {
+    private void updateIms() {
         onFeatureCapabilityChangedAdapter(this.mImsRadioTech, this.mImsCapConfig);
         updateTelephony();
     }
@@ -441,7 +441,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
     }
 
     @Override
-    public MobileState cleanState() {
+    protected MobileState cleanState() {
         return new MobileState();
     }
 
@@ -565,7 +565,7 @@ public class MobileSignalController extends SignalController<MobileState, Mobile
         }
     }
 
-    public final void updateTelephony() {
+    private final void updateTelephony() {
         if (DEBUG && FeatureOptions.LOG_ENABLE) {
             Log.d(this.mTag, "updateTelephonySignalStrength: hasService=" + hasService() + ", ss=" + this.mSignalStrength + ", mConfig.alwaysShowDataRatIcon = " + this.mConfig.alwaysShowDataRatIcon + ", mDataState = " + this.mDataState);
         }

@@ -101,7 +101,7 @@ public class EditUserPhotoController {
         return this.mNewUserPhotoDrawable;
     }
 
-    public void showUpdatePhotoPopup() {
+    private void showUpdatePhotoPopup() {
         boolean zCanTakePhoto = canTakePhoto();
         boolean zCanChoosePhoto = canChoosePhoto();
         if (!zCanTakePhoto && !zCanChoosePhoto) {
@@ -152,13 +152,13 @@ public class EditUserPhotoController {
         return this.mImageView.getContext().getPackageManager().queryIntentActivities(intent, 0).size() > 0;
     }
 
-    public void takePhoto() {
+    private void takePhoto() {
         Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
         appendOutputExtra(intent, this.mTakePictureUri);
         this.mFragment.startActivityForResult(intent, 1002);
     }
 
-    public void choosePhoto() {
+    private void choosePhoto() {
         Intent intent = new Intent("android.intent.action.GET_CONTENT", (Uri) null);
         intent.setType("image/*");
         appendOutputExtra(intent, this.mTakePictureUri);
@@ -168,7 +168,7 @@ public class EditUserPhotoController {
     private void copyAndCropPhoto(final Uri uri) {
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... voidArr) throws Exception {
+            protected Void doInBackground(Void... voidArr) throws Exception {
                 InputStream inputStreamOpenInputStream;
                 Throwable th;
                 Throwable th2;
@@ -216,7 +216,7 @@ public class EditUserPhotoController {
             }
 
             @Override
-            public void onPostExecute(Void r1) {
+            protected void onPostExecute(Void r1) {
                 if (EditUserPhotoController.this.mFragment.isAdded()) {
                     EditUserPhotoController.this.cropPhoto();
                 }
@@ -224,7 +224,7 @@ public class EditUserPhotoController {
         }.execute(new Void[0]);
     }
 
-    public void cropPhoto() {
+    private void cropPhoto() {
         Intent intent = new Intent("com.android.camera.action.CROP");
         intent.setDataAndType(this.mTakePictureUri, "image/*");
         appendOutputExtra(intent, this.mCropPictureUri);
@@ -260,7 +260,7 @@ public class EditUserPhotoController {
     private void onPhotoCropped(final Uri uri, final boolean z) {
         new AsyncTask<Void, Void, Bitmap>() {
             @Override
-            public Bitmap doInBackground(Void... voidArr) throws Throwable {
+            protected Bitmap doInBackground(Void... voidArr) throws Throwable {
                 Throwable th;
                 InputStream inputStreamOpenInputStream;
                 ?? r9 = z;
@@ -328,7 +328,7 @@ public class EditUserPhotoController {
             }
 
             @Override
-            public void onPostExecute(Bitmap bitmap) {
+            protected void onPostExecute(Bitmap bitmap) {
                 if (bitmap != null) {
                     EditUserPhotoController.this.mNewUserPhotoBitmap = bitmap;
                     EditUserPhotoController.this.mNewUserPhotoDrawable = CircleFramedDrawable.getInstance(EditUserPhotoController.this.mImageView.getContext(), EditUserPhotoController.this.mNewUserPhotoBitmap);

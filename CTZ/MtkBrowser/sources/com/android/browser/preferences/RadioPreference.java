@@ -9,12 +9,103 @@ import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.widget.Checkable;
+import com.android.browser.R;
 
 public class RadioPreference extends Preference {
     private AccessibilityManager mAccessibilityManager;
     private boolean mChecked;
     private boolean mDisableDependentsState;
     private boolean mSendAccessibilityEventViewClickedType;
+
+    public RadioPreference(Context context) {
+        super(context);
+        this.mAccessibilityManager = (AccessibilityManager) getContext().getSystemService("accessibility");
+    }
+
+    @Override
+    public boolean isPersistent() {
+        return false;
+    }
+
+    @Override
+    protected void onBindView(View view) {
+        super.onBindView(view);
+        View viewFindViewById = view.findViewById(R.id.radiobutton);
+        if (viewFindViewById != 0 && (viewFindViewById instanceof Checkable)) {
+            ((Checkable) viewFindViewById).setChecked(this.mChecked);
+            if (this.mSendAccessibilityEventViewClickedType && this.mAccessibilityManager.isEnabled() && viewFindViewById.isEnabled()) {
+                this.mSendAccessibilityEventViewClickedType = false;
+                viewFindViewById.sendAccessibilityEventUnchecked(AccessibilityEvent.obtain(1));
+            }
+        }
+    }
+
+    @Override
+    protected void onClick() {
+        super.onClick();
+        boolean z = !isChecked();
+        this.mSendAccessibilityEventViewClickedType = true;
+        if (!callChangeListener(Boolean.valueOf(z))) {
+            return;
+        }
+        setChecked(z);
+    }
+
+    public void setChecked(boolean z) {
+        if (this.mChecked != z) {
+            this.mChecked = z;
+            persistBoolean(z);
+            notifyDependencyChange(shouldDisableDependents());
+            notifyChanged();
+        }
+    }
+
+    public boolean isChecked() {
+        return this.mChecked;
+    }
+
+    @Override
+    public boolean shouldDisableDependents() {
+        boolean z;
+        if (this.mDisableDependentsState) {
+            z = this.mChecked;
+        } else {
+            z = !this.mChecked;
+        }
+        return z || super.shouldDisableDependents();
+    }
+
+    @Override
+    protected Object onGetDefaultValue(TypedArray typedArray, int i) {
+        return Boolean.valueOf(typedArray.getBoolean(i, false));
+    }
+
+    @Override
+    protected void onSetInitialValue(boolean z, Object obj) {
+        setChecked(z ? getPersistedBoolean(this.mChecked) : ((Boolean) obj).booleanValue());
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable parcelableOnSaveInstanceState = super.onSaveInstanceState();
+        if (isPersistent()) {
+            return parcelableOnSaveInstanceState;
+        }
+        SavedState savedState = new SavedState(parcelableOnSaveInstanceState);
+        savedState.mSaveStateChecked = isChecked();
+        return savedState;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable parcelable) {
+        if (parcelable == null || !parcelable.getClass().equals(SavedState.class)) {
+            super.onRestoreInstanceState(parcelable);
+            return;
+        }
+        SavedState savedState = (SavedState) parcelable;
+        super.onRestoreInstanceState(savedState.getSuperState());
+        setChecked(savedState.mSaveStateChecked);
+    }
 
     private static class SavedState extends Preference.BaseSavedState {
         public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
@@ -35,98 +126,14 @@ public class RadioPreference extends Preference {
             this.mSaveStateChecked = parcel.readInt() == 1;
         }
 
-        public SavedState(Parcelable parcelable) {
-            super(parcelable);
-        }
-
         @Override
         public void writeToParcel(Parcel parcel, int i) {
             super.writeToParcel(parcel, i);
             parcel.writeInt(this.mSaveStateChecked ? 1 : 0);
         }
-    }
 
-    public RadioPreference(Context context) {
-        super(context);
-        this.mAccessibilityManager = (AccessibilityManager) getContext().getSystemService("accessibility");
-    }
-
-    public boolean isChecked() {
-        return this.mChecked;
-    }
-
-    @Override
-    public boolean isPersistent() {
-        return false;
-    }
-
-    @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
-        View viewFindViewById = view.findViewById(2131558510);
-        if (viewFindViewById == 0 || !(viewFindViewById instanceof Checkable)) {
-            return;
+        public SavedState(Parcelable parcelable) {
+            super(parcelable);
         }
-        ((Checkable) viewFindViewById).setChecked(this.mChecked);
-        if (this.mSendAccessibilityEventViewClickedType && this.mAccessibilityManager.isEnabled() && viewFindViewById.isEnabled()) {
-            this.mSendAccessibilityEventViewClickedType = false;
-            viewFindViewById.sendAccessibilityEventUnchecked(AccessibilityEvent.obtain(1));
-        }
-    }
-
-    @Override
-    protected void onClick() {
-        super.onClick();
-        boolean z = !isChecked();
-        this.mSendAccessibilityEventViewClickedType = true;
-        if (callChangeListener(Boolean.valueOf(z))) {
-            setChecked(z);
-        }
-    }
-
-    @Override
-    protected Object onGetDefaultValue(TypedArray typedArray, int i) {
-        return Boolean.valueOf(typedArray.getBoolean(i, false));
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable parcelable) {
-        if (parcelable == null || !parcelable.getClass().equals(SavedState.class)) {
-            super.onRestoreInstanceState(parcelable);
-            return;
-        }
-        SavedState savedState = (SavedState) parcelable;
-        super.onRestoreInstanceState(savedState.getSuperState());
-        setChecked(savedState.mSaveStateChecked);
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Parcelable parcelableOnSaveInstanceState = super.onSaveInstanceState();
-        if (isPersistent()) {
-            return parcelableOnSaveInstanceState;
-        }
-        SavedState savedState = new SavedState(parcelableOnSaveInstanceState);
-        savedState.mSaveStateChecked = isChecked();
-        return savedState;
-    }
-
-    @Override
-    protected void onSetInitialValue(boolean z, Object obj) {
-        setChecked(z ? getPersistedBoolean(this.mChecked) : ((Boolean) obj).booleanValue());
-    }
-
-    public void setChecked(boolean z) {
-        if (this.mChecked != z) {
-            this.mChecked = z;
-            persistBoolean(z);
-            notifyDependencyChange(shouldDisableDependents());
-            notifyChanged();
-        }
-    }
-
-    @Override
-    public boolean shouldDisableDependents() {
-        return (this.mDisableDependentsState ? this.mChecked : !this.mChecked) || super.shouldDisableDependents();
     }
 }

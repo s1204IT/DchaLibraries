@@ -283,7 +283,7 @@ public class IpClient extends StateMachine {
             return true;
         }
 
-        public static boolean isDirectlyConnectedRoute(RouteInfo routeInfo, IpPrefix ipPrefix) {
+        private static boolean isDirectlyConnectedRoute(RouteInfo routeInfo, IpPrefix ipPrefix) {
             return !routeInfo.hasGateway() && ipPrefix.equals(routeInfo.getDestination());
         }
     }
@@ -340,7 +340,7 @@ public class IpClient extends StateMachine {
         this.mProvisioningTimeoutAlarm = new WakeupMessage(this.mContext, getHandler(), this.mTag + ".EVENT_PROVISIONING_TIMEOUT", 10);
         this.mDhcpActionTimeoutAlarm = new WakeupMessage(this.mContext, getHandler(), this.mTag + ".EVENT_DHCPACTION_TIMEOUT", 11);
         try {
-            Constructor constructor = new PathClassLoader("/system/framework/mediatek-framework-net.jar", this.mContext.getClassLoader()).loadClass("com.mediatek.net.ip.MtkIpRunningState").getConstructor(Context.class, IpClient.class, String.class, NetlinkTracker.class, State.class);
+            Constructor<?> constructor = new PathClassLoader("/system/framework/mediatek-framework-net.jar", this.mContext.getClassLoader()).loadClass("com.mediatek.net.ip.MtkIpRunningState").getConstructor(Context.class, IpClient.class, String.class, NetlinkTracker.class, State.class);
             constructor.setAccessible(true);
             this.mRunningState = (State) constructor.newInstance(context, this, str, this.mNetlinkTracker, new RunningState());
         } catch (Throwable th) {
@@ -348,7 +348,7 @@ public class IpClient extends StateMachine {
             this.mRunningState = new RunningState();
         }
         try {
-            Constructor constructor2 = new PathClassLoader("/system/framework/mediatek-framework-net.jar", this.mContext.getClassLoader()).loadClass("com.mediatek.net.ip.MtkIpStoppedState").getConstructor(Context.class, IpClient.class, String.class, State.class);
+            Constructor<?> constructor2 = new PathClassLoader("/system/framework/mediatek-framework-net.jar", this.mContext.getClassLoader()).loadClass("com.mediatek.net.ip.MtkIpStoppedState").getConstructor(Context.class, IpClient.class, String.class, State.class);
             constructor2.setAccessible(true);
             this.mStoppedState = (State) constructor2.newInstance(context, this, str, new StoppedState());
         } catch (Throwable th2) {
@@ -416,7 +416,7 @@ public class IpClient extends StateMachine {
         }
     }
 
-    public void stopStateMachineUpdaters() {
+    private void stopStateMachineUpdaters() {
         try {
             this.mNwService.unregisterObserver(this.mNetlinkTracker);
         } catch (RemoteException e) {
@@ -525,13 +525,13 @@ public class IpClient extends StateMachine {
         return z;
     }
 
-    public void logError(String str, Object... objArr) {
+    private void logError(String str, Object... objArr) {
         String str2 = "ERROR " + String.format(str, objArr);
         Log.e(this.mTag, str2);
         this.mLog.log(str2);
     }
 
-    public void resetLinkProperties() {
+    private void resetLinkProperties() {
         this.mNetlinkTracker.clearLinkProperties();
         this.mConfiguration = null;
         this.mDhcpResults = null;
@@ -541,7 +541,7 @@ public class IpClient extends StateMachine {
         this.mLinkProperties.setInterfaceName(this.mInterfaceName);
     }
 
-    public void recordMetric(int i) {
+    private void recordMetric(int i) {
         this.mMetricsLog.log(this.mInterfaceName, new IpManagerEvent(i, this.mStartTimeMillis > 0 ? SystemClock.elapsedRealtime() - this.mStartTimeMillis : 0L));
     }
 
@@ -601,7 +601,7 @@ public class IpClient extends StateMachine {
         }
     }
 
-    public void dispatchCallback(LinkProperties.ProvisioningChange provisioningChange, LinkProperties linkProperties) {
+    private void dispatchCallback(LinkProperties.ProvisioningChange provisioningChange, LinkProperties linkProperties) {
         switch (AnonymousClass5.$SwitchMap$android$net$LinkProperties$ProvisioningChange[provisioningChange.ordinal()]) {
             case 1:
                 if (DBG) {
@@ -656,8 +656,8 @@ public class IpClient extends StateMachine {
             while (it2.hasNext()) {
                 linkProperties.addRoute((RouteInfo) it2.next());
             }
-            addAllReachableDnsServers(linkProperties, this.mDhcpResults.dnsServers);
-            linkProperties.setDomains(this.mDhcpResults.domains);
+            addAllReachableDnsServers(linkProperties, ((StaticIpConfiguration) this.mDhcpResults).dnsServers);
+            linkProperties.setDomains(((StaticIpConfiguration) this.mDhcpResults).domains);
             if (this.mDhcpResults.mtu != 0) {
                 linkProperties.setMtu(this.mDhcpResults.mtu);
             }
@@ -693,7 +693,7 @@ public class IpClient extends StateMachine {
         }
     }
 
-    public boolean handleLinkPropertiesUpdate(boolean z) {
+    private boolean handleLinkPropertiesUpdate(boolean z) {
         LinkProperties linkPropertiesAssembleLinkProperties = assembleLinkProperties();
         if (Objects.equals(linkPropertiesAssembleLinkProperties, this.mLinkProperties)) {
             return true;
@@ -705,7 +705,7 @@ public class IpClient extends StateMachine {
         return linkProperties != LinkProperties.ProvisioningChange.LOST_PROVISIONING;
     }
 
-    public void handleIPv4Success(DhcpResults dhcpResults) {
+    private void handleIPv4Success(DhcpResults dhcpResults) {
         this.mDhcpResults = new DhcpResults(dhcpResults);
         LinkProperties linkPropertiesAssembleLinkProperties = assembleLinkProperties();
         LinkProperties.ProvisioningChange linkProperties = setLinkProperties(linkPropertiesAssembleLinkProperties);
@@ -716,7 +716,7 @@ public class IpClient extends StateMachine {
         dispatchCallback(linkProperties, linkPropertiesAssembleLinkProperties);
     }
 
-    public void handleIPv4Failure() {
+    private void handleIPv4Failure() {
         this.mInterfaceCtrl.clearIPv4Address();
         this.mDhcpResults = null;
         if (DBG) {
@@ -726,7 +726,7 @@ public class IpClient extends StateMachine {
         handleProvisioningFailure();
     }
 
-    public void handleProvisioningFailure() {
+    private void handleProvisioningFailure() {
         LinkProperties linkPropertiesAssembleLinkProperties = assembleLinkProperties();
         LinkProperties.ProvisioningChange linkProperties = setLinkProperties(linkPropertiesAssembleLinkProperties);
         if (linkProperties == LinkProperties.ProvisioningChange.STILL_NOT_PROVISIONED) {
@@ -738,13 +738,13 @@ public class IpClient extends StateMachine {
         }
     }
 
-    public void doImmediateProvisioningFailure(int i) {
+    private void doImmediateProvisioningFailure(int i) {
         logError("onProvisioningFailure(): %s", Integer.valueOf(i));
         recordMetric(i);
         this.mCallback.onProvisioningFailure(new LinkProperties(this.mLinkProperties));
     }
 
-    public boolean startIPv4() {
+    private boolean startIPv4() {
         if (this.mConfiguration.mStaticIpConfig != null) {
             if (this.mInterfaceCtrl.setIPv4Address(this.mConfiguration.mStaticIpConfig.ipAddress)) {
                 handleIPv4Success(new DhcpResults(this.mConfiguration.mStaticIpConfig));
@@ -758,11 +758,11 @@ public class IpClient extends StateMachine {
         return true;
     }
 
-    public boolean startIPv6() {
+    private boolean startIPv6() {
         return this.mInterfaceCtrl.setIPv6PrivacyExtensions(true) && this.mInterfaceCtrl.setIPv6AddrGenModeIfSupported(this.mConfiguration.mIPv6AddrGenMode) && this.mInterfaceCtrl.enableIPv6();
     }
 
-    public boolean applyInitialConfig(InitialConfiguration initialConfiguration) {
+    private boolean applyInitialConfig(InitialConfiguration initialConfiguration) {
         Iterator it = findAll(initialConfiguration.ipAddresses, new Predicate() {
             @Override
             public final boolean test(Object obj) {
@@ -777,7 +777,7 @@ public class IpClient extends StateMachine {
         return true;
     }
 
-    public boolean startIpReachabilityMonitor() {
+    private boolean startIpReachabilityMonitor() {
         try {
             this.mIpReachabilityMonitor = new IpReachabilityMonitor(this.mContext, this.mInterfaceParams, getHandler(), this.mLog, new IpReachabilityMonitor.Callback() {
                 @Override
@@ -792,7 +792,7 @@ public class IpClient extends StateMachine {
         return this.mIpReachabilityMonitor != null;
     }
 
-    public void stopAllIP() {
+    private void stopAllIP() {
         this.mInterfaceCtrl.disableIPv6();
         this.mInterfaceCtrl.clearAllAddresses();
     }

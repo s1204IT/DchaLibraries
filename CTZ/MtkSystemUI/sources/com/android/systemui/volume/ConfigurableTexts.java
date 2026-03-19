@@ -59,11 +59,11 @@ public class ConfigurableTexts {
         this.mTexts.keyAt(0).post(this.mUpdateAll);
     }
 
-    public void setTextSizeH(TextView textView, int i) {
+    private void setTextSizeH(TextView textView, int i) {
         textView.setTextSize(2, i);
     }
 
-    public void setTextLabelH(TextView textView, int i) {
+    private void setTextLabelH(TextView textView, int i) {
         if (i >= 0) {
             try {
                 Util.setText(textView, this.mContext.getString(i));

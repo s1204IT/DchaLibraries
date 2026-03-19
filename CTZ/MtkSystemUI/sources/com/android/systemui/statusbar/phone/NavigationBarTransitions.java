@@ -119,11 +119,11 @@ public final class NavigationBarTransitions extends BarTransitions {
         applyLightsOut(z, false);
     }
 
-    public void applyLightsOut(boolean z, boolean z2) {
+    private void applyLightsOut(boolean z, boolean z2) {
         applyLightsOut(isLightsOut(getMode()), z, z2);
     }
 
-    public void applyLightsOut(boolean z, boolean z2, boolean z3) {
+    private void applyLightsOut(boolean z, boolean z2, boolean z3) {
         if (z3 || z != this.mLightsOut) {
             this.mLightsOut = z;
             if (this.mNavButtons == null) {

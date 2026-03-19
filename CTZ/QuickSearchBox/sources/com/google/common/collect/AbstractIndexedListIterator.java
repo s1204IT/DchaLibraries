@@ -7,22 +7,17 @@ abstract class AbstractIndexedListIterator<E> extends UnmodifiableListIterator<E
     private int position;
     private final int size;
 
+    protected abstract E get(int i);
+
     protected AbstractIndexedListIterator(int i, int i2) {
         Preconditions.checkPositionIndex(i2, i);
         this.size = i;
         this.position = i2;
     }
 
-    protected abstract E get(int i);
-
     @Override
     public final boolean hasNext() {
         return this.position < this.size;
-    }
-
-    @Override
-    public final boolean hasPrevious() {
-        return this.position > 0;
     }
 
     @Override
@@ -38,6 +33,11 @@ abstract class AbstractIndexedListIterator<E> extends UnmodifiableListIterator<E
     @Override
     public final int nextIndex() {
         return this.position;
+    }
+
+    @Override
+    public final boolean hasPrevious() {
+        return this.position > 0;
     }
 
     @Override

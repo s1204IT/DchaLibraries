@@ -6,26 +6,21 @@ import android.os.Parcelable;
 public final class RatingCompat implements Parcelable {
     public static final Parcelable.Creator<RatingCompat> CREATOR = new Parcelable.Creator<RatingCompat>() {
         @Override
-        public RatingCompat createFromParcel(Parcel parcel) {
-            return new RatingCompat(parcel.readInt(), parcel.readFloat());
+        public RatingCompat createFromParcel(Parcel p) {
+            return new RatingCompat(p.readInt(), p.readFloat());
         }
 
         @Override
-        public RatingCompat[] newArray(int i) {
-            return new RatingCompat[i];
+        public RatingCompat[] newArray(int size) {
+            return new RatingCompat[size];
         }
     };
     private final int mRatingStyle;
     private final float mRatingValue;
 
-    RatingCompat(int i, float f) {
-        this.mRatingStyle = i;
-        this.mRatingValue = f;
-    }
-
-    @Override
-    public int describeContents() {
-        return this.mRatingStyle;
+    RatingCompat(int ratingStyle, float rating) {
+        this.mRatingStyle = ratingStyle;
+        this.mRatingValue = rating;
     }
 
     public String toString() {
@@ -38,8 +33,13 @@ public final class RatingCompat implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(this.mRatingStyle);
-        parcel.writeFloat(this.mRatingValue);
+    public int describeContents() {
+        return this.mRatingStyle;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.mRatingStyle);
+        dest.writeFloat(this.mRatingValue);
     }
 }

@@ -149,7 +149,7 @@ class WriteWifiConfigToNfcDialog extends AlertDialog implements TextWatcher, Vie
         bundle.putInt("security", this.mSecurity);
     }
 
-    public void handleWriteNfcEvent(Tag tag) {
+    private void handleWriteNfcEvent(Tag tag) {
         Ndef ndef = Ndef.get(tag);
         if (ndef == null) {
             setViewText(this.mLabelView, R.string.status_tag_not_writable);

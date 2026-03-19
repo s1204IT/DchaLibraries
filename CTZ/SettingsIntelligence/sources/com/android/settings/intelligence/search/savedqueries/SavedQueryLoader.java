@@ -19,7 +19,7 @@ public class SavedQueryLoader extends AsyncLoader<List<? extends SearchResult>> 
     }
 
     @Override
-    public void onDiscardResult(List<? extends SearchResult> list) {
+    protected void onDiscardResult(List<? extends SearchResult> list) {
     }
 
     @Override

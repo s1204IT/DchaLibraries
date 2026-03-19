@@ -35,16 +35,20 @@ public class AutologinBar extends LinearLayout implements View.OnClickListener, 
         super(context, attributeSet, i);
     }
 
-    void hideAutoLogin(boolean z) {
-        this.mTitleBar.hideAutoLogin(z);
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        this.mAutoLoginAccount = (Spinner) findViewById(R.id.autologin_account);
+        this.mAutoLoginLogin = (Button) findViewById(R.id.autologin_login);
+        this.mAutoLoginLogin.setOnClickListener(this);
+        this.mAutoLoginProgress = (ProgressBar) findViewById(R.id.autologin_progress);
+        this.mAutoLoginError = (TextView) findViewById(R.id.autologin_error);
+        this.mAutoLoginCancel = findViewById(R.id.autologin_close);
+        this.mAutoLoginCancel.setOnClickListener(this);
     }
 
-    @Override
-    public void loginFailed() {
-        this.mAutoLoginAccount.setEnabled(true);
-        this.mAutoLoginLogin.setEnabled(true);
-        this.mAutoLoginProgress.setVisibility(4);
-        this.mAutoLoginError.setVisibility(0);
+    public void setTitleBar(TitleBar titleBar) {
+        this.mTitleBar = titleBar;
     }
 
     @Override
@@ -57,66 +61,61 @@ public class AutologinBar extends LinearLayout implements View.OnClickListener, 
             hideAutoLogin(true);
             return;
         }
-        if (this.mAutoLoginLogin != view || this.mAutoLoginHandler == null) {
+        if (this.mAutoLoginLogin == view && this.mAutoLoginHandler != null) {
+            this.mAutoLoginAccount.setEnabled(false);
+            this.mAutoLoginLogin.setEnabled(false);
+            this.mAutoLoginProgress.setVisibility(0);
+            this.mAutoLoginError.setVisibility(8);
+            this.mAutoLoginHandler.login(this.mAutoLoginAccount.getSelectedItemPosition(), this);
+        }
+    }
+
+    public void updateAutoLogin(Tab tab, boolean z) {
+        DeviceAccountLogin deviceAccountLogin = tab.getDeviceAccountLogin();
+        if (deviceAccountLogin != null) {
+            this.mAutoLoginHandler = deviceAccountLogin;
+            this.mAccountsAdapter = new ArrayAdapter<>(new ContextThemeWrapper(((View) this).mContext, android.R.style.Theme.Holo.Light), android.R.layout.simple_spinner_item, deviceAccountLogin.getAccountNames());
+            this.mAccountsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            this.mAutoLoginAccount.setAdapter((SpinnerAdapter) this.mAccountsAdapter);
+            this.mAutoLoginAccount.setSelection(0);
+            this.mAutoLoginAccount.setEnabled(true);
+            this.mAutoLoginLogin.setEnabled(true);
+            this.mAutoLoginProgress.setVisibility(4);
+            this.mAutoLoginError.setVisibility(8);
+            switch (deviceAccountLogin.getState()) {
+                case 0:
+                    break;
+                case 1:
+                    this.mAutoLoginProgress.setVisibility(4);
+                    this.mAutoLoginError.setVisibility(0);
+                    break;
+                case 2:
+                    this.mAutoLoginAccount.setEnabled(false);
+                    this.mAutoLoginLogin.setEnabled(false);
+                    this.mAutoLoginProgress.setVisibility(0);
+                    break;
+                default:
+                    throw new IllegalStateException();
+            }
+            showAutoLogin(z);
             return;
         }
-        this.mAutoLoginAccount.setEnabled(false);
-        this.mAutoLoginLogin.setEnabled(false);
-        this.mAutoLoginProgress.setVisibility(0);
-        this.mAutoLoginError.setVisibility(8);
-        this.mAutoLoginHandler.login(this.mAutoLoginAccount.getSelectedItemPosition(), this);
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        this.mAutoLoginAccount = (Spinner) findViewById(2131558532);
-        this.mAutoLoginLogin = (Button) findViewById(2131558535);
-        this.mAutoLoginLogin.setOnClickListener(this);
-        this.mAutoLoginProgress = (ProgressBar) findViewById(2131558534);
-        this.mAutoLoginError = (TextView) findViewById(2131558536);
-        this.mAutoLoginCancel = findViewById(2131558533);
-        this.mAutoLoginCancel.setOnClickListener(this);
-    }
-
-    public void setTitleBar(TitleBar titleBar) {
-        this.mTitleBar = titleBar;
+        hideAutoLogin(z);
     }
 
     void showAutoLogin(boolean z) {
         this.mTitleBar.showAutoLogin(z);
     }
 
-    public void updateAutoLogin(Tab tab, boolean z) {
-        DeviceAccountLogin deviceAccountLogin = tab.getDeviceAccountLogin();
-        if (deviceAccountLogin == null) {
-            hideAutoLogin(z);
-            return;
-        }
-        this.mAutoLoginHandler = deviceAccountLogin;
-        this.mAccountsAdapter = new ArrayAdapter<>(new ContextThemeWrapper(this.mContext, android.R.style.Theme.Holo.Light), android.R.layout.simple_spinner_item, deviceAccountLogin.getAccountNames());
-        this.mAccountsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        this.mAutoLoginAccount.setAdapter((SpinnerAdapter) this.mAccountsAdapter);
-        this.mAutoLoginAccount.setSelection(0);
+    void hideAutoLogin(boolean z) {
+        this.mTitleBar.hideAutoLogin(z);
+    }
+
+    @Override
+    public void loginFailed() {
         this.mAutoLoginAccount.setEnabled(true);
         this.mAutoLoginLogin.setEnabled(true);
         this.mAutoLoginProgress.setVisibility(4);
-        this.mAutoLoginError.setVisibility(8);
-        switch (deviceAccountLogin.getState()) {
-            case 0:
-                break;
-            case 1:
-                this.mAutoLoginProgress.setVisibility(4);
-                this.mAutoLoginError.setVisibility(0);
-                break;
-            case 2:
-                this.mAutoLoginAccount.setEnabled(false);
-                this.mAutoLoginLogin.setEnabled(false);
-                this.mAutoLoginProgress.setVisibility(0);
-                break;
-            default:
-                throw new IllegalStateException();
-        }
-        showAutoLogin(z);
+        this.mAutoLoginError.setVisibility(0);
     }
 }

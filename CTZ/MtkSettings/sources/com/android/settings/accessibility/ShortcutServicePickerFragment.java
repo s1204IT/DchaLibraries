@@ -95,7 +95,7 @@ public class ShortcutServicePickerFragment extends RadioButtonPickerFragment {
         }
     }
 
-    public void onServiceConfirmed(String str) {
+    private void onServiceConfirmed(String str) {
         onRadioButtonConfirmed(str);
     }
 

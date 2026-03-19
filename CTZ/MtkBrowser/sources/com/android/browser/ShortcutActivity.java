@@ -9,6 +9,20 @@ public class ShortcutActivity extends Activity implements View.OnClickListener, 
     private BrowserBookmarksPage mBookmarks;
 
     @Override
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        setTitle(R.string.shortcut_bookmark_title);
+        setContentView(R.layout.pick_bookmark);
+        this.mBookmarks = (BrowserBookmarksPage) getFragmentManager().findFragmentById(R.id.bookmarks);
+        this.mBookmarks.setEnableContextMenu(false);
+        this.mBookmarks.setCallbackListener(this);
+        View viewFindViewById = findViewById(R.id.cancel);
+        if (viewFindViewById != null) {
+            viewFindViewById.setOnClickListener(this);
+        }
+    }
+
+    @Override
     public boolean onBookmarkSelected(Cursor cursor, boolean z) {
         if (z) {
             return false;
@@ -19,29 +33,14 @@ public class ShortcutActivity extends Activity implements View.OnClickListener, 
     }
 
     @Override
-    public void onClick(View view) {
-        if (view.getId() != 2131558462) {
-            return;
-        }
-        finish();
-    }
-
-    @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        setTitle(2131493028);
-        setContentView(2130968614);
-        this.mBookmarks = (BrowserBookmarksPage) getFragmentManager().findFragmentById(2131558445);
-        this.mBookmarks.setEnableContextMenu(false);
-        this.mBookmarks.setCallbackListener(this);
-        View viewFindViewById = findViewById(2131558462);
-        if (viewFindViewById != null) {
-            viewFindViewById.setOnClickListener(this);
-        }
-    }
-
-    @Override
     public boolean onOpenInNewWindow(String... strArr) {
         return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.cancel) {
+            finish();
+        }
     }
 }

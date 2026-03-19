@@ -90,7 +90,7 @@ public class MobileDataTile extends QSTileImpl<QSTile.SignalState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.SignalState signalState, Object obj) {
+    protected void handleUpdateState(QSTile.SignalState signalState, Object obj) {
         Log.d(this.TAG, "handleUpdateState arg=" + obj);
         CallbackInfo callbackInfo = (CallbackInfo) obj;
         if (callbackInfo == null) {

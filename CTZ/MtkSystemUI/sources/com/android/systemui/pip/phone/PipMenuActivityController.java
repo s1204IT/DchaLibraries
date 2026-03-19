@@ -298,7 +298,7 @@ public class PipMenuActivityController {
         }
     }
 
-    public void updateMenuActions() {
+    private void updateMenuActions() {
         if (this.mToActivityMessenger != null) {
             Rect rect = null;
             try {
@@ -331,7 +331,7 @@ public class PipMenuActivityController {
         return SystemClock.uptimeMillis() - this.mStartActivityRequestedTime >= 300;
     }
 
-    public void onMenuStateChanged(final int i, final boolean z) {
+    private void onMenuStateChanged(final int i, final boolean z) {
         if (i == 0) {
             this.mInputConsumerController.registerInputConsumer();
         } else {
@@ -353,7 +353,7 @@ public class PipMenuActivityController {
         this.mMenuState = i;
     }
 
-    public void setStartActivityRequested(boolean z) {
+    private void setStartActivityRequested(boolean z) {
         this.mHandler.removeCallbacks(this.mStartActivityRequestedTimeoutRunnable);
         this.mStartActivityRequested = z;
         this.mStartActivityRequestedTime = z ? SystemClock.uptimeMillis() : 0L;

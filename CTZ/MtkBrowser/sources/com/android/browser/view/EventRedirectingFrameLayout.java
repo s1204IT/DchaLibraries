@@ -23,6 +23,15 @@ public class EventRedirectingFrameLayout extends FrameLayout {
     }
 
     @Override
+    public boolean dispatchTouchEvent(MotionEvent motionEvent) {
+        View childAt = getChildAt(this.mTargetChild);
+        if (childAt != null) {
+            return childAt.dispatchTouchEvent(motionEvent);
+        }
+        return false;
+    }
+
+    @Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
         View childAt = getChildAt(this.mTargetChild);
         if (childAt != null) {
@@ -36,15 +45,6 @@ public class EventRedirectingFrameLayout extends FrameLayout {
         View childAt = getChildAt(this.mTargetChild);
         if (childAt != null) {
             return childAt.dispatchKeyEventPreIme(keyEvent);
-        }
-        return false;
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent motionEvent) {
-        View childAt = getChildAt(this.mTargetChild);
-        if (childAt != null) {
-            return childAt.dispatchTouchEvent(motionEvent);
         }
         return false;
     }

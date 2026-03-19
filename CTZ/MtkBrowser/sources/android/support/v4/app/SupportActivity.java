@@ -12,19 +12,19 @@ public class SupportActivity extends Activity implements LifecycleOwner {
     private SimpleArrayMap<Class<? extends Object>, Object> mExtraDataMap = new SimpleArrayMap<>();
     private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
-    public Lifecycle getLifecycle() {
-        return this.mLifecycleRegistry;
-    }
-
     @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         ReportFragment.injectIfNeededIn(this);
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle bundle) {
+    protected void onSaveInstanceState(Bundle outState) {
         this.mLifecycleRegistry.markState(Lifecycle.State.CREATED);
-        super.onSaveInstanceState(bundle);
+        super.onSaveInstanceState(outState);
+    }
+
+    public Lifecycle getLifecycle() {
+        return this.mLifecycleRegistry;
     }
 }

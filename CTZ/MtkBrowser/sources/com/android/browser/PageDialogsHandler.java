@@ -42,10 +42,173 @@ public class PageDialogsHandler {
         this.mController = controller;
     }
 
-    private void addError(LayoutInflater layoutInflater, LinearLayout linearLayout, int i) {
-        TextView textView = (TextView) layoutInflater.inflate(2130968625, (ViewGroup) linearLayout, false);
-        textView.setText(i);
-        linearLayout.addView(textView);
+    public void onConfigurationChanged(Configuration configuration) {
+        if (this.mPageInfoDialog != null) {
+            this.mPageInfoDialog.dismiss();
+            showPageInfo(this.mPageInfoView, this.mPageInfoFromShowSSLCertificateOnError, this.mUrlCertificateOnError);
+        }
+        if (this.mSSLCertificateDialog != null) {
+            this.mSSLCertificateDialog.dismiss();
+            showSSLCertificate(this.mSSLCertificateView);
+        }
+        if (this.mSSLCertificateOnErrorDialog != null) {
+            this.mSSLCertificateOnErrorDialog.dismiss();
+            showSSLCertificateOnError(this.mSSLCertificateOnErrorView, this.mSSLCertificateOnErrorHandler, this.mSSLCertificateOnErrorError);
+        }
+        if (this.mHttpAuthenticationDialog != null) {
+            this.mHttpAuthenticationDialog.reshow();
+        }
+        if (this.mPopupWindowAttemptDialog != null) {
+            this.mPopupWindowAttemptDialog.dismiss();
+            showPopupWindowAttempt(this.mPopupWindowAttemptView, this.mPopupWindowAttemptIsDialog, this.mPopupWindowAttemptMessage);
+        }
+    }
+
+    void showHttpAuthentication(final Tab tab, final HttpAuthHandler httpAuthHandler, String str, String str2) {
+        this.mHttpAuthenticationDialog = new HttpAuthenticationDialog(this.mContext, str, str2);
+        this.mHttpAuthenticationHandler = httpAuthHandler;
+        this.mHttpAuthenticationDialog.setOkListener(new HttpAuthenticationDialog.OkListener() {
+            @Override
+            public void onOk(String str3, String str4, String str5, String str6) {
+                PageDialogsHandler.this.setHttpAuthUsernamePassword(str3, str4, str5, str6);
+                httpAuthHandler.proceed(str5, str6);
+                PageDialogsHandler.this.mHttpAuthenticationDialog = null;
+            }
+        });
+        this.mHttpAuthenticationDialog.setCancelListener(new HttpAuthenticationDialog.CancelListener() {
+            @Override
+            public void onCancel() {
+                httpAuthHandler.cancel();
+                PageDialogsHandler.this.mController.onUpdatedSecurityState(tab);
+                PageDialogsHandler.this.mHttpAuthenticationDialog = null;
+            }
+        });
+        this.mHttpAuthenticationDialog.show();
+    }
+
+    public void setHttpAuthUsernamePassword(String str, String str2, String str3, String str4) {
+        WebView currentTopWebView = this.mController.getCurrentTopWebView();
+        if (currentTopWebView != null) {
+            currentTopWebView.setHttpAuthUsernamePassword(str, str2, str3, str4);
+        }
+    }
+
+    void showPageInfo(final Tab tab, final boolean z, String str) {
+        String url;
+        if (tab == null) {
+            return;
+        }
+        View viewInflate = LayoutInflater.from(this.mContext).inflate(R.layout.page_info, (ViewGroup) null);
+        WebView webView = tab.getWebView();
+        if (!z) {
+            url = tab.getUrl();
+        } else {
+            url = str;
+        }
+        String title = tab.getTitle();
+        if (url == null) {
+            url = "";
+        }
+        if (title == null) {
+            title = "";
+        }
+        ((TextView) viewInflate.findViewById(R.id.address)).setText(url);
+        ((TextView) viewInflate.findViewById(R.id.title)).setText(title);
+        this.mPageInfoView = tab;
+        this.mPageInfoFromShowSSLCertificateOnError = z;
+        this.mUrlCertificateOnError = str;
+        AlertDialog.Builder onCancelListener = new AlertDialog.Builder(this.mContext).setTitle(R.string.page_info).setIcon(android.R.drawable.ic_dialog_info).setView(viewInflate).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                PageDialogsHandler.this.mPageInfoDialog = null;
+                PageDialogsHandler.this.mPageInfoView = null;
+                if (z) {
+                    PageDialogsHandler.this.showSSLCertificateOnError(PageDialogsHandler.this.mSSLCertificateOnErrorView, PageDialogsHandler.this.mSSLCertificateOnErrorHandler, PageDialogsHandler.this.mSSLCertificateOnErrorError);
+                }
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                PageDialogsHandler.this.mPageInfoDialog = null;
+                PageDialogsHandler.this.mPageInfoView = null;
+                if (z) {
+                    PageDialogsHandler.this.showSSLCertificateOnError(PageDialogsHandler.this.mSSLCertificateOnErrorView, PageDialogsHandler.this.mSSLCertificateOnErrorHandler, PageDialogsHandler.this.mSSLCertificateOnErrorError);
+                }
+            }
+        });
+        if (z || (webView != null && webView.getCertificate() != null)) {
+            onCancelListener.setNeutralButton(R.string.view_certificate, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    PageDialogsHandler.this.mPageInfoDialog = null;
+                    PageDialogsHandler.this.mPageInfoView = null;
+                    if (!z) {
+                        PageDialogsHandler.this.showSSLCertificate(tab);
+                    } else {
+                        PageDialogsHandler.this.showSSLCertificateOnError(PageDialogsHandler.this.mSSLCertificateOnErrorView, PageDialogsHandler.this.mSSLCertificateOnErrorHandler, PageDialogsHandler.this.mSSLCertificateOnErrorError);
+                    }
+                }
+            });
+        }
+        this.mPageInfoDialog = onCancelListener.show();
+    }
+
+    private void showSSLCertificate(final Tab tab) {
+        SslCertificate certificate = tab.getWebView().getCertificate();
+        if (certificate == null) {
+            return;
+        }
+        this.mSSLCertificateView = tab;
+        this.mSSLCertificateDialog = createSslCertificateDialog(certificate, tab.getSslCertificateError()).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                PageDialogsHandler.this.mSSLCertificateDialog = null;
+                PageDialogsHandler.this.mSSLCertificateView = null;
+                PageDialogsHandler.this.showPageInfo(tab, false, null);
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                PageDialogsHandler.this.mSSLCertificateDialog = null;
+                PageDialogsHandler.this.mSSLCertificateView = null;
+                PageDialogsHandler.this.showPageInfo(tab, false, null);
+            }
+        }).show();
+    }
+
+    void showSSLCertificateOnError(final WebView webView, final SslErrorHandler sslErrorHandler, final SslError sslError) {
+        SslCertificate certificate;
+        if (sslError == null || (certificate = sslError.getCertificate()) == null) {
+            return;
+        }
+        this.mSSLCertificateOnErrorHandler = sslErrorHandler;
+        this.mSSLCertificateOnErrorView = webView;
+        this.mSSLCertificateOnErrorError = sslError;
+        this.mSSLCertificateOnErrorDialog = createSslCertificateDialog(certificate, sslError).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
+                PageDialogsHandler.this.mSSLCertificateOnErrorView = null;
+                PageDialogsHandler.this.mSSLCertificateOnErrorHandler = null;
+                PageDialogsHandler.this.mSSLCertificateOnErrorError = null;
+                ((BrowserWebView) webView).getWebViewClient().onReceivedSslError(webView, sslErrorHandler, sslError);
+            }
+        }).setNeutralButton(R.string.page_info_view, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
+                PageDialogsHandler.this.showPageInfo(PageDialogsHandler.this.mController.getTabControl().getTabFromView(webView), true, sslError.getUrl());
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                PageDialogsHandler.this.mSSLCertificateOnErrorDialog = null;
+                PageDialogsHandler.this.mSSLCertificateOnErrorView = null;
+                PageDialogsHandler.this.mSSLCertificateOnErrorHandler = null;
+                PageDialogsHandler.this.mSSLCertificateOnErrorError = null;
+                ((BrowserWebView) webView).getWebViewClient().onReceivedSslError(webView, sslErrorHandler, sslError);
+            }
+        }).show();
     }
 
     private AlertDialog.Builder createSslCertificateDialog(SslCertificate sslCertificate, SslError sslError) {
@@ -54,72 +217,79 @@ public class PageDialogsHandler {
         LinearLayout linearLayout = (LinearLayout) viewInflateCertificateView.findViewById(android.R.id.input_hour);
         LayoutInflater layoutInflaterFrom = LayoutInflater.from(this.mContext);
         if (sslError == null) {
-            ((TextView) ((LinearLayout) layoutInflaterFrom.inflate(2130968624, linearLayout)).findViewById(2131558517)).setText(android.R.string.mediasize_iso_b3);
-            i = 2130837548;
+            i = R.drawable.ic_dialog_browser_certificate_secure;
+            ((TextView) ((LinearLayout) layoutInflaterFrom.inflate(R.layout.ssl_success, linearLayout)).findViewById(R.id.success)).setText(android.R.string.mediasize_iso_b3);
         } else {
             if (sslError.hasError(3)) {
-                addError(layoutInflaterFrom, linearLayout, 2131492974);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_untrusted);
             }
             if (sslError.hasError(2)) {
-                addError(layoutInflaterFrom, linearLayout, 2131492975);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_mismatch);
             }
             if (sslError.hasError(1)) {
-                addError(layoutInflaterFrom, linearLayout, 2131492976);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_expired);
             }
             if (sslError.hasError(0)) {
-                addError(layoutInflaterFrom, linearLayout, 2131492977);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_not_yet_valid);
             }
             if (sslError.hasError(4)) {
-                addError(layoutInflaterFrom, linearLayout, 2131492978);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_date_invalid);
             }
             if (sslError.hasError(5)) {
-                addError(layoutInflaterFrom, linearLayout, 2131492979);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_invalid);
             }
             if (linearLayout.getChildCount() == 0) {
-                addError(layoutInflaterFrom, linearLayout, 2131492980);
+                addError(layoutInflaterFrom, linearLayout, R.string.ssl_unknown);
             }
-            i = 2130837547;
+            i = R.drawable.ic_dialog_browser_certificate_partially_secure;
         }
         return new AlertDialog.Builder(this.mContext).setTitle(android.R.string.mediasize_iso_b2).setIcon(i).setView(viewInflateCertificateView);
     }
 
-    private void showSSLCertificate(Tab tab) {
-        SslCertificate certificate = tab.getWebView().getCertificate();
-        if (certificate == null) {
-            return;
-        }
-        this.mSSLCertificateView = tab;
-        this.mSSLCertificateDialog = createSslCertificateDialog(certificate, tab.getSslCertificateError()).setPositiveButton(2131492964, new DialogInterface.OnClickListener(this, tab) {
-            final PageDialogsHandler this$0;
-            final Tab val$tab;
+    private void addError(LayoutInflater layoutInflater, LinearLayout linearLayout, int i) {
+        TextView textView = (TextView) layoutInflater.inflate(R.layout.ssl_warning, (ViewGroup) linearLayout, false);
+        textView.setText(i);
+        linearLayout.addView(textView);
+    }
 
-            {
-                this.this$0 = this;
-                this.val$tab = tab;
-            }
-
+    void showPopupWindowAttempt(final Tab tab, final boolean z, final Message message) {
+        this.mPopupWindowAttemptView = tab;
+        this.mPopupWindowAttemptIsDialog = z;
+        this.mPopupWindowAttemptMessage = message;
+        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                this.this$0.mSSLCertificateDialog = null;
-                this.this$0.mSSLCertificateView = null;
-                this.this$0.showPageInfo(this.val$tab, false, null);
+                PageDialogsHandler.this.mPopupWindowAttemptDialog = null;
+                PageDialogsHandler.this.mPopupWindowAttemptView = null;
+                PageDialogsHandler.this.mPopupWindowAttemptIsDialog = false;
+                PageDialogsHandler.this.mPopupWindowAttemptMessage = null;
+                WebView.WebViewTransport webViewTransport = (WebView.WebViewTransport) message.obj;
+                if (z) {
+                    tab.createSubWindow();
+                    PageDialogsHandler.this.mController.attachSubWindow(tab);
+                    webViewTransport.setWebView(tab.getSubWebView());
+                    tab.PopupWindowShown(false);
+                } else {
+                    webViewTransport.setWebView(PageDialogsHandler.this.mController.openTab((String) null, tab, true, true).getWebView());
+                }
+                message.sendToTarget();
             }
-        }).setOnCancelListener(new DialogInterface.OnCancelListener(this, tab) {
-            final PageDialogsHandler this$0;
-            final Tab val$tab;
-
-            {
-                this.this$0 = this;
-                this.val$tab = tab;
-            }
-
+        };
+        this.mPopupWindowAttemptDialog = new AlertDialog.Builder(this.mContext).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(R.string.popup_window_attempt).setPositiveButton(R.string.allow, onClickListener).setNegativeButton(R.string.block, new DialogInterface.OnClickListener() {
             @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                this.this$0.mSSLCertificateDialog = null;
-                this.this$0.mSSLCertificateView = null;
-                this.this$0.showPageInfo(this.val$tab, false, null);
+            public void onClick(DialogInterface dialogInterface, int i) {
+                PageDialogsHandler.this.mPopupWindowAttemptDialog = null;
+                PageDialogsHandler.this.mPopupWindowAttemptView = null;
+                PageDialogsHandler.this.mPopupWindowAttemptIsDialog = false;
+                PageDialogsHandler.this.mPopupWindowAttemptMessage = null;
+                message.sendToTarget();
+                tab.PopupWindowShown(false);
             }
-        }).show();
+        }).setCancelable(false).create();
+        this.mPopupWindowAttemptDialog.show();
+        if (z) {
+            tab.PopupWindowShown(true);
+        }
     }
 
     void destroyDialogs() {
@@ -153,284 +323,5 @@ public class PageDialogsHandler {
             this.mPopupWindowAttemptIsDialog = false;
             this.mPopupWindowAttemptMessage = null;
         }
-    }
-
-    public void onConfigurationChanged(Configuration configuration) {
-        if (this.mPageInfoDialog != null) {
-            this.mPageInfoDialog.dismiss();
-            showPageInfo(this.mPageInfoView, this.mPageInfoFromShowSSLCertificateOnError, this.mUrlCertificateOnError);
-        }
-        if (this.mSSLCertificateDialog != null) {
-            this.mSSLCertificateDialog.dismiss();
-            showSSLCertificate(this.mSSLCertificateView);
-        }
-        if (this.mSSLCertificateOnErrorDialog != null) {
-            this.mSSLCertificateOnErrorDialog.dismiss();
-            showSSLCertificateOnError(this.mSSLCertificateOnErrorView, this.mSSLCertificateOnErrorHandler, this.mSSLCertificateOnErrorError);
-        }
-        if (this.mHttpAuthenticationDialog != null) {
-            this.mHttpAuthenticationDialog.reshow();
-        }
-        if (this.mPopupWindowAttemptDialog != null) {
-            this.mPopupWindowAttemptDialog.dismiss();
-            showPopupWindowAttempt(this.mPopupWindowAttemptView, this.mPopupWindowAttemptIsDialog, this.mPopupWindowAttemptMessage);
-        }
-    }
-
-    public void setHttpAuthUsernamePassword(String str, String str2, String str3, String str4) {
-        WebView currentTopWebView = this.mController.getCurrentTopWebView();
-        if (currentTopWebView != null) {
-            currentTopWebView.setHttpAuthUsernamePassword(str, str2, str3, str4);
-        }
-    }
-
-    void showHttpAuthentication(Tab tab, HttpAuthHandler httpAuthHandler, String str, String str2) {
-        this.mHttpAuthenticationDialog = new HttpAuthenticationDialog(this.mContext, str, str2);
-        this.mHttpAuthenticationHandler = httpAuthHandler;
-        this.mHttpAuthenticationDialog.setOkListener(new HttpAuthenticationDialog.OkListener(this, httpAuthHandler) {
-            final PageDialogsHandler this$0;
-            final HttpAuthHandler val$handler;
-
-            {
-                this.this$0 = this;
-                this.val$handler = httpAuthHandler;
-            }
-
-            @Override
-            public void onOk(String str3, String str4, String str5, String str6) {
-                this.this$0.setHttpAuthUsernamePassword(str3, str4, str5, str6);
-                this.val$handler.proceed(str5, str6);
-                this.this$0.mHttpAuthenticationDialog = null;
-            }
-        });
-        this.mHttpAuthenticationDialog.setCancelListener(new HttpAuthenticationDialog.CancelListener(this, httpAuthHandler, tab) {
-            final PageDialogsHandler this$0;
-            final HttpAuthHandler val$handler;
-            final Tab val$tab;
-
-            {
-                this.this$0 = this;
-                this.val$handler = httpAuthHandler;
-                this.val$tab = tab;
-            }
-
-            @Override
-            public void onCancel() {
-                this.val$handler.cancel();
-                this.this$0.mController.onUpdatedSecurityState(this.val$tab);
-                this.this$0.mHttpAuthenticationDialog = null;
-            }
-        });
-        this.mHttpAuthenticationDialog.show();
-    }
-
-    void showPageInfo(Tab tab, boolean z, String str) {
-        if (tab == null) {
-            return;
-        }
-        View viewInflate = LayoutInflater.from(this.mContext).inflate(2130968612, (ViewGroup) null);
-        WebView webView = tab.getWebView();
-        String url = z ? str : tab.getUrl();
-        String title = tab.getTitle();
-        String str2 = url == null ? "" : url;
-        if (title == null) {
-            title = "";
-        }
-        ((TextView) viewInflate.findViewById(2131558456)).setText(str2);
-        ((TextView) viewInflate.findViewById(2131558407)).setText(title);
-        this.mPageInfoView = tab;
-        this.mPageInfoFromShowSSLCertificateOnError = z;
-        this.mUrlCertificateOnError = str;
-        AlertDialog.Builder onCancelListener = new AlertDialog.Builder(this.mContext).setTitle(2131492966).setIcon(android.R.drawable.ic_dialog_info).setView(viewInflate).setPositiveButton(2131492964, new DialogInterface.OnClickListener(this, z) {
-            final PageDialogsHandler this$0;
-            final boolean val$fromShowSSLCertificateOnError;
-
-            {
-                this.this$0 = this;
-                this.val$fromShowSSLCertificateOnError = z;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                this.this$0.mPageInfoDialog = null;
-                this.this$0.mPageInfoView = null;
-                if (this.val$fromShowSSLCertificateOnError) {
-                    this.this$0.showSSLCertificateOnError(this.this$0.mSSLCertificateOnErrorView, this.this$0.mSSLCertificateOnErrorHandler, this.this$0.mSSLCertificateOnErrorError);
-                }
-            }
-        }).setOnCancelListener(new DialogInterface.OnCancelListener(this, z) {
-            final PageDialogsHandler this$0;
-            final boolean val$fromShowSSLCertificateOnError;
-
-            {
-                this.this$0 = this;
-                this.val$fromShowSSLCertificateOnError = z;
-            }
-
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                this.this$0.mPageInfoDialog = null;
-                this.this$0.mPageInfoView = null;
-                if (this.val$fromShowSSLCertificateOnError) {
-                    this.this$0.showSSLCertificateOnError(this.this$0.mSSLCertificateOnErrorView, this.this$0.mSSLCertificateOnErrorHandler, this.this$0.mSSLCertificateOnErrorError);
-                }
-            }
-        });
-        if (z || (webView != null && webView.getCertificate() != null)) {
-            onCancelListener.setNeutralButton(2131492972, new DialogInterface.OnClickListener(this, z, tab) {
-                final PageDialogsHandler this$0;
-                final boolean val$fromShowSSLCertificateOnError;
-                final Tab val$tab;
-
-                {
-                    this.this$0 = this;
-                    this.val$fromShowSSLCertificateOnError = z;
-                    this.val$tab = tab;
-                }
-
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    this.this$0.mPageInfoDialog = null;
-                    this.this$0.mPageInfoView = null;
-                    if (this.val$fromShowSSLCertificateOnError) {
-                        this.this$0.showSSLCertificateOnError(this.this$0.mSSLCertificateOnErrorView, this.this$0.mSSLCertificateOnErrorHandler, this.this$0.mSSLCertificateOnErrorError);
-                    } else {
-                        this.this$0.showSSLCertificate(this.val$tab);
-                    }
-                }
-            });
-        }
-        this.mPageInfoDialog = onCancelListener.show();
-    }
-
-    void showPopupWindowAttempt(Tab tab, boolean z, Message message) {
-        this.mPopupWindowAttemptView = tab;
-        this.mPopupWindowAttemptIsDialog = z;
-        this.mPopupWindowAttemptMessage = message;
-        DialogInterface.OnClickListener onClickListener = new DialogInterface.OnClickListener(this, message, z, tab) {
-            final PageDialogsHandler this$0;
-            final boolean val$dialog;
-            final Message val$resultMsg;
-            final Tab val$tab;
-
-            {
-                this.this$0 = this;
-                this.val$resultMsg = message;
-                this.val$dialog = z;
-                this.val$tab = tab;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                this.this$0.mPopupWindowAttemptDialog = null;
-                this.this$0.mPopupWindowAttemptView = null;
-                this.this$0.mPopupWindowAttemptIsDialog = false;
-                this.this$0.mPopupWindowAttemptMessage = null;
-                WebView.WebViewTransport webViewTransport = (WebView.WebViewTransport) this.val$resultMsg.obj;
-                if (this.val$dialog) {
-                    this.val$tab.createSubWindow();
-                    this.this$0.mController.attachSubWindow(this.val$tab);
-                    webViewTransport.setWebView(this.val$tab.getSubWebView());
-                    this.val$tab.PopupWindowShown(false);
-                } else {
-                    webViewTransport.setWebView(this.this$0.mController.openTab((String) null, this.val$tab, true, true).getWebView());
-                }
-                this.val$resultMsg.sendToTarget();
-            }
-        };
-        this.mPopupWindowAttemptDialog = new AlertDialog.Builder(this.mContext).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(2131493211).setPositiveButton(2131493212, onClickListener).setNegativeButton(2131493213, new DialogInterface.OnClickListener(this, message, tab) {
-            final PageDialogsHandler this$0;
-            final Message val$resultMsg;
-            final Tab val$tab;
-
-            {
-                this.this$0 = this;
-                this.val$resultMsg = message;
-                this.val$tab = tab;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                this.this$0.mPopupWindowAttemptDialog = null;
-                this.this$0.mPopupWindowAttemptView = null;
-                this.this$0.mPopupWindowAttemptIsDialog = false;
-                this.this$0.mPopupWindowAttemptMessage = null;
-                this.val$resultMsg.sendToTarget();
-                this.val$tab.PopupWindowShown(false);
-            }
-        }).setCancelable(false).create();
-        this.mPopupWindowAttemptDialog.show();
-        if (z) {
-            tab.PopupWindowShown(true);
-        }
-    }
-
-    void showSSLCertificateOnError(WebView webView, SslErrorHandler sslErrorHandler, SslError sslError) {
-        SslCertificate certificate;
-        if (sslError == null || (certificate = sslError.getCertificate()) == null) {
-            return;
-        }
-        this.mSSLCertificateOnErrorHandler = sslErrorHandler;
-        this.mSSLCertificateOnErrorView = webView;
-        this.mSSLCertificateOnErrorError = sslError;
-        this.mSSLCertificateOnErrorDialog = createSslCertificateDialog(certificate, sslError).setPositiveButton(2131492964, new DialogInterface.OnClickListener(this, webView, sslErrorHandler, sslError) {
-            final PageDialogsHandler this$0;
-            final SslError val$error;
-            final SslErrorHandler val$handler;
-            final WebView val$view;
-
-            {
-                this.this$0 = this;
-                this.val$view = webView;
-                this.val$handler = sslErrorHandler;
-                this.val$error = sslError;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                this.this$0.mSSLCertificateOnErrorDialog = null;
-                this.this$0.mSSLCertificateOnErrorView = null;
-                this.this$0.mSSLCertificateOnErrorHandler = null;
-                this.this$0.mSSLCertificateOnErrorError = null;
-                ((BrowserWebView) this.val$view).getWebViewClient().onReceivedSslError(this.val$view, this.val$handler, this.val$error);
-            }
-        }).setNeutralButton(2131492967, new DialogInterface.OnClickListener(this, webView, sslError) {
-            final PageDialogsHandler this$0;
-            final SslError val$error;
-            final WebView val$view;
-
-            {
-                this.this$0 = this;
-                this.val$view = webView;
-                this.val$error = sslError;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                this.this$0.mSSLCertificateOnErrorDialog = null;
-                this.this$0.showPageInfo(this.this$0.mController.getTabControl().getTabFromView(this.val$view), true, this.val$error.getUrl());
-            }
-        }).setOnCancelListener(new DialogInterface.OnCancelListener(this, webView, sslErrorHandler, sslError) {
-            final PageDialogsHandler this$0;
-            final SslError val$error;
-            final SslErrorHandler val$handler;
-            final WebView val$view;
-
-            {
-                this.this$0 = this;
-                this.val$view = webView;
-                this.val$handler = sslErrorHandler;
-                this.val$error = sslError;
-            }
-
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                this.this$0.mSSLCertificateOnErrorDialog = null;
-                this.this$0.mSSLCertificateOnErrorView = null;
-                this.this$0.mSSLCertificateOnErrorHandler = null;
-                this.this$0.mSSLCertificateOnErrorError = null;
-                ((BrowserWebView) this.val$view).getWebViewClient().onReceivedSslError(this.val$view, this.val$handler, this.val$error);
-            }
-        }).show();
     }
 }

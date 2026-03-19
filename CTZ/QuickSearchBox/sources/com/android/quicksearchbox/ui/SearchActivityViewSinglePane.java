@@ -17,13 +17,13 @@ public class SearchActivityViewSinglePane extends SearchActivityView {
     }
 
     @Override
-    public void considerHidingInputMethod() {
-        this.mQueryTextView.hideInputMethod();
+    public void onResume() {
+        focusQueryTextView();
     }
 
     @Override
-    public void onResume() {
-        focusQueryTextView();
+    public void considerHidingInputMethod() {
+        this.mQueryTextView.hideInputMethod();
     }
 
     @Override

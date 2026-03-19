@@ -8,9 +8,9 @@ public class ViewModelProvider {
         <T extends ViewModel> T create(Class<T> cls);
     }
 
-    public ViewModelProvider(ViewModelStore viewModelStore, Factory factory) {
+    public ViewModelProvider(ViewModelStore store, Factory factory) {
         this.mFactory = factory;
-        this.mViewModelStore = viewModelStore;
+        this.mViewModelStore = store;
     }
 
     public <T extends ViewModel> T get(Class<T> cls) {

@@ -8,29 +8,33 @@ public final class SessionToken2 {
     interface SupportLibraryImpl {
     }
 
-    SessionToken2(SupportLibraryImpl supportLibraryImpl) {
-        this.mImpl = supportLibraryImpl;
-    }
-
-    public static SessionToken2 fromBundle(Bundle bundle) {
-        if (bundle == null) {
-            return null;
-        }
-        return bundle.getInt("android.media.token.type", -1) == 100 ? new SessionToken2(SessionToken2ImplLegacy.fromBundle(bundle)) : new SessionToken2(SessionToken2ImplBase.fromBundle(bundle));
-    }
-
-    public boolean equals(Object obj) {
-        if (obj instanceof SessionToken2) {
-            return this.mImpl.equals(((SessionToken2) obj).mImpl);
-        }
-        return false;
+    SessionToken2(SupportLibraryImpl impl) {
+        this.mImpl = impl;
     }
 
     public int hashCode() {
         return this.mImpl.hashCode();
     }
 
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SessionToken2)) {
+            return false;
+        }
+        return this.mImpl.equals(obj.mImpl);
+    }
+
     public String toString() {
         return this.mImpl.toString();
+    }
+
+    public static SessionToken2 fromBundle(Bundle bundle) {
+        if (bundle == null) {
+            return null;
+        }
+        int type = bundle.getInt("android.media.token.type", -1);
+        if (type == 100) {
+            return new SessionToken2(SessionToken2ImplLegacy.fromBundle(bundle));
+        }
+        return new SessionToken2(SessionToken2ImplBase.fromBundle(bundle));
     }
 }

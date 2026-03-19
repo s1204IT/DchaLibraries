@@ -76,7 +76,7 @@ public abstract class AbstractLogpersistPreferenceController extends DeveloperOp
         LocalBroadcastManager.getInstance(this.mContext).unregisterReceiver(this.mReceiver);
     }
 
-    public void onLogdSizeSettingUpdate(String str) {
+    private void onLogdSizeSettingUpdate(String str) {
         if (this.mLogpersist != null) {
             String str2 = SystemProperties.get("logd.logpersistd.enable");
             if (str2 == null || !str2.equals("true") || str.equals("32768")) {

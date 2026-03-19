@@ -3,6 +3,7 @@ package android.net.dhcp;
 import android.net.DhcpResults;
 import android.net.LinkAddress;
 import android.net.NetworkUtils;
+import android.net.StaticIpConfiguration;
 import android.net.metrics.DhcpErrorEvent;
 import android.os.Build;
 import android.os.SystemProperties;
@@ -628,13 +629,13 @@ public abstract class DhcpPacket {
         }
         DhcpResults dhcpResults = new DhcpResults();
         try {
-            dhcpResults.ipAddress = new LinkAddress(inet4Address, iNetmaskToPrefixLength);
+            ((StaticIpConfiguration) dhcpResults).ipAddress = new LinkAddress(inet4Address, iNetmaskToPrefixLength);
             short sShortValue = 0;
             if (this.mGateways.size() > 0) {
-                dhcpResults.gateway = this.mGateways.get(0);
+                ((StaticIpConfiguration) dhcpResults).gateway = this.mGateways.get(0);
             }
-            dhcpResults.dnsServers.addAll(this.mDnsServers);
-            dhcpResults.domains = this.mDomainName;
+            ((StaticIpConfiguration) dhcpResults).dnsServers.addAll(this.mDnsServers);
+            ((StaticIpConfiguration) dhcpResults).domains = this.mDomainName;
             dhcpResults.serverAddress = this.mServerIdentifier;
             dhcpResults.vendorInfo = this.mVendorInfo;
             dhcpResults.leaseDuration = this.mLeaseTime != null ? this.mLeaseTime.intValue() : -1;

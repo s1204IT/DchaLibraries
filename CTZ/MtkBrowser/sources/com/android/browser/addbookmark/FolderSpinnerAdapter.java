@@ -1,6 +1,5 @@
 package com.android.browser.addbookmark;
 
-import android.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -8,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import com.android.browser.R;
 
 public class FolderSpinnerAdapter extends BaseAdapter {
     private Context mContext;
@@ -24,69 +24,74 @@ public class FolderSpinnerAdapter extends BaseAdapter {
         this.mInflater = LayoutInflater.from(this.mContext);
     }
 
-    private void bindView(int i, View view, boolean z) {
-        int i2;
-        int i3;
-        if (!this.mIncludeHomeScreen) {
-            i++;
-        }
-        switch (i) {
-            case 0:
-                i2 = 2130837561;
-                i3 = 2131492996;
-                break;
-            case 1:
-                i2 = 2130837543;
-                i3 = 2131492995;
-                break;
-            case 2:
-            case 3:
-                i2 = 2130837551;
-                i3 = 2131492997;
-                break;
-            default:
-                i2 = 0;
-                i3 = 0;
-                break;
-        }
-        TextView textView = (TextView) view;
-        if (i == 3) {
-            textView.setText(this.mRecentFolderName);
-        } else if (i != 2 || z || this.mOtherFolderDisplayText == null) {
-            textView.setText(i3);
-        } else {
-            textView.setText(this.mOtherFolderDisplayText);
-        }
-        textView.setGravity(16);
-        textView.setCompoundDrawablesWithIntrinsicBounds(this.mContext.getResources().getDrawable(i2), (Drawable) null, (Drawable) null, (Drawable) null);
-    }
-
     public void addRecentFolder(long j, String str) {
         this.mIncludesRecentFolder = true;
         this.mRecentFolderId = j;
         this.mRecentFolderName = str;
     }
 
-    public void clearRecentFolder() {
-        if (this.mIncludesRecentFolder) {
-            this.mIncludesRecentFolder = false;
-            notifyDataSetChanged();
+    public long recentFolderId() {
+        return this.mRecentFolderId;
+    }
+
+    private void bindView(int i, View view, boolean z) {
+        int i2;
+        if (!this.mIncludeHomeScreen) {
+            i++;
         }
+        int i3 = 0;
+        switch (i) {
+            case 0:
+                i3 = R.string.add_to_homescreen_menu_option;
+                i2 = R.drawable.ic_home_holo_dark;
+                break;
+            case 1:
+                i3 = R.string.add_to_bookmarks_menu_option;
+                i2 = R.drawable.ic_bookmarks_holo_dark;
+                break;
+            case 2:
+            case 3:
+                i3 = R.string.add_to_other_folder_menu_option;
+                i2 = R.drawable.ic_folder_holo_dark;
+                break;
+            default:
+                i2 = 0;
+                break;
+        }
+        TextView textView = (TextView) view;
+        if (i == 3) {
+            textView.setText(this.mRecentFolderName);
+        } else if (i == 2 && !z && this.mOtherFolderDisplayText != null) {
+            textView.setText(this.mOtherFolderDisplayText);
+        } else {
+            textView.setText(i3);
+        }
+        textView.setGravity(16);
+        textView.setCompoundDrawablesWithIntrinsicBounds(this.mContext.getResources().getDrawable(i2), (Drawable) null, (Drawable) null, (Drawable) null);
+    }
+
+    @Override
+    public View getDropDownView(int i, View view, ViewGroup viewGroup) {
+        if (view == null) {
+            view = this.mInflater.inflate(android.R.layout.simple_spinner_dropdown_item, viewGroup, false);
+        }
+        bindView(i, view, true);
+        return view;
+    }
+
+    @Override
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        if (view == null) {
+            view = this.mInflater.inflate(android.R.layout.simple_spinner_item, viewGroup, false);
+        }
+        bindView(i, view, false);
+        return view;
     }
 
     @Override
     public int getCount() {
         int i = this.mIncludeHomeScreen ? 3 : 2;
         return this.mIncludesRecentFolder ? i + 1 : i;
-    }
-
-    @Override
-    public View getDropDownView(int i, View view, ViewGroup viewGroup) {
-        if (view == null) {
-            view = this.mInflater.inflate(R.layout.simple_spinner_dropdown_item, viewGroup, false);
-        }
-        bindView(i, view, true);
-        return view;
     }
 
     @Override
@@ -97,16 +102,10 @@ public class FolderSpinnerAdapter extends BaseAdapter {
     @Override
     public long getItemId(int i) {
         long j = i;
-        return !this.mIncludeHomeScreen ? j + 1 : j;
-    }
-
-    @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
-        if (view == null) {
-            view = this.mInflater.inflate(R.layout.simple_spinner_item, viewGroup, false);
+        if (!this.mIncludeHomeScreen) {
+            return j + 1;
         }
-        bindView(i, view, false);
-        return view;
+        return j;
     }
 
     @Override
@@ -114,12 +113,15 @@ public class FolderSpinnerAdapter extends BaseAdapter {
         return true;
     }
 
-    public long recentFolderId() {
-        return this.mRecentFolderId;
-    }
-
     public void setOtherFolderDisplayText(String str) {
         this.mOtherFolderDisplayText = str;
         notifyDataSetChanged();
+    }
+
+    public void clearRecentFolder() {
+        if (this.mIncludesRecentFolder) {
+            this.mIncludesRecentFolder = false;
+            notifyDataSetChanged();
+        }
     }
 }

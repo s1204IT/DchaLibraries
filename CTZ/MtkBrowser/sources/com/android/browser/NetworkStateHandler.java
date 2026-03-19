@@ -27,33 +27,28 @@ public class NetworkStateHandler {
         }
         this.mNetworkStateChangedFilter = new IntentFilter();
         this.mNetworkStateChangedFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        this.mNetworkStateIntentReceiver = new BroadcastReceiver(this) {
-            final NetworkStateHandler this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mNetworkStateIntentReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")) {
                     NetworkInfo networkInfo = (NetworkInfo) intent.getParcelableExtra("networkInfo");
                     String typeName = networkInfo.getTypeName();
                     String subtypeName = networkInfo.getSubtypeName();
-                    this.this$0.sendNetworkType(typeName.toLowerCase(), subtypeName != null ? subtypeName.toLowerCase() : "");
+                    NetworkStateHandler.this.sendNetworkType(typeName.toLowerCase(), subtypeName != null ? subtypeName.toLowerCase() : "");
                     BrowserSettings.getInstance().updateConnectionType();
-                    this.this$0.onNetworkToggle(!intent.getBooleanExtra("noConnectivity", false));
+                    NetworkStateHandler.this.onNetworkToggle(!intent.getBooleanExtra("noConnectivity", false));
                 }
             }
         };
     }
 
-    private void sendNetworkType(String str, String str2) {
-        this.mController.getCurrentWebView();
+    void onPause() {
+        this.mActivity.unregisterReceiver(this.mNetworkStateIntentReceiver);
     }
 
-    boolean isNetworkUp() {
-        return this.mIsNetworkUp;
+    void onResume() {
+        this.mActivity.registerReceiver(this.mNetworkStateIntentReceiver, this.mNetworkStateChangedFilter);
+        BrowserSettings.getInstance().updateConnectionType();
     }
 
     void onNetworkToggle(boolean z) {
@@ -67,12 +62,11 @@ public class NetworkStateHandler {
         }
     }
 
-    void onPause() {
-        this.mActivity.unregisterReceiver(this.mNetworkStateIntentReceiver);
+    boolean isNetworkUp() {
+        return this.mIsNetworkUp;
     }
 
-    void onResume() {
-        this.mActivity.registerReceiver(this.mNetworkStateIntentReceiver, this.mNetworkStateChangedFilter);
-        BrowserSettings.getInstance().updateConnectionType();
+    private void sendNetworkType(String str, String str2) {
+        this.mController.getCurrentWebView();
     }
 }

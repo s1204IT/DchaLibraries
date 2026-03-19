@@ -153,7 +153,7 @@ public class DataUsageSummaryPreference extends Preference {
         textView3.setText(this.mLimitInfoText);
     }
 
-    public static void launchWifiDataUsage(Context context) {
+    private static void launchWifiDataUsage(Context context) {
         Bundle bundle = new Bundle(1);
         bundle.putParcelable("network_template", NetworkTemplate.buildTemplateWifiWildcard());
         SubSettingLauncher sourceMetricsCategory = new SubSettingLauncher(context).setArguments(bundle).setDestination(DataUsageList.class.getName()).setSourceMetricsCategory(0);

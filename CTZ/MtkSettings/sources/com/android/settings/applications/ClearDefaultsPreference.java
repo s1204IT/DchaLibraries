@@ -123,11 +123,11 @@ public class ClearDefaultsPreference extends Preference {
         return true;
     }
 
-    public boolean isDefaultBrowser(String str) {
+    private boolean isDefaultBrowser(String str) {
         return str.equals(this.mPm.getDefaultBrowserPackageNameAsUser(UserHandle.myUserId()));
     }
 
-    public void resetLaunchDefaultsUi(TextView textView) {
+    private void resetLaunchDefaultsUi(TextView textView) {
         textView.setText(R.string.auto_launch_disable_text);
         this.mActivitiesButton.setEnabled(false);
     }

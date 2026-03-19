@@ -53,11 +53,11 @@ public class CustomDialogPreference extends DialogPreference {
     protected void onBindDialogView(View view) {
     }
 
-    public void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
+    private void setFragment(CustomPreferenceDialogFragment customPreferenceDialogFragment) {
         this.mFragment = customPreferenceDialogFragment;
     }
 
-    public DialogInterface.OnShowListener getOnShowListener() {
+    private DialogInterface.OnShowListener getOnShowListener() {
         return this.mOnShowListener;
     }
 

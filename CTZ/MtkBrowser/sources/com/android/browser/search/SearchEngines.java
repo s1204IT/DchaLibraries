@@ -6,14 +6,14 @@ import android.util.Log;
 import com.mediatek.search.SearchEngineManager;
 
 public class SearchEngines {
+    public static SearchEngine getDefaultSearchEngine(Context context) {
+        return DefaultSearchEngine.create(context);
+    }
+
     public static SearchEngine get(Context context, String str) {
         com.mediatek.common.search.SearchEngine searchEngineInfo;
         SearchEngine defaultSearchEngine = getDefaultSearchEngine(context);
-        return !TextUtils.isEmpty(str) ? ((defaultSearchEngine == null || !str.equals(defaultSearchEngine.getName())) && (searchEngineInfo = getSearchEngineInfo(context, str)) != null) ? new OpenSearchSearchEngine(context, searchEngineInfo) : defaultSearchEngine : defaultSearchEngine;
-    }
-
-    public static SearchEngine getDefaultSearchEngine(Context context) {
-        return DefaultSearchEngine.create(context);
+        return (TextUtils.isEmpty(str) || (defaultSearchEngine != null && str.equals(defaultSearchEngine.getName())) || (searchEngineInfo = getSearchEngineInfo(context, str)) == null) ? defaultSearchEngine : new OpenSearchSearchEngine(context, searchEngineInfo);
     }
 
     public static com.mediatek.common.search.SearchEngine getSearchEngineInfo(Context context, String str) {

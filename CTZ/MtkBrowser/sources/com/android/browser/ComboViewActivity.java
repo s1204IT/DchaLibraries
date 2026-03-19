@@ -20,6 +20,50 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
     private TabsAdapter mTabsAdapter;
     private ViewPager mViewPager;
 
+    @Override
+    protected void onCreate(Bundle bundle) {
+        UI.ComboViews comboViewsValueOf;
+        super.onCreate(bundle);
+        setResult(0);
+        Bundle extras = getIntent().getExtras();
+        Bundle bundle2 = extras.getBundle("combo_args");
+        String string = extras.getString("initial_view", null);
+        if (string != null) {
+            comboViewsValueOf = UI.ComboViews.valueOf(string);
+        } else {
+            comboViewsValueOf = UI.ComboViews.Bookmarks;
+        }
+        this.mViewPager = new ViewPager(this);
+        this.mViewPager.setId(R.id.tab_view);
+        setContentView(this.mViewPager);
+        ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(2);
+        if (BrowserActivity.isTablet(this)) {
+            actionBar.setDisplayOptions(3);
+            actionBar.setHomeButtonEnabled(true);
+        } else {
+            actionBar.setDisplayOptions(0);
+        }
+        this.mTabsAdapter = new TabsAdapter(this, this.mViewPager);
+        this.mTabsAdapter.addTab(actionBar.newTab().setText(R.string.tab_bookmarks), BrowserBookmarksPage.class, bundle2);
+        this.mTabsAdapter.addTab(actionBar.newTab().setText(R.string.tab_history), BrowserHistoryPage.class, bundle2);
+        if (bundle == null) {
+            switch (AnonymousClass1.$SwitchMap$com$android$browser$UI$ComboViews[comboViewsValueOf.ordinal()]) {
+                case 1:
+                    this.mViewPager.setCurrentItem(0);
+                    break;
+                case 2:
+                    this.mViewPager.setCurrentItem(1);
+                    break;
+                case 3:
+                    this.mViewPager.setCurrentItem(2);
+                    break;
+            }
+            return;
+        }
+        actionBar.setSelectedNavigationItem(bundle.getInt("tab", 0));
+    }
+
     static class AnonymousClass1 {
         static final int[] $SwitchMap$com$android$browser$UI$ComboViews = new int[UI.ComboViews.values().length];
 
@@ -37,6 +81,55 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
             } catch (NoSuchFieldError e3) {
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putInt("tab", getActionBar().getSelectedNavigationIndex());
+    }
+
+    @Override
+    public void openUrl(String str) {
+        if (str == null) {
+            Toast.makeText(this, R.string.bookmark_url_not_valid, 1).show();
+            return;
+        }
+        Intent intent = new Intent(this, (Class<?>) BrowserActivity.class);
+        intent.setAction("android.intent.action.VIEW");
+        intent.setData(Uri.parse(str));
+        setResult(-1, intent);
+        finish();
+    }
+
+    @Override
+    public void openInNewTab(String... strArr) {
+        Intent intent = new Intent();
+        intent.putExtra("open_all", strArr);
+        setResult(-1, intent);
+        finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.combined, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == 16908332) {
+            finish();
+            return true;
+        }
+        if (menuItem.getItemId() == R.id.preferences_menu_id) {
+            String stringExtra = getIntent().getStringExtra("url");
+            Intent intent = new Intent(this, (Class<?>) BrowserPreferencesPage.class);
+            intent.putExtra("currentPage", stringExtra);
+            startActivityForResult(intent, 3);
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     public static class TabsAdapter extends FragmentPagerAdapter implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
@@ -86,10 +179,6 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
         }
 
         @Override
-        public void onPageScrollStateChanged(int i) {
-        }
-
-        @Override
         public void onPageScrolled(int i, float f, int i2) {
         }
 
@@ -99,7 +188,7 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
         }
 
         @Override
-        public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        public void onPageScrollStateChanged(int i) {
         }
 
         @Override
@@ -115,92 +204,9 @@ public class ComboViewActivity extends Activity implements CombinedBookmarksCall
         @Override
         public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         }
-    }
 
-    @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        setResult(0);
-        Bundle extras = getIntent().getExtras();
-        Bundle bundle2 = extras.getBundle("combo_args");
-        String string = extras.getString("initial_view", null);
-        UI.ComboViews comboViewsValueOf = string != null ? UI.ComboViews.valueOf(string) : UI.ComboViews.Bookmarks;
-        this.mViewPager = new ViewPager(this);
-        this.mViewPager.setId(2131558403);
-        setContentView(this.mViewPager);
-        ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(2);
-        if (BrowserActivity.isTablet(this)) {
-            actionBar.setDisplayOptions(3);
-            actionBar.setHomeButtonEnabled(true);
-        } else {
-            actionBar.setDisplayOptions(0);
+        @Override
+        public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
         }
-        this.mTabsAdapter = new TabsAdapter(this, this.mViewPager);
-        this.mTabsAdapter.addTab(actionBar.newTab().setText(2131492951), BrowserBookmarksPage.class, bundle2);
-        this.mTabsAdapter.addTab(actionBar.newTab().setText(2131492953), BrowserHistoryPage.class, bundle2);
-        if (bundle != null) {
-            actionBar.setSelectedNavigationItem(bundle.getInt("tab", 0));
-        }
-        switch (AnonymousClass1.$SwitchMap$com$android$browser$UI$ComboViews[comboViewsValueOf.ordinal()]) {
-            case 1:
-                this.mViewPager.setCurrentItem(0);
-                break;
-            case 2:
-                this.mViewPager.setCurrentItem(1);
-                break;
-            case 3:
-                this.mViewPager.setCurrentItem(2);
-                break;
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(2131755012, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == 16908332) {
-            finish();
-            return true;
-        }
-        if (menuItem.getItemId() != 2131558585) {
-            return super.onOptionsItemSelected(menuItem);
-        }
-        String stringExtra = getIntent().getStringExtra("url");
-        Intent intent = new Intent(this, (Class<?>) BrowserPreferencesPage.class);
-        intent.putExtra("currentPage", stringExtra);
-        startActivityForResult(intent, 3);
-        return true;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle bundle) {
-        super.onSaveInstanceState(bundle);
-        bundle.putInt("tab", getActionBar().getSelectedNavigationIndex());
-    }
-
-    @Override
-    public void openInNewTab(String... strArr) {
-        Intent intent = new Intent();
-        intent.putExtra("open_all", strArr);
-        setResult(-1, intent);
-        finish();
-    }
-
-    @Override
-    public void openUrl(String str) {
-        if (str == null) {
-            Toast.makeText(this, 2131493015, 1).show();
-            return;
-        }
-        Intent intent = new Intent(this, (Class<?>) BrowserActivity.class);
-        intent.setAction("android.intent.action.VIEW");
-        intent.setData(Uri.parse(str));
-        setResult(-1, intent);
-        finish();
     }
 }

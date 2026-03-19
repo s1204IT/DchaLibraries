@@ -31,7 +31,7 @@ abstract class BluetoothNameDialogFragment extends InstrumentedDialogFragment im
 
     protected abstract int getDialogTitle();
 
-    public abstract void setDeviceName(String str);
+    protected abstract void setDeviceName(String str);
 
     BluetoothNameDialogFragment() {
     }

@@ -28,98 +28,82 @@ public class SearchActivity extends Activity {
     private boolean mTookAction;
     private boolean mTraceStartUp;
     private final Handler mHandler = new Handler();
-    private final Runnable mUpdateSuggestionsTask = new Runnable(this) {
-        final SearchActivity this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private final Runnable mUpdateSuggestionsTask = new Runnable() {
         @Override
         public void run() {
-            this.this$0.updateSuggestions();
+            SearchActivity.this.updateSuggestions();
         }
     };
-    private final Runnable mShowInputMethodTask = new Runnable(this) {
-        final SearchActivity this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private final Runnable mShowInputMethodTask = new Runnable() {
         @Override
         public void run() {
-            this.this$0.mSearchActivityView.showInputMethodForQuery();
+            SearchActivity.this.mSearchActivityView.showInputMethodForQuery();
         }
     };
-
-    private class ClickHandler implements SuggestionClickListener {
-        final SearchActivity this$0;
-
-        private ClickHandler(SearchActivity searchActivity) {
-            this.this$0 = searchActivity;
-        }
-
-        @Override
-        public void onSuggestionClicked(SuggestionsAdapter<?> suggestionsAdapter, long j) {
-            this.this$0.launchSuggestion(suggestionsAdapter, j);
-        }
-
-        @Override
-        public void onSuggestionQueryRefineClicked(SuggestionsAdapter<?> suggestionsAdapter, long j) {
-            this.this$0.refineSuggestion(suggestionsAdapter, j);
-        }
-    }
 
     public interface OnDestroyListener {
         void onDestroyed();
     }
 
-    private Config getConfig() {
-        return getQsbApplication().getConfig();
-    }
-
-    private String getCorpusNameFromUri(Uri uri) {
-        if (uri != null && "qsb.corpus".equals(uri.getScheme())) {
-            return uri.getAuthority();
+    @Override
+    public void onCreate(Bundle bundle) {
+        this.mTraceStartUp = getIntent().hasExtra("trace_start_up");
+        if (this.mTraceStartUp) {
+            String absolutePath = new File(getDir("traces", 0), "qsb-start.trace").getAbsolutePath();
+            Log.i("QSB.SearchActivity", "Writing start-up trace to " + absolutePath);
+            Debug.startMethodTracing(absolutePath);
         }
-        return null;
-    }
-
-    private Logger getLogger() {
-        return getQsbApplication().getLogger();
-    }
-
-    private QsbApplication getQsbApplication() {
-        return QsbApplication.get(this);
-    }
-
-    private SuggestionsProvider getSuggestionsProvider() {
-        return getQsbApplication().getSuggestionsProvider();
-    }
-
-    private void gotSuggestions(Suggestions suggestions) {
-        if (this.mStarting) {
-            this.mStarting = false;
-            String stringExtra = getIntent().getStringExtra("source");
-            getLogger().logStart(this.mOnCreateLatency, this.mStartLatencyTracker.getLatency(), stringExtra);
-            getQsbApplication().onStartupComplete();
+        recordStartTime();
+        super.onCreate(bundle);
+        QsbApplication.get(this).getSearchBaseUrlHelper();
+        this.mSource = QsbApplication.get(this).getGoogleSource();
+        this.mSearchActivityView = setupContentView();
+        if (getConfig().showScrollingResults()) {
+            this.mSearchActivityView.setMaxPromotedResults(getConfig().getMaxPromotedResults());
+        } else {
+            this.mSearchActivityView.limitResultsToViewHeight();
         }
+        this.mSearchActivityView.setSearchClickListener(new SearchActivityView.SearchClickListener() {
+            @Override
+            public boolean onSearchClicked(int i) {
+                return SearchActivity.this.onSearchClicked(i);
+            }
+        });
+        this.mSearchActivityView.setQueryListener(new SearchActivityView.QueryListener() {
+            @Override
+            public void onQueryChanged() {
+                SearchActivity.this.updateSuggestionsBuffered();
+            }
+        });
+        this.mSearchActivityView.setSuggestionClickListener(new ClickHandler());
+        this.mSearchActivityView.setVoiceSearchButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchActivity.this.onVoiceSearchClicked();
+            }
+        });
+        this.mSearchActivityView.setExitClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchActivity.this.finish();
+            }
+        });
+        setupFromIntent(getIntent());
+        restoreInstanceState(bundle);
+        this.mSearchActivityView.start();
+        recordOnCreateDone();
     }
 
-    public boolean launchSuggestion(SuggestionsAdapter<?> suggestionsAdapter, long j) {
-        SuggestionPosition currentSuggestions = getCurrentSuggestions(suggestionsAdapter, j);
-        if (currentSuggestions == null) {
-            return false;
-        }
-        this.mTookAction = true;
-        getLogger().logSuggestionClick(j, currentSuggestions.getCursor(), 0);
-        launchSuggestion(currentSuggestions.getCursor(), currentSuggestions.getPosition());
-        return true;
+    protected SearchActivityView setupContentView() {
+        setContentView(R.layout.search_activity);
+        return (SearchActivityView) findViewById(R.id.search_activity_view);
     }
 
-    private void recordOnCreateDone() {
-        this.mOnCreateLatency = this.mOnCreateTracker.getLatency();
+    @Override
+    protected void onNewIntent(Intent intent) {
+        recordStartTime();
+        setIntent(intent);
+        setupFromIntent(intent);
     }
 
     private void recordStartTime() {
@@ -127,6 +111,23 @@ public class SearchActivity extends Activity {
         this.mOnCreateTracker = new LatencyTracker();
         this.mStarting = true;
         this.mTookAction = false;
+    }
+
+    private void recordOnCreateDone() {
+        this.mOnCreateLatency = this.mOnCreateTracker.getLatency();
+    }
+
+    protected void restoreInstanceState(Bundle bundle) {
+        if (bundle == null) {
+            return;
+        }
+        setQuery(bundle.getString("query"), false);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle bundle) {
+        super.onSaveInstanceState(bundle);
+        bundle.putString("query", getQuery());
     }
 
     private void setupFromIntent(Intent intent) {
@@ -137,13 +138,119 @@ public class SearchActivity extends Activity {
         this.mAppSearchData = bundleExtra;
     }
 
-    public void updateSuggestionsBuffered() {
-        this.mHandler.removeCallbacks(this.mUpdateSuggestionsTask);
-        this.mHandler.postDelayed(this.mUpdateSuggestionsTask, getConfig().getTypingUpdateSuggestionsDelayMillis());
+    private String getCorpusNameFromUri(Uri uri) {
+        if (uri == null || !"qsb.corpus".equals(uri.getScheme())) {
+            return null;
+        }
+        return uri.getAuthority();
+    }
+
+    private QsbApplication getQsbApplication() {
+        return QsbApplication.get(this);
+    }
+
+    private Config getConfig() {
+        return getQsbApplication().getConfig();
+    }
+
+    private SuggestionsProvider getSuggestionsProvider() {
+        return getQsbApplication().getSuggestionsProvider();
+    }
+
+    private Logger getLogger() {
+        return getQsbApplication().getLogger();
+    }
+
+    public void setOnDestroyListener(OnDestroyListener onDestroyListener) {
+        this.mDestroyListener = onDestroyListener;
+    }
+
+    @Override
+    protected void onDestroy() {
+        this.mSearchActivityView.destroy();
+        super.onDestroy();
+        if (this.mDestroyListener != null) {
+            this.mDestroyListener.onDestroyed();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        if (!this.mTookAction) {
+            getLogger().logExit(getCurrentSuggestions(), getQuery().length());
+        }
+        this.mSearchActivityView.clearSuggestions();
+        this.mSearchActivityView.onStop();
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        this.mSearchActivityView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateSuggestionsBuffered();
+        this.mSearchActivityView.onResume();
+        if (this.mTraceStartUp) {
+            Debug.stopMethodTracing();
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        createMenuItems(menu, true);
+        return true;
     }
 
     public void createMenuItems(Menu menu, boolean z) {
         getQsbApplication().getHelp().addHelpMenuItem(menu, "search");
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean z) {
+        super.onWindowFocusChanged(z);
+        if (z) {
+            this.mHandler.postDelayed(this.mShowInputMethodTask, 0L);
+        }
+    }
+
+    protected String getQuery() {
+        return this.mSearchActivityView.getQuery();
+    }
+
+    protected void setQuery(String str, boolean z) {
+        this.mSearchActivityView.setQuery(str, z);
+    }
+
+    protected boolean onSearchClicked(int i) {
+        String strTrimAndCollapseFrom = CharMatcher.WHITESPACE.trimAndCollapseFrom(getQuery(), ' ');
+        if (TextUtils.getTrimmedLength(strTrimAndCollapseFrom) == 0) {
+            return false;
+        }
+        this.mTookAction = true;
+        getLogger().logSearch(i, strTrimAndCollapseFrom.length());
+        startSearch(this.mSource, strTrimAndCollapseFrom);
+        return true;
+    }
+
+    protected void startSearch(Source source, String str) {
+        launchIntent(source.createSearchIntent(str, this.mAppSearchData));
+    }
+
+    protected void onVoiceSearchClicked() {
+        this.mTookAction = true;
+        getLogger().logVoiceSearch();
+        launchIntent(this.mSource.createVoiceSearchIntent(this.mAppSearchData));
     }
 
     protected SuggestionCursor getCurrentSuggestions() {
@@ -165,16 +272,12 @@ public class SearchActivity extends Activity {
             return null;
         }
         int count = cursor.getCount();
-        if (position >= 0 && position < count) {
-            cursor.moveTo(position);
-            return suggestion;
+        if (position < 0 || position >= count) {
+            Log.w("QSB.SearchActivity", "Invalid suggestion position " + position + ", count = " + count);
+            return null;
         }
-        Log.w("QSB.SearchActivity", "Invalid suggestion position " + position + ", count = " + count);
-        return null;
-    }
-
-    protected String getQuery() {
-        return this.mSearchActivityView.getQuery();
+        cursor.moveTo(position);
+        return suggestion;
     }
 
     protected void launchIntent(Intent intent) {
@@ -188,167 +291,20 @@ public class SearchActivity extends Activity {
         }
     }
 
-    protected void launchSuggestion(SuggestionCursor suggestionCursor, int i) {
-        suggestionCursor.moveTo(i);
-        launchIntent(SuggestionUtils.getSuggestionIntent(suggestionCursor, this.mAppSearchData));
-    }
-
-    @Override
-    public void onCreate(Bundle bundle) {
-        this.mTraceStartUp = getIntent().hasExtra("trace_start_up");
-        if (this.mTraceStartUp) {
-            String absolutePath = new File(getDir("traces", 0), "qsb-start.trace").getAbsolutePath();
-            Log.i("QSB.SearchActivity", "Writing start-up trace to " + absolutePath);
-            Debug.startMethodTracing(absolutePath);
-        }
-        recordStartTime();
-        super.onCreate(bundle);
-        QsbApplication.get(this).getSearchBaseUrlHelper();
-        this.mSource = QsbApplication.get(this).getGoogleSource();
-        this.mSearchActivityView = setupContentView();
-        if (getConfig().showScrollingResults()) {
-            this.mSearchActivityView.setMaxPromotedResults(getConfig().getMaxPromotedResults());
-        } else {
-            this.mSearchActivityView.limitResultsToViewHeight();
-        }
-        this.mSearchActivityView.setSearchClickListener(new SearchActivityView.SearchClickListener(this) {
-            final SearchActivity this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public boolean onSearchClicked(int i) {
-                return this.this$0.onSearchClicked(i);
-            }
-        });
-        this.mSearchActivityView.setQueryListener(new SearchActivityView.QueryListener(this) {
-            final SearchActivity this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onQueryChanged() {
-                this.this$0.updateSuggestionsBuffered();
-            }
-        });
-        this.mSearchActivityView.setSuggestionClickListener(new ClickHandler());
-        this.mSearchActivityView.setVoiceSearchButtonClickListener(new View.OnClickListener(this) {
-            final SearchActivity this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onClick(View view) {
-                this.this$0.onVoiceSearchClicked();
-            }
-        });
-        this.mSearchActivityView.setExitClickListener(new View.OnClickListener(this) {
-            final SearchActivity this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onClick(View view) {
-                this.this$0.finish();
-            }
-        });
-        setupFromIntent(getIntent());
-        restoreInstanceState(bundle);
-        this.mSearchActivityView.start();
-        recordOnCreateDone();
-    }
-
-    @Override
-    protected void onDestroy() {
-        this.mSearchActivityView.destroy();
-        super.onDestroy();
-        if (this.mDestroyListener != null) {
-            this.mDestroyListener.onDestroyed();
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        recordStartTime();
-        setIntent(intent);
-        setupFromIntent(intent);
-    }
-
-    @Override
-    protected void onPause() {
-        this.mSearchActivityView.onPause();
-        super.onPause();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.clear();
-        createMenuItems(menu, true);
-        return true;
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateSuggestionsBuffered();
-        this.mSearchActivityView.onResume();
-        if (this.mTraceStartUp) {
-            Debug.stopMethodTracing();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle bundle) {
-        super.onSaveInstanceState(bundle);
-        bundle.putString("query", getQuery());
-    }
-
-    protected boolean onSearchClicked(int i) {
-        String strTrimAndCollapseFrom = CharMatcher.WHITESPACE.trimAndCollapseFrom(getQuery(), ' ');
-        if (TextUtils.getTrimmedLength(strTrimAndCollapseFrom) == 0) {
+    private boolean launchSuggestion(SuggestionsAdapter<?> suggestionsAdapter, long j) {
+        SuggestionPosition currentSuggestions = getCurrentSuggestions(suggestionsAdapter, j);
+        if (currentSuggestions == null) {
             return false;
         }
         this.mTookAction = true;
-        getLogger().logSearch(i, strTrimAndCollapseFrom.length());
-        startSearch(this.mSource, strTrimAndCollapseFrom);
+        getLogger().logSuggestionClick(j, currentSuggestions.getCursor(), 0);
+        launchSuggestion(currentSuggestions.getCursor(), currentSuggestions.getPosition());
         return true;
     }
 
-    @Override
-    protected void onStop() {
-        if (!this.mTookAction) {
-            getLogger().logExit(getCurrentSuggestions(), getQuery().length());
-        }
-        this.mSearchActivityView.clearSuggestions();
-        this.mSearchActivityView.onStop();
-        super.onStop();
-    }
-
-    protected void onVoiceSearchClicked() {
-        this.mTookAction = true;
-        getLogger().logVoiceSearch();
-        launchIntent(this.mSource.createVoiceSearchIntent(this.mAppSearchData));
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean z) {
-        super.onWindowFocusChanged(z);
-        if (z) {
-            this.mHandler.postDelayed(this.mShowInputMethodTask, 0L);
-        }
+    protected void launchSuggestion(SuggestionCursor suggestionCursor, int i) {
+        suggestionCursor.moveTo(i);
+        launchIntent(SuggestionUtils.getSuggestionIntent(suggestionCursor, this.mAppSearchData));
     }
 
     protected void refineSuggestion(SuggestionsAdapter<?> suggestionsAdapter, long j) {
@@ -366,32 +322,18 @@ public class SearchActivity extends Activity {
         this.mSearchActivityView.focusQueryTextView();
     }
 
-    protected void restoreInstanceState(Bundle bundle) {
-        if (bundle == null) {
-            return;
+    private void updateSuggestionsBuffered() {
+        this.mHandler.removeCallbacks(this.mUpdateSuggestionsTask);
+        this.mHandler.postDelayed(this.mUpdateSuggestionsTask, getConfig().getTypingUpdateSuggestionsDelayMillis());
+    }
+
+    private void gotSuggestions(Suggestions suggestions) {
+        if (this.mStarting) {
+            this.mStarting = false;
+            String stringExtra = getIntent().getStringExtra("source");
+            getLogger().logStart(this.mOnCreateLatency, this.mStartLatencyTracker.getLatency(), stringExtra);
+            getQsbApplication().onStartupComplete();
         }
-        setQuery(bundle.getString("query"), false);
-    }
-
-    public void setOnDestroyListener(OnDestroyListener onDestroyListener) {
-        this.mDestroyListener = onDestroyListener;
-    }
-
-    protected void setQuery(String str, boolean z) {
-        this.mSearchActivityView.setQuery(str, z);
-    }
-
-    protected SearchActivityView setupContentView() {
-        setContentView(2130968579);
-        return (SearchActivityView) findViewById(2131689485);
-    }
-
-    protected void showSuggestions(Suggestions suggestions) {
-        this.mSearchActivityView.setSuggestions(suggestions);
-    }
-
-    protected void startSearch(Source source, String str) {
-        launchIntent(source.createSearchIntent(str, this.mAppSearchData));
     }
 
     public void updateSuggestions() {
@@ -402,5 +344,24 @@ public class SearchActivity extends Activity {
         Suggestions suggestions = getSuggestionsProvider().getSuggestions(str, source);
         gotSuggestions(suggestions);
         showSuggestions(suggestions);
+    }
+
+    protected void showSuggestions(Suggestions suggestions) {
+        this.mSearchActivityView.setSuggestions(suggestions);
+    }
+
+    private class ClickHandler implements SuggestionClickListener {
+        private ClickHandler() {
+        }
+
+        @Override
+        public void onSuggestionClicked(SuggestionsAdapter<?> suggestionsAdapter, long j) {
+            SearchActivity.this.launchSuggestion(suggestionsAdapter, j);
+        }
+
+        @Override
+        public void onSuggestionQueryRefineClicked(SuggestionsAdapter<?> suggestionsAdapter, long j) {
+            SearchActivity.this.refineSuggestion(suggestionsAdapter, j);
+        }
     }
 }

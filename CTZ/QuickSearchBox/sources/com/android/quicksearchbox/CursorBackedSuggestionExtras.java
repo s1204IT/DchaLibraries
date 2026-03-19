@@ -17,13 +17,6 @@ public class CursorBackedSuggestionExtras extends AbstractSuggestionExtras {
         DEFAULT_COLUMNS.addAll(Arrays.asList(SuggestionCursorBackedCursor.COLUMNS));
     }
 
-    private CursorBackedSuggestionExtras(Cursor cursor, int i, List<String> list) {
-        super(null);
-        this.mCursor = cursor;
-        this.mCursorPosition = i;
-        this.mExtraColumns = list;
-    }
-
     static CursorBackedSuggestionExtras createExtrasIfNecessary(Cursor cursor, int i) {
         List<String> extraColumns = getExtraColumns(cursor);
         if (extraColumns != null) {
@@ -42,19 +35,27 @@ public class CursorBackedSuggestionExtras extends AbstractSuggestionExtras {
     }
 
     static List<String> getExtraColumns(Cursor cursor) {
-        ArrayList arrayList = null;
         String[] cursorColumns = getCursorColumns(cursor);
-        if (cursorColumns != null) {
-            for (String str : cursorColumns) {
-                if (!DEFAULT_COLUMNS.contains(str)) {
-                    if (arrayList == null) {
-                        arrayList = new ArrayList();
-                    }
-                    arrayList.add(str);
+        ArrayList arrayList = null;
+        if (cursorColumns == null) {
+            return null;
+        }
+        for (String str : cursorColumns) {
+            if (!DEFAULT_COLUMNS.contains(str)) {
+                if (arrayList == null) {
+                    arrayList = new ArrayList();
                 }
+                arrayList.add(str);
             }
         }
         return arrayList;
+    }
+
+    private CursorBackedSuggestionExtras(Cursor cursor, int i, List<String> list) {
+        super(null);
+        this.mCursor = cursor;
+        this.mCursorPosition = i;
+        this.mExtraColumns = list;
     }
 
     @Override

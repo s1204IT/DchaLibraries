@@ -17,27 +17,16 @@ import java.util.Locale;
 public class GoogleSearch extends Activity {
     private SearchBaseUrlHelper mSearchDomainHelper;
 
-    private Intent createLaunchUriIntentFromSearchIntent(Intent intent) {
-        String stringExtra = intent.getStringExtra("query");
-        if (TextUtils.isEmpty(stringExtra)) {
-            Log.w("GoogleSearch", "Got search intent with no query.");
-            return null;
+    @Override
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        Intent intent = getIntent();
+        String action = intent != null ? intent.getAction() : null;
+        this.mSearchDomainHelper = QsbApplication.get(this).getSearchBaseUrlHelper();
+        if ("android.intent.action.WEB_SEARCH".equals(action) || "android.intent.action.SEARCH".equals(action)) {
+            handleWebSearchIntent(intent);
         }
-        Bundle bundleExtra = intent.getBundleExtra("app_data");
-        String string = bundleExtra != null ? bundleExtra.getString("source") : "unknown";
-        String stringExtra2 = intent.getStringExtra("com.android.browser.application_id");
-        if (stringExtra2 == null) {
-            stringExtra2 = getPackageName();
-        }
-        try {
-            Intent intent2 = new Intent("android.intent.action.VIEW", Uri.parse(this.mSearchDomainHelper.getSearchBaseUrl() + "&source=android-" + string + "&q=" + URLEncoder.encode(stringExtra, "UTF-8")));
-            intent2.putExtra("com.android.browser.application_id", stringExtra2);
-            intent2.addFlags(268435456);
-            return intent2;
-        } catch (UnsupportedEncodingException e) {
-            Log.w("GoogleSearch", "Error", e);
-            return null;
-        }
+        finish();
     }
 
     public static String getLanguage(Locale locale) {
@@ -51,11 +40,50 @@ public class GoogleSearch extends Activity {
         return sb.toString();
     }
 
+    private static boolean useLangCountryHl(String str, String str2) {
+        if ("en".equals(str)) {
+            return "GB".equals(str2);
+        }
+        if ("zh".equals(str)) {
+            return "CN".equals(str2) || "TW".equals(str2);
+        }
+        if ("pt".equals(str)) {
+            return "BR".equals(str2) || "PT".equals(str2);
+        }
+        return false;
+    }
+
     private void handleWebSearchIntent(Intent intent) {
         Intent intentCreateLaunchUriIntentFromSearchIntent = createLaunchUriIntentFromSearchIntent(intent);
         PendingIntent pendingIntent = (PendingIntent) intent.getParcelableExtra("web_search_pendingintent");
         if (pendingIntent == null || !launchPendingIntent(pendingIntent, intentCreateLaunchUriIntentFromSearchIntent)) {
             launchIntent(intentCreateLaunchUriIntentFromSearchIntent);
+        }
+    }
+
+    private Intent createLaunchUriIntentFromSearchIntent(Intent intent) {
+        String stringExtra = intent.getStringExtra("query");
+        if (TextUtils.isEmpty(stringExtra)) {
+            Log.w("GoogleSearch", "Got search intent with no query.");
+            return null;
+        }
+        Bundle bundleExtra = intent.getBundleExtra("app_data");
+        String string = "unknown";
+        if (bundleExtra != null) {
+            string = bundleExtra.getString("source");
+        }
+        String stringExtra2 = intent.getStringExtra("com.android.browser.application_id");
+        if (stringExtra2 == null) {
+            stringExtra2 = getPackageName();
+        }
+        try {
+            Intent intent2 = new Intent("android.intent.action.VIEW", Uri.parse(this.mSearchDomainHelper.getSearchBaseUrl() + "&source=android-" + string + "&q=" + URLEncoder.encode(stringExtra, "UTF-8")));
+            intent2.putExtra("com.android.browser.application_id", stringExtra2);
+            intent2.addFlags(268435456);
+            return intent2;
+        } catch (UnsupportedEncodingException e) {
+            Log.w("GoogleSearch", "Error", e);
+            return null;
         }
     }
 
@@ -78,30 +106,5 @@ public class GoogleSearch extends Activity {
             Log.i("GoogleSearch", "Pending intent cancelled: " + pendingIntent);
             return false;
         }
-    }
-
-    private static boolean useLangCountryHl(String str, String str2) {
-        if ("en".equals(str)) {
-            return "GB".equals(str2);
-        }
-        if ("zh".equals(str)) {
-            return "CN".equals(str2) || "TW".equals(str2);
-        }
-        if ("pt".equals(str)) {
-            return "BR".equals(str2) || "PT".equals(str2);
-        }
-        return false;
-    }
-
-    @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        Intent intent = getIntent();
-        String action = intent != null ? intent.getAction() : null;
-        this.mSearchDomainHelper = QsbApplication.get(this).getSearchBaseUrlHelper();
-        if ("android.intent.action.WEB_SEARCH".equals(action) || "android.intent.action.SEARCH".equals(action)) {
-            handleWebSearchIntent(intent);
-        }
-        finish();
     }
 }

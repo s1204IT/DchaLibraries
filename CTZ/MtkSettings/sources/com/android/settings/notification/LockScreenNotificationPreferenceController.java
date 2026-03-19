@@ -193,7 +193,7 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
         return !getLockscreenNotificationsEnabled(context) ? R.string.lock_screen_notifications_summary_disable : !FeatureFactory.getFactory(context).getSecurityFeatureProvider().getLockPatternUtils(context).isSecure(UserHandle.myUserId()) || getAllowPrivateNotifications(context, UserHandle.myUserId()) ? R.string.lock_screen_notifications_summary_show : R.string.lock_screen_notifications_summary_hide;
     }
 
-    public void updateLockscreenNotifications() {
+    private void updateLockscreenNotifications() {
         if (this.mLockscreen == null) {
             return;
         }
@@ -206,7 +206,7 @@ public class LockScreenNotificationPreferenceController extends AbstractPreferen
         return (((DevicePolicyManager) this.mContext.getSystemService(DevicePolicyManager.class)).getKeyguardDisabledFeatures(null, i) & 8) == 0;
     }
 
-    public void updateLockscreenNotificationsForProfile() {
+    private void updateLockscreenNotificationsForProfile() {
         int i;
         if (this.mProfileUserId == -10000 || this.mLockscreenProfile == null) {
             return;

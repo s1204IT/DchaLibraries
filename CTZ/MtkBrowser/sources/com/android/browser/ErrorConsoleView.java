@@ -30,124 +30,6 @@ class ErrorConsoleView extends LinearLayout {
     private boolean mSetupComplete;
     private WebView mWebView;
 
-    static class AnonymousClass3 {
-        static final int[] $SwitchMap$android$webkit$ConsoleMessage$MessageLevel = new int[ConsoleMessage.MessageLevel.values().length];
-
-        static {
-            try {
-                $SwitchMap$android$webkit$ConsoleMessage$MessageLevel[ConsoleMessage.MessageLevel.ERROR.ordinal()] = 1;
-            } catch (NoSuchFieldError e) {
-            }
-            try {
-                $SwitchMap$android$webkit$ConsoleMessage$MessageLevel[ConsoleMessage.MessageLevel.WARNING.ordinal()] = 2;
-            } catch (NoSuchFieldError e2) {
-            }
-            try {
-                $SwitchMap$android$webkit$ConsoleMessage$MessageLevel[ConsoleMessage.MessageLevel.TIP.ordinal()] = 3;
-            } catch (NoSuchFieldError e3) {
-            }
-        }
-    }
-
-    private static class ErrorConsoleListView extends ListView {
-        private ErrorConsoleMessageList mConsoleMessages;
-
-        private static class ErrorConsoleMessageList extends BaseAdapter implements ListAdapter {
-            private LayoutInflater mInflater;
-            private Vector<ConsoleMessage> mMessages = new Vector<>();
-
-            public ErrorConsoleMessageList(Context context) {
-                this.mInflater = (LayoutInflater) context.getSystemService("layout_inflater");
-            }
-
-            public void add(ConsoleMessage consoleMessage) {
-                this.mMessages.add(consoleMessage);
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public boolean areAllItemsEnabled() {
-                return false;
-            }
-
-            public void clear() {
-                this.mMessages.clear();
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public int getCount() {
-                return this.mMessages.size();
-            }
-
-            @Override
-            public Object getItem(int i) {
-                return this.mMessages.get(i);
-            }
-
-            @Override
-            public long getItemId(int i) {
-                return i;
-            }
-
-            @Override
-            public View getView(int i, View view, ViewGroup viewGroup) {
-                ConsoleMessage consoleMessage = this.mMessages.get(i);
-                if (consoleMessage == null) {
-                    return null;
-                }
-                if (view == null) {
-                    view = this.mInflater.inflate(android.R.layout.two_line_list_item, viewGroup, false);
-                }
-                TextView textView = (TextView) view.findViewById(android.R.id.text1);
-                TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
-                textView.setText(consoleMessage.sourceId() + ":" + consoleMessage.lineNumber());
-                textView.setTextColor(-1);
-                textView2.setText(consoleMessage.message());
-                switch (AnonymousClass3.$SwitchMap$android$webkit$ConsoleMessage$MessageLevel[consoleMessage.messageLevel().ordinal()]) {
-                    case 1:
-                        textView2.setTextColor(-65536);
-                        break;
-                    case 2:
-                        textView2.setTextColor(Color.rgb(255, 192, 0));
-                        break;
-                    case 3:
-                        textView2.setTextColor(-16776961);
-                        break;
-                    default:
-                        textView2.setTextColor(-3355444);
-                        break;
-                }
-                return view;
-            }
-
-            @Override
-            public boolean hasStableIds() {
-                return true;
-            }
-
-            @Override
-            public boolean isEnabled(int i) {
-                return false;
-            }
-        }
-
-        public ErrorConsoleListView(Context context, AttributeSet attributeSet) {
-            super(context, attributeSet);
-            this.mConsoleMessages = new ErrorConsoleMessageList(context);
-            setAdapter((ListAdapter) this.mConsoleMessages);
-        }
-
-        public void addErrorMessage(ConsoleMessage consoleMessage) {
-            this.mConsoleMessages.add(consoleMessage);
-            setSelection(this.mConsoleMessages.getCount());
-        }
-
-        public void clearErrorMessages() {
-            this.mConsoleMessages.clear();
-        }
-    }
-
     public ErrorConsoleView(Context context) {
         super(context);
         this.mCurrentShowState = 2;
@@ -158,42 +40,30 @@ class ErrorConsoleView extends LinearLayout {
         if (this.mSetupComplete) {
             return;
         }
-        ((LayoutInflater) getContext().getSystemService("layout_inflater")).inflate(2130968598, this);
-        this.mConsoleHeader = (TextView) findViewById(2131558473);
-        this.mErrorList = (ErrorConsoleListView) findViewById(2131558474);
-        this.mEvalJsViewGroup = (LinearLayout) findViewById(2131558475);
-        this.mEvalEditText = (EditText) findViewById(2131558476);
-        this.mEvalButton = (Button) findViewById(2131558477);
-        this.mEvalButton.setOnClickListener(new View.OnClickListener(this) {
-            final ErrorConsoleView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        ((LayoutInflater) getContext().getSystemService("layout_inflater")).inflate(R.layout.error_console, this);
+        this.mConsoleHeader = (TextView) findViewById(R.id.error_console_header_id);
+        this.mErrorList = (ErrorConsoleListView) findViewById(R.id.error_console_list_id);
+        this.mEvalJsViewGroup = (LinearLayout) findViewById(R.id.error_console_eval_view_group_id);
+        this.mEvalEditText = (EditText) findViewById(R.id.error_console_eval_text_id);
+        this.mEvalButton = (Button) findViewById(R.id.error_console_eval_button_id);
+        this.mEvalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (this.this$0.mWebView != null) {
+                if (ErrorConsoleView.this.mWebView != null) {
                     HashMap map = new HashMap();
                     map.put(Browser.HEADER, Browser.UAPROF);
-                    this.this$0.mWebView.loadUrl("javascript:" + ((Object) this.this$0.mEvalEditText.getText()), map);
+                    ErrorConsoleView.this.mWebView.loadUrl("javascript:" + ((Object) ErrorConsoleView.this.mEvalEditText.getText()), map);
                 }
-                this.this$0.mEvalEditText.setText("");
+                ErrorConsoleView.this.mEvalEditText.setText("");
             }
         });
-        this.mConsoleHeader.setOnClickListener(new View.OnClickListener(this) {
-            final ErrorConsoleView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mConsoleHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (this.this$0.mCurrentShowState == 0) {
-                    this.this$0.showConsole(1);
+                if (ErrorConsoleView.this.mCurrentShowState == 0) {
+                    ErrorConsoleView.this.showConsole(1);
                 } else {
-                    this.this$0.showConsole(0);
+                    ErrorConsoleView.this.showConsole(0);
                 }
             }
         });
@@ -226,13 +96,6 @@ class ErrorConsoleView extends LinearLayout {
         }
     }
 
-    public int getShowState() {
-        if (this.mSetupComplete) {
-            return this.mCurrentShowState;
-        }
-        return 2;
-    }
-
     public int numberOfErrors() {
         if (this.mSetupComplete) {
             return this.mErrorList.getCount();
@@ -252,13 +115,13 @@ class ErrorConsoleView extends LinearLayout {
         switch (i) {
             case 0:
                 this.mConsoleHeader.setVisibility(0);
-                this.mConsoleHeader.setText(2131493260);
+                this.mConsoleHeader.setText(R.string.error_console_header_text_minimized);
                 this.mErrorList.setVisibility(8);
                 this.mEvalJsViewGroup.setVisibility(8);
                 break;
             case 1:
                 this.mConsoleHeader.setVisibility(0);
-                this.mConsoleHeader.setText(2131493261);
+                this.mConsoleHeader.setText(R.string.error_console_header_text_maximized);
                 this.mErrorList.setVisibility(0);
                 this.mEvalJsViewGroup.setVisibility(0);
                 break;
@@ -269,5 +132,129 @@ class ErrorConsoleView extends LinearLayout {
                 break;
         }
         this.mCurrentShowState = i;
+    }
+
+    public int getShowState() {
+        if (this.mSetupComplete) {
+            return this.mCurrentShowState;
+        }
+        return 2;
+    }
+
+    private static class ErrorConsoleListView extends ListView {
+        private ErrorConsoleMessageList mConsoleMessages;
+
+        public ErrorConsoleListView(Context context, AttributeSet attributeSet) {
+            super(context, attributeSet);
+            this.mConsoleMessages = new ErrorConsoleMessageList(context);
+            setAdapter((ListAdapter) this.mConsoleMessages);
+        }
+
+        public void addErrorMessage(ConsoleMessage consoleMessage) {
+            this.mConsoleMessages.add(consoleMessage);
+            setSelection(this.mConsoleMessages.getCount());
+        }
+
+        public void clearErrorMessages() {
+            this.mConsoleMessages.clear();
+        }
+
+        private static class ErrorConsoleMessageList extends BaseAdapter implements ListAdapter {
+            private LayoutInflater mInflater;
+            private Vector<ConsoleMessage> mMessages = new Vector<>();
+
+            public ErrorConsoleMessageList(Context context) {
+                this.mInflater = (LayoutInflater) context.getSystemService("layout_inflater");
+            }
+
+            public void add(ConsoleMessage consoleMessage) {
+                this.mMessages.add(consoleMessage);
+                notifyDataSetChanged();
+            }
+
+            public void clear() {
+                this.mMessages.clear();
+                notifyDataSetChanged();
+            }
+
+            @Override
+            public boolean areAllItemsEnabled() {
+                return false;
+            }
+
+            @Override
+            public boolean isEnabled(int i) {
+                return false;
+            }
+
+            @Override
+            public long getItemId(int i) {
+                return i;
+            }
+
+            @Override
+            public Object getItem(int i) {
+                return this.mMessages.get(i);
+            }
+
+            @Override
+            public int getCount() {
+                return this.mMessages.size();
+            }
+
+            @Override
+            public boolean hasStableIds() {
+                return true;
+            }
+
+            @Override
+            public View getView(int i, View view, ViewGroup viewGroup) {
+                ConsoleMessage consoleMessage = this.mMessages.get(i);
+                if (consoleMessage == null) {
+                    return null;
+                }
+                if (view == null) {
+                    view = this.mInflater.inflate(android.R.layout.two_line_list_item, viewGroup, false);
+                }
+                TextView textView = (TextView) view.findViewById(android.R.id.text1);
+                TextView textView2 = (TextView) view.findViewById(android.R.id.text2);
+                textView.setText(consoleMessage.sourceId() + ":" + consoleMessage.lineNumber());
+                textView.setTextColor(-1);
+                textView2.setText(consoleMessage.message());
+                switch (AnonymousClass3.$SwitchMap$android$webkit$ConsoleMessage$MessageLevel[consoleMessage.messageLevel().ordinal()]) {
+                    case 1:
+                        textView2.setTextColor(-65536);
+                        return view;
+                    case 2:
+                        textView2.setTextColor(Color.rgb(255, 192, 0));
+                        return view;
+                    case 3:
+                        textView2.setTextColor(-16776961);
+                        return view;
+                    default:
+                        textView2.setTextColor(-3355444);
+                        return view;
+                }
+            }
+        }
+    }
+
+    static class AnonymousClass3 {
+        static final int[] $SwitchMap$android$webkit$ConsoleMessage$MessageLevel = new int[ConsoleMessage.MessageLevel.values().length];
+
+        static {
+            try {
+                $SwitchMap$android$webkit$ConsoleMessage$MessageLevel[ConsoleMessage.MessageLevel.ERROR.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$android$webkit$ConsoleMessage$MessageLevel[ConsoleMessage.MessageLevel.WARNING.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$android$webkit$ConsoleMessage$MessageLevel[ConsoleMessage.MessageLevel.TIP.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+        }
     }
 }

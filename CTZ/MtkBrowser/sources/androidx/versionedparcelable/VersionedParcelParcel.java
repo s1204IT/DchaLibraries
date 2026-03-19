@@ -12,29 +12,30 @@ class VersionedParcelParcel extends VersionedParcel {
     private final SparseIntArray mPositionLookup;
     private final String mPrefix;
 
-    VersionedParcelParcel(Parcel parcel) {
-        this(parcel, parcel.dataPosition(), parcel.dataSize(), "");
+    VersionedParcelParcel(Parcel p) {
+        this(p, p.dataPosition(), p.dataSize(), "");
     }
 
-    VersionedParcelParcel(Parcel parcel, int i, int i2, String str) {
+    VersionedParcelParcel(Parcel p, int offset, int end, String prefix) {
         this.mPositionLookup = new SparseIntArray();
         this.mCurrentField = -1;
         this.mNextRead = 0;
-        this.mParcel = parcel;
-        this.mOffset = i;
-        this.mEnd = i2;
+        this.mParcel = p;
+        this.mOffset = offset;
+        this.mEnd = end;
         this.mNextRead = this.mOffset;
-        this.mPrefix = str;
+        this.mPrefix = prefix;
     }
 
     @Override
     public void closeField() {
         if (this.mCurrentField >= 0) {
-            int i = this.mPositionLookup.get(this.mCurrentField);
-            int iDataPosition = this.mParcel.dataPosition();
-            this.mParcel.setDataPosition(i);
-            this.mParcel.writeInt(iDataPosition - i);
-            this.mParcel.setDataPosition(iDataPosition);
+            int currentFieldPosition = this.mPositionLookup.get(this.mCurrentField);
+            int position = this.mParcel.dataPosition();
+            int size = position - currentFieldPosition;
+            this.mParcel.setDataPosition(currentFieldPosition);
+            this.mParcel.writeInt(size);
+            this.mParcel.setDataPosition(position);
         }
     }
 
@@ -44,12 +45,12 @@ class VersionedParcelParcel extends VersionedParcel {
     }
 
     @Override
-    public String readString() {
-        return this.mParcel.readString();
+    public void writeString(String val) {
+        this.mParcel.writeString(val);
     }
 
     @Override
-    public void writeString(String str) {
-        this.mParcel.writeString(str);
+    public String readString() {
+        return this.mParcel.readString();
     }
 }

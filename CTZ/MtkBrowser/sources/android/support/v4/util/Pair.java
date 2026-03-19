@@ -4,17 +4,17 @@ public class Pair<F, S> {
     public final F first;
     public final S second;
 
-    public Pair(F f, S s) {
-        this.first = f;
-        this.second = s;
+    public Pair(F first, S second) {
+        this.first = first;
+        this.second = second;
     }
 
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Pair)) {
+    public boolean equals(Object o) {
+        if (!(o instanceof Pair)) {
             return false;
         }
-        Pair pair = (Pair) obj;
-        return ObjectsCompat.equals(pair.first, this.first) && ObjectsCompat.equals(pair.second, this.second);
+        Pair<?, ?> p = (Pair) o;
+        return ObjectsCompat.equals(p.first, this.first) && ObjectsCompat.equals(p.second, this.second);
     }
 
     public int hashCode() {

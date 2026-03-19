@@ -22,10 +22,6 @@ public class QueryTask<C extends SuggestionCursor> implements NamedTask {
         this.mConsumer = consumer;
     }
 
-    public static <C extends SuggestionCursor> void startQuery(String str, int i, SuggestionCursorProvider<C> suggestionCursorProvider, NamedTaskExecutor namedTaskExecutor, Handler handler, Consumer<C> consumer) {
-        namedTaskExecutor.execute(new QueryTask(str, i, suggestionCursorProvider, handler, consumer));
-    }
-
     @Override
     public String getName() {
         return this.mProvider.getName();
@@ -38,5 +34,9 @@ public class QueryTask<C extends SuggestionCursor> implements NamedTask {
 
     public String toString() {
         return this.mProvider + "[" + this.mQuery + "]";
+    }
+
+    public static <C extends SuggestionCursor> void startQuery(String str, int i, SuggestionCursorProvider<C> suggestionCursorProvider, NamedTaskExecutor namedTaskExecutor, Handler handler, Consumer<C> consumer) {
+        namedTaskExecutor.execute(new QueryTask(str, i, suggestionCursorProvider, handler, consumer));
     }
 }

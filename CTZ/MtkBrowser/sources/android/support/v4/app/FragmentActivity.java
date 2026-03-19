@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.Window;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.Collection;
 
 public class FragmentActivity extends SupportActivity implements ViewModelStoreOwner {
     boolean mCreated;
@@ -33,93 +34,28 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     boolean mStartedActivityFromFragment;
     boolean mStartedIntentSenderFromFragment;
     private ViewModelStore mViewModelStore;
-    final Handler mHandler = new Handler(this) {
-        final FragmentActivity this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    final Handler mHandler = new Handler() {
         @Override
-        public void handleMessage(Message message) {
-            switch (message.what) {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
                 case 1:
-                    if (this.this$0.mStopped) {
-                        this.this$0.doReallyStop(false);
+                    if (FragmentActivity.this.mStopped) {
+                        FragmentActivity.this.doReallyStop(false);
                     }
                     break;
                 case 2:
-                    this.this$0.onResumeFragments();
-                    this.this$0.mFragments.execPendingActions();
+                    FragmentActivity.this.onResumeFragments();
+                    FragmentActivity.this.mFragments.execPendingActions();
                     break;
                 default:
-                    super.handleMessage(message);
+                    super.handleMessage(msg);
                     break;
             }
         }
     };
-    final FragmentController mFragments = FragmentController.createController(new HostCallbacks(this));
+    final FragmentController mFragments = FragmentController.createController(new HostCallbacks());
     boolean mStopped = true;
     boolean mReallyStopped = true;
-
-    class HostCallbacks extends FragmentHostCallback<FragmentActivity> {
-        final FragmentActivity this$0;
-
-        public HostCallbacks(FragmentActivity fragmentActivity) {
-            super(fragmentActivity);
-            this.this$0 = fragmentActivity;
-        }
-
-        @Override
-        public void onAttachFragment(Fragment fragment) {
-            this.this$0.onAttachFragment(fragment);
-        }
-
-        @Override
-        public void onDump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
-            this.this$0.dump(str, fileDescriptor, printWriter, strArr);
-        }
-
-        @Override
-        public View onFindViewById(int i) {
-            return this.this$0.findViewById(i);
-        }
-
-        @Override
-        public LayoutInflater onGetLayoutInflater() {
-            return this.this$0.getLayoutInflater().cloneInContext(this.this$0);
-        }
-
-        @Override
-        public int onGetWindowAnimations() {
-            Window window = this.this$0.getWindow();
-            if (window == null) {
-                return 0;
-            }
-            return window.getAttributes().windowAnimations;
-        }
-
-        @Override
-        public boolean onHasView() {
-            Window window = this.this$0.getWindow();
-            return (window == null || window.peekDecorView() == null) ? false : true;
-        }
-
-        @Override
-        public boolean onHasWindowAnimations() {
-            return this.this$0.getWindow() != null;
-        }
-
-        @Override
-        public boolean onShouldSaveFragmentState(Fragment fragment) {
-            return !this.this$0.isFinishing();
-        }
-
-        @Override
-        public void onSupportInvalidateOptionsMenu() {
-            this.this$0.supportInvalidateOptionsMenu();
-        }
-    }
 
     static final class NonConfigurationInstances {
         Object custom;
@@ -130,74 +66,60 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         }
     }
 
-    static void checkForValidRequestCode(int i) {
-        if (((-65536) & i) != 0) {
-            throw new IllegalArgumentException("Can only use lower 16 bits for requestCode");
-        }
-    }
-
-    private void markFragmentsCreated() {
-        while (markState(getSupportFragmentManager(), Lifecycle.State.CREATED)) {
-        }
-    }
-
-    private static boolean markState(FragmentManager fragmentManager, Lifecycle.State state) {
-        boolean zMarkState = false;
-        for (Fragment fragment : fragmentManager.getFragments()) {
-            if (fragment != null) {
-                if (fragment.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-                    fragment.mLifecycleRegistry.markState(state);
-                    zMarkState = true;
-                }
-                FragmentManager fragmentManagerPeekChildFragmentManager = fragment.peekChildFragmentManager();
-                zMarkState = fragmentManagerPeekChildFragmentManager != null ? markState(fragmentManagerPeekChildFragmentManager, state) | zMarkState : zMarkState;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        this.mFragments.noteStateNotSaved();
+        int requestIndex = requestCode >> 16;
+        if (requestIndex != 0) {
+            int requestIndex2 = requestIndex - 1;
+            String who = this.mPendingFragmentActivityResults.get(requestIndex2);
+            this.mPendingFragmentActivityResults.remove(requestIndex2);
+            if (who == null) {
+                Log.w("FragmentActivity", "Activity result delivered for unknown Fragment.");
+                return;
             }
-        }
-        return zMarkState;
-    }
-
-    final View dispatchFragmentsOnCreateView(View view, String str, Context context, AttributeSet attributeSet) {
-        return this.mFragments.onCreateView(view, str, context, attributeSet);
-    }
-
-    void doReallyStop(boolean z) {
-        if (this.mReallyStopped) {
+            Fragment targetFragment = this.mFragments.findFragmentByWho(who);
+            if (targetFragment == null) {
+                Log.w("FragmentActivity", "Activity result no fragment exists for who: " + who);
+                return;
+            }
+            targetFragment.onActivityResult(65535 & requestCode, resultCode, data);
             return;
         }
-        this.mReallyStopped = true;
-        this.mRetaining = z;
-        this.mHandler.removeMessages(1);
-        onReallyStop();
+        ActivityCompat.PermissionCompatDelegate delegate = ActivityCompat.getPermissionCompatDelegate();
+        if (delegate != null && delegate.onActivityResult(this, requestCode, resultCode, data)) {
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
-    public void dump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
-        super.dump(str, fileDescriptor, printWriter, strArr);
-        printWriter.print(str);
-        printWriter.print("Local FragmentActivity ");
-        printWriter.print(Integer.toHexString(System.identityHashCode(this)));
-        printWriter.println(" State:");
-        String str2 = str + "  ";
-        printWriter.print(str2);
-        printWriter.print("mCreated=");
-        printWriter.print(this.mCreated);
-        printWriter.print(" mResumed=");
-        printWriter.print(this.mResumed);
-        printWriter.print(" mStopped=");
-        printWriter.print(this.mStopped);
-        printWriter.print(" mReallyStopped=");
-        printWriter.println(this.mReallyStopped);
-        LoaderManager.getInstance(this).dump(str2, fileDescriptor, printWriter, strArr);
-        this.mFragments.getSupportFragmentManager().dump(str, fileDescriptor, printWriter, strArr);
+    public void onBackPressed() {
+        FragmentManager fragmentManager = this.mFragments.getSupportFragmentManager();
+        boolean isStateSaved = fragmentManager.isStateSaved();
+        if (isStateSaved && Build.VERSION.SDK_INT <= 25) {
+            return;
+        }
+        if (isStateSaved || !fragmentManager.popBackStackImmediate()) {
+            super.onBackPressed();
+        }
     }
 
     @Override
-    public Lifecycle getLifecycle() {
-        return super.getLifecycle();
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        this.mFragments.dispatchMultiWindowModeChanged(isInMultiWindowMode);
     }
 
-    public FragmentManager getSupportFragmentManager() {
-        return this.mFragments.getSupportFragmentManager();
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        this.mFragments.dispatchPictureInPictureModeChanged(isInPictureInPictureMode);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        this.mFragments.noteStateNotSaved();
+        this.mFragments.dispatchConfigurationChanged(newConfig);
     }
 
     @Override
@@ -212,73 +134,31 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     }
 
     @Override
-    protected void onActivityResult(int i, int i2, Intent intent) {
-        this.mFragments.noteStateNotSaved();
-        int i3 = i >> 16;
-        if (i3 == 0) {
-            ActivityCompat.PermissionCompatDelegate permissionCompatDelegate = ActivityCompat.getPermissionCompatDelegate();
-            if (permissionCompatDelegate == null || !permissionCompatDelegate.onActivityResult(this, i, i2, intent)) {
-                super.onActivityResult(i, i2, intent);
-                return;
-            }
-            return;
-        }
-        int i4 = i3 - 1;
-        String str = this.mPendingFragmentActivityResults.get(i4);
-        this.mPendingFragmentActivityResults.remove(i4);
-        if (str == null) {
-            Log.w("FragmentActivity", "Activity result delivered for unknown Fragment.");
-            return;
-        }
-        Fragment fragmentFindFragmentByWho = this.mFragments.findFragmentByWho(str);
-        if (fragmentFindFragmentByWho != null) {
-            fragmentFindFragmentByWho.onActivityResult(65535 & i, i2, intent);
-            return;
-        }
-        Log.w("FragmentActivity", "Activity result no fragment exists for who: " + str);
-    }
-
-    public void onAttachFragment(Fragment fragment) {
+    public Lifecycle getLifecycle() {
+        return super.getLifecycle();
     }
 
     @Override
-    public void onBackPressed() {
-        FragmentManager supportFragmentManager = this.mFragments.getSupportFragmentManager();
-        boolean zIsStateSaved = supportFragmentManager.isStateSaved();
-        if (!zIsStateSaved || Build.VERSION.SDK_INT > 25) {
-            if (zIsStateSaved || !supportFragmentManager.popBackStackImmediate()) {
-                super.onBackPressed();
-            }
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration configuration) {
-        super.onConfigurationChanged(configuration);
-        this.mFragments.noteStateNotSaved();
-        this.mFragments.dispatchConfigurationChanged(configuration);
-    }
-
-    @Override
-    protected void onCreate(Bundle bundle) {
+    protected void onCreate(Bundle savedInstanceState) {
         this.mFragments.attachHost(null);
-        super.onCreate(bundle);
-        NonConfigurationInstances nonConfigurationInstances = (NonConfigurationInstances) getLastNonConfigurationInstance();
-        if (nonConfigurationInstances != null) {
-            this.mViewModelStore = nonConfigurationInstances.viewModelStore;
+        super.onCreate(savedInstanceState);
+        NonConfigurationInstances nc = (NonConfigurationInstances) getLastNonConfigurationInstance();
+        if (nc != null) {
+            this.mViewModelStore = nc.viewModelStore;
         }
-        if (bundle != null) {
-            this.mFragments.restoreAllState(bundle.getParcelable("android:support:fragments"), nonConfigurationInstances != null ? nonConfigurationInstances.fragments : null);
-            if (bundle.containsKey("android:support:next_request_index")) {
-                this.mNextCandidateRequestIndex = bundle.getInt("android:support:next_request_index");
-                int[] intArray = bundle.getIntArray("android:support:request_indicies");
-                String[] stringArray = bundle.getStringArray("android:support:request_fragment_who");
-                if (intArray == null || stringArray == null || intArray.length != stringArray.length) {
+        if (savedInstanceState != null) {
+            Parcelable p = savedInstanceState.getParcelable("android:support:fragments");
+            this.mFragments.restoreAllState(p, nc != null ? nc.fragments : null);
+            if (savedInstanceState.containsKey("android:support:next_request_index")) {
+                this.mNextCandidateRequestIndex = savedInstanceState.getInt("android:support:next_request_index");
+                int[] requestCodes = savedInstanceState.getIntArray("android:support:request_indicies");
+                String[] fragmentWhos = savedInstanceState.getStringArray("android:support:request_fragment_who");
+                if (requestCodes == null || fragmentWhos == null || requestCodes.length != fragmentWhos.length) {
                     Log.w("FragmentActivity", "Invalid requestCode mapping in savedInstanceState.");
                 } else {
-                    this.mPendingFragmentActivityResults = new SparseArrayCompat<>(intArray.length);
-                    for (int i = 0; i < intArray.length; i++) {
-                        this.mPendingFragmentActivityResults.put(intArray[i], stringArray[i]);
+                    this.mPendingFragmentActivityResults = new SparseArrayCompat<>(requestCodes.length);
+                    for (int i = 0; i < requestCodes.length; i++) {
+                        this.mPendingFragmentActivityResults.put(requestCodes[i], fragmentWhos[i]);
                     }
                 }
             }
@@ -291,20 +171,35 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     }
 
     @Override
-    public boolean onCreatePanelMenu(int i, Menu menu) {
-        return i == 0 ? super.onCreatePanelMenu(i, menu) | this.mFragments.dispatchCreateOptionsMenu(menu, getMenuInflater()) : super.onCreatePanelMenu(i, menu);
+    public boolean onCreatePanelMenu(int featureId, Menu menu) {
+        if (featureId == 0) {
+            boolean show = super.onCreatePanelMenu(featureId, menu);
+            return show | this.mFragments.dispatchCreateOptionsMenu(menu, getMenuInflater());
+        }
+        boolean show2 = super.onCreatePanelMenu(featureId, menu);
+        return show2;
     }
 
     @Override
-    public View onCreateView(View view, String str, Context context, AttributeSet attributeSet) {
-        View viewDispatchFragmentsOnCreateView = dispatchFragmentsOnCreateView(view, str, context, attributeSet);
-        return viewDispatchFragmentsOnCreateView == null ? super.onCreateView(view, str, context, attributeSet) : viewDispatchFragmentsOnCreateView;
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        View v = dispatchFragmentsOnCreateView(parent, name, context, attrs);
+        if (v == null) {
+            return super.onCreateView(parent, name, context, attrs);
+        }
+        return v;
     }
 
     @Override
-    public View onCreateView(String str, Context context, AttributeSet attributeSet) {
-        View viewDispatchFragmentsOnCreateView = dispatchFragmentsOnCreateView(null, str, context, attributeSet);
-        return viewDispatchFragmentsOnCreateView == null ? super.onCreateView(str, context, attributeSet) : viewDispatchFragmentsOnCreateView;
+    public View onCreateView(String name, Context context, AttributeSet attrs) {
+        View v = dispatchFragmentsOnCreateView(null, name, context, attrs);
+        if (v == null) {
+            return super.onCreateView(name, context, attrs);
+        }
+        return v;
+    }
+
+    final View dispatchFragmentsOnCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return this.mFragments.onCreateView(parent, name, context, attrs);
     }
 
     @Override
@@ -324,36 +219,25 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     }
 
     @Override
-    public boolean onMenuItemSelected(int i, MenuItem menuItem) {
-        if (super.onMenuItemSelected(i, menuItem)) {
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        if (super.onMenuItemSelected(featureId, item)) {
             return true;
         }
-        if (i == 0) {
-            return this.mFragments.dispatchOptionsItemSelected(menuItem);
+        if (featureId == 0) {
+            return this.mFragments.dispatchOptionsItemSelected(item);
         }
-        if (i != 6) {
-            return false;
+        if (featureId == 6) {
+            return this.mFragments.dispatchContextItemSelected(item);
         }
-        return this.mFragments.dispatchContextItemSelected(menuItem);
+        return false;
     }
 
     @Override
-    public void onMultiWindowModeChanged(boolean z) {
-        this.mFragments.dispatchMultiWindowModeChanged(z);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        this.mFragments.noteStateNotSaved();
-    }
-
-    @Override
-    public void onPanelClosed(int i, Menu menu) {
-        if (i == 0) {
+    public void onPanelClosed(int featureId, Menu menu) {
+        if (featureId == 0) {
             this.mFragments.dispatchOptionsMenuClosed(menu);
         }
-        super.onPanelClosed(i, menu);
+        super.onPanelClosed(featureId, menu);
     }
 
     @Override
@@ -368,50 +252,14 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     }
 
     @Override
-    public void onPictureInPictureModeChanged(boolean z) {
-        this.mFragments.dispatchPictureInPictureModeChanged(z);
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        this.mHandler.removeMessages(2);
-        onResumeFragments();
-        this.mFragments.execPendingActions();
-    }
-
-    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
-        return super.onPreparePanel(0, view, menu);
-    }
-
-    @Override
-    public boolean onPreparePanel(int i, View view, Menu menu) {
-        return (i != 0 || menu == null) ? super.onPreparePanel(i, view, menu) : onPrepareOptionsPanel(view, menu) | this.mFragments.dispatchPrepareOptionsMenu(menu);
-    }
-
-    void onReallyStop() {
-        this.mFragments.dispatchReallyStop();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int i, String[] strArr, int[] iArr) {
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         this.mFragments.noteStateNotSaved();
-        int i2 = (i >> 16) & 65535;
-        if (i2 != 0) {
-            int i3 = i2 - 1;
-            String str = this.mPendingFragmentActivityResults.get(i3);
-            this.mPendingFragmentActivityResults.remove(i3);
-            if (str == null) {
-                Log.w("FragmentActivity", "Activity result delivered for unknown Fragment.");
-                return;
-            }
-            Fragment fragmentFindFragmentByWho = this.mFragments.findFragmentByWho(str);
-            if (fragmentFindFragmentByWho != null) {
-                fragmentFindFragmentByWho.onRequestPermissionsResult(65535 & i, strArr, iArr);
-                return;
-            }
-            Log.w("FragmentActivity", "Activity result no fragment exists for who: " + str);
-        }
+    }
+
+    @Override
+    public void onStateNotSaved() {
+        this.mFragments.noteStateNotSaved();
     }
 
     @Override
@@ -422,12 +270,30 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         this.mFragments.execPendingActions();
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        this.mHandler.removeMessages(2);
+        onResumeFragments();
+        this.mFragments.execPendingActions();
+    }
+
     protected void onResumeFragments() {
         this.mFragments.dispatchResume();
     }
 
-    public Object onRetainCustomNonConfigurationInstance() {
-        return null;
+    @Override
+    public boolean onPreparePanel(int featureId, View view, Menu menu) {
+        if (featureId == 0 && menu != null) {
+            boolean goforit = onPrepareOptionsPanel(view, menu);
+            return goforit | this.mFragments.dispatchPrepareOptionsMenu(menu);
+        }
+        boolean goforit2 = super.onPreparePanel(featureId, view, menu);
+        return goforit2;
+    }
+
+    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+        return super.onPreparePanel(0, view, menu);
     }
 
     @Override
@@ -435,44 +301,36 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         if (this.mStopped) {
             doReallyStop(true);
         }
-        Object objOnRetainCustomNonConfigurationInstance = onRetainCustomNonConfigurationInstance();
-        FragmentManagerNonConfig fragmentManagerNonConfigRetainNestedNonConfig = this.mFragments.retainNestedNonConfig();
-        if (fragmentManagerNonConfigRetainNestedNonConfig == null && this.mViewModelStore == null && objOnRetainCustomNonConfigurationInstance == null) {
+        Object custom = onRetainCustomNonConfigurationInstance();
+        FragmentManagerNonConfig fragments = this.mFragments.retainNestedNonConfig();
+        if (fragments == null && this.mViewModelStore == null && custom == null) {
             return null;
         }
-        NonConfigurationInstances nonConfigurationInstances = new NonConfigurationInstances();
-        nonConfigurationInstances.custom = objOnRetainCustomNonConfigurationInstance;
-        nonConfigurationInstances.viewModelStore = this.mViewModelStore;
-        nonConfigurationInstances.fragments = fragmentManagerNonConfigRetainNestedNonConfig;
-        return nonConfigurationInstances;
+        NonConfigurationInstances nci = new NonConfigurationInstances();
+        nci.custom = custom;
+        nci.viewModelStore = this.mViewModelStore;
+        nci.fragments = fragments;
+        return nci;
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle bundle) {
-        super.onSaveInstanceState(bundle);
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         markFragmentsCreated();
-        Parcelable parcelableSaveAllState = this.mFragments.saveAllState();
-        if (parcelableSaveAllState != null) {
-            bundle.putParcelable("android:support:fragments", parcelableSaveAllState);
+        Parcelable p = this.mFragments.saveAllState();
+        if (p != null) {
+            outState.putParcelable("android:support:fragments", p);
         }
-        if (this.mPendingFragmentActivityResults.size() <= 0) {
-            return;
-        }
-        bundle.putInt("android:support:next_request_index", this.mNextCandidateRequestIndex);
-        int[] iArr = new int[this.mPendingFragmentActivityResults.size()];
-        String[] strArr = new String[this.mPendingFragmentActivityResults.size()];
-        int i = 0;
-        while (true) {
-            int i2 = i;
-            if (i2 >= this.mPendingFragmentActivityResults.size()) {
-                bundle.putIntArray("android:support:request_indicies", iArr);
-                bundle.putStringArray("android:support:request_fragment_who", strArr);
-                return;
-            } else {
-                iArr[i2] = this.mPendingFragmentActivityResults.keyAt(i2);
-                strArr[i2] = this.mPendingFragmentActivityResults.valueAt(i2);
-                i = i2 + 1;
+        if (this.mPendingFragmentActivityResults.size() > 0) {
+            outState.putInt("android:support:next_request_index", this.mNextCandidateRequestIndex);
+            int[] requestCodes = new int[this.mPendingFragmentActivityResults.size()];
+            String[] fragmentWhos = new String[this.mPendingFragmentActivityResults.size()];
+            for (int i = 0; i < this.mPendingFragmentActivityResults.size(); i++) {
+                requestCodes[i] = this.mPendingFragmentActivityResults.keyAt(i);
+                fragmentWhos[i] = this.mPendingFragmentActivityResults.valueAt(i);
             }
+            outState.putIntArray("android:support:request_indicies", requestCodes);
+            outState.putStringArray("android:support:request_fragment_who", fragmentWhos);
         }
     }
 
@@ -492,11 +350,6 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
     }
 
     @Override
-    public void onStateNotSaved() {
-        this.mFragments.noteStateNotSaved();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         this.mStopped = true;
@@ -505,40 +358,193 @@ public class FragmentActivity extends SupportActivity implements ViewModelStoreO
         this.mFragments.dispatchStop();
     }
 
-    @Override
-    public void startActivityForResult(Intent intent, int i) {
-        if (!this.mStartedActivityFromFragment && i != -1) {
-            checkForValidRequestCode(i);
-        }
-        super.startActivityForResult(intent, i);
-    }
-
-    @Override
-    public void startActivityForResult(Intent intent, int i, Bundle bundle) {
-        if (!this.mStartedActivityFromFragment && i != -1) {
-            checkForValidRequestCode(i);
-        }
-        super.startActivityForResult(intent, i, bundle);
-    }
-
-    @Override
-    public void startIntentSenderForResult(IntentSender intentSender, int i, Intent intent, int i2, int i3, int i4) throws IntentSender.SendIntentException {
-        if (!this.mStartedIntentSenderFromFragment && i != -1) {
-            checkForValidRequestCode(i);
-        }
-        super.startIntentSenderForResult(intentSender, i, intent, i2, i3, i4);
-    }
-
-    @Override
-    public void startIntentSenderForResult(IntentSender intentSender, int i, Intent intent, int i2, int i3, int i4, Bundle bundle) throws IntentSender.SendIntentException {
-        if (!this.mStartedIntentSenderFromFragment && i != -1) {
-            checkForValidRequestCode(i);
-        }
-        super.startIntentSenderForResult(intentSender, i, intent, i2, i3, i4, bundle);
+    public Object onRetainCustomNonConfigurationInstance() {
+        return null;
     }
 
     @Deprecated
     public void supportInvalidateOptionsMenu() {
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
+        super.dump(prefix, fd, writer, args);
+        writer.print(prefix);
+        writer.print("Local FragmentActivity ");
+        writer.print(Integer.toHexString(System.identityHashCode(this)));
+        writer.println(" State:");
+        String innerPrefix = prefix + "  ";
+        writer.print(innerPrefix);
+        writer.print("mCreated=");
+        writer.print(this.mCreated);
+        writer.print(" mResumed=");
+        writer.print(this.mResumed);
+        writer.print(" mStopped=");
+        writer.print(this.mStopped);
+        writer.print(" mReallyStopped=");
+        writer.println(this.mReallyStopped);
+        LoaderManager.getInstance(this).dump(innerPrefix, fd, writer, args);
+        this.mFragments.getSupportFragmentManager().dump(prefix, fd, writer, args);
+    }
+
+    void doReallyStop(boolean retaining) {
+        if (!this.mReallyStopped) {
+            this.mReallyStopped = true;
+            this.mRetaining = retaining;
+            this.mHandler.removeMessages(1);
+            onReallyStop();
+        }
+    }
+
+    void onReallyStop() {
+        this.mFragments.dispatchReallyStop();
+    }
+
+    public void onAttachFragment(Fragment fragment) {
+    }
+
+    public FragmentManager getSupportFragmentManager() {
+        return this.mFragments.getSupportFragmentManager();
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode) {
+        if (!this.mStartedActivityFromFragment && requestCode != -1) {
+            checkForValidRequestCode(requestCode);
+        }
+        super.startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
+        if (!this.mStartedActivityFromFragment && requestCode != -1) {
+            checkForValidRequestCode(requestCode);
+        }
+        super.startActivityForResult(intent, requestCode, options);
+    }
+
+    @Override
+    public void startIntentSenderForResult(IntentSender intent, int requestCode, Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags) throws IntentSender.SendIntentException {
+        if (!this.mStartedIntentSenderFromFragment && requestCode != -1) {
+            checkForValidRequestCode(requestCode);
+        }
+        super.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags);
+    }
+
+    @Override
+    public void startIntentSenderForResult(IntentSender intent, int requestCode, Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags, Bundle options) throws IntentSender.SendIntentException {
+        if (!this.mStartedIntentSenderFromFragment && requestCode != -1) {
+            checkForValidRequestCode(requestCode);
+        }
+        super.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
+    }
+
+    static void checkForValidRequestCode(int requestCode) {
+        if (((-65536) & requestCode) != 0) {
+            throw new IllegalArgumentException("Can only use lower 16 bits for requestCode");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        this.mFragments.noteStateNotSaved();
+        int index = (requestCode >> 16) & 65535;
+        if (index != 0) {
+            int index2 = index - 1;
+            String who = this.mPendingFragmentActivityResults.get(index2);
+            this.mPendingFragmentActivityResults.remove(index2);
+            if (who == null) {
+                Log.w("FragmentActivity", "Activity result delivered for unknown Fragment.");
+                return;
+            }
+            Fragment frag = this.mFragments.findFragmentByWho(who);
+            if (frag == null) {
+                Log.w("FragmentActivity", "Activity result no fragment exists for who: " + who);
+                return;
+            }
+            frag.onRequestPermissionsResult(65535 & requestCode, permissions, grantResults);
+        }
+    }
+
+    class HostCallbacks extends FragmentHostCallback<FragmentActivity> {
+        public HostCallbacks() {
+            super(FragmentActivity.this);
+        }
+
+        @Override
+        public void onDump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
+            FragmentActivity.this.dump(prefix, fd, writer, args);
+        }
+
+        @Override
+        public boolean onShouldSaveFragmentState(Fragment fragment) {
+            return !FragmentActivity.this.isFinishing();
+        }
+
+        @Override
+        public LayoutInflater onGetLayoutInflater() {
+            return FragmentActivity.this.getLayoutInflater().cloneInContext(FragmentActivity.this);
+        }
+
+        @Override
+        public void onSupportInvalidateOptionsMenu() {
+            FragmentActivity.this.supportInvalidateOptionsMenu();
+        }
+
+        @Override
+        public boolean onHasWindowAnimations() {
+            return FragmentActivity.this.getWindow() != null;
+        }
+
+        @Override
+        public int onGetWindowAnimations() {
+            Window w = FragmentActivity.this.getWindow();
+            if (w == null) {
+                return 0;
+            }
+            return w.getAttributes().windowAnimations;
+        }
+
+        @Override
+        public void onAttachFragment(Fragment fragment) {
+            FragmentActivity.this.onAttachFragment(fragment);
+        }
+
+        @Override
+        public View onFindViewById(int id) {
+            return FragmentActivity.this.findViewById(id);
+        }
+
+        @Override
+        public boolean onHasView() {
+            Window w = FragmentActivity.this.getWindow();
+            return (w == null || w.peekDecorView() == null) ? false : true;
+        }
+    }
+
+    private void markFragmentsCreated() {
+        boolean reiterate;
+        do {
+            reiterate = markState(getSupportFragmentManager(), Lifecycle.State.CREATED);
+        } while (reiterate);
+    }
+
+    private static boolean markState(FragmentManager manager, Lifecycle.State state) {
+        boolean hadNotMarked = false;
+        Collection<Fragment> fragments = manager.getFragments();
+        for (Fragment fragment : fragments) {
+            if (fragment != null) {
+                if (fragment.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                    fragment.mLifecycleRegistry.markState(state);
+                    hadNotMarked = true;
+                }
+                FragmentManager childFragmentManager = fragment.peekChildFragmentManager();
+                if (childFragmentManager != null) {
+                    hadNotMarked |= markState(childFragmentManager, state);
+                }
+            }
+        }
+        return hadNotMarked;
     }
 }

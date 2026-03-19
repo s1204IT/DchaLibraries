@@ -25,12 +25,24 @@ public class NavTabView extends LinearLayout {
     }
 
     private void init() {
-        LayoutInflater.from(this.mContext).inflate(2130968610, this);
-        this.mContent = (ViewGroup) findViewById(2131558409);
-        this.mClose = (ImageView) findViewById(2131558497);
-        this.mTitle = (TextView) findViewById(2131558407);
-        this.mTitleBar = findViewById(2131558496);
-        this.mImage = (ImageView) findViewById(2131558403);
+        LayoutInflater.from(((View) this).mContext).inflate(R.layout.nav_tab_view, this);
+        this.mContent = (ViewGroup) findViewById(R.id.main);
+        this.mClose = (ImageView) findViewById(R.id.closetab);
+        this.mTitle = (TextView) findViewById(R.id.title);
+        this.mTitleBar = findViewById(R.id.titlebar);
+        this.mImage = (ImageView) findViewById(R.id.tab_view);
+    }
+
+    protected boolean isClose(View view) {
+        return view == this.mClose;
+    }
+
+    protected boolean isTitle(View view) {
+        return view == this.mTitleBar;
+    }
+
+    protected boolean isWebView(View view) {
+        return view == this.mImage;
     }
 
     private void setTitle() {
@@ -47,9 +59,9 @@ public class NavTabView extends LinearLayout {
             this.mTitle.setText(title);
         }
         if (this.mTab.isSnapshot()) {
-            setTitleIcon(2130837560);
+            setTitleIcon(R.drawable.ic_history_holo_dark);
         } else if (this.mTab.isPrivateBrowsingEnabled()) {
-            setTitleIcon(2130837564);
+            setTitleIcon(R.drawable.ic_incognito_holo_dark);
         } else {
             setTitleIcon(0);
         }
@@ -64,28 +76,6 @@ public class NavTabView extends LinearLayout {
         this.mTitle.setCompoundDrawablesWithIntrinsicBounds(i, 0, 0, 0);
     }
 
-    protected boolean isClose(View view) {
-        return view == this.mClose;
-    }
-
-    protected boolean isTitle(View view) {
-        return view == this.mTitleBar;
-    }
-
-    protected boolean isWebView(View view) {
-        return view == this.mImage;
-    }
-
-    @Override
-    public void setOnClickListener(View.OnClickListener onClickListener) {
-        this.mClickListener = onClickListener;
-        this.mTitleBar.setOnClickListener(this.mClickListener);
-        this.mClose.setOnClickListener(this.mClickListener);
-        if (this.mImage != null) {
-            this.mImage.setOnClickListener(this.mClickListener);
-        }
-    }
-
     protected void setWebView(Tab tab) {
         this.mTab = tab;
         setTitle();
@@ -95,6 +85,16 @@ public class NavTabView extends LinearLayout {
             if (tab != null) {
                 this.mImage.setContentDescription(tab.getTitle());
             }
+        }
+    }
+
+    @Override
+    public void setOnClickListener(View.OnClickListener onClickListener) {
+        this.mClickListener = onClickListener;
+        this.mTitleBar.setOnClickListener(this.mClickListener);
+        this.mClose.setOnClickListener(this.mClickListener);
+        if (this.mImage != null) {
+            this.mImage.setOnClickListener(this.mClickListener);
         }
     }
 }

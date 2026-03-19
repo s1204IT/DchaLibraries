@@ -43,6 +43,6 @@ public class BatteryTipLoader extends AsyncLoader<List<BatteryTip>> {
     }
 
     @Override
-    public void onDiscardResult(List<BatteryTip> list) {
+    protected void onDiscardResult(List<BatteryTip> list) {
     }
 }

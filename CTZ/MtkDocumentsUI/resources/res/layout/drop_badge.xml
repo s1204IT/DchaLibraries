@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.documentsui.DropBadgeView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/icon"
+    android:duplicateParentState="true"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
+    android:scaleType="centerInside"
+    android:contentDescription="@null"/>

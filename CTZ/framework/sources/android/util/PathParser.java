@@ -1,0 +1,92 @@
+package android.util;
+
+import android.graphics.Path;
+import dalvik.annotation.optimization.FastNative;
+
+public class PathParser {
+    static final String LOGTAG = PathParser.class.getSimpleName();
+
+    @FastNative
+    private static native boolean nCanMorph(long j, long j2);
+
+    @FastNative
+    private static native long nCreateEmptyPathData();
+
+    @FastNative
+    private static native long nCreatePathData(long j);
+
+    private static native long nCreatePathDataFromString(String str, int i);
+
+    @FastNative
+    private static native void nCreatePathFromPathData(long j, long j2);
+
+    @FastNative
+    private static native void nFinalize(long j);
+
+    @FastNative
+    private static native boolean nInterpolatePathData(long j, long j2, long j3, float f);
+
+    private static native void nParseStringForPath(long j, String str, int i);
+
+    @FastNative
+    private static native void nSetPathData(long j, long j2);
+
+    public static Path createPathFromPathData(String str) {
+        if (str == null) {
+            throw new IllegalArgumentException("Path string can not be null.");
+        }
+        Path path = new Path();
+        nParseStringForPath(path.mNativePath, str, str.length());
+        return path;
+    }
+
+    public static void createPathFromPathData(Path path, PathData pathData) {
+        nCreatePathFromPathData(path.mNativePath, pathData.mNativePathData);
+    }
+
+    public static boolean canMorph(PathData pathData, PathData pathData2) {
+        return nCanMorph(pathData.mNativePathData, pathData2.mNativePathData);
+    }
+
+    public static class PathData {
+        long mNativePathData;
+
+        public PathData() {
+            this.mNativePathData = 0L;
+            this.mNativePathData = PathParser.nCreateEmptyPathData();
+        }
+
+        public PathData(PathData pathData) {
+            this.mNativePathData = 0L;
+            this.mNativePathData = PathParser.nCreatePathData(pathData.mNativePathData);
+        }
+
+        public PathData(String str) {
+            this.mNativePathData = 0L;
+            this.mNativePathData = PathParser.nCreatePathDataFromString(str, str.length());
+            if (this.mNativePathData == 0) {
+                throw new IllegalArgumentException("Invalid pathData: " + str);
+            }
+        }
+
+        public long getNativePtr() {
+            return this.mNativePathData;
+        }
+
+        public void setPathData(PathData pathData) {
+            PathParser.nSetPathData(this.mNativePathData, pathData.mNativePathData);
+        }
+
+        protected void finalize() throws Throwable {
+            if (this.mNativePathData != 0) {
+                PathParser.nFinalize(this.mNativePathData);
+                this.mNativePathData = 0L;
+            }
+            super.finalize();
+        }
+    }
+
+    public static boolean interpolatePathData(PathData pathData, PathData pathData2, PathData pathData3, float f) {
+        return nInterpolatePathData(pathData.mNativePathData, pathData2.mNativePathData, pathData3.mNativePathData, f);
+    }
+}

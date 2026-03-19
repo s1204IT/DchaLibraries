@@ -28,7 +28,7 @@ public class DataSaverControllerImpl implements DataSaverController {
         this.mPolicyManager = NetworkPolicyManager.from(context);
     }
 
-    public void handleRestrictBackgroundChanged(boolean z) {
+    private void handleRestrictBackgroundChanged(boolean z) {
         synchronized (this.mListeners) {
             for (int i = 0; i < this.mListeners.size(); i++) {
                 this.mListeners.get(i).onDataSaverChanged(z);

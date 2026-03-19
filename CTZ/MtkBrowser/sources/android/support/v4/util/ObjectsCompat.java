@@ -5,11 +5,17 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class ObjectsCompat {
-    public static boolean equals(Object obj, Object obj2) {
-        return Build.VERSION.SDK_INT >= 19 ? Objects.equals(obj, obj2) : obj == obj2 || (obj != null && obj.equals(obj2));
+    public static boolean equals(Object a, Object b) {
+        if (Build.VERSION.SDK_INT >= 19) {
+            return Objects.equals(a, b);
+        }
+        return a == b || (a != null && a.equals(b));
     }
 
-    public static int hash(Object... objArr) {
-        return Build.VERSION.SDK_INT >= 19 ? Objects.hash(objArr) : Arrays.hashCode(objArr);
+    public static int hash(Object... values) {
+        if (Build.VERSION.SDK_INT >= 19) {
+            return Objects.hash(values);
+        }
+        return Arrays.hashCode(values);
     }
 }

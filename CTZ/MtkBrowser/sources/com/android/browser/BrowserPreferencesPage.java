@@ -19,36 +19,24 @@ public class BrowserPreferencesPage extends PreferenceActivity {
     private List<PreferenceActivity.Header> mHeaders;
 
     @Override
-    protected boolean isValidFragment(String str) {
-        return AccessibilityPreferencesFragment.class.getName().equals(str) || AdvancedPreferencesFragment.class.getName().equals(str) || BandwidthPreferencesFragment.class.getName().equals(str) || DebugPreferencesFragment.class.getName().equals(str) || GeneralPreferencesFragment.class.getName().equals(str) || LabPreferencesFragment.class.getName().equals(str) || PrivacySecurityPreferencesFragment.class.getName().equals(str) || WebsiteSettingsFragment.class.getName().equals(str) || SearchEngineSettings.class.getName().equals(str) || "com.android.browser.search.SearchEnginePreference".equals(str);
-    }
-
-    @Override
-    public void onBuildHeaders(List<PreferenceActivity.Header> list) {
-        loadHeadersFromResource(2131099659, list);
-        if (BrowserSettings.getInstance().isDebugEnabled()) {
-            PreferenceActivity.Header header = new PreferenceActivity.Header();
-            header.title = getText(2131493158);
-            header.fragment = DebugPreferencesFragment.class.getName();
-            list.add(header);
-        }
-        this.mHeaders = list;
-    }
-
-    @Override
-    public Intent onBuildStartFragmentIntent(String str, Bundle bundle, int i, int i2) {
-        Intent intentOnBuildStartFragmentIntent = super.onBuildStartFragmentIntent(str, bundle, i, i2);
-        intentOnBuildStartFragmentIntent.putExtra("currentPage", getIntent().getStringExtra("currentPage"));
-        return intentOnBuildStartFragmentIntent;
-    }
-
-    @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
             actionBar.setDisplayOptions(4, 4);
         }
+    }
+
+    @Override
+    public void onBuildHeaders(List<PreferenceActivity.Header> list) {
+        loadHeadersFromResource(R.xml.preference_headers, list);
+        if (BrowserSettings.getInstance().isDebugEnabled()) {
+            PreferenceActivity.Header header = new PreferenceActivity.Header();
+            header.title = getText(R.string.pref_development_title);
+            header.fragment = DebugPreferencesFragment.class.getName();
+            list.add(header);
+        }
+        this.mHeaders = list;
     }
 
     @Override
@@ -67,5 +55,17 @@ public class BrowserPreferencesPage extends PreferenceActivity {
     @Override
     public boolean onSearchRequested() {
         return false;
+    }
+
+    @Override
+    public Intent onBuildStartFragmentIntent(String str, Bundle bundle, int i, int i2) {
+        Intent intentOnBuildStartFragmentIntent = super.onBuildStartFragmentIntent(str, bundle, i, i2);
+        intentOnBuildStartFragmentIntent.putExtra("currentPage", getIntent().getStringExtra("currentPage"));
+        return intentOnBuildStartFragmentIntent;
+    }
+
+    @Override
+    protected boolean isValidFragment(String str) {
+        return AccessibilityPreferencesFragment.class.getName().equals(str) || AdvancedPreferencesFragment.class.getName().equals(str) || BandwidthPreferencesFragment.class.getName().equals(str) || DebugPreferencesFragment.class.getName().equals(str) || GeneralPreferencesFragment.class.getName().equals(str) || LabPreferencesFragment.class.getName().equals(str) || PrivacySecurityPreferencesFragment.class.getName().equals(str) || WebsiteSettingsFragment.class.getName().equals(str) || SearchEngineSettings.class.getName().equals(str) || "com.android.browser.search.SearchEnginePreference".equals(str);
     }
 }

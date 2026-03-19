@@ -44,7 +44,7 @@ public class RegionSearchPicker extends BaseTimeZonePicker {
         return this.mAdapter;
     }
 
-    public void onListItemClick(RegionItem regionItem) {
+    private void onListItemClick(RegionItem regionItem) {
         String id = regionItem.getId();
         FilteredCountryTimeZones filteredCountryTimeZonesLookupCountryTimeZones = this.mTimeZoneData.lookupCountryTimeZones(id);
         Activity activity = getActivity();

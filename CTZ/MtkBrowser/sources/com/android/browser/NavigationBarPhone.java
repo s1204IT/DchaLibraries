@@ -49,23 +49,71 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
         this.mBrowserUrlExt = null;
     }
 
-    private void onMenuHidden() {
-        this.mOverflowMenuShowing = false;
-        this.mBaseUi.showTitleBarForDuration();
-    }
-
-    public void dismissMenuOnly() {
-        if (!isMenuShowing() || this.mPopupMenu == null) {
-            return;
-        }
-        this.mPopupMenu.setOnDismissListener(null);
-        this.mPopupMenu.dismiss();
-        this.mPopupMenu.setOnDismissListener(this);
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        this.mStopButton = (ImageView) findViewById(R.id.stop);
+        this.mStopButton.setOnClickListener(this);
+        this.mClearButton = (ImageView) findViewById(R.id.clear);
+        this.mClearButton.setOnClickListener(this);
+        this.mMagnify = (ImageView) findViewById(R.id.magnify);
+        this.mTabSwitcher = findViewById(R.id.tab_switcher);
+        this.mTabSwitcher.setOnClickListener(this);
+        this.mMore = findViewById(R.id.more);
+        this.mMore.setOnClickListener(this);
+        this.mComboIcon = findViewById(R.id.iconcombo);
+        this.mComboIcon.setOnClickListener(this);
+        this.mTitleContainer = findViewById(R.id.title_bg);
+        setFocusState(false);
+        Resources resources = getContext().getResources();
+        this.mStopDrawable = resources.getDrawable(R.drawable.ic_stop_holo_dark);
+        this.mRefreshDrawable = resources.getDrawable(R.drawable.ic_refresh_holo_dark);
+        this.mStopDescription = resources.getString(R.string.accessibility_button_stop);
+        this.mRefreshDescription = resources.getString(R.string.accessibility_button_refresh);
+        this.mTextfieldBgDrawable = resources.getDrawable(R.drawable.textfield_active_holo_dark);
+        this.mUrlInput.setContainer(this);
+        this.mUrlInput.setStateListener(this);
+        this.mNeedsMenu = !ViewConfiguration.get(getContext()).hasPermanentMenuKey();
+        this.mIncognitoIcon = findViewById(R.id.incognito_icon);
     }
 
     @Override
-    public boolean isMenuShowing() {
-        return super.isMenuShowing() || this.mOverflowMenuShowing;
+    public void onProgressStarted() {
+        super.onProgressStarted();
+        if (this.mStopButton.getDrawable() != this.mStopDrawable) {
+            this.mStopButton.setImageDrawable(this.mStopDrawable);
+            this.mStopButton.setContentDescription(this.mStopDescription);
+            if (this.mStopButton.getVisibility() != 0) {
+                this.mComboIcon.setVisibility(8);
+                this.mStopButton.setVisibility(0);
+            }
+        }
+    }
+
+    @Override
+    public void onProgressStopped() {
+        super.onProgressStopped();
+        this.mStopButton.setImageDrawable(this.mRefreshDrawable);
+        this.mStopButton.setContentDescription(this.mRefreshDescription);
+        if (!isEditingUrl()) {
+            this.mComboIcon.setVisibility(0);
+        }
+        onStateChanged(this.mUrlInput.getState());
+    }
+
+    @Override
+    void setDisplayTitle(String str) {
+        this.mUrlInput.setTag(str);
+        if (!isEditingUrl()) {
+            if (str == null) {
+                this.mUrlInput.setText(R.string.new_tab);
+            } else if (str.startsWith("about:blank")) {
+                this.mUrlInput.setText((CharSequence) UrlUtils.stripUrl("about:blank"), false);
+            } else {
+                this.mUrlInput.setText((CharSequence) UrlUtils.stripUrl(str), false);
+            }
+            this.mUrlInput.setSelection(0);
+        }
     }
 
     @Override
@@ -101,55 +149,65 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
     }
 
     @Override
+    public boolean isMenuShowing() {
+        return super.isMenuShowing() || this.mOverflowMenuShowing;
+    }
+
+    public void dismissMenuOnly() {
+        if (isMenuShowing() && this.mPopupMenu != null) {
+            this.mPopupMenu.setOnDismissListener(null);
+            this.mPopupMenu.dismiss();
+            this.mPopupMenu.setOnDismissListener(this);
+        }
+    }
+
+    void showMenu(View view) {
+        if (this.mOverflowMenuShowing) {
+            return;
+        }
+        Activity activity = this.mUiController.getActivity();
+        if (this.mPopupMenu == null) {
+            this.mPopupMenu = new PopupMenu(((View) this).mContext, view);
+            this.mPopupMenu.setOnMenuItemClickListener(this);
+            this.mPopupMenu.setOnDismissListener(this);
+            view.getViewTreeObserver().addOnGlobalLayoutListener(this);
+            if (!activity.onCreateOptionsMenu(this.mPopupMenu.getMenu())) {
+                this.mPopupMenu = null;
+                return;
+            }
+        }
+        if (activity.onPrepareOptionsMenu(this.mPopupMenu.getMenu())) {
+            this.mOverflowMenuShowing = true;
+            this.mPopupMenu.show();
+        }
+    }
+
+    @Override
     public void onDismiss(PopupMenu popupMenu) {
         if (popupMenu == this.mPopupMenu) {
             onMenuHidden();
         }
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        this.mStopButton = (ImageView) findViewById(2131558541);
-        this.mStopButton.setOnClickListener(this);
-        this.mClearButton = (ImageView) findViewById(2131558543);
-        this.mClearButton.setOnClickListener(this);
-        this.mMagnify = (ImageView) findViewById(2131558538);
-        this.mTabSwitcher = findViewById(2131558544);
-        this.mTabSwitcher.setOnClickListener(this);
-        this.mMore = findViewById(2131558495);
-        this.mMore.setOnClickListener(this);
-        this.mComboIcon = findViewById(2131558540);
-        this.mComboIcon.setOnClickListener(this);
-        this.mTitleContainer = findViewById(2131558537);
-        setFocusState(false);
-        Resources resources = getContext().getResources();
-        this.mStopDrawable = resources.getDrawable(2130837590);
-        this.mRefreshDrawable = resources.getDrawable(2130837577);
-        this.mStopDescription = resources.getString(2131493294);
-        this.mRefreshDescription = resources.getString(2131493293);
-        this.mTextfieldBgDrawable = resources.getDrawable(2130837610);
-        this.mUrlInput.setContainer(this);
-        this.mUrlInput.setStateListener(this);
-        this.mNeedsMenu = !ViewConfiguration.get(getContext()).hasPermanentMenuKey();
-        this.mIncognitoIcon = findViewById(2131558539);
+    private void onMenuHidden() {
+        this.mOverflowMenuShowing = false;
+        this.mBaseUi.showTitleBarForDuration();
     }
 
     @Override
     public void onFocusChange(View view, boolean z) {
         String title;
-        String url;
         if (view == this.mUrlInput) {
             Tab activeTab = this.mBaseUi.getActiveTab();
             if (activeTab == null) {
                 activeTab = this.mBaseUi.mTabControl.getCurrentTab();
             }
+            String url = null;
             if (activeTab != null) {
                 url = activeTab.getUrl();
                 title = activeTab.getTitle();
             } else {
                 title = null;
-                url = null;
             }
             this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mUiController.getActivity());
             String overrideFocusContent = this.mBrowserUrlExt.getOverrideFocusContent(z, this.mUrlInput.getText().toString(), (String) this.mUrlInput.getTag(), url);
@@ -161,43 +219,6 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
             }
         }
         super.onFocusChange(view, z);
-    }
-
-    @Override
-    public void onGlobalLayout() {
-        if (!this.mOverflowMenuShowing || this.mPopupMenu == null) {
-            return;
-        }
-        this.mPopupMenu.show();
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        return this.mUiController.onOptionsItemSelected(menuItem);
-    }
-
-    @Override
-    public void onProgressStarted() {
-        super.onProgressStarted();
-        if (this.mStopButton.getDrawable() != this.mStopDrawable) {
-            this.mStopButton.setImageDrawable(this.mStopDrawable);
-            this.mStopButton.setContentDescription(this.mStopDescription);
-            if (this.mStopButton.getVisibility() != 0) {
-                this.mComboIcon.setVisibility(8);
-                this.mStopButton.setVisibility(0);
-            }
-        }
-    }
-
-    @Override
-    public void onProgressStopped() {
-        super.onProgressStopped();
-        this.mStopButton.setImageDrawable(this.mRefreshDrawable);
-        this.mStopButton.setContentDescription(this.mRefreshDescription);
-        if (!isEditingUrl()) {
-            this.mComboIcon.setVisibility(0);
-        }
-        onStateChanged(this.mUrlInput.getState());
     }
 
     @Override
@@ -240,38 +261,13 @@ public class NavigationBarPhone extends NavigationBarBase implements ViewTreeObs
     }
 
     @Override
-    void setDisplayTitle(String str) {
-        this.mUrlInput.setTag(str);
-        if (isEditingUrl()) {
-            return;
-        }
-        if (str == null) {
-            this.mUrlInput.setText(2131492949);
-        } else if (str.startsWith("about:blank")) {
-            this.mUrlInput.setText((CharSequence) UrlUtils.stripUrl("about:blank"), false);
-        } else {
-            this.mUrlInput.setText((CharSequence) UrlUtils.stripUrl(str), false);
-        }
-        this.mUrlInput.setSelection(0);
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        return this.mUiController.onOptionsItemSelected(menuItem);
     }
 
-    void showMenu(View view) {
-        if (this.mOverflowMenuShowing) {
-            return;
-        }
-        Activity activity = this.mUiController.getActivity();
-        if (this.mPopupMenu == null) {
-            this.mPopupMenu = new PopupMenu(this.mContext, view);
-            this.mPopupMenu.setOnMenuItemClickListener(this);
-            this.mPopupMenu.setOnDismissListener(this);
-            view.getViewTreeObserver().addOnGlobalLayoutListener(this);
-            if (!activity.onCreateOptionsMenu(this.mPopupMenu.getMenu())) {
-                this.mPopupMenu = null;
-                return;
-            }
-        }
-        if (activity.onPrepareOptionsMenu(this.mPopupMenu.getMenu())) {
-            this.mOverflowMenuShowing = true;
+    @Override
+    public void onGlobalLayout() {
+        if (this.mOverflowMenuShowing && this.mPopupMenu != null) {
             this.mPopupMenu.show();
         }
     }

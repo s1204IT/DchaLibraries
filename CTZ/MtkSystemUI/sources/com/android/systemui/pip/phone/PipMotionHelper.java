@@ -255,7 +255,7 @@ public class PipMotionHelper implements Handler.Callback {
         return valueAnimator;
     }
 
-    public void resizePipUnchecked(Rect rect) {
+    private void resizePipUnchecked(Rect rect) {
         if (!rect.equals(this.mBounds)) {
             SomeArgs someArgsObtain = SomeArgs.obtain();
             someArgsObtain.arg1 = rect;

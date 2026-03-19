@@ -144,7 +144,7 @@ public class SummaryLoader {
         }
     }
 
-    public synchronized void setListeningW(boolean z) {
+    private synchronized void setListeningW(boolean z) {
         if (this.mWorkerListening == z) {
             return;
         }
@@ -159,7 +159,7 @@ public class SummaryLoader {
         }
     }
 
-    public synchronized void makeProviderW(Tile tile) {
+    private synchronized void makeProviderW(Tile tile) {
         SummaryProvider summaryProvider = getSummaryProvider(tile);
         if (summaryProvider != null) {
             this.mSummaryProviderMap.put(summaryProvider, tile.intent.getComponent());

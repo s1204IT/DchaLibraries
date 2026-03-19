@@ -159,7 +159,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         this.mSetupObserver.register();
     }
 
-    public void fireNextAlarmChanged() {
+    private void fireNextAlarmChanged() {
         Utils.safeForeach(this.mCallbacks, new Consumer() {
             @Override
             public final void accept(Object obj) {
@@ -168,7 +168,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         });
     }
 
-    public void fireEffectsSuppressorChanged() {
+    private void fireEffectsSuppressorChanged() {
         Utils.safeForeach(this.mCallbacks, new Consumer() {
             @Override
             public final void accept(Object obj) {
@@ -177,7 +177,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         });
     }
 
-    public void fireZenChanged(final int i) {
+    private void fireZenChanged(final int i) {
         Utils.safeForeach(this.mCallbacks, new Consumer() {
             @Override
             public final void accept(Object obj) {
@@ -186,7 +186,7 @@ public class ZenModeControllerImpl extends CurrentUserTracker implements ZenMode
         });
     }
 
-    public void fireZenAvailableChanged(final boolean z) {
+    private void fireZenAvailableChanged(final boolean z) {
         Utils.safeForeach(this.mCallbacks, new Consumer() {
             @Override
             public final void accept(Object obj) {

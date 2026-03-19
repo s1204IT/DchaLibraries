@@ -59,7 +59,7 @@ public final class RotationLockControllerImpl implements RotationLockController 
         }
     }
 
-    public void notifyChanged() {
+    private void notifyChanged() {
         Iterator<RotationLockController.RotationLockControllerCallback> it = this.mCallbacks.iterator();
         while (it.hasNext()) {
             notifyChanged(it.next());

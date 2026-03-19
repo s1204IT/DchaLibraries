@@ -11,8 +11,13 @@ class EmptyImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    public ImmutableList<E> asList() {
-        return ImmutableList.of();
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
     }
 
     @Override
@@ -26,18 +31,28 @@ class EmptyImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    int copyIntoArray(Object[] objArr, int i) {
-        return i;
-    }
-
-    @Override
-    ImmutableSortedSet<E> createDescendingSet() {
-        return new EmptyImmutableSortedSet(Ordering.from(this.comparator).reverse());
+    public UnmodifiableIterator<E> iterator() {
+        return Iterators.emptyIterator();
     }
 
     @Override
     public UnmodifiableIterator<E> descendingIterator() {
         return Iterators.emptyIterator();
+    }
+
+    @Override
+    boolean isPartialView() {
+        return false;
+    }
+
+    @Override
+    public ImmutableList<E> asList() {
+        return ImmutableList.of();
+    }
+
+    @Override
+    int copyIntoArray(Object[] objArr, int i) {
+        return i;
     }
 
     @Override
@@ -49,38 +64,18 @@ class EmptyImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    public E first() {
-        throw new NoSuchElementException();
-    }
-
-    @Override
     public int hashCode() {
         return 0;
     }
 
     @Override
-    ImmutableSortedSet<E> headSetImpl(E e, boolean z) {
-        return this;
+    public String toString() {
+        return "[]";
     }
 
     @Override
-    int indexOf(Object obj) {
-        return -1;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    boolean isPartialView() {
-        return false;
-    }
-
-    @Override
-    public UnmodifiableIterator<E> iterator() {
-        return Iterators.emptyIterator();
+    public E first() {
+        throw new NoSuchElementException();
     }
 
     @Override
@@ -89,8 +84,8 @@ class EmptyImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    public int size() {
-        return 0;
+    ImmutableSortedSet<E> headSetImpl(E e, boolean z) {
+        return this;
     }
 
     @Override
@@ -104,7 +99,12 @@ class EmptyImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    public String toString() {
-        return "[]";
+    int indexOf(Object obj) {
+        return -1;
+    }
+
+    @Override
+    ImmutableSortedSet<E> createDescendingSet() {
+        return new EmptyImmutableSortedSet(Ordering.from(this.comparator).reverse());
     }
 }

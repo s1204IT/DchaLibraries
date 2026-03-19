@@ -58,7 +58,7 @@ public class SettingsButton extends AlphaOptimizedImageButton {
         return super.onTouchEvent(motionEvent);
     }
 
-    public void cancelLongClick() {
+    private void cancelLongClick() {
         cancelAnimation();
         this.mUpToSpeed = false;
         removeCallbacks(this.mLongPressCallback);

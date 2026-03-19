@@ -135,7 +135,7 @@ public class InputMethodPreference extends RestrictedSwitchPreference implements
         return InputMethodAndSubtypeUtil.getSubtypeLocaleNameListAsSentence(getInputMethodManager().getEnabledInputMethodSubtypeList(this.mImi, true), getContext(), this.mImi);
     }
 
-    public void setCheckedInternal(boolean z) {
+    private void setCheckedInternal(boolean z) {
         super.setChecked(z);
         this.mOnSaveListener.onSaveInputMethodPreference(this);
         notifyChanged();

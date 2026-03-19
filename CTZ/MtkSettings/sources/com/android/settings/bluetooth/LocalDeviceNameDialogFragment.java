@@ -97,7 +97,7 @@ public class LocalDeviceNameDialogFragment extends BluetoothNameDialogFragment {
     }
 
     @Override
-    public void setDeviceName(String str) {
+    protected void setDeviceName(String str) {
         this.mLocalAdapter.setName(str);
     }
 }

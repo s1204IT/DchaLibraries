@@ -627,7 +627,7 @@ public class TextListItem extends ListItem<ViewHolder> {
             return this.mAction2Divider;
         }
 
-        public View[] getWidgetViews() {
+        private View[] getWidgetViews() {
             return this.mWidgetViews;
         }
     }

@@ -5,6 +5,10 @@ import android.arch.lifecycle.Lifecycle;
 class FullLifecycleObserverAdapter implements GenericLifecycleObserver {
     private final FullLifecycleObserver mObserver;
 
+    FullLifecycleObserverAdapter(FullLifecycleObserver observer) {
+        this.mObserver = observer;
+    }
+
     static class AnonymousClass1 {
         static final int[] $SwitchMap$androidx$lifecycle$Lifecycle$Event = new int[Lifecycle.Event.values().length];
 
@@ -40,30 +44,26 @@ class FullLifecycleObserverAdapter implements GenericLifecycleObserver {
         }
     }
 
-    FullLifecycleObserverAdapter(FullLifecycleObserver fullLifecycleObserver) {
-        this.mObserver = fullLifecycleObserver;
-    }
-
     @Override
-    public void onStateChanged(LifecycleOwner lifecycleOwner, Lifecycle.Event event) {
+    public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
         switch (AnonymousClass1.$SwitchMap$androidx$lifecycle$Lifecycle$Event[event.ordinal()]) {
             case 1:
-                this.mObserver.onCreate(lifecycleOwner);
+                this.mObserver.onCreate(source);
                 return;
             case 2:
-                this.mObserver.onStart(lifecycleOwner);
+                this.mObserver.onStart(source);
                 return;
             case 3:
-                this.mObserver.onResume(lifecycleOwner);
+                this.mObserver.onResume(source);
                 return;
             case 4:
-                this.mObserver.onPause(lifecycleOwner);
+                this.mObserver.onPause(source);
                 return;
             case 5:
-                this.mObserver.onStop(lifecycleOwner);
+                this.mObserver.onStop(source);
                 return;
             case 6:
-                this.mObserver.onDestroy(lifecycleOwner);
+                this.mObserver.onDestroy(source);
                 return;
             case 7:
                 throw new IllegalArgumentException("ON_ANY must not been send by anybody");

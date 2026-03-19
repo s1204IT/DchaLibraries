@@ -518,13 +518,13 @@ public class QSPanel extends LinearLayout implements QSHost.Callback, Brightness
         }
     }
 
-    public void fireToggleStateChanged(boolean z) {
+    private void fireToggleStateChanged(boolean z) {
         if (this.mCallback != null) {
             this.mCallback.onToggleStateChanged(z);
         }
     }
 
-    public void fireScanStateChanged(boolean z) {
+    private void fireScanStateChanged(boolean z) {
         if (this.mCallback != null) {
             this.mCallback.onScanStateChanged(z);
         }

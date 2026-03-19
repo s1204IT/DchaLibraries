@@ -7,26 +7,36 @@ class RegularImmutableList<E> extends ImmutableList<E> {
     private final transient int offset;
     private final transient int size;
 
-    RegularImmutableList(Object[] objArr) {
-        this(objArr, 0, objArr.length);
-    }
-
     RegularImmutableList(Object[] objArr, int i, int i2) {
         this.offset = i;
         this.size = i2;
         this.array = objArr;
     }
 
+    RegularImmutableList(Object[] objArr) {
+        this(objArr, 0, objArr.length);
+    }
+
+    @Override
+    public int size() {
+        return this.size;
+    }
+
+    @Override
+    boolean isPartialView() {
+        return this.size != this.array.length;
+    }
+
     @Override
     int copyIntoArray(Object[] objArr, int i) {
         System.arraycopy(this.array, this.offset, objArr, i, this.size);
-        return this.size + i;
+        return i + this.size;
     }
 
     @Override
     public E get(int i) {
         Preconditions.checkElementIndex(i, this.size);
-        return (E) this.array[this.offset + i];
+        return (E) this.array[i + this.offset];
     }
 
     @Override
@@ -43,11 +53,6 @@ class RegularImmutableList<E> extends ImmutableList<E> {
     }
 
     @Override
-    boolean isPartialView() {
-        return this.size != this.array.length;
-    }
-
-    @Override
     public int lastIndexOf(Object obj) {
         if (obj == null) {
             return -1;
@@ -61,17 +66,12 @@ class RegularImmutableList<E> extends ImmutableList<E> {
     }
 
     @Override
-    public UnmodifiableListIterator<E> listIterator(int i) {
-        return Iterators.forArray(this.array, this.offset, this.size, i);
-    }
-
-    @Override
-    public int size() {
-        return this.size;
-    }
-
-    @Override
     ImmutableList<E> subListUnchecked(int i, int i2) {
         return new RegularImmutableList(this.array, this.offset + i, i2 - i);
+    }
+
+    @Override
+    public UnmodifiableListIterator<E> listIterator(int i) {
+        return Iterators.forArray(this.array, this.offset, this.size, i);
     }
 }

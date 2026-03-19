@@ -1,0 +1,81 @@
+package android.hardware.radio.V1_0;
+
+import android.os.HidlSupport;
+import android.os.HwBlob;
+import android.os.HwParcel;
+import java.util.ArrayList;
+import java.util.Objects;
+
+public final class CellInfoGsm {
+    public final CellIdentityGsm cellIdentityGsm = new CellIdentityGsm();
+    public final GsmSignalStrength signalStrengthGsm = new GsmSignalStrength();
+
+    public final boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != CellInfoGsm.class) {
+            return false;
+        }
+        CellInfoGsm cellInfoGsm = (CellInfoGsm) obj;
+        if (HidlSupport.deepEquals(this.cellIdentityGsm, cellInfoGsm.cellIdentityGsm) && HidlSupport.deepEquals(this.signalStrengthGsm, cellInfoGsm.signalStrengthGsm)) {
+            return true;
+        }
+        return false;
+    }
+
+    public final int hashCode() {
+        return Objects.hash(Integer.valueOf(HidlSupport.deepHashCode(this.cellIdentityGsm)), Integer.valueOf(HidlSupport.deepHashCode(this.signalStrengthGsm)));
+    }
+
+    public final String toString() {
+        return "{.cellIdentityGsm = " + this.cellIdentityGsm + ", .signalStrengthGsm = " + this.signalStrengthGsm + "}";
+    }
+
+    public final void readFromParcel(HwParcel hwParcel) {
+        readEmbeddedFromParcel(hwParcel, hwParcel.readBuffer(64L), 0L);
+    }
+
+    public static final ArrayList<CellInfoGsm> readVectorFromParcel(HwParcel hwParcel) {
+        ArrayList<CellInfoGsm> arrayList = new ArrayList<>();
+        HwBlob buffer = hwParcel.readBuffer(16L);
+        int int32 = buffer.getInt32(8L);
+        HwBlob embeddedBuffer = hwParcel.readEmbeddedBuffer(int32 * 64, buffer.handle(), 0L, true);
+        arrayList.clear();
+        for (int i = 0; i < int32; i++) {
+            CellInfoGsm cellInfoGsm = new CellInfoGsm();
+            cellInfoGsm.readEmbeddedFromParcel(hwParcel, embeddedBuffer, i * 64);
+            arrayList.add(cellInfoGsm);
+        }
+        return arrayList;
+    }
+
+    public final void readEmbeddedFromParcel(HwParcel hwParcel, HwBlob hwBlob, long j) {
+        this.cellIdentityGsm.readEmbeddedFromParcel(hwParcel, hwBlob, 0 + j);
+        this.signalStrengthGsm.readEmbeddedFromParcel(hwParcel, hwBlob, j + 48);
+    }
+
+    public final void writeToParcel(HwParcel hwParcel) {
+        HwBlob hwBlob = new HwBlob(64);
+        writeEmbeddedToBlob(hwBlob, 0L);
+        hwParcel.writeBuffer(hwBlob);
+    }
+
+    public static final void writeVectorToParcel(HwParcel hwParcel, ArrayList<CellInfoGsm> arrayList) {
+        HwBlob hwBlob = new HwBlob(16);
+        int size = arrayList.size();
+        hwBlob.putInt32(8L, size);
+        hwBlob.putBool(12L, false);
+        HwBlob hwBlob2 = new HwBlob(size * 64);
+        for (int i = 0; i < size; i++) {
+            arrayList.get(i).writeEmbeddedToBlob(hwBlob2, i * 64);
+        }
+        hwBlob.putBlob(0L, hwBlob2);
+        hwParcel.writeBuffer(hwBlob);
+    }
+
+    public final void writeEmbeddedToBlob(HwBlob hwBlob, long j) {
+        this.cellIdentityGsm.writeEmbeddedToBlob(hwBlob, 0 + j);
+        this.signalStrengthGsm.writeEmbeddedToBlob(hwBlob, j + 48);
+    }
+}

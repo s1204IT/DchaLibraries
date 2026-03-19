@@ -254,14 +254,14 @@ public class AntiTheftManager {
         return zDoPplCheckPassword;
     }
 
-    public void sendAntiTheftUpdateMsg(int i, int i2) {
+    private void sendAntiTheftUpdateMsg(int i, int i2) {
         Message messageObtainMessage = this.mHandler.obtainMessage(MSG_ANTITHEFT_KEYGUARD_UPDATE);
         messageObtainMessage.arg1 = i;
         messageObtainMessage.arg2 = i2;
         messageObtainMessage.sendToTarget();
     }
 
-    public void handleAntiTheftViewUpdate(int i, boolean z) {
+    private void handleAntiTheftViewUpdate(int i, boolean z) {
         if (isNeedUpdate(i, z)) {
             setAntiTheftLocked(i, z);
             if (z) {

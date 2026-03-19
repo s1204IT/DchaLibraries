@@ -110,7 +110,7 @@ public class AppDialogFragment extends InstrumentedDialogFragment implements App
         }
     }
 
-    public void onDisconnect(DialogInterface dialogInterface) {
+    private void onDisconnect(DialogInterface dialogInterface) {
         if (isUiRestricted()) {
             return;
         }

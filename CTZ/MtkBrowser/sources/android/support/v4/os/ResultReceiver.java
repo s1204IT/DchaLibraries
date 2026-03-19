@@ -10,55 +10,67 @@ import android.support.v4.os.IResultReceiver;
 public class ResultReceiver implements Parcelable {
     public static final Parcelable.Creator<ResultReceiver> CREATOR = new Parcelable.Creator<ResultReceiver>() {
         @Override
-        public ResultReceiver createFromParcel(Parcel parcel) {
-            return new ResultReceiver(parcel);
+        public ResultReceiver createFromParcel(Parcel in) {
+            return new ResultReceiver(in);
         }
 
         @Override
-        public ResultReceiver[] newArray(int i) {
-            return new ResultReceiver[i];
+        public ResultReceiver[] newArray(int size) {
+            return new ResultReceiver[size];
         }
     };
     IResultReceiver mReceiver;
     final boolean mLocal = false;
     final Handler mHandler = null;
 
-    class MyResultReceiver extends IResultReceiver.Stub {
-        final ResultReceiver this$0;
-
-        MyResultReceiver(ResultReceiver resultReceiver) {
-            this.this$0 = resultReceiver;
-        }
-
-        @Override
-        public void send(int i, Bundle bundle) {
-            if (this.this$0.mHandler != null) {
-                this.this$0.mHandler.post(new MyRunnable(this.this$0, i, bundle));
-            } else {
-                this.this$0.onReceiveResult(i, bundle);
-            }
-        }
-    }
-
     class MyRunnable implements Runnable {
         final int mResultCode;
         final Bundle mResultData;
-        final ResultReceiver this$0;
 
-        MyRunnable(ResultReceiver resultReceiver, int i, Bundle bundle) {
-            this.this$0 = resultReceiver;
-            this.mResultCode = i;
-            this.mResultData = bundle;
+        MyRunnable(int resultCode, Bundle resultData) {
+            this.mResultCode = resultCode;
+            this.mResultData = resultData;
         }
 
         @Override
         public void run() {
-            this.this$0.onReceiveResult(this.mResultCode, this.mResultData);
+            ResultReceiver.this.onReceiveResult(this.mResultCode, this.mResultData);
         }
     }
 
-    ResultReceiver(Parcel parcel) {
-        this.mReceiver = IResultReceiver.Stub.asInterface(parcel.readStrongBinder());
+    class MyResultReceiver extends IResultReceiver.Stub {
+        MyResultReceiver() {
+        }
+
+        @Override
+        public void send(int resultCode, Bundle resultData) {
+            if (ResultReceiver.this.mHandler != null) {
+                ResultReceiver.this.mHandler.post(ResultReceiver.this.new MyRunnable(resultCode, resultData));
+            } else {
+                ResultReceiver.this.onReceiveResult(resultCode, resultData);
+            }
+        }
+    }
+
+    public void send(int resultCode, Bundle resultData) {
+        if (this.mLocal) {
+            if (this.mHandler != null) {
+                this.mHandler.post(new MyRunnable(resultCode, resultData));
+                return;
+            } else {
+                onReceiveResult(resultCode, resultData);
+                return;
+            }
+        }
+        if (this.mReceiver != null) {
+            try {
+                this.mReceiver.send(resultCode, resultData);
+            } catch (RemoteException e) {
+            }
+        }
+    }
+
+    protected void onReceiveResult(int resultCode, Bundle resultData) {
     }
 
     @Override
@@ -66,34 +78,17 @@ public class ResultReceiver implements Parcelable {
         return 0;
     }
 
-    protected void onReceiveResult(int i, Bundle bundle) {
-    }
-
-    public void send(int i, Bundle bundle) {
-        if (this.mLocal) {
-            if (this.mHandler != null) {
-                this.mHandler.post(new MyRunnable(this, i, bundle));
-                return;
-            } else {
-                onReceiveResult(i, bundle);
-                return;
-            }
-        }
-        if (this.mReceiver != null) {
-            try {
-                this.mReceiver.send(i, bundle);
-            } catch (RemoteException e) {
-            }
-        }
-    }
-
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
+    public void writeToParcel(Parcel out, int flags) {
         synchronized (this) {
             if (this.mReceiver == null) {
-                this.mReceiver = new MyResultReceiver(this);
+                this.mReceiver = new MyResultReceiver();
             }
-            parcel.writeStrongBinder(this.mReceiver.asBinder());
+            out.writeStrongBinder(this.mReceiver.asBinder());
         }
+    }
+
+    ResultReceiver(Parcel in) {
+        this.mReceiver = IResultReceiver.Stub.asInterface(in.readStrongBinder());
     }
 }

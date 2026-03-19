@@ -46,37 +46,106 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         this.mBrowserUrlExt = null;
     }
 
-    @Override
-    public void afterTextChanged(Editable editable) {
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-    }
-
-    void clearCompletions() {
-        this.mUrlInput.dismissDropDown();
-    }
-
-    @Override
-    public boolean dispatchKeyEventPreIme(KeyEvent keyEvent) {
-        if (keyEvent.getKeyCode() != 4) {
-            return super.dispatchKeyEventPreIme(keyEvent);
-        }
-        stopEditingUrl();
-        return true;
-    }
-
     public UrlInputView getUrlInputView() {
         return this.mUrlInput;
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        this.mLockIcon = (ImageView) findViewById(R.id.lock);
+        this.mFavicon = (ImageView) findViewById(R.id.favicon);
+        this.mUrlInput = (UrlInputView) findViewById(R.id.url);
+        this.mUrlInput.setUrlInputListener(this);
+        this.mUrlInput.setOnFocusChangeListener(this);
+        this.mUrlInput.setSelectAllOnFocus(true);
+        this.mUrlInput.addTextChangedListener(this);
+        this.mBrowserUrlExt = Extensions.getUrlPlugin(((View) this).mContext);
+        InputFilter[] inputFilterArrCheckUrlLengthLimit = this.mBrowserUrlExt.checkUrlLengthLimit(((View) this).mContext);
+        if (inputFilterArrCheckUrlLengthLimit != null) {
+            this.mUrlInput.setFilters(inputFilterArrCheckUrlLengthLimit);
+        }
+    }
+
+    public void setTitleBar(TitleBar titleBar) {
+        this.mTitleBar = titleBar;
+        this.mBaseUi = this.mTitleBar.getUi();
+        this.mUiController = this.mTitleBar.getUiController();
+        this.mUrlInput.setController(this.mUiController);
+    }
+
+    public void setLock(Drawable drawable) {
+        if (this.mLockIcon == null) {
+            return;
+        }
+        if (drawable == null) {
+            this.mLockIcon.setVisibility(8);
+        } else {
+            this.mLockIcon.setImageDrawable(drawable);
+            this.mLockIcon.setVisibility(0);
+        }
+    }
+
+    public void setFavicon(Bitmap bitmap) {
+        if (this.mFavicon == null) {
+            return;
+        }
+        this.mFavicon.setImageDrawable(this.mBaseUi.getFaviconDrawable(bitmap));
+    }
+
+    @Override
+    public void onClick(View view) {
+    }
+
+    @Override
+    public void onFocusChange(View view, boolean z) {
+        Tab currentTab;
+        if (z || view.isInTouchMode() || this.mUrlInput.needsUpdate()) {
+            setFocusState(z);
+        }
+        if (z) {
+            this.mBaseUi.showTitleBar();
+        } else if (!this.mUrlInput.needsUpdate()) {
+            this.mUrlInput.dismissDropDown();
+            this.mUrlInput.hideIME();
+            if (this.mUrlInput.getText().length() == 0 && (currentTab = this.mUiController.getTabControl().getCurrentTab()) != null) {
+                setDisplayTitle(currentTab.getUrl());
+            }
+            this.mBaseUi.suggestHideTitleBar();
+        }
+        this.mUrlInput.clearNeedsUpdate();
+    }
+
+    protected void setFocusState(boolean z) {
     }
 
     public boolean isEditingUrl() {
         return this.mUrlInput.hasFocus();
     }
 
-    public boolean isMenuShowing() {
-        return false;
+    void stopEditingUrl() {
+        WebView currentTopWebView = this.mUiController.getCurrentTopWebView();
+        if (currentTopWebView != null) {
+            currentTopWebView.requestFocus();
+        }
+    }
+
+    void setDisplayTitle(String str) {
+        if (!isEditingUrl()) {
+            if (str.startsWith("about:blank")) {
+                this.mUrlInput.setText((CharSequence) "about:blank", false);
+            } else {
+                this.mUrlInput.setText((CharSequence) str, false);
+            }
+        }
+    }
+
+    void setIncognitoMode(boolean z) {
+        this.mUrlInput.setIncognitoMode(z);
+    }
+
+    void clearCompletions() {
+        this.mUrlInput.dismissDropDown();
     }
 
     @Override
@@ -122,7 +191,18 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
     }
 
     @Override
-    public void onClick(View view) {
+    public void onDismiss() {
+        final Tab activeTab = this.mBaseUi.getActiveTab();
+        this.mBaseUi.hideTitleBar();
+        post(new Runnable() {
+            @Override
+            public void run() {
+                NavigationBarBase.this.clearFocus();
+                if (activeTab != null) {
+                    NavigationBarBase.this.setDisplayTitle(activeTab.getUrl());
+                }
+            }
+        });
     }
 
     @Override
@@ -133,128 +213,16 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         }
     }
 
-    @Override
-    public void onDismiss() {
-        Tab activeTab = this.mBaseUi.getActiveTab();
-        this.mBaseUi.hideTitleBar();
-        post(new Runnable(this, activeTab) {
-            final NavigationBarBase this$0;
-            final Tab val$currentTab;
-
-            {
-                this.this$0 = this;
-                this.val$currentTab = activeTab;
-            }
-
-            @Override
-            public void run() {
-                this.this$0.clearFocus();
-                if (this.val$currentTab != null) {
-                    this.this$0.setDisplayTitle(this.val$currentTab.getUrl());
-                }
-            }
-        });
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        this.mLockIcon = (ImageView) findViewById(2131558527);
-        this.mFavicon = (ImageView) findViewById(2131558406);
-        this.mUrlInput = (UrlInputView) findViewById(2131558408);
-        this.mUrlInput.setUrlInputListener(this);
-        this.mUrlInput.setOnFocusChangeListener(this);
-        this.mUrlInput.setSelectAllOnFocus(true);
-        this.mUrlInput.addTextChangedListener(this);
-        this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mContext);
-        InputFilter[] inputFilterArrCheckUrlLengthLimit = this.mBrowserUrlExt.checkUrlLengthLimit(this.mContext);
-        if (inputFilterArrCheckUrlLengthLimit != null) {
-            this.mUrlInput.setFilters(inputFilterArrCheckUrlLengthLimit);
-        }
-    }
-
-    @Override
-    public void onFocusChange(View view, boolean z) {
-        Tab currentTab;
-        if (z || view.isInTouchMode() || this.mUrlInput.needsUpdate()) {
-            setFocusState(z);
-        }
-        if (z) {
-            this.mBaseUi.showTitleBar();
-        } else if (!this.mUrlInput.needsUpdate()) {
-            this.mUrlInput.dismissDropDown();
-            this.mUrlInput.hideIME();
-            if (this.mUrlInput.getText().length() == 0 && (currentTab = this.mUiController.getTabControl().getCurrentTab()) != null) {
-                setDisplayTitle(currentTab.getUrl());
-            }
-            this.mBaseUi.suggestHideTitleBar();
-        }
-        this.mUrlInput.clearNeedsUpdate();
-    }
-
-    public void onProgressStarted() {
-    }
-
-    public void onProgressStopped() {
-    }
-
-    public void onTabDataChanged(Tab tab) {
-    }
-
-    @Override
-    public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-    }
-
-    public void onVoiceResult(String str) {
-        startEditingUrl(true, true);
-        onCopySuggestion(str);
-    }
-
     public void setCurrentUrlIsBookmark(boolean z) {
     }
 
-    void setDisplayTitle(String str) {
-        if (isEditingUrl()) {
-            return;
+    @Override
+    public boolean dispatchKeyEventPreIme(KeyEvent keyEvent) {
+        if (keyEvent.getKeyCode() == 4) {
+            stopEditingUrl();
+            return true;
         }
-        if (str.startsWith("about:blank")) {
-            this.mUrlInput.setText((CharSequence) "about:blank", false);
-        } else {
-            this.mUrlInput.setText((CharSequence) str, false);
-        }
-    }
-
-    public void setFavicon(Bitmap bitmap) {
-        if (this.mFavicon == null) {
-            return;
-        }
-        this.mFavicon.setImageDrawable(this.mBaseUi.getFaviconDrawable(bitmap));
-    }
-
-    protected void setFocusState(boolean z) {
-    }
-
-    void setIncognitoMode(boolean z) {
-        this.mUrlInput.setIncognitoMode(z);
-    }
-
-    public void setLock(Drawable drawable) {
-        if (this.mLockIcon == null) {
-            return;
-        }
-        if (drawable == null) {
-            this.mLockIcon.setVisibility(8);
-        } else {
-            this.mLockIcon.setImageDrawable(drawable);
-            this.mLockIcon.setVisibility(0);
-        }
-    }
-
-    public void setTitleBar(TitleBar titleBar) {
-        this.mTitleBar = titleBar;
-        this.mBaseUi = this.mTitleBar.getUi();
-        this.mUiController = this.mTitleBar.getUiController();
-        this.mUrlInput.setController(this.mUiController);
+        return super.dispatchKeyEventPreIme(keyEvent);
     }
 
     void startEditingUrl(boolean z, boolean z2) {
@@ -273,10 +241,33 @@ public class NavigationBarBase extends LinearLayout implements TextWatcher, View
         }
     }
 
-    void stopEditingUrl() {
-        WebView currentTopWebView = this.mUiController.getCurrentTopWebView();
-        if (currentTopWebView != null) {
-            currentTopWebView.requestFocus();
-        }
+    public void onProgressStarted() {
+    }
+
+    public void onProgressStopped() {
+    }
+
+    public boolean isMenuShowing() {
+        return false;
+    }
+
+    public void onTabDataChanged(Tab tab) {
+    }
+
+    public void onVoiceResult(String str) {
+        startEditingUrl(true, true);
+        onCopySuggestion(str);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
     }
 }

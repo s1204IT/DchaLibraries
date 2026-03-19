@@ -11,22 +11,23 @@ final class SessionToken2ImplLegacy implements SessionToken2.SupportLibraryImpl 
         this.mLegacyToken = token;
     }
 
-    public static SessionToken2ImplLegacy fromBundle(Bundle bundle) {
-        return new SessionToken2ImplLegacy(MediaSessionCompat.Token.fromBundle(bundle.getBundle("android.media.token.LEGACY")));
-    }
-
-    public boolean equals(Object obj) {
-        if (obj instanceof SessionToken2ImplLegacy) {
-            return this.mLegacyToken.equals(((SessionToken2ImplLegacy) obj).mLegacyToken);
-        }
-        return false;
-    }
-
     public int hashCode() {
         return this.mLegacyToken.hashCode();
     }
 
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SessionToken2ImplLegacy)) {
+            return false;
+        }
+        return this.mLegacyToken.equals(obj.mLegacyToken);
+    }
+
     public String toString() {
         return "SessionToken2 {legacyToken=" + this.mLegacyToken + "}";
+    }
+
+    public static SessionToken2ImplLegacy fromBundle(Bundle bundle) {
+        Bundle legacyTokenBundle = bundle.getBundle("android.media.token.LEGACY");
+        return new SessionToken2ImplLegacy(MediaSessionCompat.Token.fromBundle(legacyTokenBundle));
     }
 }

@@ -21,21 +21,21 @@ public class NetlinkSocket {
             connectToKernel(fileDescriptorForProto);
             sendMessage(fileDescriptorForProto, bArr, 0, bArr.length, 300L);
             ByteBuffer byteBufferRecvMessage = recvMessage(fileDescriptorForProto, 8192, 300L);
-            NetlinkMessage netlinkMessage = NetlinkMessage.parse(byteBufferRecvMessage);
-            if (netlinkMessage != null && (netlinkMessage instanceof NetlinkErrorMessage) && ((NetlinkErrorMessage) netlinkMessage).getNlMsgError() != null) {
-                int i2 = ((NetlinkErrorMessage) netlinkMessage).getNlMsgError().error;
+            ?? r0 = NetlinkMessage.parse(byteBufferRecvMessage);
+            if (r0 != 0 && (r0 instanceof NetlinkErrorMessage) && r0.getNlMsgError() != null) {
+                int i2 = r0.getNlMsgError().error;
                 if (i2 != 0) {
-                    Log.e("NetlinkSocket", "Error in NetlinkSocket.sendOneShotKernelMessage, errmsg=" + netlinkMessage.toString());
-                    throw new ErrnoException(netlinkMessage.toString(), Math.abs(i2));
+                    Log.e("NetlinkSocket", "Error in NetlinkSocket.sendOneShotKernelMessage, errmsg=" + r0.toString());
+                    throw new ErrnoException(r0.toString(), Math.abs(i2));
                 }
                 IoUtils.closeQuietly(fileDescriptorForProto);
                 return;
             }
-            if (netlinkMessage == null) {
+            if (r0 == 0) {
                 byteBufferRecvMessage.position(0);
                 string = "raw bytes: " + NetlinkConstants.hexify(byteBufferRecvMessage);
             } else {
-                string = netlinkMessage.toString();
+                string = r0.toString();
             }
             Log.e("NetlinkSocket", "Error in NetlinkSocket.sendOneShotKernelMessage, errmsg=" + string);
             throw new ErrnoException(string, OsConstants.EPROTO);

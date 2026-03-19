@@ -41,7 +41,7 @@ public abstract class BaseTimeZoneInfoPicker extends BaseTimeZonePicker {
         return null;
     }
 
-    public void onListItemClick(TimeZoneInfoItem timeZoneInfoItem) {
+    private void onListItemClick(TimeZoneInfoItem timeZoneInfoItem) {
         getActivity().setResult(-1, prepareResultData(timeZoneInfoItem.mTimeZoneInfo));
         getActivity().finish();
     }
@@ -69,7 +69,7 @@ public abstract class BaseTimeZoneInfoPicker extends BaseTimeZonePicker {
         }
     }
 
-    static class TimeZoneInfoItem implements BaseTimeZoneAdapter.AdapterItem {
+    private static class TimeZoneInfoItem implements BaseTimeZoneAdapter.AdapterItem {
         private final long mItemId;
         private final Resources mResources;
         private final String[] mSearchKeys;

@@ -80,7 +80,7 @@ public class DozeTriggers implements DozeMachine.Part {
         this.mUiModeManager = (UiModeManager) this.mContext.getSystemService(UiModeManager.class);
     }
 
-    public void onNotification() {
+    private void onNotification() {
         if (DozeMachine.DEBUG) {
             Log.d("DozeTriggers", "requestNotificationPulse");
         }
@@ -113,7 +113,7 @@ public class DozeTriggers implements DozeMachine.Part {
         }
     }
 
-    public void onSensor(int i, boolean z, final float f, final float f2) {
+    private void onSensor(int i, boolean z, final float f, final float f2) {
         boolean z2 = false;
         final boolean z3 = i == 4;
         boolean z4 = i == 3;
@@ -148,7 +148,7 @@ public class DozeTriggers implements DozeMachine.Part {
         }
     }
 
-    public void onProximityFar(boolean z) {
+    private void onProximityFar(boolean z) {
         boolean z2 = !z;
         DozeMachine.State state = this.mMachine.getState();
         boolean z3 = state == DozeMachine.State.DOZE_AOD_PAUSED;
@@ -213,7 +213,7 @@ public class DozeTriggers implements DozeMachine.Part {
         }
     }
 
-    public void requestPulse(final int i, boolean z) {
+    private void requestPulse(final int i, boolean z) {
         Assert.isMainThread();
         this.mDozeHost.extendPulse();
         if (this.mPulsePending || !this.mAllowPulseTriggers || !canPulse()) {

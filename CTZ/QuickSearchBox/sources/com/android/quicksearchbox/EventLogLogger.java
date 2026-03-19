@@ -15,18 +15,52 @@ public class EventLogLogger implements Logger {
         this.mPackageName = this.mContext.getPackageName();
     }
 
+    protected Context getContext() {
+        return this.mContext;
+    }
+
+    protected int getVersionCode() {
+        return QsbApplication.get(getContext()).getVersionCode();
+    }
+
+    @Override
+    public void logStart(int i, int i2, String str) {
+        EventLogTags.writeQsbStart(this.mPackageName, getVersionCode(), str, i2, null, null, i);
+    }
+
+    @Override
+    public void logSuggestionClick(long j, SuggestionCursor suggestionCursor, int i) {
+        EventLogTags.writeQsbClick(j, getSuggestions(suggestionCursor), null, suggestionCursor.getUserQuery().length(), i);
+    }
+
+    @Override
+    public void logSearch(int i, int i2) {
+        EventLogTags.writeQsbSearch(null, i, i2);
+    }
+
+    @Override
+    public void logVoiceSearch() {
+        EventLogTags.writeQsbVoiceSearch(null);
+    }
+
+    @Override
+    public void logExit(SuggestionCursor suggestionCursor, int i) {
+        EventLogTags.writeQsbExit(getSuggestions(suggestionCursor), i);
+    }
+
+    @Override
+    public void logLatency(SourceResult sourceResult) {
+    }
+
     private String getSuggestions(SuggestionCursor suggestionCursor) {
         int count;
-        int i;
         StringBuilder sb = new StringBuilder();
-        if (suggestionCursor == null) {
-            count = 0;
-            i = 0;
-        } else {
+        if (suggestionCursor != null) {
             count = suggestionCursor.getCount();
-            i = 0;
+        } else {
+            count = 0;
         }
-        while (i < count) {
+        for (int i = 0; i < count; i++) {
             if (i > 0) {
                 sb.append('|');
             }
@@ -42,45 +76,7 @@ public class EventLogLogger implements Logger {
             sb.append(suggestionLogType);
             sb.append(':');
             sb.append(str);
-            i++;
         }
         return sb.toString();
-    }
-
-    protected Context getContext() {
-        return this.mContext;
-    }
-
-    protected int getVersionCode() {
-        return QsbApplication.get(getContext()).getVersionCode();
-    }
-
-    @Override
-    public void logExit(SuggestionCursor suggestionCursor, int i) {
-        EventLogTags.writeQsbExit(getSuggestions(suggestionCursor), i);
-    }
-
-    @Override
-    public void logLatency(SourceResult sourceResult) {
-    }
-
-    @Override
-    public void logSearch(int i, int i2) {
-        EventLogTags.writeQsbSearch(null, i, i2);
-    }
-
-    @Override
-    public void logStart(int i, int i2, String str) {
-        EventLogTags.writeQsbStart(this.mPackageName, getVersionCode(), str, i2, null, null, i);
-    }
-
-    @Override
-    public void logSuggestionClick(long j, SuggestionCursor suggestionCursor, int i) {
-        EventLogTags.writeQsbClick(j, getSuggestions(suggestionCursor), null, suggestionCursor.getUserQuery().length(), i);
-    }
-
-    @Override
-    public void logVoiceSearch() {
-        EventLogTags.writeQsbVoiceSearch(null);
     }
 }

@@ -21,7 +21,7 @@ public class DebugEstimatesLoader extends AsyncLoader<List<BatteryInfo>> {
     }
 
     @Override
-    public void onDiscardResult(List<BatteryInfo> list) {
+    protected void onDiscardResult(List<BatteryInfo> list) {
     }
 
     @Override

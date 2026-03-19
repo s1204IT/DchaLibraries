@@ -9,13 +9,13 @@ public class SuggestionPosition extends AbstractSuggestionWrapper {
         this.mPosition = i;
     }
 
-    @Override
-    protected Suggestion current() {
-        this.mCursor.moveTo(this.mPosition);
+    public SuggestionCursor getCursor() {
         return this.mCursor;
     }
 
-    public SuggestionCursor getCursor() {
+    @Override
+    protected Suggestion current() {
+        this.mCursor.moveTo(this.mPosition);
         return this.mCursor;
     }
 

@@ -443,7 +443,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         showProgressDialog(getResources().getString(R.string.progress_dlg_writing));
     }
 
-    public void getCallForwardStatus(int i) {
+    private void getCallForwardStatus(int i) {
         if (this.mService == null) {
             Log.d("SmartCallFwdFragment", "service not started yet");
             return;
@@ -462,7 +462,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         }
     }
 
-    public void setCallForwardStatus(int i, int i2) {
+    private void setCallForwardStatus(int i, int i2) {
         if (this.mService == null) {
             Log.d("SmartCallFwdFragment", "service not started yet");
             return;
@@ -644,7 +644,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         }
     }
 
-    public void updateGetCfStatus() {
+    private void updateGetCfStatus() {
         String string;
         int i;
         String text = this.mSim1Pref.getText();
@@ -761,7 +761,7 @@ public class SmartCallFwdFragment extends PreferenceFragment implements Preferen
         }
     }
 
-    public void showAlertDialog(String str, String str2) {
+    private void showAlertDialog(String str, String str2) {
         Log.d("SmartCallFwdFragment", "showAlertDialog");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(str);

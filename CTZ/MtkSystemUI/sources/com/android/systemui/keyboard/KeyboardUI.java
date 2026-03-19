@@ -86,7 +86,7 @@ public class KeyboardUI extends SystemUI implements InputManager.OnTabletModeCha
         }
     }
 
-    public void init() {
+    private void init() {
         Context context = this.mContext;
         this.mKeyboardName = context.getString(R.string.anr_application_process);
         if (TextUtils.isEmpty(this.mKeyboardName)) {
@@ -109,7 +109,7 @@ public class KeyboardUI extends SystemUI implements InputManager.OnTabletModeCha
         this.mUIHandler = new KeyboardUIHandler();
     }
 
-    public void processKeyboardState() {
+    private void processKeyboardState() {
         this.mHandler.removeMessages(2);
         if (!this.mEnabled) {
             this.mState = -1;
@@ -205,7 +205,7 @@ public class KeyboardUI extends SystemUI implements InputManager.OnTabletModeCha
         return null;
     }
 
-    public CachedBluetoothDevice getCachedBluetoothDevice(BluetoothDevice bluetoothDevice) {
+    private CachedBluetoothDevice getCachedBluetoothDevice(BluetoothDevice bluetoothDevice) {
         CachedBluetoothDevice cachedBluetoothDeviceFindDevice = this.mCachedDeviceManager.findDevice(bluetoothDevice);
         if (cachedBluetoothDeviceFindDevice == null) {
             return this.mCachedDeviceManager.addDevice(this.mLocalBluetoothAdapter, this.mProfileManager, bluetoothDevice);
@@ -235,14 +235,14 @@ public class KeyboardUI extends SystemUI implements InputManager.OnTabletModeCha
         }
     }
 
-    public void bleAbortScanInternal(int i) {
+    private void bleAbortScanInternal(int i) {
         if (this.mState == 3 && i == this.mScanAttempt) {
             stopScanning();
             this.mState = 9;
         }
     }
 
-    public void onDeviceAddedInternal(CachedBluetoothDevice cachedBluetoothDevice) {
+    private void onDeviceAddedInternal(CachedBluetoothDevice cachedBluetoothDevice) {
         if (this.mState == 3 && cachedBluetoothDevice.getName().equals(this.mKeyboardName)) {
             stopScanning();
             cachedBluetoothDevice.startPairing();
@@ -250,13 +250,13 @@ public class KeyboardUI extends SystemUI implements InputManager.OnTabletModeCha
         }
     }
 
-    public void onBluetoothStateChangedInternal(int i) {
+    private void onBluetoothStateChangedInternal(int i) {
         if (i == 12 && this.mState == 4) {
             processKeyboardState();
         }
     }
 
-    public void onDeviceBondStateChangedInternal(CachedBluetoothDevice cachedBluetoothDevice, int i) {
+    private void onDeviceBondStateChangedInternal(CachedBluetoothDevice cachedBluetoothDevice, int i) {
         if (this.mState == 5 && cachedBluetoothDevice.getName().equals(this.mKeyboardName)) {
             if (i == 12) {
                 this.mState = 6;
@@ -266,14 +266,14 @@ public class KeyboardUI extends SystemUI implements InputManager.OnTabletModeCha
         }
     }
 
-    public void onBleScanFailedInternal() {
+    private void onBleScanFailedInternal() {
         this.mScanCallback = null;
         if (this.mState == 3) {
             this.mState = 9;
         }
     }
 
-    public void onShowErrorInternal(Context context, String str, int i) {
+    private void onShowErrorInternal(Context context, String str, int i) {
         if ((this.mState == 5 || this.mState == 7) && this.mKeyboardName.equals(str)) {
             Toast.makeText(context, context.getString(i, str), 0).show();
         }

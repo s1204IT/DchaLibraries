@@ -11,8 +11,55 @@ public class UrlUtils {
     static final Pattern ACCEPTED_URI_SCHEMA = Pattern.compile("(?i)((?:http|https|file):\\/\\/|(?:data|about|javascript):|(?:.*:.*@))(.*)");
     private static final Pattern STRIP_URL_PATTERN = Pattern.compile("^http://(.*?)/?$");
 
-    static String filteredUrl(String str) {
-        return (str == null || str.startsWith("content:") || str.startsWith("browser:")) ? "" : str;
+    public static String stripUrl(String str) {
+        if (str == null) {
+            return null;
+        }
+        Matcher matcher = STRIP_URL_PATTERN.matcher(str);
+        if (matcher.matches()) {
+            return matcher.group(1);
+        }
+        return str;
+    }
+
+    protected static String smartUrlFilter(Uri uri) {
+        if (uri != null) {
+            return smartUrlFilter(uri.toString());
+        }
+        return null;
+    }
+
+    public static String smartUrlFilter(String str) {
+        return smartUrlFilter(str, true);
+    }
+
+    public static String smartUrlFilter(String str, boolean z) {
+        boolean z2;
+        String strTrim = str.trim();
+        if (strTrim.indexOf(32) == -1) {
+            z2 = false;
+        } else {
+            z2 = true;
+        }
+        Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(strTrim);
+        if (matcher.matches()) {
+            String strGroup = matcher.group(1);
+            String lowerCase = strGroup.toLowerCase();
+            if (!lowerCase.equals(strGroup)) {
+                strTrim = lowerCase + matcher.group(2);
+            }
+            if (z2 && Patterns.WEB_URL.matcher(strTrim).matches()) {
+                return strTrim.replace(" ", "%20");
+            }
+            return strTrim;
+        }
+        if (!z2 && Patterns.WEB_URL.matcher(strTrim).matches()) {
+            return URLUtil.guessUrl(strTrim);
+        }
+        if (z) {
+            return URLUtil.composeSearchUrl(strTrim, "http://www.google.com/m?q=%s", "%s");
+        }
+        return null;
     }
 
     public static String fixUrl(String str) {
@@ -29,49 +76,22 @@ public class UrlUtils {
                 str2 = str2.substring(0, iIndexOf).toLowerCase() + str2.substring(iIndexOf);
             }
         }
-        return (str2.startsWith("http://") || str2.startsWith("https://")) ? str2 : (str2.startsWith("http:") || str2.startsWith("https:")) ? (str2.startsWith("http:/") || str2.startsWith("https:/")) ? str2.replaceFirst("/", "//") : str2.replaceFirst(":", "://") : str2;
-    }
-
-    protected static String smartUrlFilter(Uri uri) {
-        if (uri != null) {
-            return smartUrlFilter(uri.toString());
+        if (str2.startsWith("http://") || str2.startsWith("https://")) {
+            return str2;
         }
-        return null;
-    }
-
-    public static String smartUrlFilter(String str) {
-        return smartUrlFilter(str, true);
-    }
-
-    public static String smartUrlFilter(String str, boolean z) {
-        String str2;
-        String strTrim = str.trim();
-        boolean z2 = strTrim.indexOf(32) != -1;
-        Matcher matcher = ACCEPTED_URI_SCHEMA.matcher(strTrim);
-        if (!matcher.matches()) {
-            if (!z2 && Patterns.WEB_URL.matcher(strTrim).matches()) {
-                return URLUtil.guessUrl(strTrim);
+        if (str2.startsWith("http:") || str2.startsWith("https:")) {
+            if (str2.startsWith("http:/") || str2.startsWith("https:/")) {
+                return str2.replaceFirst("/", "//");
             }
-            if (z) {
-                return URLUtil.composeSearchUrl(strTrim, "http://www.google.com/m?q=%s", "%s");
-            }
-            return null;
+            return str2.replaceFirst(":", "://");
         }
-        String strGroup = matcher.group(1);
-        String lowerCase = strGroup.toLowerCase();
-        if (lowerCase.equals(strGroup)) {
-            str2 = strTrim;
-        } else {
-            str2 = lowerCase + matcher.group(2);
-        }
-        return (z2 && Patterns.WEB_URL.matcher(str2).matches()) ? str2.replace(" ", "%20") : str2;
+        return str2;
     }
 
-    public static String stripUrl(String str) {
-        if (str == null) {
-            return null;
+    static String filteredUrl(String str) {
+        if (str == null || str.startsWith("content:") || str.startsWith("browser:")) {
+            return "";
         }
-        Matcher matcher = STRIP_URL_PATTERN.matcher(str);
-        return matcher.matches() ? matcher.group(1) : str;
+        return str;
     }
 }

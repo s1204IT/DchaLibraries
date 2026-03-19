@@ -168,7 +168,7 @@ public class CachedBluetoothDevice implements Comparable<CachedBluetoothDevice> 
         this.isReconnectedTimeOut = false;
     }
 
-    public void stopTimer() {
+    private void stopTimer() {
         if (this.mTimer != null) {
             this.mTimer.cancel();
             this.mTimer = null;

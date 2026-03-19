@@ -158,7 +158,7 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         updateListening();
     }
 
-    public void updateListening() {
+    private void updateListening() {
         for (TilePage tilePage : this.mPages) {
             tilePage.setListening(tilePage.getParent() == null ? false : this.mListening);
         }
@@ -244,7 +244,7 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         updateSelected();
     }
 
-    public void updateSelected() {
+    private void updateSelected() {
         if (this.mLastExpansion > 0.0f && this.mLastExpansion < 1.0f) {
             return;
         }
@@ -267,7 +267,7 @@ public class PagedTileLayout extends ViewPager implements QSPanel.QSTileLayout {
         post(this.mDistribute);
     }
 
-    public void distributeTiles() {
+    private void distributeTiles() {
         int size = this.mPages.size();
         for (int i = 0; i < size; i++) {
             this.mPages.get(i).removeAllViews();

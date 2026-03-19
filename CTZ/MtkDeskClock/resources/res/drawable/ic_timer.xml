@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:height="24dp"
+    android:width="24dp">
+    <group
+        android:name="hourglass_frame"
+        android:scaleX="0.7"
+        android:scaleY="0.7">
+        <group android:name="hourglass_frame_pivot">
+            <group android:name="hourglass_bottom">
+                <path android:name="bottom_inner_path"/>
+            </group>
+            <group android:name="hourglass_top">
+                <path android:name="top_inner_path"/>
+            </group>
+        </group>
+    </group>
+    <group
+        android:name="hourglass_fill"
+        android:scaleX="0.7"
+        android:scaleY="0.7">
+        <group android:name="hourglass_fill_pivot">
+            <clip-path android:name="mask_1"/>
+            <path android:name="fill_path"/>
+        </group>
+    </group>
+</vector>

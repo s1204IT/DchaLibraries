@@ -1335,7 +1335,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         setAreThereNotifications();
     }
 
-    public void updateQsExpansionEnabled() {
+    private void updateQsExpansionEnabled() {
         this.mNotificationPanel.setQsExpansionEnabled(isDeviceProvisioned() && (this.mUserSetup || this.mUserSwitcherController == null || !this.mUserSwitcherController.isSimpleUserSwitcher()) && (this.mDisabled2 & 4) == 0 && (this.mDisabled2 & 1) == 0 && !this.mDozing && !ONLY_CORE_APPS);
     }
 
@@ -2062,7 +2062,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    public void runPostCollapseRunnables() {
+    private void runPostCollapseRunnables() {
         ArrayList arrayList = new ArrayList(this.mPostCollapseRunnables);
         this.mPostCollapseRunnables.clear();
         int size = arrayList.size();
@@ -2284,7 +2284,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         barTransitions.transitionTo(i, (this.mNoAnimationOnNextBarModeChange || !this.mDeviceInteractive || i2 == 2) ? false : true);
     }
 
-    public void finishBarAnimations() {
+    private void finishBarAnimations() {
         if (this.mStatusBarView != null) {
             this.mStatusBarView.getBarTransitions().finishAnimations();
         }
@@ -2314,7 +2314,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         checkBarModes();
     }
 
-    public void dismissVolumeDialog() {
+    private void dismissVolumeDialog() {
         if (this.mVolumeComponent != null) {
             this.mVolumeComponent.dismissNow();
         }
@@ -2655,7 +2655,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    public void executeWhenUnlocked(KeyguardHostView.OnDismissAction onDismissAction) {
+    private void executeWhenUnlocked(KeyguardHostView.OnDismissAction onDismissAction) {
         if (this.mStatusBarKeyguardViewManager.isShowing()) {
             this.mLeaveOpenOnKeyguardHide = true;
         }
@@ -2866,7 +2866,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }, i);
     }
 
-    public void handleStartActivityDismissingKeyguard(Intent intent, boolean z) {
+    private void handleStartActivityDismissingKeyguard(Intent intent, boolean z) {
         startActivityDismissingKeyguard(intent, z, true);
     }
 
@@ -2967,7 +2967,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return this.mState == 3;
     }
 
-    public boolean updateIsKeyguard() {
+    private boolean updateIsKeyguard() {
         boolean z = this.mFingerprintUnlockController.getMode() == 1;
         boolean z2 = this.mDozingRequested && (!this.mDeviceInteractive || (isGoingToSleep() && (isScreenFullyOff() || this.mIsKeyguard)));
         boolean z3 = (this.mKeyguardRequested || z2) && !z;
@@ -3012,7 +3012,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    public void onLaunchTransitionFadingEnded() {
+    private void onLaunchTransitionFadingEnded() {
         this.mNotificationPanel.setAlpha(1.0f);
         this.mNotificationPanel.onAffordanceLaunchEnded();
         releaseGestureWakeLock();
@@ -3091,7 +3091,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         this.mHandler.sendEmptyMessageDelayed(1003, 5000L);
     }
 
-    public void onLaunchTransitionTimeout() {
+    private void onLaunchTransitionTimeout() {
         Log.w("StatusBar", "Launch transition: Timeout!");
         this.mNotificationPanel.onAffordanceLaunchEnded();
         releaseGestureWakeLock();
@@ -3150,7 +3150,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         return z;
     }
 
-    public void releaseGestureWakeLock() {
+    private void releaseGestureWakeLock() {
         if (this.mGestureWakeLock.isHeld()) {
             this.mGestureWakeLock.release();
         }
@@ -3930,7 +3930,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         updateScrimController();
     }
 
-    public void updateDozing() {
+    private void updateDozing() {
         Trace.beginSection("StatusBar#updateDozing");
         boolean z = false;
         boolean z2 = (this.mDozingRequested && this.mState == 1) || this.mFingerprintUnlockController.getMode() == 2;
@@ -4173,7 +4173,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
             motionEventObtain.recycle();
         }
 
-        public boolean shouldAnimateWakeup() {
+        private boolean shouldAnimateWakeup() {
             return this.mAnimateWakeup;
         }
 
@@ -4340,7 +4340,7 @@ public class StatusBar extends SystemUI implements ColorExtractor.OnColorsChange
         }
     }
 
-    public boolean collapsePanel() {
+    private boolean collapsePanel() {
         if (this.mNotificationPanel.isFullyCollapsed()) {
             return false;
         }

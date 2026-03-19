@@ -12,16 +12,10 @@ public class PriorityThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable runnable) {
-        return new Thread(this, runnable) {
-            final PriorityThreadFactory this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        return new Thread(runnable) {
             @Override
             public void run() {
-                Process.setThreadPriority(this.this$0.mPriority);
+                Process.setThreadPriority(PriorityThreadFactory.this.mPriority);
                 super.run();
             }
         };

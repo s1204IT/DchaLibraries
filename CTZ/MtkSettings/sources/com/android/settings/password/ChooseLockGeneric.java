@@ -503,7 +503,7 @@ public class ChooseLockGeneric extends SettingsActivity {
             finish();
         }
 
-        public void removeManagedProfileFingerprintsAndFinishIfNecessary(int i) {
+        private void removeManagedProfileFingerprintsAndFinishIfNecessary(int i) {
             if (this.mFingerprintManager != null && this.mFingerprintManager.isHardwareDetected()) {
                 this.mFingerprintManager.setActiveUser(UserHandle.myUserId());
             }
@@ -606,7 +606,7 @@ public class ChooseLockGeneric extends SettingsActivity {
             return (ScreenLockType.SWIPE.preferenceKey.equals(str) || ScreenLockType.NONE.preferenceKey.equals(str)) ? false : true;
         }
 
-        public boolean setUnlockMethod(String str) {
+        private boolean setUnlockMethod(String str) {
             EventLog.writeEvent(90200, str);
             ScreenLockType screenLockTypeFromKey = ScreenLockType.fromKey(str);
             if (screenLockTypeFromKey != null) {

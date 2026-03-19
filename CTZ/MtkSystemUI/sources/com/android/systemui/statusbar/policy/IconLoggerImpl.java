@@ -59,7 +59,7 @@ public class IconLoggerImpl implements IconLogger {
         }
     }
 
-    public void doLog() {
+    private void doLog() {
         ArraySet<String> arraySet;
         long jCurrentTimeMillis = System.currentTimeMillis();
         long j = jCurrentTimeMillis - this.mLastLog;

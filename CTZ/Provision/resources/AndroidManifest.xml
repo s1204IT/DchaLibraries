@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="28"
+    android:versionName="9"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.provision"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <original-package android:name="com.android.provision"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
+    <application>
+        <activity
+            android:name="DefaultActivity"
+            android:excludeFromRecents="true">
+            <intent-filter android:priority="1">
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.HOME"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.SETUP_WIZARD"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

@@ -10,9 +10,27 @@ import java.util.List;
 import java.util.ListIterator;
 
 public final class Lists {
+    public static <E> ArrayList<E> newArrayList() {
+        return new ArrayList<>();
+    }
+
     static int computeArrayListCapacity(int i) {
         CollectPreconditions.checkNonnegative(i, "arraySize");
         return Ints.saturatedCast(5 + ((long) i) + ((long) (i / 10)));
+    }
+
+    public static <E> ArrayList<E> newArrayList(Iterable<? extends E> iterable) {
+        Preconditions.checkNotNull(iterable);
+        if (iterable instanceof Collection) {
+            return new ArrayList<>(Collections2.cast(iterable));
+        }
+        return newArrayList(iterable.iterator());
+    }
+
+    public static <E> ArrayList<E> newArrayList(Iterator<? extends E> it) {
+        ArrayList<E> arrayListNewArrayList = newArrayList();
+        Iterators.addAll(arrayListNewArrayList, it);
+        return arrayListNewArrayList;
     }
 
     static boolean equalsImpl(List<?> list, Object obj) {
@@ -44,20 +62,5 @@ public final class Lists {
             }
         }
         return -1;
-    }
-
-    public static <E> ArrayList<E> newArrayList() {
-        return new ArrayList<>();
-    }
-
-    public static <E> ArrayList<E> newArrayList(Iterable<? extends E> iterable) {
-        Preconditions.checkNotNull(iterable);
-        return iterable instanceof Collection ? new ArrayList<>(Collections2.cast(iterable)) : newArrayList(iterable.iterator());
-    }
-
-    public static <E> ArrayList<E> newArrayList(Iterator<? extends E> it) {
-        ArrayList<E> arrayListNewArrayList = newArrayList();
-        Iterators.addAll(arrayListNewArrayList, it);
-        return arrayListNewArrayList;
     }
 }

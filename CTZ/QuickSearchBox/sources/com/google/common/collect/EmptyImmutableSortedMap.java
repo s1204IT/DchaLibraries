@@ -17,39 +17,8 @@ final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
     }
 
     @Override
-    ImmutableSortedMap<K, V> createDescendingMap() {
-        return new EmptyImmutableSortedMap(Ordering.from(comparator()).reverse(), this);
-    }
-
-    @Override
-    ImmutableSet<Map.Entry<K, V>> createEntrySet() {
-        throw new AssertionError("should never be called");
-    }
-
-    @Override
-    public ImmutableSet<Map.Entry<K, V>> entrySet() {
-        return ImmutableSet.of();
-    }
-
-    @Override
     public V get(Object obj) {
         return null;
-    }
-
-    @Override
-    public ImmutableSortedMap<K, V> headMap(K k, boolean z) {
-        Preconditions.checkNotNull(k);
-        return this;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
-    }
-
-    @Override
-    boolean isPartialView() {
-        return false;
     }
 
     @Override
@@ -63,9 +32,13 @@ final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
     }
 
     @Override
-    public ImmutableSortedMap<K, V> tailMap(K k, boolean z) {
-        Preconditions.checkNotNull(k);
-        return this;
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public ImmutableCollection<V> values() {
+        return ImmutableList.of();
     }
 
     @Override
@@ -74,7 +47,34 @@ final class EmptyImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
     }
 
     @Override
-    public ImmutableCollection<V> values() {
-        return ImmutableList.of();
+    boolean isPartialView() {
+        return false;
+    }
+
+    @Override
+    public ImmutableSet<Map.Entry<K, V>> entrySet() {
+        return ImmutableSet.of();
+    }
+
+    @Override
+    ImmutableSet<Map.Entry<K, V>> createEntrySet() {
+        throw new AssertionError("should never be called");
+    }
+
+    @Override
+    public ImmutableSortedMap<K, V> headMap(K k, boolean z) {
+        Preconditions.checkNotNull(k);
+        return this;
+    }
+
+    @Override
+    public ImmutableSortedMap<K, V> tailMap(K k, boolean z) {
+        Preconditions.checkNotNull(k);
+        return this;
+    }
+
+    @Override
+    ImmutableSortedMap<K, V> createDescendingMap() {
+        return new EmptyImmutableSortedMap(Ordering.from(comparator()).reverse(), this);
     }
 }

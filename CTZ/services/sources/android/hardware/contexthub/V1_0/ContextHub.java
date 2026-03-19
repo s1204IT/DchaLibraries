@@ -1,0 +1,145 @@
+package android.hardware.contexthub.V1_0;
+
+import android.os.HidlSupport;
+import android.os.HwBlob;
+import android.os.HwParcel;
+import java.util.ArrayList;
+import java.util.Objects;
+
+public final class ContextHub {
+    public byte chreApiMajorVersion;
+    public byte chreApiMinorVersion;
+    public short chrePatchVersion;
+    public long chrePlatformId;
+    public int hubId;
+    public int maxSupportedMsgLen;
+    public float peakMips;
+    public float peakPowerDrawMw;
+    public int platformVersion;
+    public float sleepPowerDrawMw;
+    public float stoppedPowerDrawMw;
+    public int toolchainVersion;
+    public String name = new String();
+    public String vendor = new String();
+    public String toolchain = new String();
+    public final ArrayList<PhysicalSensor> connectedSensors = new ArrayList<>();
+
+    public final boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != ContextHub.class) {
+            return false;
+        }
+        ContextHub contextHub = (ContextHub) obj;
+        if (HidlSupport.deepEquals(this.name, contextHub.name) && HidlSupport.deepEquals(this.vendor, contextHub.vendor) && HidlSupport.deepEquals(this.toolchain, contextHub.toolchain) && this.platformVersion == contextHub.platformVersion && this.toolchainVersion == contextHub.toolchainVersion && this.hubId == contextHub.hubId && this.peakMips == contextHub.peakMips && this.stoppedPowerDrawMw == contextHub.stoppedPowerDrawMw && this.sleepPowerDrawMw == contextHub.sleepPowerDrawMw && this.peakPowerDrawMw == contextHub.peakPowerDrawMw && HidlSupport.deepEquals(this.connectedSensors, contextHub.connectedSensors) && this.maxSupportedMsgLen == contextHub.maxSupportedMsgLen && this.chrePlatformId == contextHub.chrePlatformId && this.chreApiMajorVersion == contextHub.chreApiMajorVersion && this.chreApiMinorVersion == contextHub.chreApiMinorVersion && this.chrePatchVersion == contextHub.chrePatchVersion) {
+            return true;
+        }
+        return false;
+    }
+
+    public final int hashCode() {
+        return Objects.hash(Integer.valueOf(HidlSupport.deepHashCode(this.name)), Integer.valueOf(HidlSupport.deepHashCode(this.vendor)), Integer.valueOf(HidlSupport.deepHashCode(this.toolchain)), Integer.valueOf(HidlSupport.deepHashCode(Integer.valueOf(this.platformVersion))), Integer.valueOf(HidlSupport.deepHashCode(Integer.valueOf(this.toolchainVersion))), Integer.valueOf(HidlSupport.deepHashCode(Integer.valueOf(this.hubId))), Integer.valueOf(HidlSupport.deepHashCode(Float.valueOf(this.peakMips))), Integer.valueOf(HidlSupport.deepHashCode(Float.valueOf(this.stoppedPowerDrawMw))), Integer.valueOf(HidlSupport.deepHashCode(Float.valueOf(this.sleepPowerDrawMw))), Integer.valueOf(HidlSupport.deepHashCode(Float.valueOf(this.peakPowerDrawMw))), Integer.valueOf(HidlSupport.deepHashCode(this.connectedSensors)), Integer.valueOf(HidlSupport.deepHashCode(Integer.valueOf(this.maxSupportedMsgLen))), Integer.valueOf(HidlSupport.deepHashCode(Long.valueOf(this.chrePlatformId))), Integer.valueOf(HidlSupport.deepHashCode(Byte.valueOf(this.chreApiMajorVersion))), Integer.valueOf(HidlSupport.deepHashCode(Byte.valueOf(this.chreApiMinorVersion))), Integer.valueOf(HidlSupport.deepHashCode(Short.valueOf(this.chrePatchVersion))));
+    }
+
+    public final String toString() {
+        return "{.name = " + this.name + ", .vendor = " + this.vendor + ", .toolchain = " + this.toolchain + ", .platformVersion = " + this.platformVersion + ", .toolchainVersion = " + this.toolchainVersion + ", .hubId = " + this.hubId + ", .peakMips = " + this.peakMips + ", .stoppedPowerDrawMw = " + this.stoppedPowerDrawMw + ", .sleepPowerDrawMw = " + this.sleepPowerDrawMw + ", .peakPowerDrawMw = " + this.peakPowerDrawMw + ", .connectedSensors = " + this.connectedSensors + ", .maxSupportedMsgLen = " + this.maxSupportedMsgLen + ", .chrePlatformId = " + this.chrePlatformId + ", .chreApiMajorVersion = " + ((int) this.chreApiMajorVersion) + ", .chreApiMinorVersion = " + ((int) this.chreApiMinorVersion) + ", .chrePatchVersion = " + ((int) this.chrePatchVersion) + "}";
+    }
+
+    public final void readFromParcel(HwParcel hwParcel) {
+        readEmbeddedFromParcel(hwParcel, hwParcel.readBuffer(120L), 0L);
+    }
+
+    public static final ArrayList<ContextHub> readVectorFromParcel(HwParcel hwParcel) {
+        ArrayList<ContextHub> arrayList = new ArrayList<>();
+        HwBlob buffer = hwParcel.readBuffer(16L);
+        int int32 = buffer.getInt32(8L);
+        HwBlob embeddedBuffer = hwParcel.readEmbeddedBuffer(int32 * 120, buffer.handle(), 0L, true);
+        arrayList.clear();
+        for (int i = 0; i < int32; i++) {
+            ContextHub contextHub = new ContextHub();
+            contextHub.readEmbeddedFromParcel(hwParcel, embeddedBuffer, i * 120);
+            arrayList.add(contextHub);
+        }
+        return arrayList;
+    }
+
+    public final void readEmbeddedFromParcel(HwParcel hwParcel, HwBlob hwBlob, long j) {
+        long j2 = j + 0;
+        this.name = hwBlob.getString(j2);
+        hwParcel.readEmbeddedBuffer(this.name.getBytes().length + 1, hwBlob.handle(), j2 + 0, false);
+        long j3 = j + 16;
+        this.vendor = hwBlob.getString(j3);
+        hwParcel.readEmbeddedBuffer(this.vendor.getBytes().length + 1, hwBlob.handle(), j3 + 0, false);
+        long j4 = j + 32;
+        this.toolchain = hwBlob.getString(j4);
+        hwParcel.readEmbeddedBuffer(this.toolchain.getBytes().length + 1, hwBlob.handle(), j4 + 0, false);
+        this.platformVersion = hwBlob.getInt32(j + 48);
+        this.toolchainVersion = hwBlob.getInt32(j + 52);
+        this.hubId = hwBlob.getInt32(j + 56);
+        this.peakMips = hwBlob.getFloat(j + 60);
+        this.stoppedPowerDrawMw = hwBlob.getFloat(j + 64);
+        this.sleepPowerDrawMw = hwBlob.getFloat(j + 68);
+        this.peakPowerDrawMw = hwBlob.getFloat(j + 72);
+        long j5 = j + 80;
+        int int32 = hwBlob.getInt32(8 + j5);
+        HwBlob embeddedBuffer = hwParcel.readEmbeddedBuffer(int32 * 96, hwBlob.handle(), j5 + 0, true);
+        this.connectedSensors.clear();
+        for (int i = 0; i < int32; i++) {
+            PhysicalSensor physicalSensor = new PhysicalSensor();
+            physicalSensor.readEmbeddedFromParcel(hwParcel, embeddedBuffer, i * 96);
+            this.connectedSensors.add(physicalSensor);
+        }
+        this.maxSupportedMsgLen = hwBlob.getInt32(j + 96);
+        this.chrePlatformId = hwBlob.getInt64(j + 104);
+        this.chreApiMajorVersion = hwBlob.getInt8(j + 112);
+        this.chreApiMinorVersion = hwBlob.getInt8(j + 113);
+        this.chrePatchVersion = hwBlob.getInt16(j + 114);
+    }
+
+    public final void writeToParcel(HwParcel hwParcel) {
+        HwBlob hwBlob = new HwBlob(120);
+        writeEmbeddedToBlob(hwBlob, 0L);
+        hwParcel.writeBuffer(hwBlob);
+    }
+
+    public static final void writeVectorToParcel(HwParcel hwParcel, ArrayList<ContextHub> arrayList) {
+        HwBlob hwBlob = new HwBlob(16);
+        int size = arrayList.size();
+        hwBlob.putInt32(8L, size);
+        hwBlob.putBool(12L, false);
+        HwBlob hwBlob2 = new HwBlob(size * 120);
+        for (int i = 0; i < size; i++) {
+            arrayList.get(i).writeEmbeddedToBlob(hwBlob2, i * 120);
+        }
+        hwBlob.putBlob(0L, hwBlob2);
+        hwParcel.writeBuffer(hwBlob);
+    }
+
+    public final void writeEmbeddedToBlob(HwBlob hwBlob, long j) {
+        hwBlob.putString(j + 0, this.name);
+        hwBlob.putString(16 + j, this.vendor);
+        hwBlob.putString(32 + j, this.toolchain);
+        hwBlob.putInt32(48 + j, this.platformVersion);
+        hwBlob.putInt32(52 + j, this.toolchainVersion);
+        hwBlob.putInt32(56 + j, this.hubId);
+        hwBlob.putFloat(60 + j, this.peakMips);
+        hwBlob.putFloat(64 + j, this.stoppedPowerDrawMw);
+        hwBlob.putFloat(68 + j, this.sleepPowerDrawMw);
+        hwBlob.putFloat(72 + j, this.peakPowerDrawMw);
+        int size = this.connectedSensors.size();
+        long j2 = 80 + j;
+        hwBlob.putInt32(8 + j2, size);
+        hwBlob.putBool(12 + j2, false);
+        HwBlob hwBlob2 = new HwBlob(size * 96);
+        for (int i = 0; i < size; i++) {
+            this.connectedSensors.get(i).writeEmbeddedToBlob(hwBlob2, i * 96);
+        }
+        hwBlob.putBlob(j2 + 0, hwBlob2);
+        hwBlob.putInt32(96 + j, this.maxSupportedMsgLen);
+        hwBlob.putInt64(104 + j, this.chrePlatformId);
+        hwBlob.putInt8(112 + j, this.chreApiMajorVersion);
+        hwBlob.putInt8(113 + j, this.chreApiMinorVersion);
+        hwBlob.putInt16(j + 114, this.chrePatchVersion);
+    }
+}

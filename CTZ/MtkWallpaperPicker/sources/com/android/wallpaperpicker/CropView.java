@@ -1,0 +1,300 @@
+package com.android.wallpaperpicker;
+
+import android.content.Context;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.graphics.RectF;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.ViewConfiguration;
+import android.view.ViewTreeObserver;
+import com.android.photos.views.TiledImageRenderer;
+import com.android.photos.views.TiledImageView;
+
+public class CropView extends TiledImageView implements ScaleGestureDetector.OnScaleGestureListener {
+    private float mCenterX;
+    private float mCenterY;
+    private float mFirstX;
+    private float mFirstY;
+    Matrix mInverseRotateMatrix;
+    private float mLastX;
+    private float mLastY;
+    private float mMinScale;
+    Matrix mRotateMatrix;
+    private ScaleGestureDetector mScaleGestureDetector;
+    private float[] mTempAdjustment;
+    private float[] mTempCoef;
+    private RectF mTempEdges;
+    private float[] mTempImageDims;
+    private float[] mTempPoint;
+    private float[] mTempRendererCenter;
+    TouchCallback mTouchCallback;
+    private long mTouchDownTime;
+    private boolean mTouchEnabled;
+
+    public interface TouchCallback {
+        void onTap();
+
+        void onTouchDown();
+
+        void onTouchUp();
+    }
+
+    public CropView(Context context) {
+        this(context, null);
+    }
+
+    public CropView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+        this.mTouchEnabled = true;
+        this.mTempEdges = new RectF();
+        this.mTempPoint = new float[]{0.0f, 0.0f};
+        this.mTempCoef = new float[]{0.0f, 0.0f};
+        this.mTempAdjustment = new float[]{0.0f, 0.0f};
+        this.mTempImageDims = new float[]{0.0f, 0.0f};
+        this.mTempRendererCenter = new float[]{0.0f, 0.0f};
+        this.mScaleGestureDetector = new ScaleGestureDetector(context, this);
+        this.mRotateMatrix = new Matrix();
+        this.mInverseRotateMatrix = new Matrix();
+    }
+
+    private float[] getImageDims() {
+        float imageWidth = this.mRenderer.source.getImageWidth();
+        float imageHeight = this.mRenderer.source.getImageHeight();
+        float[] fArr = this.mTempImageDims;
+        fArr[0] = imageWidth;
+        fArr[1] = imageHeight;
+        this.mRotateMatrix.mapPoints(fArr);
+        fArr[0] = Math.abs(fArr[0]);
+        fArr[1] = Math.abs(fArr[1]);
+        return fArr;
+    }
+
+    private void getEdgesHelper(RectF rectF) {
+        float width = getWidth();
+        float height = getHeight();
+        float[] imageDims = getImageDims();
+        float f = imageDims[0];
+        float f2 = imageDims[1];
+        float[] fArr = this.mTempRendererCenter;
+        fArr[0] = this.mCenterX - (this.mRenderer.source.getImageWidth() / 2.0f);
+        fArr[1] = this.mCenterY - (this.mRenderer.source.getImageHeight() / 2.0f);
+        this.mRotateMatrix.mapPoints(fArr);
+        float f3 = f / 2.0f;
+        fArr[0] = fArr[0] + f3;
+        float f4 = f2 / 2.0f;
+        fArr[1] = fArr[1] + f4;
+        float f5 = this.mRenderer.scale;
+        float f6 = width / 2.0f;
+        float f7 = (((f6 - fArr[0]) + ((f - width) / 2.0f)) * f5) + f6;
+        float f8 = height / 2.0f;
+        float f9 = (((f8 - fArr[1]) + ((f2 - height) / 2.0f)) * f5) + f8;
+        float f10 = f3 * f5;
+        float f11 = f4 * f5;
+        rectF.left = f7 - f10;
+        rectF.right = f7 + f10;
+        rectF.top = f9 - f11;
+        rectF.bottom = f9 + f11;
+    }
+
+    public int getImageRotation() {
+        return this.mRenderer.rotation;
+    }
+
+    public RectF getCrop() {
+        RectF rectF = this.mTempEdges;
+        getEdgesHelper(rectF);
+        float f = this.mRenderer.scale;
+        float f2 = (-rectF.left) / f;
+        float f3 = (-rectF.top) / f;
+        return new RectF(f2, f3, (getWidth() / f) + f2, (getHeight() / f) + f3);
+    }
+
+    public Point getSourceDimensions() {
+        return new Point(this.mRenderer.source.getImageWidth(), this.mRenderer.source.getImageHeight());
+    }
+
+    @Override
+    public void setTileSource(TiledImageRenderer.TileSource tileSource, Runnable runnable) {
+        super.setTileSource(tileSource, runnable);
+        this.mCenterX = this.mRenderer.centerX;
+        this.mCenterY = this.mRenderer.centerY;
+        this.mRotateMatrix.reset();
+        this.mRotateMatrix.setRotate(this.mRenderer.rotation);
+        this.mInverseRotateMatrix.reset();
+        this.mInverseRotateMatrix.setRotate(-this.mRenderer.rotation);
+        updateMinScale(getWidth(), getHeight(), tileSource, true);
+    }
+
+    @Override
+    protected void onSizeChanged(int i, int i2, int i3, int i4) {
+        updateMinScale(i, i2, this.mRenderer.source, false);
+    }
+
+    public void setScale(float f) {
+        synchronized (this.mLock) {
+            this.mRenderer.scale = f;
+        }
+    }
+
+    private void updateMinScale(int i, int i2, TiledImageRenderer.TileSource tileSource, boolean z) {
+        synchronized (this.mLock) {
+            if (z) {
+                try {
+                    this.mRenderer.scale = 1.0f;
+                } catch (Throwable th) {
+                    throw th;
+                }
+            }
+            if (tileSource != null) {
+                float[] imageDims = getImageDims();
+                this.mMinScale = Math.max(i / imageDims[0], i2 / imageDims[1]);
+                this.mRenderer.scale = Math.max(this.mMinScale, z ? Float.MIN_VALUE : this.mRenderer.scale);
+            }
+        }
+    }
+
+    @Override
+    public boolean onScaleBegin(ScaleGestureDetector scaleGestureDetector) {
+        return true;
+    }
+
+    @Override
+    public boolean onScale(ScaleGestureDetector scaleGestureDetector) {
+        this.mRenderer.scale *= scaleGestureDetector.getScaleFactor();
+        this.mRenderer.scale = Math.max(this.mMinScale, this.mRenderer.scale);
+        invalidate();
+        return true;
+    }
+
+    @Override
+    public void onScaleEnd(ScaleGestureDetector scaleGestureDetector) {
+    }
+
+    public void setParallaxOffset(float f, RectF rectF) {
+        float fMax = Math.max(0.0f, Math.min(f, 1.0f));
+        float width = getWidth() / this.mRenderer.scale;
+        this.mCenterX = (width / 2.0f) + (fMax * (rectF.width() - width)) + rectF.left;
+        updateCenter();
+    }
+
+    public void moveToLeft() {
+        if (getWidth() == 0 || getHeight() == 0) {
+            getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    CropView.this.moveToLeft();
+                    CropView.this.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        }
+        getEdgesHelper(this.mTempEdges);
+        this.mCenterX = (float) (((double) this.mCenterX) + Math.ceil(r0.left / this.mRenderer.scale));
+        updateCenter();
+    }
+
+    private void updateCenter() {
+        this.mRenderer.centerX = Math.round(this.mCenterX);
+        this.mRenderer.centerY = Math.round(this.mCenterY);
+    }
+
+    public void setTouchEnabled(boolean z) {
+        this.mTouchEnabled = z;
+    }
+
+    public void setTouchCallback(TouchCallback touchCallback) {
+        this.mTouchCallback = touchCallback;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+        int actionMasked = motionEvent.getActionMasked();
+        boolean z = actionMasked == 6;
+        int actionIndex = z ? motionEvent.getActionIndex() : -1;
+        int pointerCount = motionEvent.getPointerCount();
+        float x = 0.0f;
+        float y = 0.0f;
+        for (int i = 0; i < pointerCount; i++) {
+            if (actionIndex != i) {
+                x += motionEvent.getX(i);
+                y += motionEvent.getY(i);
+            }
+        }
+        if (z) {
+            pointerCount--;
+        }
+        float f = pointerCount;
+        float f2 = x / f;
+        float f3 = y / f;
+        if (actionMasked == 0) {
+            this.mFirstX = f2;
+            this.mFirstY = f3;
+            this.mTouchDownTime = System.currentTimeMillis();
+            if (this.mTouchCallback != null) {
+                this.mTouchCallback.onTouchDown();
+            }
+        } else if (actionMasked == 1) {
+            ViewConfiguration viewConfiguration = ViewConfiguration.get(getContext());
+            float f4 = ((this.mFirstX - f2) * (this.mFirstX - f2)) + ((this.mFirstY - f3) * (this.mFirstY - f3));
+            float scaledTouchSlop = viewConfiguration.getScaledTouchSlop() * viewConfiguration.getScaledTouchSlop();
+            long jCurrentTimeMillis = System.currentTimeMillis();
+            if (this.mTouchCallback != null) {
+                if (f4 < scaledTouchSlop && jCurrentTimeMillis < this.mTouchDownTime + ((long) ViewConfiguration.getTapTimeout())) {
+                    this.mTouchCallback.onTap();
+                }
+                this.mTouchCallback.onTouchUp();
+            }
+        }
+        if (!this.mTouchEnabled) {
+            return true;
+        }
+        synchronized (this.mLock) {
+            this.mScaleGestureDetector.onTouchEvent(motionEvent);
+            if (actionMasked == 2) {
+                float[] fArr = this.mTempPoint;
+                fArr[0] = (this.mLastX - f2) / this.mRenderer.scale;
+                fArr[1] = (this.mLastY - f3) / this.mRenderer.scale;
+                this.mInverseRotateMatrix.mapPoints(fArr);
+                this.mCenterX += fArr[0];
+                this.mCenterY += fArr[1];
+                updateCenter();
+                invalidate();
+            }
+            if (this.mRenderer.source != null) {
+                RectF rectF = this.mTempEdges;
+                getEdgesHelper(rectF);
+                float f5 = this.mRenderer.scale;
+                float[] fArr2 = this.mTempCoef;
+                fArr2[0] = 1.0f;
+                fArr2[1] = 1.0f;
+                this.mRotateMatrix.mapPoints(fArr2);
+                float[] fArr3 = this.mTempAdjustment;
+                this.mTempAdjustment[0] = 0.0f;
+                this.mTempAdjustment[1] = 0.0f;
+                if (rectF.left > 0.0f) {
+                    fArr3[0] = rectF.left / f5;
+                } else if (rectF.right < getWidth()) {
+                    fArr3[0] = (rectF.right - getWidth()) / f5;
+                }
+                if (rectF.top > 0.0f) {
+                    fArr3[1] = (float) Math.ceil(rectF.top / f5);
+                } else if (rectF.bottom < getHeight()) {
+                    fArr3[1] = (rectF.bottom - getHeight()) / f5;
+                }
+                for (int i2 = 0; i2 <= 1; i2++) {
+                    if (fArr2[i2] > 0.0f) {
+                        fArr3[i2] = (float) Math.ceil(fArr3[i2]);
+                    }
+                }
+                this.mInverseRotateMatrix.mapPoints(fArr3);
+                this.mCenterX += fArr3[0];
+                this.mCenterY += fArr3[1];
+                updateCenter();
+            }
+        }
+        this.mLastX = f2;
+        this.mLastY = f3;
+        return true;
+    }
+}

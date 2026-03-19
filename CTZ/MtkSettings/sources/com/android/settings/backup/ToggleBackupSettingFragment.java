@@ -125,7 +125,7 @@ public class ToggleBackupSettingFragment extends SettingsPreferenceFragment impl
         }
     }
 
-    public void showEraseBackupDialog() {
+    private void showEraseBackupDialog() {
         CharSequence text;
         if (Settings.Secure.getInt(getContentResolver(), "user_full_data_backup_aware", 0) != 0) {
             text = getResources().getText(com.android.settings.R.string.fullbackup_erase_dialog_message);
@@ -141,7 +141,7 @@ public class ToggleBackupSettingFragment extends SettingsPreferenceFragment impl
         return 81;
     }
 
-    public void setBackupEnabled(boolean z) {
+    private void setBackupEnabled(boolean z) {
         if (this.mBackupManager != null) {
             try {
                 this.mBackupManager.setBackupEnabled(z);

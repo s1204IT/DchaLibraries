@@ -100,7 +100,7 @@ public class ActionBar extends RelativeLayout {
         return button;
     }
 
-    public void onExpandCollapse() {
+    private void onExpandCollapse() {
         this.mIsExpanded = !this.mIsExpanded;
         this.mSlots[getSlotIndex(3)].setActivated(this.mIsExpanded);
         int animationDuration = getContext().getResources().getInteger(this.mIsExpanded ? R.integer.car_action_bar_expand_anim_duration : R.integer.car_action_bar_collapse_anim_duration);

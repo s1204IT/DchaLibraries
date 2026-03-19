@@ -294,7 +294,7 @@ public class QSDetail extends LinearLayout {
         this.mQsDetailHeader.setClickable(false);
     }
 
-    public void handleToggleStateChanged(boolean z, boolean z2) {
+    private void handleToggleStateChanged(boolean z, boolean z2) {
         this.mSwitchState = z;
         if (this.mAnimatingOpen) {
             return;
@@ -304,7 +304,7 @@ public class QSDetail extends LinearLayout {
         this.mQsDetailHeaderSwitch.setEnabled(z2);
     }
 
-    public void handleScanStateChanged(boolean z) {
+    private void handleScanStateChanged(boolean z) {
         if (this.mScanState == z) {
             return;
         }
@@ -333,7 +333,7 @@ public class QSDetail extends LinearLayout {
         }).start();
     }
 
-    public void checkPendingAnimations() {
+    private void checkPendingAnimations() {
         handleToggleStateChanged(this.mSwitchState, this.mDetailAdapter != null && this.mDetailAdapter.getToggleEnabled());
     }
 }

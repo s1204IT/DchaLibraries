@@ -249,7 +249,7 @@ public final class Maps {
         }
 
         @Override
-        public SortedMap<K, V> map() {
+        SortedMap<K, V> map() {
             return (SortedMap) super.map();
         }
 
@@ -287,7 +287,7 @@ public final class Maps {
         }
 
         @Override
-        public NavigableMap<K, V> map() {
+        NavigableMap<K, V> map() {
             return (NavigableMap) this.map;
         }
 
@@ -525,7 +525,7 @@ public final class Maps {
         }
 
         @Override
-        public final Map<K, V> delegate() {
+        protected final Map<K, V> delegate() {
             return forward();
         }
 

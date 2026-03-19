@@ -13,38 +13,36 @@ import java.util.concurrent.CountDownLatch;
 public class NfcHandler implements NfcAdapter.CreateNdefMessageCallback {
     final Controller mController;
     Tab mCurrentTab;
-    final Handler mHandler = new Handler(this) {
-        final NfcHandler this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message message) {
             if (message.what == 100) {
-                this.this$0.mIsPrivate = this.this$0.mCurrentTab.getWebView().isPrivateBrowsingEnabled();
-                this.this$0.mPrivateBrowsingSignal.countDown();
+                NfcHandler.this.mIsPrivate = NfcHandler.this.mCurrentTab.getWebView().isPrivateBrowsingEnabled();
+                NfcHandler.this.mPrivateBrowsingSignal.countDown();
             }
         }
     };
     boolean mIsPrivate;
     CountDownLatch mPrivateBrowsingSignal;
 
-    public NfcHandler(Controller controller) {
-        this.mController = controller;
-    }
-
     public static void register(Activity activity, Controller controller) {
         NfcAdapter defaultAdapter = NfcAdapter.getDefaultAdapter(activity.getApplicationContext());
         if (defaultAdapter == null) {
             return;
         }
-        defaultAdapter.setNdefPushMessageCallback(controller != null ? new NfcHandler(controller) : null, activity, new Activity[0]);
+        NfcHandler nfcHandler = null;
+        if (controller != null) {
+            nfcHandler = new NfcHandler(controller);
+        }
+        defaultAdapter.setNdefPushMessageCallback(nfcHandler, activity, new Activity[0]);
     }
 
     public static void unregister(Activity activity) {
         register(activity, null);
+    }
+
+    public NfcHandler(Controller controller) {
+        this.mController = controller;
     }
 
     @Override

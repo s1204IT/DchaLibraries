@@ -165,7 +165,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         return ((((int) ((endA - startA) * fraction)) + startA) << 24) | ((((int) ((endR - startR) * fraction)) + startR) << 16) | ((((int) ((endG - startG) * fraction)) + startG) << 8) | (((int) ((endB - startB) * fraction)) + startB);
     }
 
-    public void updateRingColor(float interpolatedTime, Ring ring) {
+    private void updateRingColor(float interpolatedTime, Ring ring) {
         if (interpolatedTime > 0.75f) {
             ring.setColor(evaluateColorChange((interpolatedTime - 0.75f) / 0.25f, ring.getStartingColor(), ring.getNextColor()));
         } else {
@@ -183,7 +183,7 @@ public class CircularProgressDrawable extends Drawable implements Animatable {
         ring.setRotation(rotation);
     }
 
-    public void applyTransformation(float interpolatedTime, Ring ring, boolean lastFrame) {
+    private void applyTransformation(float interpolatedTime, Ring ring, boolean lastFrame) {
         float startTrim;
         float startTrim2;
         if (this.mFinishing) {

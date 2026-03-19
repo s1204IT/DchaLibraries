@@ -21,6 +21,41 @@ public abstract class BasePieView implements PieMenu.PieView {
     protected ArrayList<View> mViews;
     protected int mWidth;
 
+    protected abstract int findChildAt(int i);
+
+    public void setLayoutListener(PieMenu.PieView.OnLayoutListener onLayoutListener) {
+        this.mListener = onLayoutListener;
+    }
+
+    public void setAdapter(Adapter adapter) {
+        this.mAdapter = adapter;
+        if (adapter == null) {
+            if (this.mAdapter != null) {
+                this.mAdapter.unregisterDataSetObserver(this.mObserver);
+            }
+            this.mViews = null;
+            this.mCurrent = -1;
+            return;
+        }
+        this.mObserver = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                BasePieView.this.buildViews();
+            }
+
+            @Override
+            public void onInvalidated() {
+                BasePieView.this.mViews.clear();
+            }
+        };
+        this.mAdapter.registerDataSetObserver(this.mObserver);
+        setCurrent(0);
+    }
+
+    public void setCurrent(int i) {
+        this.mCurrent = i;
+    }
+
     protected void buildViews() {
         if (this.mAdapter != null) {
             int count = this.mAdapter.getCount();
@@ -41,20 +76,18 @@ public abstract class BasePieView implements PieMenu.PieView {
         }
     }
 
-    protected void drawView(View view, Canvas canvas) {
-        int iSave = canvas.save();
-        canvas.translate(view.getLeft(), view.getTop());
-        view.draw(canvas);
-        canvas.restoreToCount(iSave);
-    }
-
-    protected abstract int findChildAt(int i);
-
     @Override
     public void layout(int i, int i2, boolean z, float f, int i3) {
         if (this.mListener != null) {
             this.mListener.onLayout(i, i2, z);
         }
+    }
+
+    protected void drawView(View view, Canvas canvas) {
+        int iSave = canvas.save();
+        canvas.translate(view.getLeft(), view.getTop());
+        view.draw(canvas);
+        canvas.restoreToCount(iSave);
     }
 
     @Override
@@ -69,7 +102,7 @@ public abstract class BasePieView implements PieMenu.PieView {
             case 1:
                 this.mViews.get(this.mCurrent).performClick();
                 this.mViews.get(this.mCurrent).setPressed(false);
-                break;
+                return true;
             case 2:
                 View view = this.mViews.get(this.mCurrent);
                 setCurrent(Math.max(0, Math.min(this.mViews.size() - 1, findChildAt(y))));
@@ -78,47 +111,9 @@ public abstract class BasePieView implements PieMenu.PieView {
                     view.setPressed(false);
                     view2.setPressed(true);
                 }
-                break;
+                return true;
+            default:
+                return true;
         }
-        return true;
-    }
-
-    public void setAdapter(Adapter adapter) {
-        this.mAdapter = adapter;
-        if (adapter != null) {
-            this.mObserver = new DataSetObserver(this) {
-                final BasePieView this$0;
-
-                {
-                    this.this$0 = this;
-                }
-
-                @Override
-                public void onChanged() {
-                    this.this$0.buildViews();
-                }
-
-                @Override
-                public void onInvalidated() {
-                    this.this$0.mViews.clear();
-                }
-            };
-            this.mAdapter.registerDataSetObserver(this.mObserver);
-            setCurrent(0);
-        } else {
-            if (this.mAdapter != null) {
-                this.mAdapter.unregisterDataSetObserver(this.mObserver);
-            }
-            this.mViews = null;
-            this.mCurrent = -1;
-        }
-    }
-
-    public void setCurrent(int i) {
-        this.mCurrent = i;
-    }
-
-    public void setLayoutListener(PieMenu.PieView.OnLayoutListener onLayoutListener) {
-        this.mListener = onLayoutListener;
     }
 }

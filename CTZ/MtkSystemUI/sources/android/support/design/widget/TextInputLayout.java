@@ -828,7 +828,7 @@ public class TextInputLayout extends LinearLayout {
         }
     }
 
-    public void passwordVisibilityToggleRequested(boolean shouldSkipAnimations) {
+    private void passwordVisibilityToggleRequested(boolean shouldSkipAnimations) {
         if (this.passwordToggleEnabled) {
             int selection = this.editText.getSelectionEnd();
             if (hasPasswordTransformation()) {

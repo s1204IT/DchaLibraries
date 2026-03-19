@@ -14,12 +14,12 @@ public abstract class LoaderManager {
         void onLoaderReset(Loader<D> loader);
     }
 
-    public static <T extends LifecycleOwner & ViewModelStoreOwner> LoaderManager getInstance(T t) {
-        return new LoaderManagerImpl(t, t.getViewModelStore());
-    }
-
     @Deprecated
     public abstract void dump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr);
 
     public abstract void markForRedelivery();
+
+    public static <T extends LifecycleOwner & ViewModelStoreOwner> LoaderManager getInstance(T owner) {
+        return new LoaderManagerImpl(owner, owner.getViewModelStore());
+    }
 }

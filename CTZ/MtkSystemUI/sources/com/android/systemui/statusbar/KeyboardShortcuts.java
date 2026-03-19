@@ -256,14 +256,14 @@ public final class KeyboardShortcuts {
         }, i);
     }
 
-    public void dismissKeyboardShortcuts() {
+    private void dismissKeyboardShortcuts() {
         if (this.mKeyboardShortcutsDialog != null) {
             this.mKeyboardShortcutsDialog.dismiss();
             this.mKeyboardShortcutsDialog = null;
         }
     }
 
-    public KeyboardShortcutGroup getSystemShortcuts() {
+    private KeyboardShortcutGroup getSystemShortcuts() {
         KeyboardShortcutGroup keyboardShortcutGroup = new KeyboardShortcutGroup((CharSequence) this.mContext.getString(com.android.systemui.R.string.keyboard_shortcut_group_system), true);
         keyboardShortcutGroup.addItem(new KeyboardShortcutInfo(this.mContext.getString(com.android.systemui.R.string.keyboard_shortcut_group_system_home), 66, 65536));
         keyboardShortcutGroup.addItem(new KeyboardShortcutInfo(this.mContext.getString(com.android.systemui.R.string.keyboard_shortcut_group_system_back), 67, 65536));
@@ -274,7 +274,7 @@ public final class KeyboardShortcuts {
         return keyboardShortcutGroup;
     }
 
-    public KeyboardShortcutGroup getDefaultApplicationShortcuts() {
+    private KeyboardShortcutGroup getDefaultApplicationShortcuts() {
         PackageInfo packageInfo;
         int userId = this.mContext.getUserId();
         ArrayList arrayList = new ArrayList();
@@ -344,7 +344,7 @@ public final class KeyboardShortcuts {
         }
     }
 
-    public void showKeyboardShortcutsDialog(final List<KeyboardShortcutGroup> list) {
+    private void showKeyboardShortcutsDialog(final List<KeyboardShortcutGroup> list) {
         this.mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -353,7 +353,7 @@ public final class KeyboardShortcuts {
         });
     }
 
-    public void handleShowKeyboardShortcuts(List<KeyboardShortcutGroup> list) {
+    private void handleShowKeyboardShortcuts(List<KeyboardShortcutGroup> list) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
         View viewInflate = ((LayoutInflater) this.mContext.getSystemService("layout_inflater")).inflate(com.android.systemui.R.layout.keyboard_shortcuts_view, (ViewGroup) null);
         populateKeyboardShortcuts((LinearLayout) viewInflate.findViewById(com.android.systemui.R.id.keyboard_shortcuts_container), list);

@@ -66,7 +66,7 @@ public class ManagedProfileControllerImpl implements ManagedProfileController {
         }
     }
 
-    public void reloadManagedProfiles() {
+    private void reloadManagedProfiles() {
         synchronized (this.mProfiles) {
             boolean z = this.mProfiles.size() > 0;
             int currentUser = ActivityManager.getCurrentUser();

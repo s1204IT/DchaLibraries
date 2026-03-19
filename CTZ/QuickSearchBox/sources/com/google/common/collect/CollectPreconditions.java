@@ -7,17 +7,16 @@ final class CollectPreconditions {
         if (obj == null) {
             throw new NullPointerException("null key in entry: null=" + obj2);
         }
-        if (obj2 != null) {
-            return;
+        if (obj2 == null) {
+            throw new NullPointerException("null value in entry: " + obj + "=null");
         }
-        throw new NullPointerException("null value in entry: " + obj + "=null");
     }
 
     static int checkNonnegative(int i, String str) {
-        if (i >= 0) {
-            return i;
+        if (i < 0) {
+            throw new IllegalArgumentException(str + " cannot be negative but was: " + i);
         }
-        throw new IllegalArgumentException(str + " cannot be negative but was: " + i);
+        return i;
     }
 
     static void checkRemove(boolean z) {

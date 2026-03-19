@@ -15,31 +15,11 @@ public class GoogleSuggestionProvider extends ContentProvider {
     private GoogleSource mSource;
     private UriMatcher mUriMatcher;
 
-    private UriMatcher buildUriMatcher(Context context) {
-        String authority = getAuthority(context);
-        UriMatcher uriMatcher = new UriMatcher(-1);
-        uriMatcher.addURI(authority, "search_suggest_query", 0);
-        uriMatcher.addURI(authority, "search_suggest_query/*", 0);
-        uriMatcher.addURI(authority, "search_suggest_shortcut", 1);
-        uriMatcher.addURI(authority, "search_suggest_shortcut/*", 1);
-        return uriMatcher;
-    }
-
-    private SourceResult emptyIfNull(SourceResult sourceResult, GoogleSource googleSource, String str) {
-        return sourceResult == null ? new CursorBackedSourceResult(googleSource, str) : sourceResult;
-    }
-
-    private String getQuery(Uri uri) {
-        return uri.getPathSegments().size() > 1 ? uri.getLastPathSegment() : "";
-    }
-
     @Override
-    public int delete(Uri uri, String str, String[] strArr) {
-        throw new UnsupportedOperationException();
-    }
-
-    protected String getAuthority(Context context) {
-        return context.getPackageName() + ".google";
+    public boolean onCreate() {
+        this.mSource = QsbApplication.get(getContext()).getGoogleSource();
+        this.mUriMatcher = buildUriMatcher(getContext());
+        return true;
     }
 
     @Override
@@ -47,16 +27,8 @@ public class GoogleSuggestionProvider extends ContentProvider {
         return "vnd.android.cursor.dir/vnd.android.search.suggest";
     }
 
-    @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean onCreate() {
-        this.mSource = QsbApplication.get(getContext()).getGoogleSource();
-        this.mUriMatcher = buildUriMatcher(getContext());
-        return true;
+    private SourceResult emptyIfNull(SourceResult sourceResult, GoogleSource googleSource, String str) {
+        return sourceResult == null ? new CursorBackedSourceResult(googleSource, str) : sourceResult;
     }
 
     @Override
@@ -72,8 +44,39 @@ public class GoogleSuggestionProvider extends ContentProvider {
         throw new IllegalArgumentException("Unknown URI " + uri);
     }
 
+    private String getQuery(Uri uri) {
+        if (uri.getPathSegments().size() > 1) {
+            return uri.getLastPathSegment();
+        }
+        return "";
+    }
+
+    @Override
+    public Uri insert(Uri uri, ContentValues contentValues) {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int delete(Uri uri, String str, String[] strArr) {
+        throw new UnsupportedOperationException();
+    }
+
+    private UriMatcher buildUriMatcher(Context context) {
+        String authority = getAuthority(context);
+        UriMatcher uriMatcher = new UriMatcher(-1);
+        uriMatcher.addURI(authority, "search_suggest_query", 0);
+        uriMatcher.addURI(authority, "search_suggest_query/*", 0);
+        uriMatcher.addURI(authority, "search_suggest_shortcut", 1);
+        uriMatcher.addURI(authority, "search_suggest_shortcut/*", 1);
+        return uriMatcher;
+    }
+
+    protected String getAuthority(Context context) {
+        return context.getPackageName() + ".google";
     }
 }

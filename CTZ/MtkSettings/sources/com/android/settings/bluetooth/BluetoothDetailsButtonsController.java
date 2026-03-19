@@ -19,7 +19,7 @@ public class BluetoothDetailsButtonsController extends BluetoothDetailsControlle
         this.mIsConnected = cachedBluetoothDevice.isConnected();
     }
 
-    public void onForgetButtonPressed() {
+    private void onForgetButtonPressed() {
         ForgetDeviceDialogFragment.newInstance(this.mCachedDevice.getAddress()).show(this.mFragment.getFragmentManager(), "ForgetBluetoothDevice");
     }
 

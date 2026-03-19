@@ -63,7 +63,7 @@ public class ZoneGetter {
         return map;
     }
 
-    public static List<String> readTimezonesToDisplay(Context context) {
+    private static List<String> readTimezonesToDisplay(Context context) {
         ArrayList arrayList = new ArrayList();
         try {
             XmlResourceParser xml = context.getResources().getXml(R.xml.timezones);

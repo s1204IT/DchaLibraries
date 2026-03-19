@@ -20,6 +20,19 @@ final class SingletonImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     }
 
     @Override
+    public V get(Object obj) {
+        if (this.singleKey.equals(obj)) {
+            return this.singleValue;
+        }
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return 1;
+    }
+
+    @Override
     public boolean containsKey(Object obj) {
         return this.singleKey.equals(obj);
     }
@@ -27,6 +40,11 @@ final class SingletonImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     @Override
     public boolean containsValue(Object obj) {
         return this.singleValue.equals(obj);
+    }
+
+    @Override
+    boolean isPartialView() {
+        return false;
     }
 
     @Override
@@ -40,31 +58,13 @@ final class SingletonImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     }
 
     @Override
-    public V get(Object obj) {
-        if (this.singleKey.equals(obj)) {
-            return this.singleValue;
-        }
-        return null;
-    }
-
-    @Override
     public ImmutableBiMap<V, K> inverse() {
         ImmutableBiMap<V, K> immutableBiMap = this.inverse;
-        if (immutableBiMap != null) {
-            return immutableBiMap;
+        if (immutableBiMap == null) {
+            SingletonImmutableBiMap singletonImmutableBiMap = new SingletonImmutableBiMap(this.singleValue, this.singleKey, this);
+            this.inverse = singletonImmutableBiMap;
+            return singletonImmutableBiMap;
         }
-        SingletonImmutableBiMap singletonImmutableBiMap = new SingletonImmutableBiMap(this.singleValue, this.singleKey, this);
-        this.inverse = singletonImmutableBiMap;
-        return singletonImmutableBiMap;
-    }
-
-    @Override
-    boolean isPartialView() {
-        return false;
-    }
-
-    @Override
-    public int size() {
-        return 1;
+        return immutableBiMap;
     }
 }

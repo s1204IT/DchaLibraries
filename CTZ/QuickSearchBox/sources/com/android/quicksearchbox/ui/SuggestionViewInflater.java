@@ -22,11 +22,6 @@ public class SuggestionViewInflater implements SuggestionViewFactory {
         this.mContext = context;
     }
 
-    @Override
-    public boolean canCreateView(Suggestion suggestion) {
-        return true;
-    }
-
     protected LayoutInflater getInflater() {
         return (LayoutInflater) this.mContext.getSystemService("layout_inflater");
     }
@@ -38,21 +33,23 @@ public class SuggestionViewInflater implements SuggestionViewFactory {
 
     @Override
     public View getView(SuggestionCursor suggestionCursor, String str, View view, ViewGroup viewGroup) {
-        View viewInflate;
         if (view == null || !view.getClass().equals(this.mViewClass)) {
-            viewInflate = getInflater().inflate(this.mLayoutId, viewGroup, false);
-        } else {
-            viewInflate = view;
+            view = getInflater().inflate(this.mLayoutId, viewGroup, false);
         }
-        if (viewInflate instanceof SuggestionView) {
-            ((SuggestionView) viewInflate).bindAsSuggestion(suggestionCursor, str);
-            return viewInflate;
+        if (!(view instanceof SuggestionView)) {
+            throw new IllegalArgumentException("Not a SuggestionView: " + view);
         }
-        throw new IllegalArgumentException("Not a SuggestionView: " + viewInflate);
+        ((SuggestionView) view).bindAsSuggestion(suggestionCursor, str);
+        return view;
     }
 
     @Override
     public String getViewType(Suggestion suggestion) {
         return this.mViewType;
+    }
+
+    @Override
+    public boolean canCreateView(Suggestion suggestion) {
+        return true;
     }
 }

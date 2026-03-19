@@ -11,10 +11,10 @@ public class TextAppearanceFactory {
     }
 
     public Object[] createSuggestionQueryTextAppearance() {
-        return new Object[]{new TextAppearanceSpan(this.mContext, 2131558407)};
+        return new Object[]{new TextAppearanceSpan(this.mContext, R.style.SuggestionText1_Query)};
     }
 
     public Object[] createSuggestionSuggestedTextAppearance() {
-        return new Object[]{new TextAppearanceSpan(this.mContext, 2131558408)};
+        return new Object[]{new TextAppearanceSpan(this.mContext, R.style.SuggestionText1_Suggested)};
     }
 }

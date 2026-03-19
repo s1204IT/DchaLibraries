@@ -126,7 +126,7 @@ class SpeedBumpController {
         }
     }
 
-    public void hideLockOutMessage() {
+    private void hideLockOutMessage() {
         if (this.mLockoutMessageView.getVisibility() != 0) {
             return;
         }
@@ -149,7 +149,7 @@ class SpeedBumpController {
         this.mLockoutMessageView.startAnimation(lockOutMessageOut);
     }
 
-    public void updateUnlimitedModeEnabled(CarUxRestrictions restrictions) {
+    private void updateUnlimitedModeEnabled(CarUxRestrictions restrictions) {
         this.mContentRateLimiter.setUnlimitedMode(!restrictions.isRequiresDistractionOptimization());
     }
 

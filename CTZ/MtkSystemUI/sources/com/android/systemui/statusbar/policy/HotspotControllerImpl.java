@@ -140,7 +140,7 @@ public class HotspotControllerImpl implements WifiManager.SoftApCallback, Hotspo
         return this.mNumConnectedDevices;
     }
 
-    public void fireHotspotChangedCallback(boolean z) {
+    private void fireHotspotChangedCallback(boolean z) {
         fireHotspotChangedCallback(z, this.mNumConnectedDevices);
     }
 

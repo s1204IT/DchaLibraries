@@ -23,7 +23,7 @@ public class SavedQueryRemover extends AsyncLoader<Void> {
     }
 
     @Override
-    public void onDiscardResult(Void r1) {
+    protected void onDiscardResult(Void r1) {
     }
 
     private SQLiteDatabase getWritableDatabase() {

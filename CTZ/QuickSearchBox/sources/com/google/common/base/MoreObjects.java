@@ -1,21 +1,28 @@
 package com.google.common.base;
 
 public final class MoreObjects {
+    public static <T> T firstNonNull(T t, T t2) {
+        return t != null ? t : (T) Preconditions.checkNotNull(t2);
+    }
+
+    public static ToStringHelper toStringHelper(Object obj) {
+        return new ToStringHelper(simpleName(obj.getClass()));
+    }
+
+    static String simpleName(Class<?> cls) {
+        String strReplaceAll = cls.getName().replaceAll("\\$[0-9]+", "\\$");
+        int iLastIndexOf = strReplaceAll.lastIndexOf(36);
+        if (iLastIndexOf == -1) {
+            iLastIndexOf = strReplaceAll.lastIndexOf(46);
+        }
+        return strReplaceAll.substring(iLastIndexOf + 1);
+    }
 
     public static final class ToStringHelper {
         private final String className;
         private ValueHolder holderHead;
         private ValueHolder holderTail;
         private boolean omitNullValues;
-
-        private static final class ValueHolder {
-            String name;
-            ValueHolder next;
-            Object value;
-
-            private ValueHolder() {
-            }
-        }
 
         private ToStringHelper(String str) {
             this.holderHead = new ValueHolder();
@@ -24,31 +31,12 @@ public final class MoreObjects {
             this.className = (String) Preconditions.checkNotNull(str);
         }
 
-        private ValueHolder addHolder() {
-            ValueHolder valueHolder = new ValueHolder();
-            this.holderTail.next = valueHolder;
-            this.holderTail = valueHolder;
-            return valueHolder;
-        }
-
-        private ToStringHelper addHolder(Object obj) {
-            addHolder().value = obj;
-            return this;
-        }
-
-        private ToStringHelper addHolder(String str, Object obj) {
-            ValueHolder valueHolderAddHolder = addHolder();
-            valueHolderAddHolder.value = obj;
-            valueHolderAddHolder.name = (String) Preconditions.checkNotNull(str);
-            return this;
+        public ToStringHelper add(String str, Object obj) {
+            return addHolder(str, obj);
         }
 
         public ToStringHelper add(String str, int i) {
             return addHolder(str, String.valueOf(i));
-        }
-
-        public ToStringHelper add(String str, Object obj) {
-            return addHolder(str, obj);
         }
 
         public ToStringHelper addValue(Object obj) {
@@ -75,22 +63,33 @@ public final class MoreObjects {
             sb.append('}');
             return sb.toString();
         }
-    }
 
-    public static <T> T firstNonNull(T t, T t2) {
-        return t != null ? t : (T) Preconditions.checkNotNull(t2);
-    }
-
-    static String simpleName(Class<?> cls) {
-        String strReplaceAll = cls.getName().replaceAll("\\$[0-9]+", "\\$");
-        int iLastIndexOf = strReplaceAll.lastIndexOf(36);
-        if (iLastIndexOf == -1) {
-            iLastIndexOf = strReplaceAll.lastIndexOf(46);
+        private ValueHolder addHolder() {
+            ValueHolder valueHolder = new ValueHolder();
+            this.holderTail.next = valueHolder;
+            this.holderTail = valueHolder;
+            return valueHolder;
         }
-        return strReplaceAll.substring(iLastIndexOf + 1);
-    }
 
-    public static ToStringHelper toStringHelper(Object obj) {
-        return new ToStringHelper(simpleName(obj.getClass()));
+        private ToStringHelper addHolder(Object obj) {
+            addHolder().value = obj;
+            return this;
+        }
+
+        private ToStringHelper addHolder(String str, Object obj) {
+            ValueHolder valueHolderAddHolder = addHolder();
+            valueHolderAddHolder.value = obj;
+            valueHolderAddHolder.name = (String) Preconditions.checkNotNull(str);
+            return this;
+        }
+
+        private static final class ValueHolder {
+            String name;
+            ValueHolder next;
+            Object value;
+
+            private ValueHolder() {
+            }
+        }
     }
 }

@@ -73,7 +73,7 @@ public class FullscreenUserSwitcher {
         this.mCurrentForegroundUserId = this.mUserManagerHelper.getForegroundUserId();
     }
 
-    public void onUserSelected(UserGridRecyclerView.UserRecord userRecord) {
+    private void onUserSelected(UserGridRecyclerView.UserRecord userRecord) {
         if (userRecord.mIsForeground) {
             dismissKeyguard();
         } else {
@@ -81,7 +81,7 @@ public class FullscreenUserSwitcher {
         }
     }
 
-    public void dismissKeyguard() {
+    private void dismissKeyguard() {
         this.mStatusBar.executeRunnableDismissingKeyguard(null, null, true, true, true);
     }
 

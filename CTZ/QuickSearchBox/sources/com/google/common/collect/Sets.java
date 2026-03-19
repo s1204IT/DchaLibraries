@@ -24,25 +24,12 @@ public final class Sets {
         }
     }
 
-    static boolean equalsImpl(Set<?> set, Object obj) {
-        boolean z;
-        if (set == obj) {
-            return true;
-        }
-        if (!(obj instanceof Set)) {
-            return false;
-        }
-        Set set2 = (Set) obj;
-        try {
-            if (set.size() == set2.size()) {
-                z = set.containsAll(set2);
-            }
-            return z;
-        } catch (ClassCastException e) {
-            return false;
-        } catch (NullPointerException e2) {
-            return false;
-        }
+    public static <E> HashSet<E> newHashSet() {
+        return new HashSet<>();
+    }
+
+    public static <E> HashSet<E> newHashSetWithExpectedSize(int i) {
+        return new HashSet<>(Maps.capacity(i));
     }
 
     static int hashCodeImpl(Set<?> set) {
@@ -55,20 +42,26 @@ public final class Sets {
         return iHashCode;
     }
 
-    public static <E> HashSet<E> newHashSet() {
-        return new HashSet<>();
-    }
-
-    public static <E> HashSet<E> newHashSetWithExpectedSize(int i) {
-        return new HashSet<>(Maps.capacity(i));
-    }
-
-    static boolean removeAllImpl(Set<?> set, Collection<?> collection) {
-        Preconditions.checkNotNull(collection);
-        if (collection instanceof Multiset) {
-            collection = ((Multiset) collection).elementSet();
+    static boolean equalsImpl(Set<?> set, Object obj) {
+        if (set == obj) {
+            return true;
         }
-        return (!(collection instanceof Set) || collection.size() <= set.size()) ? removeAllImpl(set, collection.iterator()) : Iterators.removeAll(set.iterator(), collection);
+        if (!(obj instanceof Set)) {
+            return false;
+        }
+        Set set2 = (Set) obj;
+        try {
+            if (set.size() == set2.size()) {
+                if (set.containsAll(set2)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (ClassCastException e) {
+            return false;
+        } catch (NullPointerException e2) {
+            return false;
+        }
     }
 
     static boolean removeAllImpl(Set<?> set, Iterator<?> it) {
@@ -77,5 +70,16 @@ public final class Sets {
             zRemove |= set.remove(it.next());
         }
         return zRemove;
+    }
+
+    static boolean removeAllImpl(Set<?> set, Collection<?> collection) {
+        Preconditions.checkNotNull(collection);
+        if (collection instanceof Multiset) {
+            collection = ((Multiset) collection).elementSet();
+        }
+        if ((collection instanceof Set) && collection.size() > set.size()) {
+            return Iterators.removeAll(set.iterator(), collection);
+        }
+        return removeAllImpl(set, collection.iterator());
     }
 }

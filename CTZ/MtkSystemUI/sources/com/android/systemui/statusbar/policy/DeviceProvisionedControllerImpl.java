@@ -97,13 +97,13 @@ public class DeviceProvisionedControllerImpl extends CurrentUserTracker implemen
         }
     }
 
-    public void notifySetupChanged() {
+    private void notifySetupChanged() {
         for (int size = this.mListeners.size() - 1; size >= 0; size--) {
             this.mListeners.get(size).onUserSetupChanged();
         }
     }
 
-    public void notifyProvisionedChanged() {
+    private void notifyProvisionedChanged() {
         for (int size = this.mListeners.size() - 1; size >= 0; size--) {
             this.mListeners.get(size).onDeviceProvisionedChanged();
         }

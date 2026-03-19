@@ -34,75 +34,25 @@ public class HttpAuthenticationDialog {
         createDialog();
     }
 
-    private void createDialog() {
-        View viewInflate = LayoutInflater.from(this.mContext).inflate(2130968606, (ViewGroup) null);
-        this.mUsernameView = (TextView) viewInflate.findViewById(2131558488);
-        this.mPasswordView = (TextView) viewInflate.findViewById(2131558489);
-        this.mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener(this) {
-            final HttpAuthenticationDialog this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                if (i != 6) {
-                    return false;
-                }
-                this.this$0.mDialog.getButton(-1).performClick();
-                return true;
-            }
-        });
-        this.mDialog = new AlertDialog.Builder(this.mContext).setTitle(this.mContext.getText(2131492957).toString().replace("%s1", this.mHost).replace("%s2", this.mRealm)).setIconAttribute(android.R.attr.alertDialogIcon).setView(viewInflate).setPositiveButton(2131492960, new DialogInterface.OnClickListener(this) {
-            final HttpAuthenticationDialog this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (this.this$0.mOkListener != null) {
-                    this.this$0.mOkListener.onOk(this.this$0.mHost, this.this$0.mRealm, this.this$0.getUsername(), this.this$0.getPassword());
-                }
-            }
-        }).setNegativeButton(2131492963, new DialogInterface.OnClickListener(this) {
-            final HttpAuthenticationDialog this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (this.this$0.mCancelListener != null) {
-                    this.this$0.mCancelListener.onCancel();
-                }
-            }
-        }).setOnCancelListener(new DialogInterface.OnCancelListener(this) {
-            final HttpAuthenticationDialog this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                if (this.this$0.mCancelListener != null) {
-                    this.this$0.mCancelListener.onCancel();
-                }
-            }
-        }).create();
-        this.mDialog.getWindow().setSoftInputMode(4);
+    private String getUsername() {
+        return this.mUsernameView.getText().toString();
     }
 
     private String getPassword() {
         return this.mPasswordView.getText().toString();
     }
 
-    private String getUsername() {
-        return this.mUsernameView.getText().toString();
+    public void setOkListener(OkListener okListener) {
+        this.mOkListener = okListener;
+    }
+
+    public void setCancelListener(CancelListener cancelListener) {
+        this.mCancelListener = cancelListener;
+    }
+
+    public void show() {
+        this.mDialog.show();
+        this.mUsernameView.requestFocus();
     }
 
     public void reshow() {
@@ -125,16 +75,42 @@ public class HttpAuthenticationDialog {
         }
     }
 
-    public void setCancelListener(CancelListener cancelListener) {
-        this.mCancelListener = cancelListener;
-    }
-
-    public void setOkListener(OkListener okListener) {
-        this.mOkListener = okListener;
-    }
-
-    public void show() {
-        this.mDialog.show();
-        this.mUsernameView.requestFocus();
+    private void createDialog() {
+        View viewInflate = LayoutInflater.from(this.mContext).inflate(R.layout.http_authentication, (ViewGroup) null);
+        this.mUsernameView = (TextView) viewInflate.findViewById(R.id.username_edit);
+        this.mPasswordView = (TextView) viewInflate.findViewById(R.id.password_edit);
+        this.mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if (i == 6) {
+                    HttpAuthenticationDialog.this.mDialog.getButton(-1).performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+        this.mDialog = new AlertDialog.Builder(this.mContext).setTitle(this.mContext.getText(R.string.sign_in_to).toString().replace("%s1", this.mHost).replace("%s2", this.mRealm)).setIconAttribute(android.R.attr.alertDialogIcon).setView(viewInflate).setPositiveButton(R.string.action, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (HttpAuthenticationDialog.this.mOkListener != null) {
+                    HttpAuthenticationDialog.this.mOkListener.onOk(HttpAuthenticationDialog.this.mHost, HttpAuthenticationDialog.this.mRealm, HttpAuthenticationDialog.this.getUsername(), HttpAuthenticationDialog.this.getPassword());
+                }
+            }
+        }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (HttpAuthenticationDialog.this.mCancelListener != null) {
+                    HttpAuthenticationDialog.this.mCancelListener.onCancel();
+                }
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                if (HttpAuthenticationDialog.this.mCancelListener != null) {
+                    HttpAuthenticationDialog.this.mCancelListener.onCancel();
+                }
+            }
+        }).create();
+        this.mDialog.getWindow().setSoftInputMode(4);
     }
 }

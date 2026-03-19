@@ -9,12 +9,187 @@ public class AccessibilityNodeInfoCompat {
     private final AccessibilityNodeInfo mInfo;
     public int mParentVirtualDescendantId = -1;
 
-    private AccessibilityNodeInfoCompat(AccessibilityNodeInfo accessibilityNodeInfo) {
-        this.mInfo = accessibilityNodeInfo;
+    private AccessibilityNodeInfoCompat(AccessibilityNodeInfo info) {
+        this.mInfo = info;
     }
 
-    private static String getActionSymbolicName(int i) {
-        switch (i) {
+    public static AccessibilityNodeInfoCompat wrap(AccessibilityNodeInfo info) {
+        return new AccessibilityNodeInfoCompat(info);
+    }
+
+    public AccessibilityNodeInfo unwrap() {
+        return this.mInfo;
+    }
+
+    public int getActions() {
+        return this.mInfo.getActions();
+    }
+
+    public void addAction(int action) {
+        this.mInfo.addAction(action);
+    }
+
+    public void setParent(View parent) {
+        this.mInfo.setParent(parent);
+    }
+
+    public void getBoundsInParent(Rect outBounds) {
+        this.mInfo.getBoundsInParent(outBounds);
+    }
+
+    public void getBoundsInScreen(Rect outBounds) {
+        this.mInfo.getBoundsInScreen(outBounds);
+    }
+
+    public boolean isCheckable() {
+        return this.mInfo.isCheckable();
+    }
+
+    public boolean isChecked() {
+        return this.mInfo.isChecked();
+    }
+
+    public boolean isFocusable() {
+        return this.mInfo.isFocusable();
+    }
+
+    public boolean isFocused() {
+        return this.mInfo.isFocused();
+    }
+
+    public boolean isSelected() {
+        return this.mInfo.isSelected();
+    }
+
+    public boolean isClickable() {
+        return this.mInfo.isClickable();
+    }
+
+    public boolean isLongClickable() {
+        return this.mInfo.isLongClickable();
+    }
+
+    public boolean isEnabled() {
+        return this.mInfo.isEnabled();
+    }
+
+    public boolean isPassword() {
+        return this.mInfo.isPassword();
+    }
+
+    public boolean isScrollable() {
+        return this.mInfo.isScrollable();
+    }
+
+    public void setScrollable(boolean scrollable) {
+        this.mInfo.setScrollable(scrollable);
+    }
+
+    public CharSequence getPackageName() {
+        return this.mInfo.getPackageName();
+    }
+
+    public CharSequence getClassName() {
+        return this.mInfo.getClassName();
+    }
+
+    public void setClassName(CharSequence className) {
+        this.mInfo.setClassName(className);
+    }
+
+    public CharSequence getText() {
+        return this.mInfo.getText();
+    }
+
+    public CharSequence getContentDescription() {
+        return this.mInfo.getContentDescription();
+    }
+
+    public String getViewIdResourceName() {
+        if (Build.VERSION.SDK_INT >= 18) {
+            return this.mInfo.getViewIdResourceName();
+        }
+        return null;
+    }
+
+    public int hashCode() {
+        if (this.mInfo == null) {
+            return 0;
+        }
+        return this.mInfo.hashCode();
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        AccessibilityNodeInfoCompat other = (AccessibilityNodeInfoCompat) obj;
+        if (this.mInfo == null) {
+            if (other.mInfo != null) {
+                return false;
+            }
+        } else if (!this.mInfo.equals(other.mInfo)) {
+            return false;
+        }
+        return true;
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(super.toString());
+        Rect bounds = new Rect();
+        getBoundsInParent(bounds);
+        builder.append("; boundsInParent: " + bounds);
+        getBoundsInScreen(bounds);
+        builder.append("; boundsInScreen: " + bounds);
+        builder.append("; packageName: ");
+        builder.append(getPackageName());
+        builder.append("; className: ");
+        builder.append(getClassName());
+        builder.append("; text: ");
+        builder.append(getText());
+        builder.append("; contentDescription: ");
+        builder.append(getContentDescription());
+        builder.append("; viewId: ");
+        builder.append(getViewIdResourceName());
+        builder.append("; checkable: ");
+        builder.append(isCheckable());
+        builder.append("; checked: ");
+        builder.append(isChecked());
+        builder.append("; focusable: ");
+        builder.append(isFocusable());
+        builder.append("; focused: ");
+        builder.append(isFocused());
+        builder.append("; selected: ");
+        builder.append(isSelected());
+        builder.append("; clickable: ");
+        builder.append(isClickable());
+        builder.append("; longClickable: ");
+        builder.append(isLongClickable());
+        builder.append("; enabled: ");
+        builder.append(isEnabled());
+        builder.append("; password: ");
+        builder.append(isPassword());
+        builder.append("; scrollable: " + isScrollable());
+        builder.append("; [");
+        int actionBits = getActions();
+        while (actionBits != 0) {
+            int action = 1 << Integer.numberOfTrailingZeros(actionBits);
+            actionBits &= ~action;
+            builder.append(getActionSymbolicName(action));
+            if (actionBits != 0) {
+                builder.append(", ");
+            }
+        }
+        builder.append("]");
+        return builder.toString();
+    }
+
+    private static String getActionSymbolicName(int action) {
+        switch (action) {
             case 1:
                 return "ACTION_FOCUS";
             case 2:
@@ -54,173 +229,5 @@ public class AccessibilityNodeInfoCompat {
             default:
                 return "ACTION_UNKNOWN";
         }
-    }
-
-    public static AccessibilityNodeInfoCompat wrap(AccessibilityNodeInfo accessibilityNodeInfo) {
-        return new AccessibilityNodeInfoCompat(accessibilityNodeInfo);
-    }
-
-    public void addAction(int i) {
-        this.mInfo.addAction(i);
-    }
-
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj != null && getClass() == obj.getClass()) {
-            AccessibilityNodeInfoCompat accessibilityNodeInfoCompat = (AccessibilityNodeInfoCompat) obj;
-            return this.mInfo == null ? accessibilityNodeInfoCompat.mInfo == null : this.mInfo.equals(accessibilityNodeInfoCompat.mInfo);
-        }
-        return false;
-    }
-
-    public int getActions() {
-        return this.mInfo.getActions();
-    }
-
-    public void getBoundsInParent(Rect rect) {
-        this.mInfo.getBoundsInParent(rect);
-    }
-
-    public void getBoundsInScreen(Rect rect) {
-        this.mInfo.getBoundsInScreen(rect);
-    }
-
-    public CharSequence getClassName() {
-        return this.mInfo.getClassName();
-    }
-
-    public CharSequence getContentDescription() {
-        return this.mInfo.getContentDescription();
-    }
-
-    public CharSequence getPackageName() {
-        return this.mInfo.getPackageName();
-    }
-
-    public CharSequence getText() {
-        return this.mInfo.getText();
-    }
-
-    public String getViewIdResourceName() {
-        if (Build.VERSION.SDK_INT >= 18) {
-            return this.mInfo.getViewIdResourceName();
-        }
-        return null;
-    }
-
-    public int hashCode() {
-        if (this.mInfo == null) {
-            return 0;
-        }
-        return this.mInfo.hashCode();
-    }
-
-    public boolean isCheckable() {
-        return this.mInfo.isCheckable();
-    }
-
-    public boolean isChecked() {
-        return this.mInfo.isChecked();
-    }
-
-    public boolean isClickable() {
-        return this.mInfo.isClickable();
-    }
-
-    public boolean isEnabled() {
-        return this.mInfo.isEnabled();
-    }
-
-    public boolean isFocusable() {
-        return this.mInfo.isFocusable();
-    }
-
-    public boolean isFocused() {
-        return this.mInfo.isFocused();
-    }
-
-    public boolean isLongClickable() {
-        return this.mInfo.isLongClickable();
-    }
-
-    public boolean isPassword() {
-        return this.mInfo.isPassword();
-    }
-
-    public boolean isScrollable() {
-        return this.mInfo.isScrollable();
-    }
-
-    public boolean isSelected() {
-        return this.mInfo.isSelected();
-    }
-
-    public void setClassName(CharSequence charSequence) {
-        this.mInfo.setClassName(charSequence);
-    }
-
-    public void setParent(View view) {
-        this.mInfo.setParent(view);
-    }
-
-    public void setScrollable(boolean z) {
-        this.mInfo.setScrollable(z);
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(super.toString());
-        Rect rect = new Rect();
-        getBoundsInParent(rect);
-        sb.append("; boundsInParent: " + rect);
-        getBoundsInScreen(rect);
-        sb.append("; boundsInScreen: " + rect);
-        sb.append("; packageName: ");
-        sb.append(getPackageName());
-        sb.append("; className: ");
-        sb.append(getClassName());
-        sb.append("; text: ");
-        sb.append(getText());
-        sb.append("; contentDescription: ");
-        sb.append(getContentDescription());
-        sb.append("; viewId: ");
-        sb.append(getViewIdResourceName());
-        sb.append("; checkable: ");
-        sb.append(isCheckable());
-        sb.append("; checked: ");
-        sb.append(isChecked());
-        sb.append("; focusable: ");
-        sb.append(isFocusable());
-        sb.append("; focused: ");
-        sb.append(isFocused());
-        sb.append("; selected: ");
-        sb.append(isSelected());
-        sb.append("; clickable: ");
-        sb.append(isClickable());
-        sb.append("; longClickable: ");
-        sb.append(isLongClickable());
-        sb.append("; enabled: ");
-        sb.append(isEnabled());
-        sb.append("; password: ");
-        sb.append(isPassword());
-        sb.append("; scrollable: " + isScrollable());
-        sb.append("; [");
-        int actions = getActions();
-        while (actions != 0) {
-            int iNumberOfTrailingZeros = 1 << Integer.numberOfTrailingZeros(actions);
-            actions &= iNumberOfTrailingZeros ^ (-1);
-            sb.append(getActionSymbolicName(iNumberOfTrailingZeros));
-            if (actions != 0) {
-                sb.append(", ");
-            }
-        }
-        sb.append("]");
-        return sb.toString();
-    }
-
-    public AccessibilityNodeInfo unwrap() {
-        return this.mInfo;
     }
 }

@@ -85,7 +85,7 @@ public class MasterClear extends InstrumentedFragment implements ViewTreeObserve
         getActivity().setTitle(R.string.master_clear_short_title);
     }
 
-    public boolean runKeyguardConfirmation(int i) {
+    private boolean runKeyguardConfirmation(int i) {
         return new ChooseLockSettingsHelper(getActivity(), this).launchConfirmationActivity(i, getActivity().getResources().getText(R.string.master_clear_short_title));
     }
 

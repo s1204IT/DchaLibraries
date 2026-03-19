@@ -11,18 +11,16 @@ public class PerNameExecutor implements NamedTaskExecutor {
     }
 
     @Override
-    public void execute(NamedTask namedTask) {
-        synchronized (this) {
-            if (this.mExecutors == null) {
-                this.mExecutors = new HashMap<>();
-            }
-            String name = namedTask.getName();
-            NamedTaskExecutor namedTaskExecutorCreate = this.mExecutors.get(name);
-            if (namedTaskExecutorCreate == null) {
-                namedTaskExecutorCreate = this.mExecutorFactory.create();
-                this.mExecutors.put(name, namedTaskExecutorCreate);
-            }
-            namedTaskExecutorCreate.execute(namedTask);
+    public synchronized void execute(NamedTask namedTask) {
+        if (this.mExecutors == null) {
+            this.mExecutors = new HashMap<>();
         }
+        String name = namedTask.getName();
+        NamedTaskExecutor namedTaskExecutorCreate = this.mExecutors.get(name);
+        if (namedTaskExecutorCreate == null) {
+            namedTaskExecutorCreate = this.mExecutorFactory.create();
+            this.mExecutors.put(name, namedTaskExecutorCreate);
+        }
+        namedTaskExecutorCreate.execute(namedTask);
     }
 }

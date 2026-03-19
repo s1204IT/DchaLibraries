@@ -62,7 +62,7 @@ public class DarkIconDispatcherImpl implements DarkIconDispatcher {
         applyIconTint();
     }
 
-    public void setIconTintInternal(float f) {
+    private void setIconTintInternal(float f) {
         this.mDarkIntensity = f;
         this.mIconTint = ((Integer) ArgbEvaluator.getInstance().evaluate(f, Integer.valueOf(this.mLightModeIconColorSingleTone), Integer.valueOf(this.mDarkModeIconColorSingleTone))).intValue();
         applyIconTint();

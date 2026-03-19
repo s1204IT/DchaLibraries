@@ -30,69 +30,117 @@ public class AudioAttributesCompat {
     private AudioAttributesCompat() {
     }
 
+    public Object unwrap() {
+        if (this.mAudioAttributesWrapper != null) {
+            return this.mAudioAttributesWrapper.unwrap();
+        }
+        return null;
+    }
+
+    public int getLegacyStreamType() {
+        if (this.mLegacyStream != null) {
+            return this.mLegacyStream.intValue();
+        }
+        if (Build.VERSION.SDK_INT >= 21 && !sForceLegacyBehavior) {
+            return AudioAttributesCompatApi21.toLegacyStreamType(this.mAudioAttributesWrapper);
+        }
+        return toVolumeStreamType(false, this.mFlags, this.mUsage);
+    }
+
+    public static AudioAttributesCompat wrap(Object aa) {
+        if (Build.VERSION.SDK_INT >= 21 && !sForceLegacyBehavior) {
+            AudioAttributesCompat aac = new AudioAttributesCompat();
+            aac.mAudioAttributesWrapper = AudioAttributesCompatApi21.Wrapper.wrap((AudioAttributes) aa);
+            return aac;
+        }
+        return null;
+    }
+
+    public int getContentType() {
+        if (Build.VERSION.SDK_INT >= 21 && !sForceLegacyBehavior && this.mAudioAttributesWrapper != null) {
+            return this.mAudioAttributesWrapper.unwrap().getContentType();
+        }
+        return this.mContentType;
+    }
+
+    public int getUsage() {
+        if (Build.VERSION.SDK_INT >= 21 && !sForceLegacyBehavior && this.mAudioAttributesWrapper != null) {
+            return this.mAudioAttributesWrapper.unwrap().getUsage();
+        }
+        return this.mUsage;
+    }
+
+    public int getFlags() {
+        if (Build.VERSION.SDK_INT >= 21 && !sForceLegacyBehavior && this.mAudioAttributesWrapper != null) {
+            return this.mAudioAttributesWrapper.unwrap().getFlags();
+        }
+        int flags = this.mFlags;
+        int legacyStream = getLegacyStreamType();
+        if (legacyStream == 6) {
+            flags |= 4;
+        } else if (legacyStream == 7) {
+            flags |= 1;
+        }
+        return flags & 273;
+    }
+
     public static AudioAttributesCompat fromBundle(Bundle bundle) {
+        Integer numValueOf = null;
         if (bundle == null) {
             return null;
         }
         if (Build.VERSION.SDK_INT >= 21) {
-            AudioAttributes audioAttributes = (AudioAttributes) bundle.getParcelable("android.support.v4.media.audio_attrs.FRAMEWORKS");
-            return audioAttributes == null ? null : wrap(audioAttributes);
+            AudioAttributes frameworkAttrs = (AudioAttributes) bundle.getParcelable("android.support.v4.media.audio_attrs.FRAMEWORKS");
+            if (frameworkAttrs == null) {
+                return null;
+            }
+            return wrap(frameworkAttrs);
         }
-        int i = bundle.getInt("android.support.v4.media.audio_attrs.USAGE", 0);
-        int i2 = bundle.getInt("android.support.v4.media.audio_attrs.CONTENT_TYPE", 0);
-        int i3 = bundle.getInt("android.support.v4.media.audio_attrs.FLAGS", 0);
-        AudioAttributesCompat audioAttributesCompat = new AudioAttributesCompat();
-        audioAttributesCompat.mUsage = i;
-        audioAttributesCompat.mContentType = i2;
-        audioAttributesCompat.mFlags = i3;
-        audioAttributesCompat.mLegacyStream = bundle.containsKey("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE") ? Integer.valueOf(bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE")) : null;
-        return audioAttributesCompat;
+        int usage = bundle.getInt("android.support.v4.media.audio_attrs.USAGE", 0);
+        int contentType = bundle.getInt("android.support.v4.media.audio_attrs.CONTENT_TYPE", 0);
+        int flags = bundle.getInt("android.support.v4.media.audio_attrs.FLAGS", 0);
+        AudioAttributesCompat attr = new AudioAttributesCompat();
+        attr.mUsage = usage;
+        attr.mContentType = contentType;
+        attr.mFlags = flags;
+        if (bundle.containsKey("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE")) {
+            numValueOf = Integer.valueOf(bundle.getInt("android.support.v4.media.audio_attrs.LEGACY_STREAM_TYPE"));
+        }
+        attr.mLegacyStream = numValueOf;
+        return attr;
     }
 
-    static int toVolumeStreamType(boolean z, int i, int i2) {
-        if ((i & 1) == 1) {
-            return z ? 1 : 7;
-        }
-        if ((i & 4) == 4) {
-            return z ? 0 : 6;
-        }
-        switch (i2) {
-            case 0:
-                return z ? Integer.MIN_VALUE : 3;
-            case 1:
-            case 12:
-            case 14:
-            case 16:
-                return 3;
-            case 2:
-                return 0;
-            case 3:
-                return z ? 0 : 8;
-            case 4:
-                return 4;
-            case 5:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                return 5;
-            case 6:
-                return 2;
-            case 11:
-                return 10;
-            case 13:
-                return 1;
-            case 15:
-            default:
-                if (!z) {
-                    return 3;
-                }
-                throw new IllegalArgumentException("Unknown usage value " + i2 + " in audio attributes");
-        }
+    public int hashCode() {
+        return (Build.VERSION.SDK_INT < 21 || sForceLegacyBehavior || this.mAudioAttributesWrapper == null) ? Arrays.hashCode(new Object[]{Integer.valueOf(this.mContentType), Integer.valueOf(this.mFlags), Integer.valueOf(this.mUsage), this.mLegacyStream}) : this.mAudioAttributesWrapper.unwrap().hashCode();
     }
 
-    static String usageToString(int i) {
-        switch (i) {
+    public String toString() {
+        StringBuilder sb = new StringBuilder("AudioAttributesCompat:");
+        if (unwrap() != null) {
+            sb.append(" audioattributes=");
+            sb.append(unwrap());
+        } else {
+            if (this.mLegacyStream != null) {
+                sb.append(" stream=");
+                sb.append(this.mLegacyStream);
+                sb.append(" derived");
+            }
+            sb.append(" usage=");
+            sb.append(usageToString());
+            sb.append(" content=");
+            sb.append(this.mContentType);
+            sb.append(" flags=0x");
+            sb.append(Integer.toHexString(this.mFlags).toUpperCase());
+        }
+        return sb.toString();
+    }
+
+    String usageToString() {
+        return usageToString(this.mUsage);
+    }
+
+    static String usageToString(int usage) {
+        switch (usage) {
             case 0:
                 return new String("USAGE_UNKNOWN");
             case 1:
@@ -125,103 +173,74 @@ public class AudioAttributesCompat {
                 return new String("USAGE_GAME");
             case 15:
             default:
-                return new String("unknown usage " + i);
+                return new String("unknown usage " + usage);
             case 16:
                 return new String("USAGE_ASSISTANT");
         }
     }
 
-    public static AudioAttributesCompat wrap(Object obj) {
-        if (Build.VERSION.SDK_INT < 21 || sForceLegacyBehavior) {
-            return null;
+    static int toVolumeStreamType(boolean fromGetVolumeControlStream, int flags, int usage) {
+        if ((flags & 1) == 1) {
+            return fromGetVolumeControlStream ? 1 : 7;
         }
-        AudioAttributesCompat audioAttributesCompat = new AudioAttributesCompat();
-        audioAttributesCompat.mAudioAttributesWrapper = AudioAttributesCompatApi21.Wrapper.wrap((AudioAttributes) obj);
-        return audioAttributesCompat;
+        if ((flags & 4) == 4) {
+            return fromGetVolumeControlStream ? 0 : 6;
+        }
+        switch (usage) {
+            case 0:
+                return fromGetVolumeControlStream ? Integer.MIN_VALUE : 3;
+            case 1:
+            case 12:
+            case 14:
+            case 16:
+                return 3;
+            case 2:
+                return 0;
+            case 3:
+                return fromGetVolumeControlStream ? 0 : 8;
+            case 4:
+                return 4;
+            case 5:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+                return 5;
+            case 6:
+                return 2;
+            case 11:
+                return 10;
+            case 13:
+                return 1;
+            case 15:
+            default:
+                if (!fromGetVolumeControlStream) {
+                    return 3;
+                }
+                throw new IllegalArgumentException("Unknown usage value " + usage + " in audio attributes");
+        }
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (obj == null || getClass() != obj.getClass()) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AudioAttributesCompat audioAttributesCompat = (AudioAttributesCompat) obj;
+        AudioAttributesCompat that = (AudioAttributesCompat) o;
         if (Build.VERSION.SDK_INT >= 21 && !sForceLegacyBehavior && this.mAudioAttributesWrapper != null) {
-            return this.mAudioAttributesWrapper.unwrap().equals(audioAttributesCompat.unwrap());
+            return this.mAudioAttributesWrapper.unwrap().equals(that.unwrap());
         }
-        if (this.mContentType == audioAttributesCompat.getContentType() && this.mFlags == audioAttributesCompat.getFlags() && this.mUsage == audioAttributesCompat.getUsage()) {
+        if (this.mContentType == that.getContentType() && this.mFlags == that.getFlags() && this.mUsage == that.getUsage()) {
             if (this.mLegacyStream != null) {
-                if (this.mLegacyStream.equals(audioAttributesCompat.mLegacyStream)) {
+                if (this.mLegacyStream.equals(that.mLegacyStream)) {
                     return true;
                 }
-            } else if (audioAttributesCompat.mLegacyStream == null) {
+            } else if (that.mLegacyStream == null) {
                 return true;
             }
         }
         return false;
-    }
-
-    public int getContentType() {
-        return (Build.VERSION.SDK_INT < 21 || sForceLegacyBehavior || this.mAudioAttributesWrapper == null) ? this.mContentType : this.mAudioAttributesWrapper.unwrap().getContentType();
-    }
-
-    public int getFlags() {
-        if (Build.VERSION.SDK_INT >= 21 && !sForceLegacyBehavior && this.mAudioAttributesWrapper != null) {
-            return this.mAudioAttributesWrapper.unwrap().getFlags();
-        }
-        int i = this.mFlags;
-        int legacyStreamType = getLegacyStreamType();
-        if (legacyStreamType == 6) {
-            i |= 4;
-        } else if (legacyStreamType == 7) {
-            i |= 1;
-        }
-        return i & 273;
-    }
-
-    public int getLegacyStreamType() {
-        return this.mLegacyStream != null ? this.mLegacyStream.intValue() : (Build.VERSION.SDK_INT < 21 || sForceLegacyBehavior) ? toVolumeStreamType(false, this.mFlags, this.mUsage) : AudioAttributesCompatApi21.toLegacyStreamType(this.mAudioAttributesWrapper);
-    }
-
-    public int getUsage() {
-        return (Build.VERSION.SDK_INT < 21 || sForceLegacyBehavior || this.mAudioAttributesWrapper == null) ? this.mUsage : this.mAudioAttributesWrapper.unwrap().getUsage();
-    }
-
-    public int hashCode() {
-        return (Build.VERSION.SDK_INT < 21 || sForceLegacyBehavior || this.mAudioAttributesWrapper == null) ? Arrays.hashCode(new Object[]{Integer.valueOf(this.mContentType), Integer.valueOf(this.mFlags), Integer.valueOf(this.mUsage), this.mLegacyStream}) : this.mAudioAttributesWrapper.unwrap().hashCode();
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder("AudioAttributesCompat:");
-        if (unwrap() != null) {
-            sb.append(" audioattributes=");
-            sb.append(unwrap());
-        } else {
-            if (this.mLegacyStream != null) {
-                sb.append(" stream=");
-                sb.append(this.mLegacyStream);
-                sb.append(" derived");
-            }
-            sb.append(" usage=");
-            sb.append(usageToString());
-            sb.append(" content=");
-            sb.append(this.mContentType);
-            sb.append(" flags=0x");
-            sb.append(Integer.toHexString(this.mFlags).toUpperCase());
-        }
-        return sb.toString();
-    }
-
-    public Object unwrap() {
-        if (this.mAudioAttributesWrapper != null) {
-            return this.mAudioAttributesWrapper.unwrap();
-        }
-        return null;
-    }
-
-    String usageToString() {
-        return usageToString(this.mUsage);
     }
 }

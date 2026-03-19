@@ -22,8 +22,14 @@ public class SnapshotGridView extends GridView {
 
     @Override
     protected void onMeasure(int i, int i2) {
+        int iMakeMeasureSpec;
         int size = View.MeasureSpec.getSize(i);
-        int iMakeMeasureSpec = (size <= 0 || this.mColWidth <= 0) ? i : View.MeasureSpec.makeMeasureSpec(Math.min(Math.min(size / this.mColWidth, 6) * this.mColWidth, size), View.MeasureSpec.getMode(i));
+        int mode = View.MeasureSpec.getMode(i);
+        if (size > 0 && this.mColWidth > 0) {
+            iMakeMeasureSpec = View.MeasureSpec.makeMeasureSpec(Math.min(Math.min(size / this.mColWidth, 6) * this.mColWidth, size), mode);
+        } else {
+            iMakeMeasureSpec = i;
+        }
         if (i != iMakeMeasureSpec) {
             setPaddingRelative((i - iMakeMeasureSpec) / 2, 0, 0, 0);
         }

@@ -139,7 +139,7 @@ public abstract class KeyguardAbsKeyInputView extends LinearLayout implements Em
         }
     }
 
-    public void onPasswordChecked(int i, boolean z, int i2, boolean z2) {
+    private void onPasswordChecked(int i, boolean z, int i2, boolean z2) {
         boolean z3 = KeyguardUpdateMonitor.getCurrentUser() == i;
         if (z) {
             this.mCallback.reportUnlockAttempt(i, true, 0);

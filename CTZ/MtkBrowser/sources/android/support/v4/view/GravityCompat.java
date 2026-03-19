@@ -5,15 +5,18 @@ import android.os.Build;
 import android.view.Gravity;
 
 public final class GravityCompat {
-    public static void apply(int i, int i2, int i3, Rect rect, Rect rect2, int i4) {
+    public static void apply(int gravity, int w, int h, Rect container, Rect outRect, int layoutDirection) {
         if (Build.VERSION.SDK_INT >= 17) {
-            Gravity.apply(i, i2, i3, rect, rect2, i4);
+            Gravity.apply(gravity, w, h, container, outRect, layoutDirection);
         } else {
-            Gravity.apply(i, i2, i3, rect, rect2);
+            Gravity.apply(gravity, w, h, container, outRect);
         }
     }
 
-    public static int getAbsoluteGravity(int i, int i2) {
-        return Build.VERSION.SDK_INT >= 17 ? Gravity.getAbsoluteGravity(i, i2) : (-8388609) & i;
+    public static int getAbsoluteGravity(int gravity, int layoutDirection) {
+        if (Build.VERSION.SDK_INT >= 17) {
+            return Gravity.getAbsoluteGravity(gravity, layoutDirection);
+        }
+        return (-8388609) & gravity;
     }
 }

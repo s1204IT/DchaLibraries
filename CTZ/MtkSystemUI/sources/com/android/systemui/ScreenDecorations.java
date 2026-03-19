@@ -183,7 +183,7 @@ public class ScreenDecorations extends SystemUI implements TunerService.Tunable 
         view.setRotation(i2);
     }
 
-    public void updateWindowVisibilities() {
+    private void updateWindowVisibilities() {
         updateWindowVisibility(this.mOverlay);
         updateWindowVisibility(this.mBottomOverlay);
     }

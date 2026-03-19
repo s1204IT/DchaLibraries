@@ -165,7 +165,7 @@ public class ApfFilter {
         }
     }
 
-    public void maybeSetCounter(ApfGenerator apfGenerator, Counter counter) {
+    private void maybeSetCounter(ApfGenerator apfGenerator, Counter counter) {
         if (this.mApfCapabilities.hasDataAccess()) {
             apfGenerator.addLoadImmediate(ApfGenerator.Register.R1, counter.offset());
         }
@@ -208,24 +208,24 @@ public class ApfFilter {
 
         private void updateStats(ProcessRaResult processRaResult) {
             this.mStats.receivedRas++;
-            switch (processRaResult) {
-                case MATCH:
+            switch (AnonymousClass2.$SwitchMap$android$net$apf$ApfFilter$ProcessRaResult[processRaResult.ordinal()]) {
+                case 1:
                     this.mStats.matchingRas++;
                     break;
-                case DROPPED:
+                case 2:
                     this.mStats.droppedRas++;
                     break;
-                case PARSE_ERROR:
+                case 3:
                     this.mStats.parseErrors++;
                     break;
-                case ZERO_LIFETIME:
+                case 4:
                     this.mStats.zeroLifetimeRas++;
                     break;
-                case UPDATE_EXPIRY:
+                case 5:
                     this.mStats.matchingRas++;
                     this.mStats.programUpdates++;
                     break;
-                case UPDATE_NEW_RA:
+                case 6:
                     this.mStats.programUpdates++;
                     break;
             }
@@ -240,6 +240,37 @@ public class ApfFilter {
                 this.mStats.programUpdatesAllowingMulticast = ApfFilter.this.mNumProgramUpdatesAllowingMulticast;
                 ApfFilter.this.mMetricsLog.log(this.mStats);
                 ApfFilter.this.logApfProgramEventLocked(jElapsedRealtime / 1000);
+            }
+        }
+    }
+
+    static class AnonymousClass2 {
+        static final int[] $SwitchMap$android$net$apf$ApfFilter$ProcessRaResult = new int[ProcessRaResult.values().length];
+
+        static {
+            try {
+                $SwitchMap$android$net$apf$ApfFilter$ProcessRaResult[ProcessRaResult.MATCH.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$android$net$apf$ApfFilter$ProcessRaResult[ProcessRaResult.DROPPED.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$android$net$apf$ApfFilter$ProcessRaResult[ProcessRaResult.PARSE_ERROR.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+            try {
+                $SwitchMap$android$net$apf$ApfFilter$ProcessRaResult[ProcessRaResult.ZERO_LIFETIME.ordinal()] = 4;
+            } catch (NoSuchFieldError e4) {
+            }
+            try {
+                $SwitchMap$android$net$apf$ApfFilter$ProcessRaResult[ProcessRaResult.UPDATE_EXPIRY.ordinal()] = 5;
+            } catch (NoSuchFieldError e5) {
+            }
+            try {
+                $SwitchMap$android$net$apf$ApfFilter$ProcessRaResult[ProcessRaResult.UPDATE_NEW_RA.ordinal()] = 6;
+            } catch (NoSuchFieldError e6) {
             }
         }
     }
@@ -269,12 +300,12 @@ public class ApfFilter {
         this.mDataSnapshot = bArr;
     }
 
-    public void log(String str) {
+    private void log(String str) {
         Log.d("ApfFilter", "(" + this.mInterfaceParams.name + "): " + str);
     }
 
     @GuardedBy("this")
-    public long getUniqueNumberLocked() {
+    private long getUniqueNumberLocked() {
         long j = this.mUniqueCounter;
         this.mUniqueCounter = 1 + j;
         return j;
@@ -752,7 +783,7 @@ public class ApfFilter {
     }
 
     @GuardedBy("this")
-    public void logApfProgramEventLocked(long j) {
+    private void logApfProgramEventLocked(long j) {
         if (this.mLastInstallEvent == null) {
             return;
         }

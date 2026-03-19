@@ -205,7 +205,7 @@ public class DashboardSummary extends InstrumentedFragment implements ConditionM
         }
     }
 
-    public void updateCategory() {
+    void updateCategory() {
         DashboardCategory tilesForCategory = this.mDashboardFeatureProvider.getTilesForCategory("com.android.settings.category.ia.homepage");
         this.mSummaryLoader.updateSummaryToCache(tilesForCategory);
         this.mStagingCategory = tilesForCategory;

@@ -26,54 +26,36 @@ public class PermissionsPrompt extends RelativeLayout {
         super(context, attributeSet);
     }
 
-    private void handleButtonClick(boolean z) {
-        hide();
-        if (z) {
-            this.mRequest.grant(this.mRequest.getResources());
-        } else {
-            this.mRequest.deny();
-        }
-    }
-
-    private void init() {
-        this.mMessage = (TextView) findViewById(2131558480);
-        this.mAllowButton = (Button) findViewById(2131558502);
-        this.mDenyButton = (Button) findViewById(2131558501);
-        this.mRemember = (CheckBox) findViewById(2131558481);
-        this.mAllowButton.setOnClickListener(new View.OnClickListener(this) {
-            final PermissionsPrompt this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onClick(View view) {
-                this.this$0.handleButtonClick(true);
-            }
-        });
-        this.mDenyButton.setOnClickListener(new View.OnClickListener(this) {
-            final PermissionsPrompt this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onClick(View view) {
-                this.this$0.handleButtonClick(false);
-            }
-        });
-    }
-
-    public void hide() {
-        setVisibility(8);
-    }
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         init();
+    }
+
+    private void init() {
+        this.mMessage = (TextView) findViewById(R.id.message);
+        this.mAllowButton = (Button) findViewById(R.id.allow_button);
+        this.mDenyButton = (Button) findViewById(R.id.deny_button);
+        this.mRemember = (CheckBox) findViewById(R.id.remember);
+        this.mAllowButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PermissionsPrompt.this.handleButtonClick(true);
+            }
+        });
+        this.mDenyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PermissionsPrompt.this.handleButtonClick(false);
+            }
+        });
+    }
+
+    public void show(PermissionRequest permissionRequest) {
+        this.mRequest = permissionRequest;
+        setMessage();
+        this.mRemember.setChecked(true);
+        setVisibility(0);
     }
 
     public void setMessage() {
@@ -81,11 +63,11 @@ public class PermissionsPrompt extends RelativeLayout {
         Vector vector = new Vector();
         for (String str : resources) {
             if (str.equals("android.webkit.resource.VIDEO_CAPTURE")) {
-                vector.add(getResources().getString(2131493241));
+                vector.add(getResources().getString(R.string.resource_video_capture));
             } else if (str.equals("android.webkit.resource.AUDIO_CAPTURE")) {
-                vector.add(getResources().getString(2131493242));
+                vector.add(getResources().getString(R.string.resource_audio_capture));
             } else if (str.equals("android.webkit.resource.PROTECTED_MEDIA_ID")) {
-                vector.add(getResources().getString(2131493240));
+                vector.add(getResources().getString(R.string.resource_protected_media_id));
             }
         }
         if (vector.isEmpty()) {
@@ -97,13 +79,19 @@ public class PermissionsPrompt extends RelativeLayout {
             sb.append(", ");
             sb.append((String) enumerationElements.nextElement());
         }
-        this.mMessage.setText(String.format(getResources().getString(2131493236), this.mRequest.getOrigin(), sb.toString()));
+        this.mMessage.setText(String.format(getResources().getString(R.string.permissions_prompt_message), this.mRequest.getOrigin(), sb.toString()));
     }
 
-    public void show(PermissionRequest permissionRequest) {
-        this.mRequest = permissionRequest;
-        setMessage();
-        this.mRemember.setChecked(true);
-        setVisibility(0);
+    public void hide() {
+        setVisibility(8);
+    }
+
+    private void handleButtonClick(boolean z) {
+        hide();
+        if (z) {
+            this.mRequest.grant(this.mRequest.getResources());
+        } else {
+            this.mRequest.deny();
+        }
     }
 }

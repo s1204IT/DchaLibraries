@@ -157,7 +157,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         setHasOptionsMenu(true);
     }
 
-    public static boolean isInteresting(VolumeInfo volumeInfo) {
+    private static boolean isInteresting(VolumeInfo volumeInfo) {
         switch (volumeInfo.getType()) {
             case 0:
             case 1:
@@ -167,7 +167,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    public synchronized void refresh() {
+    private synchronized void refresh() {
         Context prefContext = getPrefContext();
         getPreferenceScreen().removeAll();
         this.mInternalCategory.removeAll();
@@ -317,7 +317,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
 
         @Override
-        public Exception doInBackground(Void... voidArr) {
+        protected Exception doInBackground(Void... voidArr) {
             try {
                 this.mStorageManager.mount(this.mVolumeId);
                 return null;
@@ -327,7 +327,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
 
         @Override
-        public void onPostExecute(Exception exc) {
+        protected void onPostExecute(Exception exc) {
             if (exc == null) {
                 Toast.makeText(this.mContext, this.mContext.getString(R.string.storage_mount_success, this.mDescription), 0).show();
                 return;
@@ -351,7 +351,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
 
         @Override
-        public Exception doInBackground(Void... voidArr) {
+        protected Exception doInBackground(Void... voidArr) {
             try {
                 this.mStorageManager.unmount(this.mVolumeId);
                 return null;
@@ -361,7 +361,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
 
         @Override
-        public void onPostExecute(Exception exc) {
+        protected void onPostExecute(Exception exc) {
             if (exc == null) {
                 Toast.makeText(this.mContext, this.mContext.getString(R.string.storage_unmount_success, this.mDescription), 0).show();
                 return;
@@ -457,7 +457,7 @@ public class StorageSettings extends SettingsPreferenceFragment implements Index
         }
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Context mContext;
         private final SummaryLoader mLoader;
         private final StorageManagerVolumeProvider mStorageManagerVolumeProvider;

@@ -8,14 +8,14 @@ public class ArchTaskExecutor extends TaskExecutor {
     private TaskExecutor mDelegate = this.mDefaultTaskExecutor;
     private static final Executor sMainThreadExecutor = new Executor() {
         @Override
-        public void execute(Runnable runnable) {
-            ArchTaskExecutor.getInstance().postToMainThread(runnable);
+        public void execute(Runnable command) {
+            ArchTaskExecutor.getInstance().postToMainThread(command);
         }
     };
     private static final Executor sIOThreadExecutor = new Executor() {
         @Override
-        public void execute(Runnable runnable) {
-            ArchTaskExecutor.getInstance().executeOnDiskIO(runnable);
+        public void execute(Runnable command) {
+            ArchTaskExecutor.getInstance().executeOnDiskIO(command);
         }
     };
 
@@ -27,12 +27,8 @@ public class ArchTaskExecutor extends TaskExecutor {
             return sInstance;
         }
         synchronized (ArchTaskExecutor.class) {
-            try {
-                if (sInstance == null) {
-                    sInstance = new ArchTaskExecutor();
-                }
-            } catch (Throwable th) {
-                throw th;
+            if (sInstance == null) {
+                sInstance = new ArchTaskExecutor();
             }
         }
         return sInstance;
@@ -44,12 +40,12 @@ public class ArchTaskExecutor extends TaskExecutor {
     }
 
     @Override
-    public boolean isMainThread() {
-        return this.mDelegate.isMainThread();
+    public void postToMainThread(Runnable runnable) {
+        this.mDelegate.postToMainThread(runnable);
     }
 
     @Override
-    public void postToMainThread(Runnable runnable) {
-        this.mDelegate.postToMainThread(runnable);
+    public boolean isMainThread() {
+        return this.mDelegate.isMainThread();
     }
 }

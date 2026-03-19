@@ -9,23 +9,13 @@ final class EmptyImmutableBiMap extends ImmutableBiMap<Object, Object> {
     }
 
     @Override
-    ImmutableSet<Map.Entry<Object, Object>> createEntrySet() {
-        throw new AssertionError("should never be called");
-    }
-
-    @Override
-    public ImmutableSet<Map.Entry<Object, Object>> entrySet() {
-        return ImmutableSet.of();
-    }
-
-    @Override
-    public Object get(Object obj) {
-        return null;
-    }
-
-    @Override
     public ImmutableBiMap<Object, Object> inverse() {
         return this;
+    }
+
+    @Override
+    public int size() {
+        return 0;
     }
 
     @Override
@@ -34,8 +24,18 @@ final class EmptyImmutableBiMap extends ImmutableBiMap<Object, Object> {
     }
 
     @Override
-    boolean isPartialView() {
-        return false;
+    public Object get(Object obj) {
+        return null;
+    }
+
+    @Override
+    public ImmutableSet<Map.Entry<Object, Object>> entrySet() {
+        return ImmutableSet.of();
+    }
+
+    @Override
+    ImmutableSet<Map.Entry<Object, Object>> createEntrySet() {
+        throw new AssertionError("should never be called");
     }
 
     @Override
@@ -43,12 +43,12 @@ final class EmptyImmutableBiMap extends ImmutableBiMap<Object, Object> {
         return ImmutableSet.of();
     }
 
-    Object readResolve() {
-        return INSTANCE;
+    @Override
+    boolean isPartialView() {
+        return false;
     }
 
-    @Override
-    public int size() {
-        return 0;
+    Object readResolve() {
+        return INSTANCE;
     }
 }

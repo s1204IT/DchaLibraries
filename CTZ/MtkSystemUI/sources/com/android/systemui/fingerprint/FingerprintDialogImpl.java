@@ -98,7 +98,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         this.mHandler.obtainMessage(5, false).sendToTarget();
     }
 
-    public void handleShowDialog(SomeArgs someArgs) {
+    private void handleShowDialog(SomeArgs someArgs) {
         Log.d("FingerprintDialogImpl", "handleShowDialog, isAnimatingAway: " + this.mDialogView.isAnimatingAway());
         if (this.mDialogView.isAnimatingAway()) {
             this.mDialogView.forceRemove();
@@ -112,18 +112,18 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         this.mDialogShowing = true;
     }
 
-    public void handleFingerprintAuthenticated() {
+    private void handleFingerprintAuthenticated() {
         Log.d("FingerprintDialogImpl", "handleFingerprintAuthenticated");
         this.mDialogView.announceForAccessibility(this.mContext.getResources().getText(R.string.config_customAdbWifiNetworkConfirmationComponent));
         handleHideDialog(false);
     }
 
-    public void handleFingerprintHelp(String str) {
+    private void handleFingerprintHelp(String str) {
         Log.d("FingerprintDialogImpl", "handleFingerprintHelp: " + str);
         this.mDialogView.showHelpMessage(str);
     }
 
-    public void handleFingerprintError(String str) {
+    private void handleFingerprintError(String str) {
         Log.d("FingerprintDialogImpl", "handleFingerprintError: " + str);
         if (!this.mDialogShowing) {
             Log.d("FingerprintDialogImpl", "Dialog already dismissed");
@@ -132,7 +132,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         }
     }
 
-    public void handleHideDialog(boolean z) {
+    private void handleHideDialog(boolean z) {
         Log.d("FingerprintDialogImpl", "handleHideDialog, userCanceled: " + z);
         if (!this.mDialogShowing) {
             Log.w("FingerprintDialogImpl", "Dialog already dismissed, userCanceled: " + z);
@@ -150,7 +150,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         this.mDialogView.startDismiss();
     }
 
-    public void handleButtonNegative() {
+    private void handleButtonNegative() {
         if (this.mReceiver == null) {
             Log.e("FingerprintDialogImpl", "Receiver is null");
             return;
@@ -163,7 +163,7 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         handleHideDialog(false);
     }
 
-    public void handleButtonPositive() {
+    private void handleButtonPositive() {
         if (this.mReceiver == null) {
             Log.e("FingerprintDialogImpl", "Receiver is null");
             return;
@@ -176,11 +176,11 @@ public class FingerprintDialogImpl extends SystemUI implements CommandQueue.Call
         handleHideDialog(false);
     }
 
-    public void handleClearMessage() {
+    private void handleClearMessage() {
         this.mDialogView.resetMessage();
     }
 
-    public void handleUserCanceled() {
+    private void handleUserCanceled() {
         handleHideDialog(true);
     }
 }

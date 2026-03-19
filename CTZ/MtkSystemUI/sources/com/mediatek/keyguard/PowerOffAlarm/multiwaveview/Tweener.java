@@ -30,7 +30,7 @@ class Tweener {
         this.animator = objectAnimator;
     }
 
-    public static void remove(Animator animator) {
+    private static void remove(Animator animator) {
         Iterator<Map.Entry<Object, Tweener>> it = sTweens.entrySet().iterator();
         while (it.hasNext()) {
             if (it.next().getValue().animator == animator) {

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:title="@string/choose_network_title">
+    <PreferenceCategory android:key="connected_network_operator_preference"/>
+    <PreferenceCategory android:key="network_operators_preference"/>
+</PreferenceScreen>

@@ -10,56 +10,67 @@ import java.util.List;
 public class MediaController2 implements AutoCloseable {
     private final SupportLibraryImpl mImpl;
 
+    interface SupportLibraryImpl extends AutoCloseable {
+    }
+
+    @Override
+    public void close() {
+        try {
+            this.mImpl.close();
+        } catch (Exception e) {
+        }
+    }
+
     public static abstract class ControllerCallback {
-        public void onAllowedCommandsChanged(MediaController2 mediaController2, SessionCommandGroup2 sessionCommandGroup2) {
+        public void onConnected(MediaController2 controller, SessionCommandGroup2 allowedCommands) {
         }
 
-        public void onBufferingStateChanged(MediaController2 mediaController2, MediaItem2 mediaItem2, int i) {
+        public void onDisconnected(MediaController2 controller) {
         }
 
-        public void onConnected(MediaController2 mediaController2, SessionCommandGroup2 sessionCommandGroup2) {
+        public void onCustomLayoutChanged(MediaController2 controller, List<MediaSession2.CommandButton> layout) {
         }
 
-        public void onCurrentMediaItemChanged(MediaController2 mediaController2, MediaItem2 mediaItem2) {
+        public void onPlaybackInfoChanged(MediaController2 controller, PlaybackInfo info) {
         }
 
-        public void onCustomCommand(MediaController2 mediaController2, SessionCommand2 sessionCommand2, Bundle bundle, ResultReceiver resultReceiver) {
+        public void onAllowedCommandsChanged(MediaController2 controller, SessionCommandGroup2 commands) {
         }
 
-        public void onCustomLayoutChanged(MediaController2 mediaController2, List<MediaSession2.CommandButton> list) {
+        public void onCustomCommand(MediaController2 controller, SessionCommand2 command, Bundle args, ResultReceiver receiver) {
         }
 
-        public void onDisconnected(MediaController2 mediaController2) {
+        public void onPlayerStateChanged(MediaController2 controller, int state) {
         }
 
-        public void onError(MediaController2 mediaController2, int i, Bundle bundle) {
+        public void onPlaybackSpeedChanged(MediaController2 controller, float speed) {
         }
 
-        public void onPlaybackInfoChanged(MediaController2 mediaController2, PlaybackInfo playbackInfo) {
+        public void onBufferingStateChanged(MediaController2 controller, MediaItem2 item, int state) {
         }
 
-        public void onPlaybackSpeedChanged(MediaController2 mediaController2, float f) {
+        public void onSeekCompleted(MediaController2 controller, long position) {
         }
 
-        public void onPlayerStateChanged(MediaController2 mediaController2, int i) {
+        public void onError(MediaController2 controller, int errorCode, Bundle extras) {
         }
 
-        public void onPlaylistChanged(MediaController2 mediaController2, List<MediaItem2> list, MediaMetadata2 mediaMetadata2) {
+        public void onCurrentMediaItemChanged(MediaController2 controller, MediaItem2 item) {
         }
 
-        public void onPlaylistMetadataChanged(MediaController2 mediaController2, MediaMetadata2 mediaMetadata2) {
+        public void onPlaylistChanged(MediaController2 controller, List<MediaItem2> list, MediaMetadata2 metadata) {
         }
 
-        public void onRepeatModeChanged(MediaController2 mediaController2, int i) {
+        public void onPlaylistMetadataChanged(MediaController2 controller, MediaMetadata2 metadata) {
         }
 
-        public void onRoutesInfoChanged(MediaController2 mediaController2, List<Bundle> list) {
+        public void onShuffleModeChanged(MediaController2 controller, int shuffleMode) {
         }
 
-        public void onSeekCompleted(MediaController2 mediaController2, long j) {
+        public void onRepeatModeChanged(MediaController2 controller, int repeatMode) {
         }
 
-        public void onShuffleModeChanged(MediaController2 mediaController2, int i) {
+        public void onRoutesInfoChanged(MediaController2 controller, List<Bundle> routes) {
         }
     }
 
@@ -70,34 +81,28 @@ public class MediaController2 implements AutoCloseable {
         private final int mMaxVolume;
         private final int mPlaybackType;
 
-        PlaybackInfo(int i, AudioAttributesCompat audioAttributesCompat, int i2, int i3, int i4) {
-            this.mPlaybackType = i;
-            this.mAudioAttrsCompat = audioAttributesCompat;
-            this.mControlType = i2;
-            this.mMaxVolume = i3;
-            this.mCurrentVolume = i4;
+        PlaybackInfo(int playbackType, AudioAttributesCompat attrs, int controlType, int max, int current) {
+            this.mPlaybackType = playbackType;
+            this.mAudioAttrsCompat = attrs;
+            this.mControlType = controlType;
+            this.mMaxVolume = max;
+            this.mCurrentVolume = current;
         }
 
-        static PlaybackInfo createPlaybackInfo(int i, AudioAttributesCompat audioAttributesCompat, int i2, int i3, int i4) {
-            return new PlaybackInfo(i, audioAttributesCompat, i2, i3, i4);
+        static PlaybackInfo createPlaybackInfo(int playbackType, AudioAttributesCompat attrs, int controlType, int max, int current) {
+            return new PlaybackInfo(playbackType, attrs, controlType, max, current);
         }
 
         static PlaybackInfo fromBundle(Bundle bundle) {
             if (bundle == null) {
                 return null;
             }
-            return createPlaybackInfo(bundle.getInt("android.media.audio_info.playback_type"), AudioAttributesCompat.fromBundle(bundle.getBundle("android.media.audio_info.audio_attrs")), bundle.getInt("android.media.audio_info.control_type"), bundle.getInt("android.media.audio_info.max_volume"), bundle.getInt("android.media.audio_info.current_volume"));
-        }
-    }
-
-    interface SupportLibraryImpl extends AutoCloseable {
-    }
-
-    @Override
-    public void close() {
-        try {
-            this.mImpl.close();
-        } catch (Exception e) {
+            int volumeType = bundle.getInt("android.media.audio_info.playback_type");
+            int volumeControl = bundle.getInt("android.media.audio_info.control_type");
+            int maxVolume = bundle.getInt("android.media.audio_info.max_volume");
+            int currentVolume = bundle.getInt("android.media.audio_info.current_volume");
+            AudioAttributesCompat attrs = AudioAttributesCompat.fromBundle(bundle.getBundle("android.media.audio_info.audio_attrs"));
+            return createPlaybackInfo(volumeType, attrs, volumeControl, maxVolume, currentVolume);
         }
     }
 }

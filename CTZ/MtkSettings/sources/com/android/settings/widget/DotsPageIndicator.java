@@ -158,7 +158,7 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         }
     }
 
-    public void setPageCount(int i) {
+    private void setPageCount(int i) {
         this.pageCount = i;
         calculateDotPositions();
         resetState();
@@ -455,17 +455,17 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         return valueAnimatorOfFloat;
     }
 
-    public void setJoiningFraction(int i, float f) {
+    private void setJoiningFraction(int i, float f) {
         this.joiningFractions[i] = f;
         postInvalidateOnAnimation();
     }
 
-    public void clearJoiningFractions() {
+    private void clearJoiningFractions() {
         Arrays.fill(this.joiningFractions, 0.0f);
         postInvalidateOnAnimation();
     }
 
-    public void setDotRevealFraction(int i, float f) {
+    private void setDotRevealFraction(int i, float f) {
         this.dotRevealFractions[i] = f;
         postInvalidateOnAnimation();
     }
@@ -490,7 +490,7 @@ public class DotsPageIndicator extends View implements ViewPager.OnPageChangeLis
         this.joiningAnimationSet.start();
     }
 
-    public void cancelJoiningAnimations() {
+    private void cancelJoiningAnimations() {
         if (this.joiningAnimationSet != null && this.joiningAnimationSet.isRunning()) {
             this.joiningAnimationSet.cancel();
         }

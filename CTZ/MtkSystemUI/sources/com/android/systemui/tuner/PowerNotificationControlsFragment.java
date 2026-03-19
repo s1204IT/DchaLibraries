@@ -67,7 +67,7 @@ public class PowerNotificationControlsFragment extends Fragment {
         MetricsLogger.visibility(getContext(), 392, false);
     }
 
-    public boolean isEnabled() {
+    private boolean isEnabled() {
         return Settings.Secure.getInt(getContext().getContentResolver(), "show_importance_slider", 0) == 1;
     }
 }

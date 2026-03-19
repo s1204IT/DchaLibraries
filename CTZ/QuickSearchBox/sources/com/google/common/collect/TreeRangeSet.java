@@ -12,26 +12,39 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> {
     private transient Set<Range<C>> asRanges;
     final NavigableMap<Cut<C>, Range<C>> rangesByLowerBound;
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public Set<Range<C>> asRanges() {
+        Set<Range<C>> set = this.asRanges;
+        if (set != null) {
+            return set;
+        }
+        AsRanges asRanges = new AsRanges();
+        this.asRanges = asRanges;
+        return asRanges;
+    }
+
     final class AsRanges extends ForwardingCollection<Range<C>> implements Set<Range<C>> {
-        final TreeRangeSet this$0;
-
-        AsRanges(TreeRangeSet treeRangeSet) {
-            this.this$0 = treeRangeSet;
+        AsRanges() {
         }
 
         @Override
-        public Collection<Range<C>> delegate() {
-            return this.this$0.rangesByLowerBound.values();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return Sets.equalsImpl(this, obj);
+        protected Collection<Range<C>> delegate() {
+            return TreeRangeSet.this.rangesByLowerBound.values();
         }
 
         @Override
         public int hashCode() {
             return Sets.hashCodeImpl(this);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return Sets.equalsImpl(this, obj);
         }
     }
 
@@ -45,7 +58,25 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> {
         }
 
         private NavigableMap<Cut<C>, Range<C>> subMap(Range<Cut<C>> range) {
-            return range.isConnected(this.upperBoundWindow) ? new RangesByUpperBound(this.rangesByLowerBound, range.intersection(this.upperBoundWindow)) : ImmutableSortedMap.of();
+            if (range.isConnected(this.upperBoundWindow)) {
+                return new RangesByUpperBound(this.rangesByLowerBound, range.intersection(this.upperBoundWindow));
+            }
+            return ImmutableSortedMap.of();
+        }
+
+        @Override
+        public NavigableMap<Cut<C>, Range<C>> subMap(Cut<C> cut, boolean z, Cut<C> cut2, boolean z2) {
+            return subMap(Range.range(cut, BoundType.forBoolean(z), cut2, BoundType.forBoolean(z2)));
+        }
+
+        @Override
+        public NavigableMap<Cut<C>, Range<C>> headMap(Cut<C> cut, boolean z) {
+            return subMap(Range.upTo(cut, BoundType.forBoolean(z)));
+        }
+
+        @Override
+        public NavigableMap<Cut<C>, Range<C>> tailMap(Cut<C> cut, boolean z) {
+            return subMap(Range.downTo(cut, BoundType.forBoolean(z)));
         }
 
         @Override
@@ -59,65 +90,12 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> {
         }
 
         @Override
-        Iterator<Map.Entry<Cut<C>, Range<C>>> descendingEntryIterator() {
-            PeekingIterator peekingIterator = Iterators.peekingIterator((this.upperBoundWindow.hasUpperBound() ? this.rangesByLowerBound.headMap(this.upperBoundWindow.upperEndpoint(), false).descendingMap().values() : this.rangesByLowerBound.descendingMap().values()).iterator());
-            if (peekingIterator.hasNext() && this.upperBoundWindow.upperBound.isLessThan(((Range) peekingIterator.peek()).upperBound)) {
-                peekingIterator.next();
-            }
-            return new AbstractIterator<Map.Entry<Cut<C>, Range<C>>>(this, peekingIterator) {
-                final RangesByUpperBound this$0;
-                final PeekingIterator val$backingItr;
-
-                {
-                    this.this$0 = this;
-                    this.val$backingItr = peekingIterator;
-                }
-
-                @Override
-                public Map.Entry<Cut<C>, Range<C>> computeNext() {
-                    if (!this.val$backingItr.hasNext()) {
-                        return (Map.Entry) endOfData();
-                    }
-                    Range range = (Range) this.val$backingItr.next();
-                    return this.this$0.upperBoundWindow.lowerBound.isLessThan(range.upperBound) ? Maps.immutableEntry(range.upperBound, range) : (Map.Entry) endOfData();
-                }
-            };
-        }
-
-        @Override
-        Iterator<Map.Entry<Cut<C>, Range<C>>> entryIterator() {
-            Map.Entry entryLowerEntry;
-            Iterator<Range<C>> it = (this.upperBoundWindow.hasLowerBound() && (entryLowerEntry = this.rangesByLowerBound.lowerEntry((Cut<C>) this.upperBoundWindow.lowerEndpoint())) != null) ? this.upperBoundWindow.lowerBound.isLessThan(((Range) entryLowerEntry.getValue()).upperBound) ? this.rangesByLowerBound.tailMap(entryLowerEntry.getKey(), true).values().iterator() : this.rangesByLowerBound.tailMap(this.upperBoundWindow.lowerEndpoint(), true).values().iterator() : this.rangesByLowerBound.values().iterator();
-            return new AbstractIterator<Map.Entry<Cut<C>, Range<C>>>(this, it) {
-                final RangesByUpperBound this$0;
-                final Iterator val$backingItr;
-
-                {
-                    this.this$0 = this;
-                    this.val$backingItr = it;
-                }
-
-                @Override
-                public Map.Entry<Cut<C>, Range<C>> computeNext() {
-                    if (!this.val$backingItr.hasNext()) {
-                        return (Map.Entry) endOfData();
-                    }
-                    Range range = (Range) this.val$backingItr.next();
-                    return this.this$0.upperBoundWindow.upperBound.isLessThan(range.upperBound) ? (Map.Entry) endOfData() : Maps.immutableEntry(range.upperBound, range);
-                }
-            };
-        }
-
-        @Override
         public Range<C> get(Object obj) {
+            Map.Entry<Cut<C>, Range<C>> entryLowerEntry;
             if (obj instanceof Cut) {
                 try {
                     Cut<C> cut = (Cut) obj;
-                    if (!this.upperBoundWindow.contains(cut)) {
-                        return null;
-                    }
-                    Map.Entry<Cut<C>, Range<C>> entryLowerEntry = this.rangesByLowerBound.lowerEntry(cut);
-                    if (entryLowerEntry != null && entryLowerEntry.getValue().upperBound.equals(cut)) {
+                    if (this.upperBoundWindow.contains(cut) && (entryLowerEntry = this.rangesByLowerBound.lowerEntry(cut)) != null && entryLowerEntry.getValue().upperBound.equals(cut)) {
                         return entryLowerEntry.getValue();
                     }
                 } catch (ClassCastException e) {
@@ -128,44 +106,72 @@ public class TreeRangeSet<C extends Comparable<?>> extends AbstractRangeSet<C> {
         }
 
         @Override
-        public NavigableMap<Cut<C>, Range<C>> headMap(Cut<C> cut, boolean z) {
-            return subMap(Range.upTo(cut, BoundType.forBoolean(z)));
+        Iterator<Map.Entry<Cut<C>, Range<C>>> entryIterator() {
+            Map.Entry entryLowerEntry;
+            final Iterator<Range<C>> it;
+            if (!this.upperBoundWindow.hasLowerBound() || (entryLowerEntry = this.rangesByLowerBound.lowerEntry((Cut<C>) this.upperBoundWindow.lowerEndpoint())) == null) {
+                it = this.rangesByLowerBound.values().iterator();
+            } else if (this.upperBoundWindow.lowerBound.isLessThan(((Range) entryLowerEntry.getValue()).upperBound)) {
+                it = this.rangesByLowerBound.tailMap(entryLowerEntry.getKey(), true).values().iterator();
+            } else {
+                it = this.rangesByLowerBound.tailMap(this.upperBoundWindow.lowerEndpoint(), true).values().iterator();
+            }
+            return new AbstractIterator<Map.Entry<Cut<C>, Range<C>>>() {
+                @Override
+                protected Map.Entry<Cut<C>, Range<C>> computeNext() {
+                    if (!it.hasNext()) {
+                        return (Map.Entry) endOfData();
+                    }
+                    Range range = (Range) it.next();
+                    if (RangesByUpperBound.this.upperBoundWindow.upperBound.isLessThan(range.upperBound)) {
+                        return (Map.Entry) endOfData();
+                    }
+                    return Maps.immutableEntry(range.upperBound, range);
+                }
+            };
         }
 
         @Override
-        public boolean isEmpty() {
-            return this.upperBoundWindow.equals(Range.all()) ? this.rangesByLowerBound.isEmpty() : !entryIterator().hasNext();
+        Iterator<Map.Entry<Cut<C>, Range<C>>> descendingEntryIterator() {
+            Collection<Range<C>> collectionValues;
+            if (this.upperBoundWindow.hasUpperBound()) {
+                collectionValues = this.rangesByLowerBound.headMap(this.upperBoundWindow.upperEndpoint(), false).descendingMap().values();
+            } else {
+                collectionValues = this.rangesByLowerBound.descendingMap().values();
+            }
+            final PeekingIterator peekingIterator = Iterators.peekingIterator(collectionValues.iterator());
+            if (peekingIterator.hasNext() && this.upperBoundWindow.upperBound.isLessThan(((Range) peekingIterator.peek()).upperBound)) {
+                peekingIterator.next();
+            }
+            return new AbstractIterator<Map.Entry<Cut<C>, Range<C>>>() {
+                @Override
+                protected Map.Entry<Cut<C>, Range<C>> computeNext() {
+                    if (!peekingIterator.hasNext()) {
+                        return (Map.Entry) endOfData();
+                    }
+                    Range range = (Range) peekingIterator.next();
+                    if (RangesByUpperBound.this.upperBoundWindow.lowerBound.isLessThan(range.upperBound)) {
+                        return Maps.immutableEntry(range.upperBound, range);
+                    }
+                    return (Map.Entry) endOfData();
+                }
+            };
         }
 
         @Override
         public int size() {
-            return this.upperBoundWindow.equals(Range.all()) ? this.rangesByLowerBound.size() : Iterators.size(entryIterator());
+            if (this.upperBoundWindow.equals(Range.all())) {
+                return this.rangesByLowerBound.size();
+            }
+            return Iterators.size(entryIterator());
         }
 
         @Override
-        public NavigableMap<Cut<C>, Range<C>> subMap(Cut<C> cut, boolean z, Cut<C> cut2, boolean z2) {
-            return subMap(Range.range(cut, BoundType.forBoolean(z), cut2, BoundType.forBoolean(z2)));
+        public boolean isEmpty() {
+            if (this.upperBoundWindow.equals(Range.all())) {
+                return this.rangesByLowerBound.isEmpty();
+            }
+            return !entryIterator().hasNext();
         }
-
-        @Override
-        public NavigableMap<Cut<C>, Range<C>> tailMap(Cut<C> cut, boolean z) {
-            return subMap(Range.downTo(cut, BoundType.forBoolean(z)));
-        }
-    }
-
-    @Override
-    public Set<Range<C>> asRanges() {
-        Set<Range<C>> set = this.asRanges;
-        if (set != null) {
-            return set;
-        }
-        AsRanges asRanges = new AsRanges(this);
-        this.asRanges = asRanges;
-        return asRanges;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
     }
 }

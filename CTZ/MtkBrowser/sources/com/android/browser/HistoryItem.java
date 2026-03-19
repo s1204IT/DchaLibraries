@@ -12,7 +12,7 @@ class HistoryItem extends BookmarkItem implements CompoundButton.OnCheckedChange
 
     HistoryItem(Context context, boolean z) {
         super(context);
-        this.mStar = (CompoundButton) findViewById(2131558487);
+        this.mStar = (CompoundButton) findViewById(R.id.star);
         this.mStar.setOnCheckedChangeListener(this);
         if (z) {
             this.mStar.setVisibility(0);
@@ -32,19 +32,19 @@ class HistoryItem extends BookmarkItem implements CompoundButton.OnCheckedChange
         return this.mStar.isChecked();
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean z) throws Throwable {
-        if (!z) {
-            Bookmarks.removeFromBookmarks(getContext(), getContext().getContentResolver(), this.mUrl, getName());
-        } else {
-            setIsBookmark(false);
-            com.android.browser.provider.Browser.saveBookmark(getContext(), getName(), this.mUrl);
-        }
-    }
-
     void setIsBookmark(boolean z) {
         this.mStar.setOnCheckedChangeListener(null);
         this.mStar.setChecked(z);
         this.mStar.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton compoundButton, boolean z) throws Throwable {
+        if (z) {
+            setIsBookmark(false);
+            com.android.browser.provider.Browser.saveBookmark(getContext(), getName(), this.mUrl);
+        } else {
+            Bookmarks.removeFromBookmarks(getContext(), getContext().getContentResolver(), this.mUrl, getName());
+        }
     }
 }

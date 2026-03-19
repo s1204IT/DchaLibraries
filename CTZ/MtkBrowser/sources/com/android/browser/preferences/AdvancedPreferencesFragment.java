@@ -15,6 +15,7 @@ import android.webkit.WebStorage;
 import com.android.browser.BrowserActivity;
 import com.android.browser.BrowserSettings;
 import com.android.browser.Extensions;
+import com.android.browser.R;
 import com.mediatek.browser.ext.IBrowserMiscExt;
 import com.mediatek.browser.ext.IBrowserSettingExt;
 import java.util.Map;
@@ -25,16 +26,9 @@ public class AdvancedPreferencesFragment extends PreferenceFragment implements P
     private IBrowserMiscExt mBrowserMiscExt = null;
 
     @Override
-    public void onActivityResult(int i, int i2, Intent intent) {
-        super.onActivityResult(i, i2, intent);
-        this.mBrowserMiscExt = Extensions.getMiscPlugin(getActivity());
-        this.mBrowserMiscExt.onActivityResult(i, i2, intent, this);
-    }
-
-    @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        addPreferencesFromResource(2131099649);
+        addPreferencesFromResource(R.xml.advanced_preferences);
         ((PreferenceScreen) findPreference("search_engine")).setFragment(SearchEngineSettings.class.getName());
         ((PreferenceScreen) findPreference("website_settings")).setFragment(WebsiteSettingsFragment.class.getName());
         this.mBrowserSettingExt = Extensions.getSettingPlugin(getActivity());
@@ -46,6 +40,40 @@ public class AdvancedPreferencesFragment extends PreferenceFragment implements P
         getPreferenceScreen().removePreference(preferenceFindPreference);
         this.mBrowserSettingExt.customizePreference(140, getPreferenceScreen(), this, BrowserSettings.getInstance().getPreferences(), this);
         ((CheckBoxPreference) findPreference("load_page")).setChecked(PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("load_page", true));
+    }
+
+    @Override
+    public void onActivityResult(int i, int i2, Intent intent) {
+        super.onActivityResult(i, i2, intent);
+        this.mBrowserMiscExt = Extensions.getMiscPlugin(getActivity());
+        this.mBrowserMiscExt.onActivityResult(i, i2, intent, this);
+    }
+
+    void updateListPreferenceSummary(ListPreference listPreference) {
+        listPreference.setSummary(listPreference.getEntry());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        final PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("website_settings");
+        preferenceScreen.setEnabled(false);
+        WebStorage.getInstance().getOrigins(new ValueCallback<Map>() {
+            @Override
+            public void onReceiveValue(Map map) {
+                if (map != null && !map.isEmpty()) {
+                    preferenceScreen.setEnabled(true);
+                }
+            }
+        });
+        GeolocationPermissions.getInstance().getOrigins(new ValueCallback<Set<String>>() {
+            @Override
+            public void onReceiveValue(Set<String> set) {
+                if (set != null && !set.isEmpty()) {
+                    preferenceScreen.setEnabled(true);
+                }
+            }
+        });
     }
 
     @Override
@@ -67,50 +95,5 @@ public class AdvancedPreferencesFragment extends PreferenceFragment implements P
         }
         this.mBrowserSettingExt = Extensions.getSettingPlugin(getActivity());
         return this.mBrowserSettingExt.updatePreferenceItem(preference, obj);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        PreferenceScreen preferenceScreen = (PreferenceScreen) findPreference("website_settings");
-        preferenceScreen.setEnabled(false);
-        WebStorage.getInstance().getOrigins(new ValueCallback<Map>(this, preferenceScreen) {
-            final AdvancedPreferencesFragment this$0;
-            final PreferenceScreen val$websiteSettings;
-
-            {
-                this.this$0 = this;
-                this.val$websiteSettings = preferenceScreen;
-            }
-
-            @Override
-            public void onReceiveValue(Map map) {
-                if (map == null || map.isEmpty()) {
-                    return;
-                }
-                this.val$websiteSettings.setEnabled(true);
-            }
-        });
-        GeolocationPermissions.getInstance().getOrigins(new ValueCallback<Set<String>>(this, preferenceScreen) {
-            final AdvancedPreferencesFragment this$0;
-            final PreferenceScreen val$websiteSettings;
-
-            {
-                this.this$0 = this;
-                this.val$websiteSettings = preferenceScreen;
-            }
-
-            @Override
-            public void onReceiveValue(Set<String> set) {
-                if (set == null || set.isEmpty()) {
-                    return;
-                }
-                this.val$websiteSettings.setEnabled(true);
-            }
-        });
-    }
-
-    void updateListPreferenceSummary(ListPreference listPreference) {
-        listPreference.setSummary(listPreference.getEntry());
     }
 }

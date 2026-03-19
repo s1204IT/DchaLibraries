@@ -138,7 +138,7 @@ public class PrintServiceSettingsFragment extends SettingsPreferenceFragment imp
         this.mSwitchBar.hide();
     }
 
-    public void onPreferenceToggled(String str, boolean z) {
+    private void onPreferenceToggled(String str, boolean z) {
         ((PrintManager) getContext().getSystemService("print")).setPrintServiceEnabled(this.mComponentName, z);
     }
 
@@ -146,7 +146,7 @@ public class PrintServiceSettingsFragment extends SettingsPreferenceFragment imp
         return (ListView) getView().findViewById(R.id.backup_list);
     }
 
-    public void updateEmptyView() {
+    private void updateEmptyView() {
         ViewGroup viewGroup = (ViewGroup) getListView().getParent();
         View emptyView = getBackupListView().getEmptyView();
         if (!this.mToggleSwitch.isChecked()) {

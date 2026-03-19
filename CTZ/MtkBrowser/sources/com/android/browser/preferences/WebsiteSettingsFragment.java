@@ -1,6 +1,5 @@
 package com.android.browser.preferences;
 
-import android.R;
 import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
@@ -26,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import com.android.browser.R;
 import com.android.browser.WebStorageSizeManager;
 import com.android.browser.provider.BrowserContract;
 import java.util.HashMap;
@@ -57,13 +57,6 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
         private String mOrigin;
         private String mTitle;
 
-        private Site(Parcel parcel) {
-            this.mOrigin = parcel.readString();
-            this.mTitle = parcel.readString();
-            this.mFeatures = parcel.readInt();
-            this.mIcon = (Bitmap) parcel.readParcelable(null);
-        }
-
         public Site(String str) {
             this.mOrigin = str;
             this.mTitle = null;
@@ -71,17 +64,24 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             this.mFeatures = 0;
         }
 
-        private String hideHttp(String str) {
-            return "http".equals(Uri.parse(str).getScheme()) ? str.substring(7) : str;
-        }
-
         public void addFeature(int i) {
             this.mFeatures = (1 << i) | this.mFeatures;
         }
 
-        @Override
-        public int describeContents() {
-            return 0;
+        public void removeFeature(int i) {
+            this.mFeatures = (~(1 << i)) & this.mFeatures;
+        }
+
+        public boolean hasFeature(int i) {
+            return ((1 << i) & this.mFeatures) != 0;
+        }
+
+        public int getFeatureCount() {
+            int i = 0;
+            for (int i2 = 0; i2 < 2; i2++) {
+                i += hasFeature(i2) ? 1 : 0;
+            }
+            return i;
         }
 
         public int getFeatureByIndex(int i) {
@@ -95,25 +95,20 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             return -1;
         }
 
-        public int getFeatureCount() {
-            int i = 0;
-            int i2 = 0;
-            while (true) {
-                int i3 = i;
-                if (i3 >= 2) {
-                    return i2;
-                }
-                i2 += hasFeature(i3) ? 1 : 0;
-                i = i3 + 1;
-            }
+        public String getOrigin() {
+            return this.mOrigin;
+        }
+
+        public void setTitle(String str) {
+            this.mTitle = str;
+        }
+
+        public void setIcon(Bitmap bitmap) {
+            this.mIcon = bitmap;
         }
 
         public Bitmap getIcon() {
             return this.mIcon;
-        }
-
-        public String getOrigin() {
-            return this.mOrigin;
         }
 
         public String getPrettyOrigin() {
@@ -127,20 +122,13 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             return this.mTitle == null ? hideHttp(this.mOrigin) : this.mTitle;
         }
 
-        public boolean hasFeature(int i) {
-            return (this.mFeatures & (1 << i)) != 0;
+        private String hideHttp(String str) {
+            return "http".equals(Uri.parse(str).getScheme()) ? str.substring(7) : str;
         }
 
-        public void removeFeature(int i) {
-            this.mFeatures = ((1 << i) ^ (-1)) & this.mFeatures;
-        }
-
-        public void setIcon(Bitmap bitmap) {
-            this.mIcon = bitmap;
-        }
-
-        public void setTitle(String str) {
-            this.mTitle = str;
+        @Override
+        public int describeContents() {
+            return 0;
         }
 
         @Override
@@ -149,6 +137,13 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             parcel.writeString(this.mTitle);
             parcel.writeInt(this.mFeatures);
             parcel.writeParcelable(this.mIcon, i);
+        }
+
+        private Site(Parcel parcel) {
+            this.mOrigin = parcel.readString();
+            this.mTitle = parcel.readString();
+            this.mFeatures = parcel.readInt();
+            this.mIcon = (Bitmap) parcel.readParcelable(null);
         }
     }
 
@@ -162,92 +157,21 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
         private Bitmap mUsageEmptyIcon;
         private Bitmap mUsageHighIcon;
         private Bitmap mUsageLowIcon;
-        final WebsiteSettingsFragment this$0;
-
-        private class UpdateFromBookmarksDbTask extends AsyncTask<Void, Void, Void> {
-            private Context mContext;
-            private boolean mDataSetChanged;
-            private Map<String, Site> mSites;
-            final SiteAdapter this$1;
-
-            public UpdateFromBookmarksDbTask(SiteAdapter siteAdapter, Context context, Map<String, Site> map) {
-                this.this$1 = siteAdapter;
-                this.mContext = context.getApplicationContext();
-                this.mSites = map;
-            }
-
-            @Override
-            protected Void doInBackground(Void... voidArr) {
-                Set hashSet;
-                HashMap map = new HashMap();
-                for (Map.Entry<String, Site> entry : this.mSites.entrySet()) {
-                    Site value = entry.getValue();
-                    String host = Uri.parse(entry.getKey()).getHost();
-                    if (map.containsKey(host)) {
-                        hashSet = (Set) map.get(host);
-                    } else {
-                        hashSet = new HashSet();
-                        map.put(host, hashSet);
-                    }
-                    hashSet.add(value);
-                }
-                Cursor cursorQuery = this.mContext.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"url", "title", "favicon"}, "folder == 0", null, null);
-                if (cursorQuery == null) {
-                    return null;
-                }
-                if (cursorQuery.moveToFirst()) {
-                    int columnIndex = cursorQuery.getColumnIndex("url");
-                    int columnIndex2 = cursorQuery.getColumnIndex("title");
-                    int columnIndex3 = cursorQuery.getColumnIndex("favicon");
-                    do {
-                        String string = cursorQuery.getString(columnIndex);
-                        String host2 = Uri.parse(string).getHost();
-                        if (map.containsKey(host2)) {
-                            String string2 = cursorQuery.getString(columnIndex2);
-                            byte[] blob = cursorQuery.getBlob(columnIndex3);
-                            Bitmap bitmapDecodeByteArray = blob != null ? BitmapFactory.decodeByteArray(blob, 0, blob.length) : null;
-                            for (Site site : (Set) map.get(host2)) {
-                                if (!string.equals(site.getOrigin())) {
-                                    if (new String(site.getOrigin() + "/").equals(string)) {
-                                        this.mDataSetChanged = true;
-                                        site.setTitle(string2);
-                                    }
-                                }
-                                if (bitmapDecodeByteArray != null) {
-                                    this.mDataSetChanged = true;
-                                    site.setIcon(bitmapDecodeByteArray);
-                                }
-                            }
-                        }
-                    } while (cursorQuery.moveToNext());
-                }
-                cursorQuery.close();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void r2) {
-                if (this.mDataSetChanged) {
-                    this.this$1.notifyDataSetChanged();
-                }
-            }
-        }
 
         public SiteAdapter(WebsiteSettingsFragment websiteSettingsFragment, Context context, int i) {
-            this(websiteSettingsFragment, context, i, null);
+            this(context, i, null);
         }
 
-        public SiteAdapter(WebsiteSettingsFragment websiteSettingsFragment, Context context, int i, Site site) {
+        public SiteAdapter(Context context, int i, Site site) {
             super(context, i);
-            this.this$0 = websiteSettingsFragment;
             this.mResource = i;
             this.mInflater = (LayoutInflater) context.getSystemService("layout_inflater");
-            this.mDefaultIcon = BitmapFactory.decodeResource(websiteSettingsFragment.getResources(), 2130837505);
-            this.mUsageEmptyIcon = BitmapFactory.decodeResource(websiteSettingsFragment.getResources(), 2130837566);
-            this.mUsageLowIcon = BitmapFactory.decodeResource(websiteSettingsFragment.getResources(), 2130837567);
-            this.mUsageHighIcon = BitmapFactory.decodeResource(websiteSettingsFragment.getResources(), 2130837565);
-            this.mLocationAllowedIcon = BitmapFactory.decodeResource(websiteSettingsFragment.getResources(), 2130837559);
-            this.mLocationDisallowedIcon = BitmapFactory.decodeResource(websiteSettingsFragment.getResources(), 2130837558);
+            this.mDefaultIcon = BitmapFactory.decodeResource(WebsiteSettingsFragment.this.getResources(), R.drawable.app_web_browser_sm);
+            this.mUsageEmptyIcon = BitmapFactory.decodeResource(WebsiteSettingsFragment.this.getResources(), R.drawable.ic_list_data_off);
+            this.mUsageLowIcon = BitmapFactory.decodeResource(WebsiteSettingsFragment.this.getResources(), R.drawable.ic_list_data_small);
+            this.mUsageHighIcon = BitmapFactory.decodeResource(WebsiteSettingsFragment.this.getResources(), R.drawable.ic_list_data_large);
+            this.mLocationAllowedIcon = BitmapFactory.decodeResource(WebsiteSettingsFragment.this.getResources(), R.drawable.ic_gps_on_holo_dark);
+            this.mLocationDisallowedIcon = BitmapFactory.decodeResource(WebsiteSettingsFragment.this.getResources(), R.drawable.ic_gps_denied_holo_dark);
             this.mCurrentSite = site;
             if (this.mCurrentSite == null) {
                 askForOrigins();
@@ -259,61 +183,161 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             if (map.containsKey(str)) {
                 site = map.get(str);
             } else {
-                site = new Site(str);
-                map.put(str, site);
+                Site site2 = new Site(str);
+                map.put(str, site2);
+                site = site2;
             }
             site.addFeature(i);
         }
 
-        public void askForGeolocation(Map<String, Site> map) {
-            GeolocationPermissions.getInstance().getOrigins(new ValueCallback<Set<String>>(this, map) {
-                final SiteAdapter this$1;
-                final Map val$sites;
-
-                {
-                    this.this$1 = this;
-                    this.val$sites = map;
-                }
-
-                @Override
-                public void onReceiveValue(Set<String> set) {
-                    if (set != null) {
-                        Iterator<String> it = set.iterator();
-                        while (it.hasNext()) {
-                            this.this$1.addFeatureToSite(this.val$sites, it.next(), 1);
-                        }
-                    }
-                    this.this$1.populateIcons(this.val$sites);
-                    this.this$1.populateOrigins(this.val$sites);
-                }
-            });
-        }
-
         public void askForOrigins() {
-            WebStorage.getInstance().getOrigins(new ValueCallback<Map>(this) {
-                final SiteAdapter this$1;
-
-                {
-                    this.this$1 = this;
-                }
-
+            WebStorage.getInstance().getOrigins(new ValueCallback<Map>() {
                 @Override
                 public void onReceiveValue(Map map) {
                     HashMap map2 = new HashMap();
                     if (map != null) {
                         Iterator it = map.keySet().iterator();
                         while (it.hasNext()) {
-                            this.this$1.addFeatureToSite(map2, (String) it.next(), 0);
+                            SiteAdapter.this.addFeatureToSite(map2, (String) it.next(), 0);
                         }
                     }
-                    this.this$1.askForGeolocation(map2);
+                    SiteAdapter.this.askForGeolocation(map2);
                 }
             });
         }
 
+        public void askForGeolocation(final Map<String, Site> map) {
+            GeolocationPermissions.getInstance().getOrigins(new ValueCallback<Set<String>>() {
+                @Override
+                public void onReceiveValue(Set<String> set) {
+                    if (set != null) {
+                        Iterator<String> it = set.iterator();
+                        while (it.hasNext()) {
+                            SiteAdapter.this.addFeatureToSite(map, it.next(), 1);
+                        }
+                    }
+                    SiteAdapter.this.populateIcons(map);
+                    SiteAdapter.this.populateOrigins(map);
+                }
+            });
+        }
+
+        public void populateIcons(Map<String, Site> map) {
+            new UpdateFromBookmarksDbTask(getContext(), map).execute(new Void[0]);
+        }
+
+        private class UpdateFromBookmarksDbTask extends AsyncTask<Void, Void, Void> {
+            private Context mContext;
+            private boolean mDataSetChanged;
+            private Map<String, Site> mSites;
+
+            public UpdateFromBookmarksDbTask(Context context, Map<String, Site> map) {
+                this.mContext = context.getApplicationContext();
+                this.mSites = map;
+            }
+
+            @Override
+            protected Void doInBackground(Void... voidArr) {
+                Bitmap bitmapDecodeByteArray;
+                Set set;
+                HashMap map = new HashMap();
+                for (Map.Entry<String, Site> entry : this.mSites.entrySet()) {
+                    Site value = entry.getValue();
+                    String host = Uri.parse(entry.getKey()).getHost();
+                    if (map.containsKey(host)) {
+                        set = (Set) map.get(host);
+                    } else {
+                        HashSet hashSet = new HashSet();
+                        map.put(host, hashSet);
+                        set = hashSet;
+                    }
+                    set.add(value);
+                }
+                Cursor cursorQuery = this.mContext.getContentResolver().query(BrowserContract.Bookmarks.CONTENT_URI, new String[]{"url", "title", "favicon"}, "folder == 0", null, null);
+                if (cursorQuery != null) {
+                    if (cursorQuery.moveToFirst()) {
+                        int columnIndex = cursorQuery.getColumnIndex("url");
+                        int columnIndex2 = cursorQuery.getColumnIndex("title");
+                        int columnIndex3 = cursorQuery.getColumnIndex("favicon");
+                        do {
+                            String string = cursorQuery.getString(columnIndex);
+                            String host2 = Uri.parse(string).getHost();
+                            if (map.containsKey(host2)) {
+                                String string2 = cursorQuery.getString(columnIndex2);
+                                byte[] blob = cursorQuery.getBlob(columnIndex3);
+                                if (blob != null) {
+                                    bitmapDecodeByteArray = BitmapFactory.decodeByteArray(blob, 0, blob.length);
+                                } else {
+                                    bitmapDecodeByteArray = null;
+                                }
+                                for (Site site : (Set) map.get(host2)) {
+                                    if (!string.equals(site.getOrigin())) {
+                                        if (new String(site.getOrigin() + "/").equals(string)) {
+                                            this.mDataSetChanged = true;
+                                            site.setTitle(string2);
+                                        }
+                                    }
+                                    if (bitmapDecodeByteArray != null) {
+                                        this.mDataSetChanged = true;
+                                        site.setIcon(bitmapDecodeByteArray);
+                                    }
+                                }
+                            }
+                        } while (cursorQuery.moveToNext());
+                    }
+                    cursorQuery.close();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void r1) {
+                if (this.mDataSetChanged) {
+                    SiteAdapter.this.notifyDataSetChanged();
+                }
+            }
+        }
+
+        public void populateOrigins(Map<String, Site> map) {
+            clear();
+            Iterator<Map.Entry<String, Site>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                add(it.next().getValue());
+            }
+            notifyDataSetChanged();
+            if (getCount() == 0) {
+                WebsiteSettingsFragment.this.finish();
+            }
+        }
+
         @Override
         public int getCount() {
-            return this.mCurrentSite == null ? super.getCount() : this.mCurrentSite.getFeatureCount();
+            if (this.mCurrentSite == null) {
+                return super.getCount();
+            }
+            return this.mCurrentSite.getFeatureCount();
+        }
+
+        public String sizeValueToString(long j) {
+            if (j <= 0) {
+                Log.e(WebsiteSettingsFragment.this.LOGTAG, "sizeValueToString called with non-positive value: " + j);
+                return "0";
+            }
+            return String.valueOf(((int) Math.ceil((j / 1048576.0f) * 10.0f)) / 10.0f);
+        }
+
+        public void setIconForUsage(ImageView imageView, long j) {
+            float f = j / 1048576.0f;
+            double d = f;
+            if (d <= 0.1d) {
+                imageView.setImageBitmap(this.mUsageEmptyIcon);
+                return;
+            }
+            if (d > 0.1d && f <= 5.0f) {
+                imageView.setImageBitmap(this.mUsageLowIcon);
+            } else if (f > 5.0f) {
+                imageView.setImageBitmap(this.mUsageHighIcon);
+            }
         }
 
         @Override
@@ -321,77 +345,15 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             if (view == null) {
                 view = this.mInflater.inflate(this.mResource, viewGroup, false);
             }
-            TextView textView = (TextView) view.findViewById(2131558407);
-            TextView textView2 = (TextView) view.findViewById(2131558558);
-            ImageView imageView = (ImageView) view.findViewById(2131558509);
-            ImageView imageView2 = (ImageView) view.findViewById(2131558557);
-            ImageView imageView3 = (ImageView) view.findViewById(2131558556);
-            ImageView imageView4 = (ImageView) view.findViewById(2131558555);
+            final TextView textView = (TextView) view.findViewById(R.id.title);
+            final TextView textView2 = (TextView) view.findViewById(R.id.subtitle);
+            ImageView imageView = (ImageView) view.findViewById(R.id.icon);
+            final ImageView imageView2 = (ImageView) view.findViewById(R.id.feature_icon);
+            final ImageView imageView3 = (ImageView) view.findViewById(R.id.usage_icon);
+            final ImageView imageView4 = (ImageView) view.findViewById(R.id.location_icon);
             imageView3.setVisibility(8);
             imageView4.setVisibility(8);
-            if (this.mCurrentSite != null) {
-                imageView.setVisibility(8);
-                imageView4.setVisibility(8);
-                imageView3.setVisibility(8);
-                imageView2.setVisibility(0);
-                String origin = this.mCurrentSite.getOrigin();
-                switch (this.mCurrentSite.getFeatureByIndex(i)) {
-                    case 0:
-                        WebStorage.getInstance().getUsageForOrigin(origin, new ValueCallback<Long>(this, textView, textView2, imageView2) {
-                            final SiteAdapter this$1;
-                            final ImageView val$featureIcon;
-                            final TextView val$subtitle;
-                            final TextView val$title;
-
-                            {
-                                this.this$1 = this;
-                                this.val$title = textView;
-                                this.val$subtitle = textView2;
-                                this.val$featureIcon = imageView2;
-                            }
-
-                            @Override
-                            public void onReceiveValue(Long l) {
-                                if (l != null) {
-                                    String str = this.this$1.sizeValueToString(l.longValue()) + " " + WebsiteSettingsFragment.sMBStored;
-                                    this.val$title.setText(2131493230);
-                                    this.val$subtitle.setText(str);
-                                    this.val$subtitle.setVisibility(0);
-                                    this.this$1.setIconForUsage(this.val$featureIcon, l.longValue());
-                                }
-                            }
-                        });
-                        break;
-                    case 1:
-                        textView.setText(2131493249);
-                        GeolocationPermissions.getInstance().getAllowed(origin, new ValueCallback<Boolean>(this, textView2, imageView2) {
-                            final SiteAdapter this$1;
-                            final ImageView val$featureIcon;
-                            final TextView val$subtitle;
-
-                            {
-                                this.this$1 = this;
-                                this.val$subtitle = textView2;
-                                this.val$featureIcon = imageView2;
-                            }
-
-                            @Override
-                            public void onReceiveValue(Boolean bool) {
-                                if (bool != null) {
-                                    if (bool.booleanValue()) {
-                                        this.val$subtitle.setText(2131493250);
-                                        this.val$featureIcon.setImageBitmap(this.this$1.mLocationAllowedIcon);
-                                    } else {
-                                        this.val$subtitle.setText(2131493251);
-                                        this.val$featureIcon.setImageBitmap(this.this$1.mLocationDisallowedIcon);
-                                    }
-                                    this.val$subtitle.setVisibility(0);
-                                }
-                            }
-                        });
-                        break;
-                }
-            } else {
+            if (this.mCurrentSite == null) {
                 Site item = getItem(i);
                 textView.setText(item.getPrettyTitle());
                 String prettyOrigin = item.getPrettyOrigin();
@@ -415,48 +377,72 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
                 }
                 imageView.setImageBitmap(icon);
                 view.setTag(item);
-                String origin2 = item.getOrigin();
+                String origin = item.getOrigin();
                 if (item.hasFeature(0)) {
-                    WebStorage.getInstance().getUsageForOrigin(origin2, new ValueCallback<Long>(this, imageView3) {
-                        final SiteAdapter this$1;
-                        final ImageView val$usageIcon;
-
-                        {
-                            this.this$1 = this;
-                            this.val$usageIcon = imageView3;
-                        }
-
+                    WebStorage.getInstance().getUsageForOrigin(origin, new ValueCallback<Long>() {
                         @Override
                         public void onReceiveValue(Long l) {
                             if (l != null) {
-                                this.this$1.setIconForUsage(this.val$usageIcon, l.longValue());
-                                this.val$usageIcon.setVisibility(0);
+                                SiteAdapter.this.setIconForUsage(imageView3, l.longValue());
+                                imageView3.setVisibility(0);
                             }
                         }
                     });
                 }
                 if (item.hasFeature(1)) {
                     imageView4.setVisibility(0);
-                    GeolocationPermissions.getInstance().getAllowed(origin2, new ValueCallback<Boolean>(this, imageView4) {
-                        final SiteAdapter this$1;
-                        final ImageView val$locationIcon;
-
-                        {
-                            this.this$1 = this;
-                            this.val$locationIcon = imageView4;
-                        }
-
+                    GeolocationPermissions.getInstance().getAllowed(origin, new ValueCallback<Boolean>() {
                         @Override
                         public void onReceiveValue(Boolean bool) {
                             if (bool != null) {
                                 if (bool.booleanValue()) {
-                                    this.val$locationIcon.setImageBitmap(this.this$1.mLocationAllowedIcon);
+                                    imageView4.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
                                 } else {
-                                    this.val$locationIcon.setImageBitmap(this.this$1.mLocationDisallowedIcon);
+                                    imageView4.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
                                 }
                             }
                         }
                     });
+                }
+            } else {
+                imageView.setVisibility(8);
+                imageView4.setVisibility(8);
+                imageView3.setVisibility(8);
+                imageView2.setVisibility(0);
+                String origin2 = this.mCurrentSite.getOrigin();
+                switch (this.mCurrentSite.getFeatureByIndex(i)) {
+                    case 0:
+                        WebStorage.getInstance().getUsageForOrigin(origin2, new ValueCallback<Long>() {
+                            @Override
+                            public void onReceiveValue(Long l) {
+                                if (l != null) {
+                                    String str = SiteAdapter.this.sizeValueToString(l.longValue()) + " " + WebsiteSettingsFragment.sMBStored;
+                                    textView.setText(R.string.webstorage_clear_data_title);
+                                    textView2.setText(str);
+                                    textView2.setVisibility(0);
+                                    SiteAdapter.this.setIconForUsage(imageView2, l.longValue());
+                                }
+                            }
+                        });
+                        break;
+                    case 1:
+                        textView.setText(R.string.geolocation_settings_page_title);
+                        GeolocationPermissions.getInstance().getAllowed(origin2, new ValueCallback<Boolean>() {
+                            @Override
+                            public void onReceiveValue(Boolean bool) {
+                                if (bool != null) {
+                                    if (bool.booleanValue()) {
+                                        textView2.setText(R.string.geolocation_settings_page_summary_allowed);
+                                        imageView2.setImageBitmap(SiteAdapter.this.mLocationAllowedIcon);
+                                    } else {
+                                        textView2.setText(R.string.geolocation_settings_page_summary_not_allowed);
+                                        imageView2.setImageBitmap(SiteAdapter.this.mLocationDisallowedIcon);
+                                    }
+                                    textView2.setVisibility(0);
+                                }
+                            }
+                        });
+                        break;
                 }
             }
             return view;
@@ -467,94 +453,78 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
             if (this.mCurrentSite != null) {
                 switch (this.mCurrentSite.getFeatureByIndex(i)) {
                     case 0:
-                        new AlertDialog.Builder(getContext()).setMessage(2131493231).setPositiveButton(2131493232, new DialogInterface.OnClickListener(this) {
-                            final SiteAdapter this$1;
-
-                            {
-                                this.this$1 = this;
-                            }
-
+                        new AlertDialog.Builder(getContext()).setMessage(R.string.webstorage_clear_data_dialog_message).setPositiveButton(R.string.webstorage_clear_data_dialog_ok_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i2) {
-                                WebStorage.getInstance().deleteOrigin(this.this$1.mCurrentSite.getOrigin());
-                                this.this$1.mCurrentSite.removeFeature(0);
-                                if (this.this$1.mCurrentSite.getFeatureCount() == 0) {
-                                    this.this$1.this$0.finish();
+                                WebStorage.getInstance().deleteOrigin(SiteAdapter.this.mCurrentSite.getOrigin());
+                                SiteAdapter.this.mCurrentSite.removeFeature(0);
+                                if (SiteAdapter.this.mCurrentSite.getFeatureCount() == 0) {
+                                    WebsiteSettingsFragment.this.finish();
                                 }
-                                this.this$1.askForOrigins();
-                                this.this$1.notifyDataSetChanged();
+                                SiteAdapter.this.askForOrigins();
+                                SiteAdapter.this.notifyDataSetChanged();
                             }
-                        }).setNegativeButton(2131493233, (DialogInterface.OnClickListener) null).setIconAttribute(R.attr.alertDialogIcon).show();
+                        }).setNegativeButton(R.string.webstorage_clear_data_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(android.R.attr.alertDialogIcon).show();
                         break;
                     case 1:
-                        new AlertDialog.Builder(getContext()).setMessage(2131493252).setPositiveButton(2131493253, new DialogInterface.OnClickListener(this) {
-                            final SiteAdapter this$1;
-
-                            {
-                                this.this$1 = this;
-                            }
-
+                        new AlertDialog.Builder(getContext()).setMessage(R.string.geolocation_settings_page_dialog_message).setPositiveButton(R.string.geolocation_settings_page_dialog_ok_button, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i2) {
-                                GeolocationPermissions.getInstance().clear(this.this$1.mCurrentSite.getOrigin());
-                                this.this$1.mCurrentSite.removeFeature(1);
-                                if (this.this$1.mCurrentSite.getFeatureCount() == 0) {
-                                    this.this$1.this$0.finish();
+                                GeolocationPermissions.getInstance().clear(SiteAdapter.this.mCurrentSite.getOrigin());
+                                SiteAdapter.this.mCurrentSite.removeFeature(1);
+                                if (SiteAdapter.this.mCurrentSite.getFeatureCount() == 0) {
+                                    WebsiteSettingsFragment.this.finish();
                                 }
-                                this.this$1.askForOrigins();
-                                this.this$1.notifyDataSetChanged();
+                                SiteAdapter.this.askForOrigins();
+                                SiteAdapter.this.notifyDataSetChanged();
                             }
-                        }).setNegativeButton(2131493254, (DialogInterface.OnClickListener) null).setIconAttribute(R.attr.alertDialogIcon).show();
+                        }).setNegativeButton(R.string.geolocation_settings_page_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(android.R.attr.alertDialogIcon).show();
                         break;
                 }
-                return;
             }
             Site site = (Site) view.getTag();
-            PreferenceActivity preferenceActivity = (PreferenceActivity) this.this$0.getActivity();
+            PreferenceActivity preferenceActivity = (PreferenceActivity) WebsiteSettingsFragment.this.getActivity();
             if (preferenceActivity != null) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("site", site);
                 preferenceActivity.startPreferencePanel(WebsiteSettingsFragment.class.getName(), bundle, 0, site.getPrettyTitle(), null, 0);
             }
         }
+    }
 
-        public void populateIcons(Map<String, Site> map) {
-            new UpdateFromBookmarksDbTask(this, getContext(), map).execute(new Void[0]);
+    @Override
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
+        View viewInflate = layoutInflater.inflate(R.layout.website_settings, viewGroup, false);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            this.mSite = (Site) arguments.getParcelable("site");
         }
+        if (this.mSite == null) {
+            View viewFindViewById = viewInflate.findViewById(R.id.clear_all_button);
+            viewFindViewById.setVisibility(0);
+            viewFindViewById.setOnClickListener(this);
+        }
+        return viewInflate;
+    }
 
-        public void populateOrigins(Map<String, Site> map) {
-            clear();
-            Iterator<Map.Entry<String, Site>> it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                add(it.next().getValue());
-            }
-            notifyDataSetChanged();
-            if (getCount() == 0) {
-                this.this$0.finish();
-            }
+    @Override
+    public void onActivityCreated(Bundle bundle) {
+        super.onActivityCreated(bundle);
+        if (sMBStored == null) {
+            sMBStored = getString(R.string.webstorage_origin_summary_mb_stored);
         }
+        this.mAdapter = new SiteAdapter(this, getActivity(), R.layout.website_settings_row);
+        if (this.mSite != null) {
+            this.mAdapter.mCurrentSite = this.mSite;
+        }
+        getListView().setAdapter((ListAdapter) this.mAdapter);
+        getListView().setOnItemClickListener(this.mAdapter);
+    }
 
-        public void setIconForUsage(ImageView imageView, long j) {
-            float f = j / 1048576.0f;
-            double d = f;
-            if (d <= 0.1d) {
-                imageView.setImageBitmap(this.mUsageEmptyIcon);
-                return;
-            }
-            if (d > 0.1d && f <= 5.0f) {
-                imageView.setImageBitmap(this.mUsageLowIcon);
-            } else if (f > 5.0f) {
-                imageView.setImageBitmap(this.mUsageHighIcon);
-            }
-        }
-
-        public String sizeValueToString(long j) {
-            if (j > 0) {
-                return String.valueOf(((int) Math.ceil((j / 1048576.0f) * 10.0f)) / 10.0f);
-            }
-            Log.e(this.this$0.LOGTAG, "sizeValueToString called with non-positive value: " + j);
-            return "0";
-        }
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.mAdapter.askForOrigins();
     }
 
     private void finish() {
@@ -565,60 +535,18 @@ public class WebsiteSettingsFragment extends ListFragment implements View.OnClic
     }
 
     @Override
-    public void onActivityCreated(Bundle bundle) {
-        super.onActivityCreated(bundle);
-        if (sMBStored == null) {
-            sMBStored = getString(2131493234);
-        }
-        this.mAdapter = new SiteAdapter(this, getActivity(), 2130968636);
-        if (this.mSite != null) {
-            this.mAdapter.mCurrentSite = this.mSite;
-        }
-        getListView().setAdapter((ListAdapter) this.mAdapter);
-        getListView().setOnItemClickListener(this.mAdapter);
-    }
-
-    @Override
     public void onClick(View view) {
-        if (view.getId() != 2131558553) {
-            return;
+        if (view.getId() == R.id.clear_all_button) {
+            new AlertDialog.Builder(getActivity()).setMessage(R.string.website_settings_clear_all_dialog_message).setPositiveButton(R.string.website_settings_clear_all_dialog_ok_button, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    WebStorage.getInstance().deleteAllData();
+                    GeolocationPermissions.getInstance().clearAll();
+                    WebStorageSizeManager.resetLastOutOfSpaceNotificationTime();
+                    WebsiteSettingsFragment.this.mAdapter.askForOrigins();
+                    WebsiteSettingsFragment.this.finish();
+                }
+            }).setNegativeButton(R.string.website_settings_clear_all_dialog_cancel_button, (DialogInterface.OnClickListener) null).setIconAttribute(android.R.attr.alertDialogIcon).show();
         }
-        new AlertDialog.Builder(getActivity()).setMessage(2131493256).setPositiveButton(2131493257, new DialogInterface.OnClickListener(this) {
-            final WebsiteSettingsFragment this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                WebStorage.getInstance().deleteAllData();
-                GeolocationPermissions.getInstance().clearAll();
-                WebStorageSizeManager.resetLastOutOfSpaceNotificationTime();
-                this.this$0.mAdapter.askForOrigins();
-                this.this$0.finish();
-            }
-        }).setNegativeButton(2131493258, (DialogInterface.OnClickListener) null).setIconAttribute(R.attr.alertDialogIcon).show();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View viewInflate = layoutInflater.inflate(2130968635, viewGroup, false);
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            this.mSite = (Site) arguments.getParcelable("site");
-        }
-        if (this.mSite == null) {
-            View viewFindViewById = viewInflate.findViewById(2131558553);
-            viewFindViewById.setVisibility(0);
-            viewFindViewById.setOnClickListener(this);
-        }
-        return viewInflate;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        this.mAdapter.askForOrigins();
     }
 }

@@ -45,7 +45,7 @@ final class Synchronized {
         }
     }
 
-    public static <E> Collection<E> collection(Collection<E> collection, Object obj) {
+    private static <E> Collection<E> collection(Collection<E> collection, Object obj) {
         return new SynchronizedCollection(collection, obj);
     }
 
@@ -57,7 +57,7 @@ final class Synchronized {
         }
 
         @Override
-        public Collection<E> delegate() {
+        Collection<E> delegate() {
             return (Collection) super.delegate();
         }
 
@@ -185,7 +185,7 @@ final class Synchronized {
         }
 
         @Override
-        public Set<E> delegate() {
+        Set<E> delegate() {
             return (Set) super.delegate();
         }
 
@@ -211,7 +211,7 @@ final class Synchronized {
         }
     }
 
-    public static <E> SortedSet<E> sortedSet(SortedSet<E> sortedSet, Object obj) {
+    private static <E> SortedSet<E> sortedSet(SortedSet<E> sortedSet, Object obj) {
         return new SynchronizedSortedSet(sortedSet, obj);
     }
 
@@ -223,7 +223,7 @@ final class Synchronized {
         }
 
         @Override
-        public SortedSet<E> delegate() {
+        SortedSet<E> delegate() {
             return (SortedSet) super.delegate();
         }
 
@@ -294,7 +294,7 @@ final class Synchronized {
         }
 
         @Override
-        public Map<K, V> delegate() {
+        Map<K, V> delegate() {
             return (Map) super.delegate();
         }
 
@@ -444,7 +444,7 @@ final class Synchronized {
         }
 
         @Override
-        public SortedMap<K, V> delegate() {
+        SortedMap<K, V> delegate() {
             return (SortedMap) super.delegate();
         }
 
@@ -505,7 +505,7 @@ final class Synchronized {
         private transient Set<V> valueSet;
 
         @Override
-        public BiMap<K, V> delegate() {
+        BiMap<K, V> delegate() {
             return (BiMap) super.delegate();
         }
 
@@ -531,7 +531,7 @@ final class Synchronized {
         }
 
         @Override
-        public NavigableSet<E> delegate() {
+        NavigableSet<E> delegate() {
             return (NavigableSet) super.delegate();
         }
 
@@ -668,7 +668,7 @@ final class Synchronized {
         }
 
         @Override
-        public NavigableMap<K, V> delegate() {
+        NavigableMap<K, V> delegate() {
             return (NavigableMap) super.delegate();
         }
 
@@ -864,7 +864,7 @@ final class Synchronized {
         }
     }
 
-    public static <K, V> Map.Entry<K, V> nullableSynchronizedEntry(Map.Entry<K, V> entry, Object obj) {
+    private static <K, V> Map.Entry<K, V> nullableSynchronizedEntry(Map.Entry<K, V> entry, Object obj) {
         if (entry == null) {
             return null;
         }
@@ -879,7 +879,7 @@ final class Synchronized {
         }
 
         @Override
-        public Map.Entry<K, V> delegate() {
+        Map.Entry<K, V> delegate() {
             return (Map.Entry) super.delegate();
         }
 

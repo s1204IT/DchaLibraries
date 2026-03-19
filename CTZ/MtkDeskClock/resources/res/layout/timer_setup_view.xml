@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/timer_setup_top_margin"
+    android:paddingBottom="@dimen/fab_height"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <include layout="@layout/timer_setup_time"/>
+    <include layout="@layout/timer_setup_divider"/>
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        layout="@layout/timer_setup_digits"/>
+</LinearLayout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="28"
+    android:versionName="9"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.vpndialogs"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <uses-permission android:name="android.permission.CONTROL_VPN"/>
+    <uses-permission android:name="android.permission.CONNECTIVITY_INTERNAL"/>
+    <uses-permission android:name="android.permission.HIDE_NON_SYSTEM_OVERLAY_WINDOWS"/>
+    <application
+        android:label="VpnDialogs"
+        android:allowBackup="false">
+        <activity
+            android:theme="@android:style/Theme.Material.Light.Dialog.Alert"
+            android:name="com.android.vpndialogs.ConfirmDialog">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:theme="@android:style/Theme.Material.Light.Dialog.Alert"
+            android:name="com.android.vpndialogs.ManageDialog"
+            android:permission="android.permission.NETWORK_SETTINGS"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"/>
+        <activity
+            android:theme="@android:style/Theme.Material.Light.Dialog.Alert"
+            android:label="@string/always_on_disconnected_title"
+            android:name="com.android.vpndialogs.AlwaysOnDisconnectedDialog"
+            android:permission="android.permission.NETWORK_SETTINGS"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"/>
+    </application>
+</manifest>

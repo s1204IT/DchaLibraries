@@ -5,6 +5,12 @@ import java.util.Map;
 
 public interface HttpHelper {
 
+    public interface UrlRewriter {
+        String rewrite(String str);
+    }
+
+    String get(GetRequest getRequest) throws IOException;
+
     public static class GetRequest {
         private Map<String, String> mHeaders;
         private String mUrl;
@@ -16,12 +22,12 @@ public interface HttpHelper {
             this.mUrl = str;
         }
 
-        public Map<String, String> getHeaders() {
-            return this.mHeaders;
-        }
-
         public String getUrl() {
             return this.mUrl;
+        }
+
+        public Map<String, String> getHeaders() {
+            return this.mHeaders;
         }
     }
 
@@ -35,10 +41,4 @@ public interface HttpHelper {
             this.mReasonPhrase = str;
         }
     }
-
-    public interface UrlRewriter {
-        String rewrite(String str);
-    }
-
-    String get(GetRequest getRequest) throws IOException;
 }

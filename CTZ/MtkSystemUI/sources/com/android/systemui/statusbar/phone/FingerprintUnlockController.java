@@ -73,7 +73,7 @@ public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
         this.mStatusBarKeyguardViewManager = statusBarKeyguardViewManager;
     }
 
-    public void releaseFingerprintWakeLock() {
+    private void releaseFingerprintWakeLock() {
         if (this.mWakeLock != null) {
             this.mHandler.removeCallbacks(this.mReleaseFingerprintWakeLockRunnable);
             Log.i("FingerprintController", "releasing fp wakelock");
@@ -172,7 +172,7 @@ public class FingerprintUnlockController extends KeyguardUpdateMonitorCallback {
         Trace.endSection();
     }
 
-    public void showBouncer() {
+    private void showBouncer() {
         if (calculateMode() == 3) {
             this.mStatusBarKeyguardViewManager.showBouncer(false);
         }

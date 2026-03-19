@@ -12,113 +12,54 @@ class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     private final transient int mask;
     private final transient ImmutableMapEntry<K, V>[] valueTable;
 
-    private final class Inverse extends ImmutableBiMap<V, K> {
-        final RegularImmutableBiMap this$0;
-
-        final class InverseEntrySet extends ImmutableMapEntrySet<V, K> {
-            final Inverse this$1;
-
-            InverseEntrySet(Inverse inverse) {
-                this.this$1 = inverse;
+    RegularImmutableBiMap(int i, ImmutableMapEntry.TerminalEntry<?, ?>[] terminalEntryArr) {
+        ImmutableMapEntry<K, V> nonTerminalBiMapEntry;
+        int i2 = i;
+        int iClosedTableSize = Hashing.closedTableSize(i2, 1.2d);
+        this.mask = iClosedTableSize - 1;
+        ImmutableMapEntry<K, V>[] immutableMapEntryArrCreateEntryArray = createEntryArray(iClosedTableSize);
+        ImmutableMapEntry<K, V>[] immutableMapEntryArrCreateEntryArray2 = createEntryArray(iClosedTableSize);
+        ImmutableMapEntry<K, V>[] immutableMapEntryArrCreateEntryArray3 = createEntryArray(i);
+        int i3 = 0;
+        int i4 = 0;
+        while (i3 < i2) {
+            ImmutableMapEntry.TerminalEntry<?, ?> terminalEntry = terminalEntryArr[i3];
+            Object key = terminalEntry.getKey();
+            Object value = terminalEntry.getValue();
+            int iHashCode = key.hashCode();
+            int iHashCode2 = value.hashCode();
+            int iSmear = Hashing.smear(iHashCode) & this.mask;
+            int iSmear2 = Hashing.smear(iHashCode2) & this.mask;
+            ImmutableMapEntry<K, V> immutableMapEntry = immutableMapEntryArrCreateEntryArray[iSmear];
+            ImmutableMapEntry<K, V> nextInKeyBucket = immutableMapEntry;
+            while (nextInKeyBucket != null) {
+                checkNoConflict(!key.equals(nextInKeyBucket.getKey()), "key", terminalEntry, nextInKeyBucket);
+                nextInKeyBucket = nextInKeyBucket.getNextInKeyBucket();
+                key = key;
             }
-
-            @Override
-            ImmutableList<Map.Entry<V, K>> createAsList() {
-                return new ImmutableAsList<Map.Entry<V, K>>(this) {
-                    final InverseEntrySet this$2;
-
-                    {
-                        this.this$2 = this;
-                    }
-
-                    @Override
-                    ImmutableCollection<Map.Entry<V, K>> delegateCollection() {
-                        return this.this$2;
-                    }
-
-                    @Override
-                    public Map.Entry<V, K> get(int i) {
-                        ImmutableMapEntry immutableMapEntry = this.this$2.this$1.this$0.entries[i];
-                        return Maps.immutableEntry(immutableMapEntry.getValue(), immutableMapEntry.getKey());
-                    }
-                };
+            ImmutableMapEntry<K, V> immutableMapEntry2 = immutableMapEntryArrCreateEntryArray2[iSmear2];
+            ImmutableMapEntry<K, V> nextInValueBucket = immutableMapEntry2;
+            while (nextInValueBucket != null) {
+                checkNoConflict(!value.equals(nextInValueBucket.getValue()), "value", terminalEntry, nextInValueBucket);
+                nextInValueBucket = nextInValueBucket.getNextInValueBucket();
+                value = value;
             }
-
-            @Override
-            public int hashCode() {
-                return this.this$1.this$0.hashCode;
+            if (immutableMapEntry != null || immutableMapEntry2 != null) {
+                nonTerminalBiMapEntry = new NonTerminalBiMapEntry<>(terminalEntry, immutableMapEntry, immutableMapEntry2);
+            } else {
+                nonTerminalBiMapEntry = terminalEntry;
             }
-
-            @Override
-            boolean isHashCodeFast() {
-                return true;
-            }
-
-            @Override
-            public UnmodifiableIterator<Map.Entry<V, K>> iterator() {
-                return asList().iterator();
-            }
-
-            @Override
-            ImmutableMap<V, K> map() {
-                return this.this$1;
-            }
+            immutableMapEntryArrCreateEntryArray[iSmear] = nonTerminalBiMapEntry;
+            immutableMapEntryArrCreateEntryArray2[iSmear2] = nonTerminalBiMapEntry;
+            immutableMapEntryArrCreateEntryArray3[i3] = nonTerminalBiMapEntry;
+            i4 += iHashCode ^ iHashCode2;
+            i3++;
+            i2 = i;
         }
-
-        private Inverse(RegularImmutableBiMap regularImmutableBiMap) {
-            this.this$0 = regularImmutableBiMap;
-        }
-
-        @Override
-        ImmutableSet<Map.Entry<V, K>> createEntrySet() {
-            return new InverseEntrySet(this);
-        }
-
-        @Override
-        public K get(Object obj) {
-            if (obj == null) {
-                return null;
-            }
-            for (ImmutableMapEntry nextInValueBucket = this.this$0.valueTable[Hashing.smear(obj.hashCode()) & this.this$0.mask]; nextInValueBucket != null; nextInValueBucket = nextInValueBucket.getNextInValueBucket()) {
-                if (obj.equals(nextInValueBucket.getValue())) {
-                    return nextInValueBucket.getKey();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public ImmutableBiMap<K, V> inverse() {
-            return this.this$0;
-        }
-
-        @Override
-        boolean isPartialView() {
-            return false;
-        }
-
-        @Override
-        public int size() {
-            return inverse().size();
-        }
-
-        @Override
-        Object writeReplace() {
-            return new InverseSerializedForm(this.this$0);
-        }
-    }
-
-    private static class InverseSerializedForm<K, V> implements Serializable {
-        private static final long serialVersionUID = 1;
-        private final ImmutableBiMap<K, V> forward;
-
-        InverseSerializedForm(ImmutableBiMap<K, V> immutableBiMap) {
-            this.forward = immutableBiMap;
-        }
-
-        Object readResolve() {
-            return this.forward.inverse();
-        }
+        this.keyTable = immutableMapEntryArrCreateEntryArray;
+        this.valueTable = immutableMapEntryArrCreateEntryArray2;
+        this.entries = immutableMapEntryArrCreateEntryArray3;
+        this.hashCode = i4;
     }
 
     private static final class NonTerminalBiMapEntry<K, V> extends ImmutableMapEntry<K, V> {
@@ -142,88 +83,8 @@ class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
         }
     }
 
-    RegularImmutableBiMap(int i, ImmutableMapEntry.TerminalEntry<?, ?>[] terminalEntryArr) {
-        int iClosedTableSize = Hashing.closedTableSize(i, 1.2d);
-        this.mask = iClosedTableSize - 1;
-        ?? r8 = (ImmutableMapEntry<K, V>[]) createEntryArray(iClosedTableSize);
-        ?? r9 = (ImmutableMapEntry<K, V>[]) createEntryArray(iClosedTableSize);
-        ?? r10 = (ImmutableMapEntry<K, V>[]) createEntryArray(i);
-        int i2 = 0;
-        int i3 = 0;
-        while (true) {
-            int i4 = i2;
-            int i5 = i3;
-            if (i4 >= i) {
-                this.keyTable = r8;
-                this.valueTable = r9;
-                this.entries = r10;
-                this.hashCode = i5;
-                return;
-            }
-            ?? nonTerminalBiMapEntry = terminalEntryArr[i4];
-            Object key = nonTerminalBiMapEntry.getKey();
-            Object value = nonTerminalBiMapEntry.getValue();
-            int iHashCode = key.hashCode();
-            int iHashCode2 = value.hashCode();
-            int iSmear = Hashing.smear(iHashCode) & this.mask;
-            int iSmear2 = Hashing.smear(iHashCode2) & this.mask;
-            ?? r5 = r8[iSmear];
-            for (?? nextInKeyBucket = r5; nextInKeyBucket != 0; nextInKeyBucket = nextInKeyBucket.getNextInKeyBucket()) {
-                checkNoConflict(!key.equals(nextInKeyBucket.getKey()), "key", nonTerminalBiMapEntry, nextInKeyBucket);
-            }
-            ?? r4 = r9[iSmear2];
-            for (?? nextInValueBucket = r4; nextInValueBucket != 0; nextInValueBucket = nextInValueBucket.getNextInValueBucket()) {
-                checkNoConflict(!value.equals(nextInValueBucket.getValue()), "value", nonTerminalBiMapEntry, nextInValueBucket);
-            }
-            if (r5 != 0 || r4 != 0) {
-                nonTerminalBiMapEntry = new NonTerminalBiMapEntry(nonTerminalBiMapEntry, r5, r4);
-            }
-            r8[iSmear] = nonTerminalBiMapEntry;
-            r9[iSmear2] = nonTerminalBiMapEntry;
-            r10[i4] = nonTerminalBiMapEntry;
-            i3 = i5 + (iHashCode ^ iHashCode2);
-            i2 = i4 + 1;
-        }
-    }
-
     private static <K, V> ImmutableMapEntry<K, V>[] createEntryArray(int i) {
         return new ImmutableMapEntry[i];
-    }
-
-    @Override
-    ImmutableSet<Map.Entry<K, V>> createEntrySet() {
-        return new ImmutableMapEntrySet<K, V>(this) {
-            final RegularImmutableBiMap this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            ImmutableList<Map.Entry<K, V>> createAsList() {
-                return new RegularImmutableAsList(this, this.this$0.entries);
-            }
-
-            @Override
-            public int hashCode() {
-                return this.this$0.hashCode;
-            }
-
-            @Override
-            boolean isHashCodeFast() {
-                return true;
-            }
-
-            @Override
-            public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
-                return asList().iterator();
-            }
-
-            @Override
-            ImmutableMap<K, V> map() {
-                return this.this$0;
-            }
-        };
     }
 
     @Override
@@ -240,14 +101,33 @@ class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     }
 
     @Override
-    public ImmutableBiMap<V, K> inverse() {
-        ImmutableBiMap<V, K> immutableBiMap = this.inverse;
-        if (immutableBiMap != null) {
-            return immutableBiMap;
-        }
-        Inverse inverse = new Inverse();
-        this.inverse = inverse;
-        return inverse;
+    ImmutableSet<Map.Entry<K, V>> createEntrySet() {
+        return new ImmutableMapEntrySet<K, V>() {
+            @Override
+            ImmutableMap<K, V> map() {
+                return RegularImmutableBiMap.this;
+            }
+
+            @Override
+            public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
+                return asList().iterator();
+            }
+
+            @Override
+            ImmutableList<Map.Entry<K, V>> createAsList() {
+                return new RegularImmutableAsList(this, RegularImmutableBiMap.this.entries);
+            }
+
+            @Override
+            boolean isHashCodeFast() {
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                return RegularImmutableBiMap.this.hashCode;
+            }
+        };
     }
 
     @Override
@@ -258,5 +138,113 @@ class RegularImmutableBiMap<K, V> extends ImmutableBiMap<K, V> {
     @Override
     public int size() {
         return this.entries.length;
+    }
+
+    @Override
+    public ImmutableBiMap<V, K> inverse() {
+        ImmutableBiMap<V, K> immutableBiMap = this.inverse;
+        if (immutableBiMap != null) {
+            return immutableBiMap;
+        }
+        Inverse inverse = new Inverse();
+        this.inverse = inverse;
+        return inverse;
+    }
+
+    private final class Inverse extends ImmutableBiMap<V, K> {
+        private Inverse() {
+        }
+
+        @Override
+        public int size() {
+            return inverse().size();
+        }
+
+        @Override
+        public ImmutableBiMap<K, V> inverse() {
+            return RegularImmutableBiMap.this;
+        }
+
+        @Override
+        public K get(Object obj) {
+            if (obj != null) {
+                for (ImmutableMapEntry nextInValueBucket = RegularImmutableBiMap.this.valueTable[Hashing.smear(obj.hashCode()) & RegularImmutableBiMap.this.mask]; nextInValueBucket != null; nextInValueBucket = nextInValueBucket.getNextInValueBucket()) {
+                    if (obj.equals(nextInValueBucket.getValue())) {
+                        return nextInValueBucket.getKey();
+                    }
+                }
+                return null;
+            }
+            return null;
+        }
+
+        @Override
+        ImmutableSet<Map.Entry<V, K>> createEntrySet() {
+            return new InverseEntrySet();
+        }
+
+        final class InverseEntrySet extends ImmutableMapEntrySet<V, K> {
+            InverseEntrySet() {
+            }
+
+            @Override
+            ImmutableMap<V, K> map() {
+                return Inverse.this;
+            }
+
+            @Override
+            boolean isHashCodeFast() {
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                return RegularImmutableBiMap.this.hashCode;
+            }
+
+            @Override
+            public UnmodifiableIterator<Map.Entry<V, K>> iterator() {
+                return asList().iterator();
+            }
+
+            @Override
+            ImmutableList<Map.Entry<V, K>> createAsList() {
+                return new ImmutableAsList<Map.Entry<V, K>>() {
+                    @Override
+                    public Map.Entry<V, K> get(int i) {
+                        ImmutableMapEntry immutableMapEntry = RegularImmutableBiMap.this.entries[i];
+                        return Maps.immutableEntry(immutableMapEntry.getValue(), immutableMapEntry.getKey());
+                    }
+
+                    @Override
+                    ImmutableCollection<Map.Entry<V, K>> delegateCollection() {
+                        return InverseEntrySet.this;
+                    }
+                };
+            }
+        }
+
+        @Override
+        boolean isPartialView() {
+            return false;
+        }
+
+        @Override
+        Object writeReplace() {
+            return new InverseSerializedForm(RegularImmutableBiMap.this);
+        }
+    }
+
+    private static class InverseSerializedForm<K, V> implements Serializable {
+        private static final long serialVersionUID = 1;
+        private final ImmutableBiMap<K, V> forward;
+
+        InverseSerializedForm(ImmutableBiMap<K, V> immutableBiMap) {
+            this.forward = immutableBiMap;
+        }
+
+        Object readResolve() {
+            return this.forward.inverse();
+        }
     }
 }

@@ -39,7 +39,7 @@ public class GlobalActionsComponent extends SystemUI implements GlobalActions.Gl
         return new GlobalActionsImpl(globalActionsComponent.mContext);
     }
 
-    public void onExtensionCallback(GlobalActions globalActions) {
+    private void onExtensionCallback(GlobalActions globalActions) {
         if (this.mPlugin != null) {
             this.mPlugin.destroy();
         }

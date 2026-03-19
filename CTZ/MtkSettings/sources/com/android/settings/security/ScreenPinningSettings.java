@@ -90,7 +90,7 @@ public class ScreenPinningSettings extends SettingsPreferenceFragment implements
         return Settings.Secure.getInt(getContentResolver(), "lock_to_app_exit_locked", this.mLockPatternUtils.isSecure(UserHandle.myUserId()) ? 1 : 0) != 0;
     }
 
-    public boolean setScreenLockUsed(boolean z) {
+    private boolean setScreenLockUsed(boolean z) {
         if (z && new LockPatternUtils(getActivity()).getKeyguardStoredPasswordQuality(UserHandle.myUserId()) == 0) {
             Intent intent = new Intent("android.app.action.SET_NEW_PASSWORD");
             intent.putExtra("minimum_quality", 65536);

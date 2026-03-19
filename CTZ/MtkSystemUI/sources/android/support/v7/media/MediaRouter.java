@@ -998,12 +998,12 @@ public final class MediaRouter {
             return -1;
         }
 
-        public String getUniqueId(ProviderInfo provider, String routeDescriptorId) {
+        private String getUniqueId(ProviderInfo provider, String routeDescriptorId) {
             String componentName = provider.getComponentName().flattenToShortString();
             return this.mUniqueIdMap.get(new Pair(componentName, routeDescriptorId));
         }
 
-        public void updateSelectedRouteIfNeeded(boolean selectedRouteDescriptorChanged) {
+        private void updateSelectedRouteIfNeeded(boolean selectedRouteDescriptorChanged) {
             if (this.mDefaultRoute != null && !this.mDefaultRoute.isSelectable()) {
                 Log.i("MediaRouter", "Clearing the default route because it is no longer selectable: " + this.mDefaultRoute);
                 this.mDefaultRoute = null;

@@ -137,7 +137,7 @@ public class DataSaverBackend {
         this.mBlacklistInitialized = true;
     }
 
-    public void handleRestrictBackgroundChanged(boolean z) {
+    private void handleRestrictBackgroundChanged(boolean z) {
         for (int i = 0; i < this.mListeners.size(); i++) {
             this.mListeners.get(i).onDataSaverChanged(z);
         }
@@ -155,7 +155,7 @@ public class DataSaverBackend {
         }
     }
 
-    public void handleUidPoliciesChanged(int i, int i2) {
+    private void handleUidPoliciesChanged(int i, int i2) {
         loadWhitelist();
         loadBlacklist();
         int i3 = this.mUidPolicies.get(i, 0);

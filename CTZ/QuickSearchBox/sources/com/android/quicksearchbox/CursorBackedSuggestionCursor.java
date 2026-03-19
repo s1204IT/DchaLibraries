@@ -16,9 +16,22 @@ public abstract class CursorBackedSuggestionCursor implements SuggestionCursor {
     private final int mIcon2Col = getColumnIndex("suggest_icon_2");
     private final int mRefreshSpinnerCol = getColumnIndex("suggest_spinner_while_refreshing");
 
+    @Override
+    public abstract Source getSuggestionSource();
+
     public CursorBackedSuggestionCursor(String str, Cursor cursor) {
         this.mUserQuery = str;
         this.mCursor = cursor;
+    }
+
+    @Override
+    public String getUserQuery() {
+        return this.mUserQuery;
+    }
+
+    @Override
+    public String getSuggestionLogType() {
+        return getStringOrNull("suggest_log_type");
     }
 
     @Override
@@ -37,21 +50,8 @@ public abstract class CursorBackedSuggestionCursor implements SuggestionCursor {
     }
 
     protected void finalize() {
-        if (this.mClosed) {
-            return;
-        }
-        Log.e("QSB.CursorBackedSuggestionCursor", "LEAK! Finalized without being closed: " + toString());
-    }
-
-    protected int getColumnIndex(String str) {
-        if (this.mCursor == null) {
-            return -1;
-        }
-        try {
-            return this.mCursor.getColumnIndex(str);
-        } catch (RuntimeException e) {
-            Log.e("QSB.CursorBackedSuggestionCursor", "getColumnIndex() failed, ", e);
-            return -1;
+        if (!this.mClosed) {
+            Log.e("QSB.CursorBackedSuggestionCursor", "LEAK! Finalized without being closed: " + toString());
         }
     }
 
@@ -68,6 +68,20 @@ public abstract class CursorBackedSuggestionCursor implements SuggestionCursor {
         } catch (RuntimeException e) {
             Log.e("QSB.CursorBackedSuggestionCursor", "getCount() failed, ", e);
             return 0;
+        }
+    }
+
+    @Override
+    public void moveTo(int i) {
+        if (this.mClosed) {
+            throw new IllegalStateException("moveTo(" + i + ") after close()");
+        }
+        try {
+            if (!this.mCursor.moveToPosition(i)) {
+                Log.e("QSB.CursorBackedSuggestionCursor", "moveToPosition(" + i + ") failed, count=" + getCount());
+            }
+        } catch (RuntimeException e) {
+            Log.e("QSB.CursorBackedSuggestionCursor", "moveToPosition() failed, ", e);
         }
     }
 
@@ -88,73 +102,10 @@ public abstract class CursorBackedSuggestionCursor implements SuggestionCursor {
         return getStringOrNull("suggest_shortcut_id");
     }
 
-    protected String getStringOrNull(int i) {
-        if (this.mCursor == null || i == -1) {
-            return null;
-        }
-        try {
-            return this.mCursor.getString(i);
-        } catch (RuntimeException e) {
-            Log.e("QSB.CursorBackedSuggestionCursor", "getString() failed, ", e);
-            return null;
-        }
-    }
-
-    protected String getStringOrNull(String str) {
-        return getStringOrNull(getColumnIndex(str));
-    }
-
     @Override
     public String getSuggestionFormat() {
         return getStringOrNull(this.mFormatCol);
     }
-
-    @Override
-    public String getSuggestionIcon1() {
-        return getStringOrNull(this.mIcon1Col);
-    }
-
-    @Override
-    public String getSuggestionIcon2() {
-        return getStringOrNull(this.mIcon2Col);
-    }
-
-    @Override
-    public String getSuggestionIntentAction() {
-        String stringOrNull = getStringOrNull("suggest_intent_action");
-        return stringOrNull != null ? stringOrNull : getSuggestionSource().getDefaultIntentAction();
-    }
-
-    @Override
-    public String getSuggestionIntentDataString() {
-        String stringOrNull;
-        String stringOrNull2 = getStringOrNull("suggest_intent_data");
-        if (stringOrNull2 == null) {
-            stringOrNull2 = getSuggestionSource().getDefaultIntentData();
-        }
-        if (stringOrNull2 == null || (stringOrNull = getStringOrNull("suggest_intent_data_id")) == null) {
-            return stringOrNull2;
-        }
-        return stringOrNull2 + "/" + Uri.encode(stringOrNull);
-    }
-
-    @Override
-    public String getSuggestionIntentExtraData() {
-        return getStringOrNull("suggest_intent_extra_data");
-    }
-
-    @Override
-    public String getSuggestionLogType() {
-        return getStringOrNull("suggest_log_type");
-    }
-
-    @Override
-    public String getSuggestionQuery() {
-        return getStringOrNull("suggest_intent_query");
-    }
-
-    @Override
-    public abstract Source getSuggestionSource();
 
     @Override
     public String getSuggestionText1() {
@@ -172,8 +123,13 @@ public abstract class CursorBackedSuggestionCursor implements SuggestionCursor {
     }
 
     @Override
-    public String getUserQuery() {
-        return this.mUserQuery;
+    public String getSuggestionIcon1() {
+        return getStringOrNull(this.mIcon1Col);
+    }
+
+    @Override
+    public String getSuggestionIcon2() {
+        return getStringOrNull(this.mIcon2Col);
     }
 
     @Override
@@ -182,23 +138,65 @@ public abstract class CursorBackedSuggestionCursor implements SuggestionCursor {
     }
 
     @Override
+    public String getSuggestionIntentAction() {
+        String stringOrNull = getStringOrNull("suggest_intent_action");
+        return stringOrNull != null ? stringOrNull : getSuggestionSource().getDefaultIntentAction();
+    }
+
+    @Override
+    public String getSuggestionQuery() {
+        return getStringOrNull("suggest_intent_query");
+    }
+
+    @Override
+    public String getSuggestionIntentDataString() {
+        String stringOrNull;
+        String stringOrNull2 = getStringOrNull("suggest_intent_data");
+        if (stringOrNull2 == null) {
+            stringOrNull2 = getSuggestionSource().getDefaultIntentData();
+        }
+        if (stringOrNull2 != null && (stringOrNull = getStringOrNull("suggest_intent_data_id")) != null) {
+            return stringOrNull2 + "/" + Uri.encode(stringOrNull);
+        }
+        return stringOrNull2;
+    }
+
+    @Override
+    public String getSuggestionIntentExtraData() {
+        return getStringOrNull("suggest_intent_extra_data");
+    }
+
+    @Override
     public boolean isWebSearchSuggestion() {
         return "android.intent.action.WEB_SEARCH".equals(getSuggestionIntentAction());
     }
 
-    @Override
-    public void moveTo(int i) {
-        if (this.mClosed) {
-            throw new IllegalStateException("moveTo(" + i + ") after close()");
+    protected int getColumnIndex(String str) {
+        if (this.mCursor == null) {
+            return -1;
         }
         try {
-            if (this.mCursor.moveToPosition(i)) {
-                return;
-            }
-            Log.e("QSB.CursorBackedSuggestionCursor", "moveToPosition(" + i + ") failed, count=" + getCount());
+            return this.mCursor.getColumnIndex(str);
         } catch (RuntimeException e) {
-            Log.e("QSB.CursorBackedSuggestionCursor", "moveToPosition() failed, ", e);
+            Log.e("QSB.CursorBackedSuggestionCursor", "getColumnIndex() failed, ", e);
+            return -1;
         }
+    }
+
+    protected String getStringOrNull(int i) {
+        if (this.mCursor == null || i == -1) {
+            return null;
+        }
+        try {
+            return this.mCursor.getString(i);
+        } catch (RuntimeException e) {
+            Log.e("QSB.CursorBackedSuggestionCursor", "getString() failed, ", e);
+            return null;
+        }
+    }
+
+    protected String getStringOrNull(String str) {
+        return getStringOrNull(getColumnIndex(str));
     }
 
     public String toString() {

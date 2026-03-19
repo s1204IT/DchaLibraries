@@ -6,13 +6,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import com.android.browser.BrowserSettings;
 import com.android.browser.Extensions;
+import com.android.browser.R;
 
 public class FontSizePreview extends WebViewPreview {
     private Context mContext;
     String mHtml;
 
-    public FontSizePreview(Context context) {
-        super(context);
+    public FontSizePreview(Context context, AttributeSet attributeSet, int i) {
+        super(context, attributeSet, i);
         this.mContext = null;
     }
 
@@ -21,8 +22,8 @@ public class FontSizePreview extends WebViewPreview {
         this.mContext = null;
     }
 
-    public FontSizePreview(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
+    public FontSizePreview(Context context) {
+        super(context);
         this.mContext = null;
     }
 
@@ -30,13 +31,7 @@ public class FontSizePreview extends WebViewPreview {
     protected void init(Context context) {
         super.init(context);
         this.mContext = context;
-        this.mHtml = String.format("<!DOCTYPE html><html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\"><style type=\"text/css\">p { margin: 2px auto;}</style><body><p style=\"font-size: 4pt\">%s</p><p style=\"font-size: 8pt\">%s</p><p style=\"font-size: 10pt\">%s</p><p style=\"font-size: 14pt\">%s</p><p style=\"font-size: 18pt\">%s</p></body></html>", context.getResources().getStringArray(2131230824));
-    }
-
-    @Override
-    protected void setupWebView(WebView webView) {
-        super.setupWebView(webView);
-        webView.setLayerType(1, null);
+        this.mHtml = String.format("<!DOCTYPE html><html><head><meta http-equiv=\"Content-Type\" content=\"text/html;charset=UTF-8\"><style type=\"text/css\">p { margin: 2px auto;}</style><body><p style=\"font-size: 4pt\">%s</p><p style=\"font-size: 8pt\">%s</p><p style=\"font-size: 10pt\">%s</p><p style=\"font-size: 14pt\">%s</p><p style=\"font-size: 18pt\">%s</p></body></html>", context.getResources().getStringArray(R.array.pref_text_size_choices));
     }
 
     @Override
@@ -50,5 +45,11 @@ public class FontSizePreview extends WebViewPreview {
         settings.setTextZoom(browserSettings.getTextZoom());
         Extensions.getSettingPlugin(this.mContext).setStandardFontFamily(settings, browserSettings.getPreferences());
         this.mWebView.loadDataWithBaseURL(null, this.mHtml, "text/html", "utf-8", null);
+    }
+
+    @Override
+    protected void setupWebView(WebView webView) {
+        super.setupWebView(webView);
+        webView.setLayerType(1, null);
     }
 }

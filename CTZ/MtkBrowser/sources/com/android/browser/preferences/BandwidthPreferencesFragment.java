@@ -6,12 +6,13 @@ import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import com.android.browser.BrowserSettings;
+import com.android.browser.R;
 
 public class BandwidthPreferencesFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        addPreferencesFromResource(2131099650);
+        addPreferencesFromResource(R.xml.bandwidth_preferences);
         getPreferenceScreen().removePreference(findPreference("preload_when"));
     }
 
@@ -25,9 +26,8 @@ public class BandwidthPreferencesFragment extends PreferenceFragment {
         if (!sharedPreferences.contains("preload_when") && (listPreference2 = (ListPreference) preferenceScreen.findPreference("preload_when")) != null) {
             listPreference2.setValue(BrowserSettings.getInstance().getDefaultPreloadSetting());
         }
-        if (sharedPreferences.contains("link_prefetch_when") || (listPreference = (ListPreference) preferenceScreen.findPreference("link_prefetch_when")) == null) {
-            return;
+        if (!sharedPreferences.contains("link_prefetch_when") && (listPreference = (ListPreference) preferenceScreen.findPreference("link_prefetch_when")) != null) {
+            listPreference.setValue(BrowserSettings.getInstance().getDefaultLinkPrefetchSetting());
         }
-        listPreference.setValue(BrowserSettings.getInstance().getDefaultLinkPrefetchSetting());
     }
 }

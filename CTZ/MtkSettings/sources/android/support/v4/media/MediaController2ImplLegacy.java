@@ -176,7 +176,7 @@ class MediaController2ImplLegacy implements MediaController2.SupportLibraryImpl 
         sendCommand(command, null, null);
     }
 
-    public void sendCommand(String command, ResultReceiver receiver) throws Throwable {
+    private void sendCommand(String command, ResultReceiver receiver) throws Throwable {
         sendCommand(command, null, receiver);
     }
 

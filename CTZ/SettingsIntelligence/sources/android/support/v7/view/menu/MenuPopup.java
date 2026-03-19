@@ -11,7 +11,7 @@ import android.widget.HeaderViewListAdapter;
 import android.widget.ListAdapter;
 import android.widget.PopupWindow;
 
-public abstract class MenuPopup implements MenuPresenter, ShowableListMenu, AdapterView.OnItemClickListener {
+abstract class MenuPopup implements MenuPresenter, ShowableListMenu, AdapterView.OnItemClickListener {
     private Rect mEpicenterBounds;
 
     public abstract void addMenu(MenuBuilder menuBuilder);

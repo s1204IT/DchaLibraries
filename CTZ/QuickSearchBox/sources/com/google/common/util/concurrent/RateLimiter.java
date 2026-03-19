@@ -8,16 +8,9 @@ public abstract class RateLimiter {
     private volatile Object mutexDoNotUseDirectly;
     private final SleepingStopwatch stopwatch;
 
-    static abstract class SleepingStopwatch {
-        SleepingStopwatch() {
-        }
+    abstract double doGetRate();
 
-        abstract long readMicros();
-    }
-
-    RateLimiter(SleepingStopwatch sleepingStopwatch) {
-        this.stopwatch = (SleepingStopwatch) Preconditions.checkNotNull(sleepingStopwatch);
-    }
+    abstract void doSetRate(double d, long j);
 
     static RateLimiter create(SleepingStopwatch sleepingStopwatch, double d) {
         SmoothRateLimiter.SmoothBursty smoothBursty = new SmoothRateLimiter.SmoothBursty(sleepingStopwatch, 1.0d);
@@ -45,16 +38,8 @@ public abstract class RateLimiter {
         return obj;
     }
 
-    abstract double doGetRate();
-
-    abstract void doSetRate(double d, long j);
-
-    public final double getRate() {
-        double dDoGetRate;
-        synchronized (mutex()) {
-            dDoGetRate = doGetRate();
-        }
-        return dDoGetRate;
+    RateLimiter(SleepingStopwatch sleepingStopwatch) {
+        this.stopwatch = (SleepingStopwatch) Preconditions.checkNotNull(sleepingStopwatch);
     }
 
     public final void setRate(double d) {
@@ -64,7 +49,22 @@ public abstract class RateLimiter {
         }
     }
 
+    public final double getRate() {
+        double dDoGetRate;
+        synchronized (mutex()) {
+            dDoGetRate = doGetRate();
+        }
+        return dDoGetRate;
+    }
+
     public String toString() {
         return String.format("RateLimiter[stableRate=%3.1fqps]", Double.valueOf(getRate()));
+    }
+
+    static abstract class SleepingStopwatch {
+        abstract long readMicros();
+
+        SleepingStopwatch() {
+        }
     }
 }

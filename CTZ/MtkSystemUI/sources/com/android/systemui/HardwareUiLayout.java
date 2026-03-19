@@ -274,7 +274,7 @@ public class HardwareUiLayout extends FrameLayout implements TunerService.Tunabl
         updatePosition();
     }
 
-    public void updatePosition() {
+    private void updatePosition() {
         if (this.mChild == null) {
             return;
         }

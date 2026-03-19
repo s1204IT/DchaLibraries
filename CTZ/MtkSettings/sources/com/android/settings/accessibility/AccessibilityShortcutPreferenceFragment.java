@@ -111,7 +111,7 @@ public class AccessibilityShortcutPreferenceFragment extends ToggleFeaturePrefer
         updatePreferences();
     }
 
-    public void updatePreferences() {
+    private void updatePreferences() {
         ContentResolver contentResolver = getContentResolver();
         Context context = getContext();
         this.mServicePreference.setSummary(getServiceName(context));

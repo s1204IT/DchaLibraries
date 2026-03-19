@@ -134,14 +134,14 @@ public class ChipGroup extends FlexboxLayout {
         setCheckedId(-1);
     }
 
-    public void setCheckedId(int checkedId) {
+    private void setCheckedId(int checkedId) {
         this.checkedId = checkedId;
         if (this.onCheckedChangeListener != null && this.singleSelection) {
             this.onCheckedChangeListener.onCheckedChanged(this, checkedId);
         }
     }
 
-    public void setCheckedStateForView(int viewId, boolean checked) {
+    private void setCheckedStateForView(int viewId, boolean checked) {
         View checkedView = findViewById(viewId);
         if (checkedView instanceof Chip) {
             this.protectFromCheckedChange = true;

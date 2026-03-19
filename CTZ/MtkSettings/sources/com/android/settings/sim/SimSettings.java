@@ -141,7 +141,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         this.mSimManagementExt.initPrimarySim(this);
     }
 
-    public void updateSubscriptions() {
+    private void updateSubscriptions() {
         this.mSubInfoList = this.mSubscriptionManager.getActiveSubscriptionInfoList();
         for (int i = 0; i < this.mNumSlots; i++) {
             Preference preferenceFindPreference = this.mSimCards.findPreference("sim" + i);
@@ -187,7 +187,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         }
     }
 
-    public void updateActivitesCategory() {
+    private void updateActivitesCategory() {
         updateCellularDataValues();
         updateCallValues();
         updateSmsValues();
@@ -214,7 +214,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         this.mSimManagementExt.setPrefSummary(preferenceFindPreference, "sim_sms");
     }
 
-    public void updateCellularDataValues() {
+    private void updateCellularDataValues() {
         Preference preferenceFindPreference = findPreference("sim_cellular_data");
         if (preferenceFindPreference == null) {
             return;
@@ -236,7 +236,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         this.mSimManagementExt.configSimPreferenceScreen(preferenceFindPreference, "sim_cellular_data", -1);
     }
 
-    public void updateCallValues() {
+    private void updateCallValues() {
         String string;
         Preference preferenceFindPreference = findPreference("sim_calls");
         if (preferenceFindPreference == null) {
@@ -346,16 +346,16 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
             setEnabled(false);
         }
 
-        public int getSlotId() {
+        private int getSlotId() {
             return this.mSlotId;
         }
     }
 
-    public String getPhoneNumber(SubscriptionInfo subscriptionInfo) {
+    private String getPhoneNumber(SubscriptionInfo subscriptionInfo) {
         return ((TelephonyManager) this.mContext.getSystemService("phone")).getLine1Number(subscriptionInfo.getSubscriptionId());
     }
 
-    public void log(String str) {
+    private void log(String str) {
         Log.d("SimSettings", str);
     }
 
@@ -383,13 +383,13 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         getActivity().registerReceiver(this.mReceiver, intentFilter);
     }
 
-    public void handleRadioPowerSwitchComplete() {
+    private void handleRadioPowerSwitchComplete() {
         logInEng("handleRadioPowerSwitchComplete");
         updateSimSlotValues();
         updateActivitesCategory();
     }
 
-    public void handleAirplaneModeChange(Intent intent) {
+    private void handleAirplaneModeChange(Intent intent) {
         this.mIsAirplaneModeOn = intent.getBooleanExtra("state", false);
         Log.d("SimSettings", "airplaneMode=" + this.mIsAirplaneModeOn);
         updateSimSlotValues();
@@ -442,7 +442,7 @@ public class SimSettings extends RestrictedSettingsFragment implements Indexable
         return (!z || zIsCapabilitySwitching || this.mIsAirplaneModeOn || zIsInCall || z2 || i != -1) ? false : true;
     }
 
-    public void logInEng(String str) {
+    private void logInEng(String str) {
         if (ENG_LOAD) {
             Log.d("SimSettings", str);
         }

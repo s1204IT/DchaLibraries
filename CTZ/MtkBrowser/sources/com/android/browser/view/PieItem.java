@@ -25,11 +25,25 @@ public class PieItem {
         setAlpha(getAlpha());
     }
 
+    public boolean hasItems() {
+        return this.mItems != null;
+    }
+
+    public List<PieItem> getItems() {
+        return this.mItems;
+    }
+
     public void addItem(PieItem pieItem) {
         if (this.mItems == null) {
             this.mItems = new ArrayList();
         }
         this.mItems.add(pieItem);
+    }
+
+    public void setAlpha(float f) {
+        if (this.mView != null) {
+            this.mView.setAlpha(f);
+        }
     }
 
     public float getAlpha() {
@@ -39,31 +53,38 @@ public class PieItem {
         return 1.0f;
     }
 
+    public void setAnimationAngle(float f) {
+        this.animate = f;
+    }
+
     public float getAnimationAngle() {
         return this.animate;
     }
 
-    public int getInnerRadius() {
-        return this.inner;
+    public void setEnabled(boolean z) {
+        this.mEnabled = z;
     }
 
-    public List<PieItem> getItems() {
-        return this.mItems;
+    public void setSelected(boolean z) {
+        this.mSelected = z;
+        if (this.mView != null) {
+            this.mView.setSelected(z);
+        }
+    }
+
+    public boolean isSelected() {
+        return this.mSelected;
     }
 
     public int getLevel() {
         return this.level;
     }
 
-    public int getOuterRadius() {
-        return this.outer;
-    }
-
-    public PieMenu.PieView getPieView() {
-        if (this.mEnabled) {
-            return this.mPieView;
-        }
-        return null;
+    public void setGeometry(float f, float f2, int i, int i2) {
+        this.start = f;
+        this.sweep = f2;
+        this.inner = i;
+        this.outer = i2;
     }
 
     public float getStart() {
@@ -78,51 +99,30 @@ public class PieItem {
         return this.sweep;
     }
 
-    public View getView() {
-        return this.mView;
+    public int getInnerRadius() {
+        return this.inner;
     }
 
-    public boolean hasItems() {
-        return this.mItems != null;
+    public int getOuterRadius() {
+        return this.outer;
     }
 
     public boolean isPieView() {
         return this.mPieView != null;
     }
 
-    public boolean isSelected() {
-        return this.mSelected;
-    }
-
-    public void setAlpha(float f) {
-        if (this.mView != null) {
-            this.mView.setAlpha(f);
-        }
-    }
-
-    public void setAnimationAngle(float f) {
-        this.animate = f;
-    }
-
-    public void setEnabled(boolean z) {
-        this.mEnabled = z;
-    }
-
-    public void setGeometry(float f, float f2, int i, int i2) {
-        this.start = f;
-        this.sweep = f2;
-        this.inner = i;
-        this.outer = i2;
+    public View getView() {
+        return this.mView;
     }
 
     public void setPieView(PieMenu.PieView pieView) {
         this.mPieView = pieView;
     }
 
-    public void setSelected(boolean z) {
-        this.mSelected = z;
-        if (this.mView != null) {
-            this.mView.setSelected(z);
+    public PieMenu.PieView getPieView() {
+        if (this.mEnabled) {
+            return this.mPieView;
         }
+        return null;
     }
 }

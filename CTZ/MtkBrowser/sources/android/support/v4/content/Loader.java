@@ -16,61 +16,48 @@ public class Loader<D> {
     public interface OnLoadCompleteListener<D> {
     }
 
-    public void abandon() {
-        this.mAbandoned = true;
-        onAbandon();
+    public void unregisterListener(OnLoadCompleteListener<D> listener) {
+        if (this.mListener == null) {
+            throw new IllegalStateException("No listener register");
+        }
+        if (this.mListener != listener) {
+            throw new IllegalArgumentException("Attempting to unregister the wrong listener");
+        }
+        this.mListener = null;
+    }
+
+    public final void startLoading() {
+        this.mStarted = true;
+        this.mReset = false;
+        this.mAbandoned = false;
+        onStartLoading();
+    }
+
+    protected void onStartLoading() {
     }
 
     public boolean cancelLoad() {
         return onCancelLoad();
     }
 
-    public String dataToString(D d) {
-        StringBuilder sb = new StringBuilder(64);
-        DebugUtils.buildShortClassTag(d, sb);
-        sb.append("}");
-        return sb.toString();
-    }
-
-    @Deprecated
-    public void dump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
-        printWriter.print(str);
-        printWriter.print("mId=");
-        printWriter.print(this.mId);
-        printWriter.print(" mListener=");
-        printWriter.println(this.mListener);
-        if (this.mStarted || this.mContentChanged || this.mProcessingChange) {
-            printWriter.print(str);
-            printWriter.print("mStarted=");
-            printWriter.print(this.mStarted);
-            printWriter.print(" mContentChanged=");
-            printWriter.print(this.mContentChanged);
-            printWriter.print(" mProcessingChange=");
-            printWriter.println(this.mProcessingChange);
-        }
-        if (this.mAbandoned || this.mReset) {
-            printWriter.print(str);
-            printWriter.print("mAbandoned=");
-            printWriter.print(this.mAbandoned);
-            printWriter.print(" mReset=");
-            printWriter.println(this.mReset);
-        }
-    }
-
-    protected void onAbandon() {
-    }
-
     protected boolean onCancelLoad() {
         return false;
     }
 
-    protected void onReset() {
-    }
-
-    protected void onStartLoading() {
+    public void stopLoading() {
+        this.mStarted = false;
+        onStopLoading();
     }
 
     protected void onStopLoading() {
+    }
+
+    public void abandon() {
+        this.mAbandoned = true;
+        onAbandon();
+    }
+
+    protected void onAbandon() {
     }
 
     public void reset() {
@@ -82,16 +69,14 @@ public class Loader<D> {
         this.mProcessingChange = false;
     }
 
-    public final void startLoading() {
-        this.mStarted = true;
-        this.mReset = false;
-        this.mAbandoned = false;
-        onStartLoading();
+    protected void onReset() {
     }
 
-    public void stopLoading() {
-        this.mStarted = false;
-        onStopLoading();
+    public String dataToString(D data) {
+        StringBuilder sb = new StringBuilder(64);
+        DebugUtils.buildShortClassTag(data, sb);
+        sb.append("}");
+        return sb.toString();
     }
 
     public String toString() {
@@ -103,13 +88,28 @@ public class Loader<D> {
         return sb.toString();
     }
 
-    public void unregisterListener(OnLoadCompleteListener<D> onLoadCompleteListener) {
-        if (this.mListener == null) {
-            throw new IllegalStateException("No listener register");
+    @Deprecated
+    public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
+        writer.print(prefix);
+        writer.print("mId=");
+        writer.print(this.mId);
+        writer.print(" mListener=");
+        writer.println(this.mListener);
+        if (this.mStarted || this.mContentChanged || this.mProcessingChange) {
+            writer.print(prefix);
+            writer.print("mStarted=");
+            writer.print(this.mStarted);
+            writer.print(" mContentChanged=");
+            writer.print(this.mContentChanged);
+            writer.print(" mProcessingChange=");
+            writer.println(this.mProcessingChange);
         }
-        if (this.mListener != onLoadCompleteListener) {
-            throw new IllegalArgumentException("Attempting to unregister the wrong listener");
+        if (this.mAbandoned || this.mReset) {
+            writer.print(prefix);
+            writer.print("mAbandoned=");
+            writer.print(this.mAbandoned);
+            writer.print(" mReset=");
+            writer.println(this.mReset);
         }
-        this.mListener = null;
     }
 }

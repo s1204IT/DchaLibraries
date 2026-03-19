@@ -11,43 +11,40 @@ public class ViewGroupUtils {
     private static final ThreadLocal<Matrix> sMatrix = new ThreadLocal<>();
     private static final ThreadLocal<RectF> sRectF = new ThreadLocal<>();
 
-    public static void getDescendantRect(ViewGroup viewGroup, View view, Rect rect) {
-        rect.set(0, 0, view.getWidth(), view.getHeight());
-        offsetDescendantRect(viewGroup, view, rect);
-    }
-
-    private static void offsetDescendantMatrix(ViewParent viewParent, View view, Matrix matrix) {
-        Object parent = view.getParent();
-        if ((parent instanceof View) && parent != viewParent) {
-            offsetDescendantMatrix(viewParent, (View) parent, matrix);
-            matrix.preTranslate(-r0.getScrollX(), -r0.getScrollY());
-        }
-        matrix.preTranslate(view.getLeft(), view.getTop());
-        if (view.getMatrix().isIdentity()) {
-            return;
-        }
-        matrix.preConcat(view.getMatrix());
-    }
-
-    static void offsetDescendantRect(ViewGroup viewGroup, View view, Rect rect) {
-        Matrix matrix;
-        Matrix matrix2 = sMatrix.get();
-        if (matrix2 == null) {
-            Matrix matrix3 = new Matrix();
-            sMatrix.set(matrix3);
-            matrix = matrix3;
+    static void offsetDescendantRect(ViewGroup parent, View descendant, Rect rect) {
+        Matrix m = sMatrix.get();
+        if (m == null) {
+            m = new Matrix();
+            sMatrix.set(m);
         } else {
-            matrix2.reset();
-            matrix = matrix2;
+            m.reset();
         }
-        offsetDescendantMatrix(viewGroup, view, matrix);
+        offsetDescendantMatrix(parent, descendant, m);
         RectF rectF = sRectF.get();
         if (rectF == null) {
             rectF = new RectF();
             sRectF.set(rectF);
         }
         rectF.set(rect);
-        matrix.mapRect(rectF);
+        m.mapRect(rectF);
         rect.set((int) (rectF.left + 0.5f), (int) (rectF.top + 0.5f), (int) (rectF.right + 0.5f), (int) (rectF.bottom + 0.5f));
+    }
+
+    public static void getDescendantRect(ViewGroup parent, View descendant, Rect out) {
+        out.set(0, 0, descendant.getWidth(), descendant.getHeight());
+        offsetDescendantRect(parent, descendant, out);
+    }
+
+    private static void offsetDescendantMatrix(ViewParent target, View view, Matrix m) {
+        Object parent = view.getParent();
+        if ((parent instanceof View) && parent != target) {
+            View vp = (View) parent;
+            offsetDescendantMatrix(target, vp, m);
+            m.preTranslate(-vp.getScrollX(), -vp.getScrollY());
+        }
+        m.preTranslate(view.getLeft(), view.getTop());
+        if (!view.getMatrix().isIdentity()) {
+            m.preConcat(view.getMatrix());
+        }
     }
 }

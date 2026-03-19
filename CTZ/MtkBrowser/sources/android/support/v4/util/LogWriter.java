@@ -7,15 +7,8 @@ public class LogWriter extends Writer {
     private StringBuilder mBuilder = new StringBuilder(128);
     private final String mTag;
 
-    public LogWriter(String str) {
-        this.mTag = str;
-    }
-
-    private void flushBuilder() {
-        if (this.mBuilder.length() > 0) {
-            Log.d(this.mTag, this.mBuilder.toString());
-            this.mBuilder.delete(0, this.mBuilder.length());
-        }
+    public LogWriter(String tag) {
+        this.mTag = tag;
     }
 
     @Override
@@ -29,14 +22,21 @@ public class LogWriter extends Writer {
     }
 
     @Override
-    public void write(char[] cArr, int i, int i2) {
-        for (int i3 = 0; i3 < i2; i3++) {
-            char c = cArr[i + i3];
+    public void write(char[] buf, int offset, int count) {
+        for (int i = 0; i < count; i++) {
+            char c = buf[offset + i];
             if (c == '\n') {
                 flushBuilder();
             } else {
                 this.mBuilder.append(c);
             }
+        }
+    }
+
+    private void flushBuilder() {
+        if (this.mBuilder.length() > 0) {
+            Log.d(this.mTag, this.mBuilder.toString());
+            this.mBuilder.delete(0, this.mBuilder.length());
         }
     }
 }

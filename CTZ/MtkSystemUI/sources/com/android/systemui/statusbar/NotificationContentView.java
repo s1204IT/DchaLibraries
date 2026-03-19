@@ -839,7 +839,7 @@ public class NotificationContentView extends FrameLayout {
         }
     }
 
-    public TransformableView getTransformableViewForVisibleType(int i) {
+    private TransformableView getTransformableViewForVisibleType(int i) {
         switch (i) {
             case 1:
                 return this.mExpandedWrapper;

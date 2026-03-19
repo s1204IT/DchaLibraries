@@ -8,12 +8,15 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import com.android.browser.R;
 
 public abstract class WebViewPreview extends Preference implements SharedPreferences.OnSharedPreferenceChangeListener {
     protected WebView mWebView;
 
-    public WebViewPreview(Context context) {
-        super(context);
+    protected abstract void updatePreview(boolean z);
+
+    public WebViewPreview(Context context, AttributeSet attributeSet, int i) {
+        super(context, attributeSet, i);
         init(context);
     }
 
@@ -22,32 +25,22 @@ public abstract class WebViewPreview extends Preference implements SharedPrefere
         init(context);
     }
 
-    public WebViewPreview(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
+    public WebViewPreview(Context context) {
+        super(context);
         init(context);
     }
 
     protected void init(Context context) {
-        setLayoutResource(2130968637);
+        setLayoutResource(R.layout.webview_preview);
     }
 
-    @Override
-    protected void onAttachedToHierarchy(PreferenceManager preferenceManager) {
-        super.onAttachedToHierarchy(preferenceManager);
-        getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-    }
-
-    @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
-        this.mWebView = (WebView) view.findViewById(2131558559);
-        updatePreview(true);
+    protected void setupWebView(WebView webView) {
     }
 
     @Override
     protected View onCreateView(ViewGroup viewGroup) {
         View viewOnCreateView = super.onCreateView(viewGroup);
-        WebView webView = (WebView) viewOnCreateView.findViewById(2131558559);
+        WebView webView = (WebView) viewOnCreateView.findViewById(R.id.webview);
         webView.setFocusable(false);
         webView.setFocusableInTouchMode(false);
         webView.setClickable(false);
@@ -56,6 +49,19 @@ public abstract class WebViewPreview extends Preference implements SharedPrefere
         webView.setVerticalScrollBarEnabled(false);
         setupWebView(webView);
         return viewOnCreateView;
+    }
+
+    @Override
+    protected void onBindView(View view) {
+        super.onBindView(view);
+        this.mWebView = (WebView) view.findViewById(R.id.webview);
+        updatePreview(true);
+    }
+
+    @Override
+    protected void onAttachedToHierarchy(PreferenceManager preferenceManager) {
+        super.onAttachedToHierarchy(preferenceManager);
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -68,9 +74,4 @@ public abstract class WebViewPreview extends Preference implements SharedPrefere
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String str) {
         updatePreview(false);
     }
-
-    protected void setupWebView(WebView webView) {
-    }
-
-    protected abstract void updatePreview(boolean z);
 }

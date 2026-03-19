@@ -112,7 +112,7 @@ public class NotificationRemoteInputManager implements Dumpable {
             return null;
         }
 
-        public boolean superOnClickHandler(View view, PendingIntent pendingIntent, Intent intent) {
+        private boolean superOnClickHandler(View view, PendingIntent pendingIntent, Intent intent) {
             return super.onClickHandler(view, pendingIntent, intent, 4);
         }
 

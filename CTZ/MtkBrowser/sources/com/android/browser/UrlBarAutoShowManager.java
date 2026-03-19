@@ -27,14 +27,42 @@ public class UrlBarAutoShowManager implements View.OnTouchListener, BrowserWebVi
         this.mSlop = ViewConfiguration.get(this.mUi.getActivity()).getScaledTouchSlop() * 2;
     }
 
+    public void setTarget(BrowserWebView browserWebView) {
+        if (this.mTarget == browserWebView) {
+            return;
+        }
+        if (this.mTarget != null) {
+            this.mTarget.setOnTouchListener(null);
+            this.mTarget.setOnScrollChangedListener(null);
+        }
+        this.mTarget = browserWebView;
+        if (this.mTarget != null) {
+            this.mTarget.setOnTouchListener(this);
+            this.mTarget.setOnScrollChangedListener(this);
+        }
+    }
+
     @Override
     public void onScrollChanged(int i, int i2, int i3, int i4) {
         this.mLastScrollTime = SystemClock.uptimeMillis();
         this.mIsScrolling = true;
-        if (i2 == 0) {
-            this.mUi.suggestHideTitleBar();
-        } else if (this.mUi.isTitleBarShowing()) {
-            this.mUi.showTitleBarForDuration(Math.max(2000 - (this.mLastScrollTime - this.mTriggeredTime), SCROLL_TIMEOUT_DURATION));
+        if (i2 != 0) {
+            if (this.mUi.isTitleBarShowing()) {
+                this.mUi.showTitleBarForDuration(Math.max(2000 - (this.mLastScrollTime - this.mTriggeredTime), SCROLL_TIMEOUT_DURATION));
+                return;
+            }
+            return;
+        }
+        this.mUi.suggestHideTitleBar();
+    }
+
+    void stopTracking() {
+        if (this.mIsTracking) {
+            this.mIsTracking = false;
+            this.mIsScrolling = false;
+            if (this.mUi.isTitleBarShowing()) {
+                this.mUi.showTitleBarForDuration();
+            }
         }
     }
 
@@ -75,31 +103,6 @@ public class UrlBarAutoShowManager implements View.OnTouchListener, BrowserWebVi
                 return false;
             default:
                 return false;
-        }
-    }
-
-    public void setTarget(BrowserWebView browserWebView) {
-        if (this.mTarget == browserWebView) {
-            return;
-        }
-        if (this.mTarget != null) {
-            this.mTarget.setOnTouchListener(null);
-            this.mTarget.setOnScrollChangedListener(null);
-        }
-        this.mTarget = browserWebView;
-        if (this.mTarget != null) {
-            this.mTarget.setOnTouchListener(this);
-            this.mTarget.setOnScrollChangedListener(this);
-        }
-    }
-
-    void stopTracking() {
-        if (this.mIsTracking) {
-            this.mIsTracking = false;
-            this.mIsScrolling = false;
-            if (this.mUi.isTitleBarShowing()) {
-                this.mUi.showTitleBarForDuration();
-            }
         }
     }
 }

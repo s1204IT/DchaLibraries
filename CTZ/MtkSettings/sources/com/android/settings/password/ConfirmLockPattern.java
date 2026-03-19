@@ -100,7 +100,7 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
                 }
             }
 
-            public boolean isInternalActivity() {
+            private boolean isInternalActivity() {
                 return ConfirmLockPatternFragment.this.getActivity() instanceof InternalActivity;
             }
 
@@ -294,7 +294,7 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
             this.mAppearAnimationUtils.startAnimation2d(getActiveViews(), null, this);
         }
 
-        public void updateStage(Stage stage) {
+        private void updateStage(Stage stage) {
             switch (stage) {
                 case NeedToUnlock:
                     if (this.mHeaderText != null) {
@@ -378,7 +378,7 @@ public class ConfirmLockPattern extends ConfirmDeviceCredentialBaseActivity {
             }
         }
 
-        public void onPatternChecked(boolean z, Intent intent, int i, int i2, boolean z2) {
+        private void onPatternChecked(boolean z, Intent intent, int i, int i2, boolean z2) {
             this.mLockPatternView.setEnabled(true);
             if (z) {
                 if (z2) {

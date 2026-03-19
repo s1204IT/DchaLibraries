@@ -52,7 +52,7 @@ public class CustomListPreference extends ListPreference {
             return customListPreferenceDialogFragment;
         }
 
-        public CustomListPreference getCustomizablePreference() {
+        private CustomListPreference getCustomizablePreference() {
             return (CustomListPreference) getPreference();
         }
 

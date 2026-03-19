@@ -107,12 +107,12 @@ public class KeyButtonView extends ImageView implements NavBarButtonProvider.But
     public void loadAsync(Icon icon) {
         new AsyncTask<Icon, Void, Drawable>() {
             @Override
-            public Drawable doInBackground(Icon... iconArr) {
+            protected Drawable doInBackground(Icon... iconArr) {
                 return iconArr[0].loadDrawable(KeyButtonView.this.mContext);
             }
 
             @Override
-            public void onPostExecute(Drawable drawable) {
+            protected void onPostExecute(Drawable drawable) {
                 KeyButtonView.this.setImageDrawable(drawable);
             }
         }.execute(icon);

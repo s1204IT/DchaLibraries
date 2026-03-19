@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:androidprv="http://schemas.android.com/apk/prv/res/android" xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="28"
+    android:versionName="9"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.proxyhandler"
+    coreApp="true"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+        android:label="@string/app_label"
+        android:process="com.android.proxyhandler"
+        android:defaultToDeviceProtectedStorage="true"
+        android:directBootAware="true">
+        <service
+            android:name="com.android.proxyhandler.ProxyService"
+            android:exported="true"/>
+    </application>
+</manifest>

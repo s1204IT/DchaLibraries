@@ -158,7 +158,7 @@ public class WifiTetherPreferenceController extends AbstractPreferenceController
         clearSummaryForAirplaneMode(-1);
     }
 
-    public void clearSummaryForAirplaneMode(int i) {
+    private void clearSummaryForAirplaneMode(int i) {
         if (Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) != 0) {
             this.mPreference.setSummary(R.string.wifi_tether_disabled_by_airplane);
         } else if (i != -1) {

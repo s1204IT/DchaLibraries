@@ -44,7 +44,7 @@ public class FragmentHostManager {
         createFragmentHost(null);
     }
 
-    public void createFragmentHost(Parcelable parcelable) {
+    private void createFragmentHost(Parcelable parcelable) {
         this.mFragments = FragmentController.createController(new HostCallbacks());
         this.mFragments.attachHost(null);
         this.mLifecycleCallbacks = new FragmentManager.FragmentLifecycleCallbacks() {
@@ -72,7 +72,7 @@ public class FragmentHostManager {
         this.mFragments.dispatchResume();
     }
 
-    public Parcelable destroyFragmentHost() {
+    private Parcelable destroyFragmentHost() {
         this.mFragments.dispatchPause();
         Parcelable parcelableSaveAllState = this.mFragments.saveAllState();
         this.mFragments.dispatchStop();
@@ -102,7 +102,7 @@ public class FragmentHostManager {
         }
     }
 
-    public void onFragmentViewCreated(final Fragment fragment) {
+    private void onFragmentViewCreated(final Fragment fragment) {
         final String tag = fragment.getTag();
         ArrayList<FragmentListener> arrayList = this.mListeners.get(tag);
         if (arrayList != null) {
@@ -115,7 +115,7 @@ public class FragmentHostManager {
         }
     }
 
-    public void onFragmentViewDestroyed(final Fragment fragment) {
+    private void onFragmentViewDestroyed(final Fragment fragment) {
         final String tag = fragment.getTag();
         ArrayList<FragmentListener> arrayList = this.mListeners.get(tag);
         if (arrayList != null) {
@@ -136,10 +136,10 @@ public class FragmentHostManager {
         }
     }
 
-    public void dump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
+    private void dump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
     }
 
-    public <T extends View> T findViewById(int i) {
+    private <T extends View> T findViewById(int i) {
         return (T) this.mRootView.findViewById(i);
     }
 

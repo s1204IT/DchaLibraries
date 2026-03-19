@@ -74,7 +74,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    public void onStart() {
+    private void onStart() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -84,7 +84,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    public void onResume() {
+    private void onResume() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -94,7 +94,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    public void onPause() {
+    private void onPause() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -114,7 +114,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    public void onStop() {
+    private void onStop() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);
@@ -124,7 +124,7 @@ public class Lifecycle extends LifecycleRegistry {
         }
     }
 
-    public void onDestroy() {
+    private void onDestroy() {
         int size = this.mObservers.size();
         for (int i = 0; i < size; i++) {
             LifecycleObserver lifecycleObserver = this.mObservers.get(i);

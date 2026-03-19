@@ -24,22 +24,38 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
             if (obj2 == null) {
                 return false;
             }
-            if (obj2.equals(obj)) {
+            if (!obj2.equals(obj)) {
+                iSmear++;
+            } else {
                 return true;
             }
-            iSmear++;
         }
+    }
+
+    @Override
+    public int size() {
+        return this.elements.length;
+    }
+
+    @Override
+    public UnmodifiableIterator<E> iterator() {
+        return Iterators.forArray(this.elements);
     }
 
     @Override
     int copyIntoArray(Object[] objArr, int i) {
         System.arraycopy(this.elements, 0, objArr, i, this.elements.length);
-        return this.elements.length + i;
+        return i + this.elements.length;
     }
 
     @Override
     ImmutableList<E> createAsList() {
         return new RegularImmutableAsList(this, this.elements);
+    }
+
+    @Override
+    boolean isPartialView() {
+        return false;
     }
 
     @Override
@@ -50,20 +66,5 @@ final class RegularImmutableSet<E> extends ImmutableSet<E> {
     @Override
     boolean isHashCodeFast() {
         return true;
-    }
-
-    @Override
-    boolean isPartialView() {
-        return false;
-    }
-
-    @Override
-    public UnmodifiableIterator<E> iterator() {
-        return Iterators.forArray(this.elements);
-    }
-
-    @Override
-    public int size() {
-        return this.elements.length;
     }
 }

@@ -84,7 +84,7 @@ public final class CredentialStorage extends Activity {
         super.onDestroy();
     }
 
-    public void handleUnlockOrInstall() {
+    private void handleUnlockOrInstall() {
         if (isFinishing()) {
         }
         switch (AnonymousClass1.$SwitchMap$android$security$KeyStore$State[this.mKeyStore.state().ordinal()]) {
@@ -127,7 +127,7 @@ public final class CredentialStorage extends Activity {
         }
     }
 
-    public void ensureKeyGuard() {
+    private void ensureKeyGuard() {
         if (!checkKeyGuardQuality()) {
             new ConfigureKeyGuardDialog().show(getFragmentManager(), "ConfigureKeyGuardDialog");
         } else {
@@ -265,7 +265,7 @@ public final class CredentialStorage extends Activity {
         }
 
         @Override
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             new LockPatternUtils(CredentialStorage.this).resetKeyStore(UserHandle.myUserId());
             try {
                 KeyChain.KeyChainConnection keyChainConnectionBind = KeyChain.bind(CredentialStorage.this);
@@ -285,7 +285,7 @@ public final class CredentialStorage extends Activity {
         }
 
         @Override
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             if (bool.booleanValue()) {
                 Toast.makeText(CredentialStorage.this, R.string.credentials_erased, 0).show();
                 CredentialStorage.this.clearLegacyVpnIfEstablished();
@@ -296,7 +296,7 @@ public final class CredentialStorage extends Activity {
         }
     }
 
-    public void clearLegacyVpnIfEstablished() {
+    private void clearLegacyVpnIfEstablished() {
         if (VpnUtils.disconnectLegacyVpn(getApplicationContext())) {
             Toast.makeText(this, R.string.vpn_disconnected, 0).show();
         }
@@ -310,7 +310,7 @@ public final class CredentialStorage extends Activity {
         }
 
         @Override
-        public Boolean doInBackground(Void... voidArr) {
+        protected Boolean doInBackground(Void... voidArr) {
             try {
                 KeyChain.KeyChainConnection keyChainConnectionBind = KeyChain.bind(CredentialStorage.this);
                 Throwable th = null;
@@ -333,7 +333,7 @@ public final class CredentialStorage extends Activity {
         }
 
         @Override
-        public void onPostExecute(Boolean bool) {
+        protected void onPostExecute(Boolean bool) {
             Log.e("CredentialStorage", "onPostExecute ");
             CredentialStorage.this.mIsMarkKeyAsUserSelectable = false;
             CredentialStorage.this.finish();
@@ -360,7 +360,7 @@ public final class CredentialStorage extends Activity {
         }
     }
 
-    public boolean confirmKeyGuard(int i) {
+    private boolean confirmKeyGuard(int i) {
         return new ChooseLockSettingsHelper(this).launchConfirmationActivity(i, getResources().getText(R.string.credentials_title), true);
     }
 

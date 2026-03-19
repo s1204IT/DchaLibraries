@@ -12,20 +12,11 @@ public final class Pools {
         private final Object[] mPool;
         private int mPoolSize;
 
-        public SimplePool(int i) {
-            if (i <= 0) {
+        public SimplePool(int maxPoolSize) {
+            if (maxPoolSize <= 0) {
                 throw new IllegalArgumentException("The max pool size must be > 0");
             }
-            this.mPool = new Object[i];
-        }
-
-        private boolean isInPool(T t) {
-            for (int i = 0; i < this.mPoolSize; i++) {
-                if (this.mPool[i] == t) {
-                    return true;
-                }
-            }
-            return false;
+            this.mPool = new Object[maxPoolSize];
         }
 
         @Override
@@ -41,24 +32,33 @@ public final class Pools {
         }
 
         @Override
-        public boolean release(T t) {
-            if (isInPool(t)) {
+        public boolean release(T instance) {
+            if (isInPool(instance)) {
                 throw new IllegalStateException("Already in the pool!");
             }
-            if (this.mPoolSize >= this.mPool.length) {
-                return false;
+            if (this.mPoolSize < this.mPool.length) {
+                this.mPool[this.mPoolSize] = instance;
+                this.mPoolSize++;
+                return true;
             }
-            this.mPool[this.mPoolSize] = t;
-            this.mPoolSize++;
-            return true;
+            return false;
+        }
+
+        private boolean isInPool(T instance) {
+            for (int i = 0; i < this.mPoolSize; i++) {
+                if (this.mPool[i] == instance) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
     public static class SynchronizedPool<T> extends SimplePool<T> {
         private final Object mLock;
 
-        public SynchronizedPool(int i) {
-            super(i);
+        public SynchronizedPool(int maxPoolSize) {
+            super(maxPoolSize);
             this.mLock = new Object();
         }
 
@@ -72,10 +72,10 @@ public final class Pools {
         }
 
         @Override
-        public boolean release(T t) {
+        public boolean release(T element) {
             boolean zRelease;
             synchronized (this.mLock) {
-                zRelease = super.release(t);
+                zRelease = super.release(element);
             }
             return zRelease;
         }

@@ -17,14 +17,8 @@ final class ReverseOrdering<T> extends Ordering<T> implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (obj instanceof ReverseOrdering) {
-            return this.forwardOrder.equals(((ReverseOrdering) obj).forwardOrder);
-        }
-        return false;
+    public <S extends T> Ordering<S> reverse() {
+        return this.forwardOrder;
     }
 
     public int hashCode() {
@@ -32,8 +26,14 @@ final class ReverseOrdering<T> extends Ordering<T> implements Serializable {
     }
 
     @Override
-    public <S extends T> Ordering<S> reverse() {
-        return this.forwardOrder;
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ReverseOrdering) {
+            return this.forwardOrder.equals(obj.forwardOrder);
+        }
+        return false;
     }
 
     public String toString() {

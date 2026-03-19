@@ -8,8 +8,8 @@ class MediaSessionManagerImplApi28 extends MediaSessionManagerImplApi21 {
     static final class RemoteUserInfo implements MediaSessionManager.RemoteUserInfoImpl {
         MediaSessionManager.RemoteUserInfo mObject;
 
-        RemoteUserInfo(String str, int i, int i2) {
-            this.mObject = new MediaSessionManager.RemoteUserInfo(str, i, i2);
+        RemoteUserInfo(String packageName, int pid, int uid) {
+            this.mObject = new MediaSessionManager.RemoteUserInfo(packageName, pid, uid);
         }
     }
 }

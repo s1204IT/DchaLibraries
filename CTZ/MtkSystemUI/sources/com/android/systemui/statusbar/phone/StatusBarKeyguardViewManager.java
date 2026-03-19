@@ -110,7 +110,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         });
     }
 
-    public void onContainerLayout(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
+    private void onContainerLayout(View view, int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8) {
         this.mNotificationPanelView.setBouncerTop(this.mBouncer.getTop());
     }
 
@@ -163,7 +163,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         return false;
     }
 
-    public void hideBouncer(boolean z) {
+    private void hideBouncer(boolean z) {
         this.mBouncer.hide(z);
         cancelPendingWakeupAction();
     }
@@ -428,7 +428,7 @@ public class StatusBarKeyguardViewManager implements RemoteInputController.Callb
         }
     }
 
-    public void executeAfterKeyguardGoneAction() {
+    private void executeAfterKeyguardGoneAction() {
         if (this.mAfterKeyguardGoneAction != null) {
             Log.d(TAG, "executeAfterKeyguardGoneAction() is called");
             this.mAfterKeyguardGoneAction.onDismiss();

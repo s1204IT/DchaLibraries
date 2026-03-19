@@ -9,6 +9,9 @@ import java.util.concurrent.ConcurrentMap;
 abstract class GenericMapMaker<K0, V0> {
     MapMaker.RemovalListener<K0, V0> removalListener;
 
+    @Deprecated
+    abstract <K extends K0, V extends V0> ConcurrentMap<K, V> makeComputingMap(Function<? super K, ? extends V> function);
+
     enum NullListener implements MapMaker.RemovalListener<Object, Object> {
         INSTANCE;
 
@@ -23,7 +26,4 @@ abstract class GenericMapMaker<K0, V0> {
     <K extends K0, V extends V0> MapMaker.RemovalListener<K, V> getRemovalListener() {
         return (MapMaker.RemovalListener) MoreObjects.firstNonNull(this.removalListener, NullListener.INSTANCE);
     }
-
-    @Deprecated
-    abstract <K extends K0, V extends V0> ConcurrentMap<K, V> makeComputingMap(Function<? super K, ? extends V> function);
 }

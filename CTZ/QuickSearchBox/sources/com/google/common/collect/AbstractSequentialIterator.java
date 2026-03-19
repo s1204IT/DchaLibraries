@@ -5,11 +5,11 @@ import java.util.NoSuchElementException;
 public abstract class AbstractSequentialIterator<T> extends UnmodifiableIterator<T> {
     private T nextOrNull;
 
+    protected abstract T computeNext(T t);
+
     protected AbstractSequentialIterator(T t) {
         this.nextOrNull = t;
     }
-
-    protected abstract T computeNext(T t);
 
     @Override
     public final boolean hasNext() {

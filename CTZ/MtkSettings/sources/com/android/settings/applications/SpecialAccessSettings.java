@@ -57,7 +57,7 @@ public class SpecialAccessSettings extends DashboardFragment {
         return buildPreferenceControllers(context);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new HighPowerAppsController(context));
         arrayList.add(new DeviceAdministratorsController(context));

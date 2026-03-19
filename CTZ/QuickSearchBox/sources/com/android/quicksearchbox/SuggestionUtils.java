@@ -33,17 +33,20 @@ public class SuggestionUtils {
 
     static String normalizeUrl(String str) {
         int length;
-        if (str == null) {
-            return str;
+        if (str != null) {
+            int iIndexOf = str.indexOf("://");
+            if (iIndexOf == -1) {
+                str = "http://" + str;
+                length = "http".length() + "://".length();
+            } else {
+                length = iIndexOf + "://".length();
+            }
+            int length2 = str.length();
+            if (str.indexOf(47, length) == length2 - 1) {
+                length2--;
+            }
+            return str.substring(0, length2);
         }
-        int iIndexOf = str.indexOf("://");
-        if (iIndexOf == -1) {
-            str = "http://" + str;
-            length = "http".length() + "://".length();
-        } else {
-            length = iIndexOf + "://".length();
-        }
-        int length2 = str.length();
-        return str.substring(0, str.indexOf(47, length) == length2 + (-1) ? length2 - 1 : length2);
+        return str;
     }
 }

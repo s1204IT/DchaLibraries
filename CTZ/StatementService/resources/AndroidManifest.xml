@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="1"
+    android:versionName="1.0"
+    android:compileSdkVersion="28"
+    android:compileSdkVersionCodename="9"
+    package="com.android.statementservice"
+    platformBuildVersionCode="28"
+    platformBuildVersionName="9">
+    <uses-sdk
+        android:minSdkVersion="28"
+        android:targetSdkVersion="28"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTENT_FILTER_VERIFICATION_AGENT"/>
+    <application
+        android:label="@string/service_name"
+        android:allowBackup="false">
+        <uses-library android:name="org.apache.http.legacy"/>
+        <service
+            android:name="com.android.statementservice.DirectStatementService"
+            android:exported="false">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.android.statementservice.aosp.service.CHECK_ACTION"/>
+            </intent-filter>
+        </service>
+        <receiver
+            android:name="com.android.statementservice.IntentFilterVerificationReceiver"
+            android:permission="android.permission.BIND_INTENT_FILTER_VERIFIER">
+            <intent-filter android:priority="1">
+                <action android:name="android.intent.action.INTENT_FILTER_NEEDS_VERIFICATION"/>
+                <data android:mimeType="application/vnd.android.package-archive"/>
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

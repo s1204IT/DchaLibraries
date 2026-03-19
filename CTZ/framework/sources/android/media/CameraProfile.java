@@ -1,0 +1,64 @@
+package android.media;
+
+import android.hardware.Camera;
+import java.util.Arrays;
+import java.util.HashMap;
+
+public class CameraProfile {
+    public static final int QUALITY_HIGH = 2;
+    public static final int QUALITY_LOW = 0;
+    public static final int QUALITY_MEDIUM = 1;
+    private static final HashMap<Integer, int[]> sCache = new HashMap<>();
+
+    private static final native int native_get_image_encoding_quality_level(int i, int i2);
+
+    private static final native int native_get_num_image_encoding_quality_levels(int i);
+
+    private static final native void native_init();
+
+    static {
+        System.loadLibrary("media_jni");
+        native_init();
+    }
+
+    public static int getJpegEncodingQualityParameter(int i) {
+        int numberOfCameras = Camera.getNumberOfCameras();
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        for (int i2 = 0; i2 < numberOfCameras; i2++) {
+            Camera.getCameraInfo(i2, cameraInfo);
+            if (cameraInfo.facing == 0) {
+                return getJpegEncodingQualityParameter(i2, i);
+            }
+        }
+        return 0;
+    }
+
+    public static int getJpegEncodingQualityParameter(int i, int i2) {
+        int i3;
+        if (i2 < 0 || i2 > 2) {
+            throw new IllegalArgumentException("Unsupported quality level: " + i2);
+        }
+        synchronized (sCache) {
+            int[] imageEncodingQualityLevels = sCache.get(Integer.valueOf(i));
+            if (imageEncodingQualityLevels == null) {
+                imageEncodingQualityLevels = getImageEncodingQualityLevels(i);
+                sCache.put(Integer.valueOf(i), imageEncodingQualityLevels);
+            }
+            i3 = imageEncodingQualityLevels[i2];
+        }
+        return i3;
+    }
+
+    private static int[] getImageEncodingQualityLevels(int i) {
+        int iNative_get_num_image_encoding_quality_levels = native_get_num_image_encoding_quality_levels(i);
+        if (iNative_get_num_image_encoding_quality_levels != 3) {
+            throw new RuntimeException("Unexpected Jpeg encoding quality levels " + iNative_get_num_image_encoding_quality_levels);
+        }
+        int[] iArr = new int[iNative_get_num_image_encoding_quality_levels];
+        for (int i2 = 0; i2 < iNative_get_num_image_encoding_quality_levels; i2++) {
+            iArr[i2] = native_get_image_encoding_quality_level(i, i2);
+        }
+        Arrays.sort(iArr);
+        return iArr;
+    }
+}

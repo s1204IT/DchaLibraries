@@ -14,9 +14,8 @@ public class DefaultBrowserMiscExt implements IBrowserMiscExt {
     @Override
     public void processNetworkNotify(WebView webView, Activity activity, boolean z) {
         Log.i("@M_DefaultBrowserMiscExt", "Enter: processNetworkNotify --default implement");
-        if (z) {
-            return;
+        if (!z) {
+            webView.setNetworkAvailable(false);
         }
-        webView.setNetworkAvailable(false);
     }
 }

@@ -46,7 +46,7 @@ public class ScanningSettings extends DashboardFragment {
         return buildPreferenceControllers(context);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new WifiScanningPreferenceController(context));
         arrayList.add(new BluetoothScanningPreferenceController(context));

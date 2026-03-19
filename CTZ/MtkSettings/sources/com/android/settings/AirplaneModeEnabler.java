@@ -67,7 +67,7 @@ public class AirplaneModeEnabler {
         this.mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
     }
 
-    public void onAirplaneModeChanged() {
+    private void onAirplaneModeChanged() {
         if (this.mOnAirplaneModeChangedListener != null) {
             this.mOnAirplaneModeChangedListener.onAirplaneModeChanged(isAirplaneModeOn());
         }

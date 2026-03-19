@@ -690,7 +690,7 @@ public final class MediaControllerCompat {
             sendCommand("android.support.v4.media.session.command.GET_EXTRA_BINDER", null, new ExtraBinderRequestResultReceiver(this));
         }
 
-        public void processPendingCallbacks() {
+        private void processPendingCallbacks() {
             if (this.mSessionToken.getExtraBinder() == null) {
                 return;
             }

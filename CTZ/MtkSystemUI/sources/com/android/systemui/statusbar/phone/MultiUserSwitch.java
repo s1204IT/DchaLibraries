@@ -113,7 +113,7 @@ public class MultiUserSwitch extends FrameLayout implements View.OnClickListener
         refreshContentDescription();
     }
 
-    public void refreshContentDescription() {
+    private void refreshContentDescription() {
         String currentUserName;
         if (this.mUserManager.isUserSwitcherEnabled() && this.mUserSwitcherController != null) {
             currentUserName = this.mUserSwitcherController.getCurrentUserName(this.mContext);

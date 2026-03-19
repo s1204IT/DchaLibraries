@@ -79,7 +79,7 @@ public class ManagedProfileSettings extends SettingsPreferenceFragment implement
         return 401;
     }
 
-    public void updateWorkModePreference() {
+    private void updateWorkModePreference() {
         int i;
         boolean z = !this.mUserManager.isQuietModeEnabled(this.mManagedUser);
         this.mWorkModePreference.setChecked(z);

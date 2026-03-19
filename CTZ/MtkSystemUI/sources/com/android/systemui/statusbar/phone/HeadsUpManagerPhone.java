@@ -281,7 +281,7 @@ public class HeadsUpManagerPhone extends HeadsUpManager implements ViewTreeObser
         });
     }
 
-    public void updateTouchableRegionListener() {
+    private void updateTouchableRegionListener() {
         boolean z = hasPinnedHeadsUp() || this.mHeadsUpGoingAway || this.mWaitingOnCollapseWhenGoingAway;
         if (z == this.mIsObserving) {
             return;

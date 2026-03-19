@@ -134,7 +134,7 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         }
     }
 
-    public void displayDefaultSecurityMessage() {
+    private void displayDefaultSecurityMessage() {
         this.mSecurityMessageDisplay.setMessage("");
     }
 
@@ -199,7 +199,7 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
             }
         }
 
-        public void onPatternChecked(int i, boolean z, int i2, boolean z2) {
+        private void onPatternChecked(int i, boolean z, int i2, boolean z2) {
             boolean z3 = KeyguardUpdateMonitor.getCurrentUser() == i;
             if (z) {
                 KeyguardPatternView.this.mCallback.reportUnlockAttempt(i, true, 0);
@@ -224,7 +224,7 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         }
     }
 
-    public void handleAttemptLockout(long j) {
+    private void handleAttemptLockout(long j) {
         this.mLockPatternView.clearPattern();
         this.mLockPatternView.setEnabled(false);
         long jCeil = (long) Math.ceil((j - SystemClock.elapsedRealtime()) / 1000.0d);
@@ -352,7 +352,7 @@ public class KeyguardPatternView extends LinearLayout implements EmergencyButton
         }
     }
 
-    public void enableClipping(boolean z) {
+    private void enableClipping(boolean z) {
         setClipChildren(z);
         this.mContainer.setClipToPadding(z);
         this.mContainer.setClipChildren(z);

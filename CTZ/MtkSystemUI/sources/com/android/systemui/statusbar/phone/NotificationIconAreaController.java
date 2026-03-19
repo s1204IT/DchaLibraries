@@ -240,7 +240,7 @@ public class NotificationIconAreaController implements DarkIconDispatcher.DarkRe
         }
     }
 
-    public void updateTintForIcon(StatusBarIconView statusBarIconView) {
+    private void updateTintForIcon(StatusBarIconView statusBarIconView) {
         boolean z;
         int tint = 0;
         if (!Boolean.TRUE.equals(statusBarIconView.getTag(R.id.icon_is_pre_L)) || NotificationUtils.isGrayscale(statusBarIconView, this.mNotificationColorUtil)) {

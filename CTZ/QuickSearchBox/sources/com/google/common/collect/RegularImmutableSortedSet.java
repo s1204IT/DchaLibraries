@@ -18,29 +18,36 @@ final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         Preconditions.checkArgument(!immutableList.isEmpty());
     }
 
-    private int unsafeBinarySearch(Object obj) throws ClassCastException {
-        return Collections.binarySearch(this.elements, obj, unsafeComparator());
+    @Override
+    public UnmodifiableIterator<E> iterator() {
+        return this.elements.iterator();
     }
 
     @Override
-    public E ceiling(E e) {
-        int iTailIndex = tailIndex(e, true);
-        if (iTailIndex == size()) {
-            return null;
-        }
-        return this.elements.get(iTailIndex);
+    public UnmodifiableIterator<E> descendingIterator() {
+        return this.elements.reverse().iterator();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return this.elements.size();
     }
 
     @Override
     public boolean contains(Object obj) {
-        if (obj == null) {
-            return false;
+        if (obj != null) {
+            try {
+                return unsafeBinarySearch(obj) >= 0;
+            } catch (ClassCastException e) {
+                return false;
+            }
         }
-        try {
-            return unsafeBinarySearch(obj) >= 0;
-        } catch (ClassCastException e) {
-            return false;
-        }
+        return false;
     }
 
     @Override
@@ -76,24 +83,18 @@ final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return false;
     }
 
+    private int unsafeBinarySearch(Object obj) throws ClassCastException {
+        return Collections.binarySearch(this.elements, obj, unsafeComparator());
+    }
+
+    @Override
+    boolean isPartialView() {
+        return this.elements.isPartialView();
+    }
+
     @Override
     int copyIntoArray(Object[] objArr, int i) {
         return this.elements.copyIntoArray(objArr, i);
-    }
-
-    @Override
-    ImmutableList<E> createAsList() {
-        return new ImmutableSortedAsList(this, this.elements);
-    }
-
-    @Override
-    ImmutableSortedSet<E> createDescendingSet() {
-        return new RegularImmutableSortedSet(this.elements.reverse(), Ordering.from(this.comparator).reverse());
-    }
-
-    @Override
-    public UnmodifiableIterator<E> descendingIterator() {
-        return this.elements.reverse().iterator();
     }
 
     @Override
@@ -108,92 +109,30 @@ final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         if (size() != set.size()) {
             return false;
         }
-        if (!SortedIterables.hasSameComparator(this.comparator, set)) {
-            return containsAll(set);
-        }
-        Iterator<E> it = set.iterator();
-        try {
-            UnmodifiableIterator<E> it2 = iterator();
-            while (it2.hasNext()) {
-                E next = it2.next();
-                E next2 = it.next();
-                if (next2 == null || unsafeCompare(next, next2) != 0) {
-                    return false;
+        if (SortedIterables.hasSameComparator(this.comparator, set)) {
+            Iterator<E> it = set.iterator();
+            try {
+                UnmodifiableIterator<E> it2 = iterator();
+                while (it2.hasNext()) {
+                    E next = it2.next();
+                    E next2 = it.next();
+                    if (next2 == null || unsafeCompare(next, next2) != 0) {
+                        return false;
+                    }
                 }
+                return true;
+            } catch (ClassCastException e) {
+                return false;
+            } catch (NoSuchElementException e2) {
+                return false;
             }
-            return true;
-        } catch (ClassCastException e) {
-            return false;
-        } catch (NoSuchElementException e2) {
-            return false;
         }
+        return containsAll(set);
     }
 
     @Override
     public E first() {
         return this.elements.get(0);
-    }
-
-    @Override
-    public E floor(E e) {
-        int iHeadIndex = headIndex(e, true) - 1;
-        if (iHeadIndex == -1) {
-            return null;
-        }
-        return this.elements.get(iHeadIndex);
-    }
-
-    ImmutableSortedSet<E> getSubSet(int i, int i2) {
-        return (i == 0 && i2 == size()) ? this : i < i2 ? new RegularImmutableSortedSet(this.elements.subList(i, i2), this.comparator) : emptySet(this.comparator);
-    }
-
-    int headIndex(E e, boolean z) {
-        return SortedLists.binarySearch(this.elements, Preconditions.checkNotNull(e), comparator(), z ? SortedLists.KeyPresentBehavior.FIRST_AFTER : SortedLists.KeyPresentBehavior.FIRST_PRESENT, SortedLists.KeyAbsentBehavior.NEXT_HIGHER);
-    }
-
-    @Override
-    ImmutableSortedSet<E> headSetImpl(E e, boolean z) {
-        return getSubSet(0, headIndex(e, z));
-    }
-
-    @Override
-    public E higher(E e) {
-        int iTailIndex = tailIndex(e, false);
-        if (iTailIndex == size()) {
-            return null;
-        }
-        return this.elements.get(iTailIndex);
-    }
-
-    @Override
-    int indexOf(Object obj) {
-        if (obj == null) {
-            return -1;
-        }
-        try {
-            int iBinarySearch = SortedLists.binarySearch(this.elements, obj, unsafeComparator(), SortedLists.KeyPresentBehavior.ANY_PRESENT, SortedLists.KeyAbsentBehavior.INVERTED_INSERTION_INDEX);
-            if (iBinarySearch < 0) {
-                iBinarySearch = -1;
-            }
-            return iBinarySearch;
-        } catch (ClassCastException e) {
-            return -1;
-        }
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    boolean isPartialView() {
-        return this.elements.isPartialView();
-    }
-
-    @Override
-    public UnmodifiableIterator<E> iterator() {
-        return this.elements.iterator();
     }
 
     @Override
@@ -211,8 +150,39 @@ final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
     }
 
     @Override
-    public int size() {
-        return this.elements.size();
+    public E floor(E e) {
+        int iHeadIndex = headIndex(e, true) - 1;
+        if (iHeadIndex == -1) {
+            return null;
+        }
+        return this.elements.get(iHeadIndex);
+    }
+
+    @Override
+    public E ceiling(E e) {
+        int iTailIndex = tailIndex(e, true);
+        if (iTailIndex == size()) {
+            return null;
+        }
+        return this.elements.get(iTailIndex);
+    }
+
+    @Override
+    public E higher(E e) {
+        int iTailIndex = tailIndex(e, false);
+        if (iTailIndex == size()) {
+            return null;
+        }
+        return this.elements.get(iTailIndex);
+    }
+
+    @Override
+    ImmutableSortedSet<E> headSetImpl(E e, boolean z) {
+        return getSubSet(0, headIndex(e, z));
+    }
+
+    int headIndex(E e, boolean z) {
+        return SortedLists.binarySearch(this.elements, Preconditions.checkNotNull(e), comparator(), z ? SortedLists.KeyPresentBehavior.FIRST_AFTER : SortedLists.KeyPresentBehavior.FIRST_PRESENT, SortedLists.KeyAbsentBehavior.NEXT_HIGHER);
     }
 
     @Override
@@ -220,16 +190,52 @@ final class RegularImmutableSortedSet<E> extends ImmutableSortedSet<E> {
         return tailSetImpl(e, z).headSetImpl(e2, z2);
     }
 
-    int tailIndex(E e, boolean z) {
-        return SortedLists.binarySearch(this.elements, Preconditions.checkNotNull(e), comparator(), z ? SortedLists.KeyPresentBehavior.FIRST_PRESENT : SortedLists.KeyPresentBehavior.FIRST_AFTER, SortedLists.KeyAbsentBehavior.NEXT_HIGHER);
-    }
-
     @Override
     ImmutableSortedSet<E> tailSetImpl(E e, boolean z) {
         return getSubSet(tailIndex(e, z), size());
     }
 
+    int tailIndex(E e, boolean z) {
+        return SortedLists.binarySearch(this.elements, Preconditions.checkNotNull(e), comparator(), z ? SortedLists.KeyPresentBehavior.FIRST_PRESENT : SortedLists.KeyPresentBehavior.FIRST_AFTER, SortedLists.KeyAbsentBehavior.NEXT_HIGHER);
+    }
+
     Comparator<Object> unsafeComparator() {
         return this.comparator;
+    }
+
+    ImmutableSortedSet<E> getSubSet(int i, int i2) {
+        if (i == 0 && i2 == size()) {
+            return this;
+        }
+        if (i < i2) {
+            return new RegularImmutableSortedSet(this.elements.subList(i, i2), this.comparator);
+        }
+        return emptySet(this.comparator);
+    }
+
+    @Override
+    int indexOf(Object obj) {
+        if (obj == null) {
+            return -1;
+        }
+        try {
+            int iBinarySearch = SortedLists.binarySearch(this.elements, obj, unsafeComparator(), SortedLists.KeyPresentBehavior.ANY_PRESENT, SortedLists.KeyAbsentBehavior.INVERTED_INSERTION_INDEX);
+            if (iBinarySearch >= 0) {
+                return iBinarySearch;
+            }
+            return -1;
+        } catch (ClassCastException e) {
+            return -1;
+        }
+    }
+
+    @Override
+    ImmutableList<E> createAsList() {
+        return new ImmutableSortedAsList(this, this.elements);
+    }
+
+    @Override
+    ImmutableSortedSet<E> createDescendingSet() {
+        return new RegularImmutableSortedSet(this.elements.reverse(), Ordering.from(this.comparator).reverse());
     }
 }

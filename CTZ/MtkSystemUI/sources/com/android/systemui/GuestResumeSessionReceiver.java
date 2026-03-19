@@ -50,7 +50,7 @@ public class GuestResumeSessionReceiver extends BroadcastReceiver {
         }
     }
 
-    public static void wipeGuestSession(Context context, int i) {
+    private static void wipeGuestSession(Context context, int i) {
         UserManager userManager = (UserManager) context.getSystemService("user");
         try {
             UserInfo currentUser = ActivityManager.getService().getCurrentUser();

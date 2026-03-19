@@ -13,20 +13,45 @@ public class QueryTextView extends EditText {
         void onCommitCompletion(int i);
     }
 
-    public QueryTextView(Context context) {
-        super(context);
+    public QueryTextView(Context context, AttributeSet attributeSet, int i) {
+        super(context, attributeSet, i);
     }
 
     public QueryTextView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
     }
 
-    public QueryTextView(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
+    public QueryTextView(Context context) {
+        super(context);
+    }
+
+    public void setTextSelection(boolean z) {
+        if (z) {
+            selectAll();
+        } else {
+            setSelection(length());
+        }
+    }
+
+    protected void replaceText(CharSequence charSequence) {
+        clearComposingText();
+        setText(charSequence);
+        setTextSelection(false);
+    }
+
+    public void setCommitCompletionListener(CommitCompletionListener commitCompletionListener) {
+        this.mCommitCompletionListener = commitCompletionListener;
     }
 
     private InputMethodManager getInputMethodManager() {
         return (InputMethodManager) getContext().getSystemService("input_method");
+    }
+
+    public void showInputMethod() {
+        InputMethodManager inputMethodManager = getInputMethodManager();
+        if (inputMethodManager != null) {
+            inputMethodManager.showSoftInput(this, 0);
+        }
     }
 
     public void hideInputMethod() {
@@ -42,31 +67,6 @@ public class QueryTextView extends EditText {
         replaceText(completionInfo.getText());
         if (this.mCommitCompletionListener != null) {
             this.mCommitCompletionListener.onCommitCompletion(completionInfo.getPosition());
-        }
-    }
-
-    protected void replaceText(CharSequence charSequence) {
-        clearComposingText();
-        setText(charSequence);
-        setTextSelection(false);
-    }
-
-    public void setCommitCompletionListener(CommitCompletionListener commitCompletionListener) {
-        this.mCommitCompletionListener = commitCompletionListener;
-    }
-
-    public void setTextSelection(boolean z) {
-        if (z) {
-            selectAll();
-        } else {
-            setSelection(length());
-        }
-    }
-
-    public void showInputMethod() {
-        InputMethodManager inputMethodManager = getInputMethodManager();
-        if (inputMethodManager != null) {
-            inputMethodManager.showSoftInput(this, 0);
         }
     }
 }

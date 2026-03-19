@@ -71,21 +71,21 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
         return super.toString();
     }
 
-    public static <K, V> void succeedsInValueSet(ValueSetLink<K, V> valueSetLink, ValueSetLink<K, V> valueSetLink2) {
+    private static <K, V> void succeedsInValueSet(ValueSetLink<K, V> valueSetLink, ValueSetLink<K, V> valueSetLink2) {
         valueSetLink.setSuccessorInValueSet(valueSetLink2);
         valueSetLink2.setPredecessorInValueSet(valueSetLink);
     }
 
-    public static <K, V> void succeedsInMultimap(ValueEntry<K, V> valueEntry, ValueEntry<K, V> valueEntry2) {
+    private static <K, V> void succeedsInMultimap(ValueEntry<K, V> valueEntry, ValueEntry<K, V> valueEntry2) {
         valueEntry.setSuccessorInMultimap(valueEntry2);
         valueEntry2.setPredecessorInMultimap(valueEntry);
     }
 
-    public static <K, V> void deleteFromValueSet(ValueSetLink<K, V> valueSetLink) {
+    private static <K, V> void deleteFromValueSet(ValueSetLink<K, V> valueSetLink) {
         succeedsInValueSet(valueSetLink.getPredecessorInValueSet(), valueSetLink.getSuccessorInValueSet());
     }
 
-    public static <K, V> void deleteFromMultimap(ValueEntry<K, V> valueEntry) {
+    private static <K, V> void deleteFromMultimap(ValueEntry<K, V> valueEntry) {
         succeedsInMultimap(valueEntry.getPredecessorInMultimap(), valueEntry.getSuccessorInMultimap());
     }
 
@@ -145,7 +145,7 @@ public final class LinkedHashMultimap<K, V> extends AbstractSetMultimap<K, V> {
     }
 
     @Override
-    public Set<V> createCollection() {
+    Set<V> createCollection() {
         return new LinkedHashSet(this.valueSetCapacity);
     }
 

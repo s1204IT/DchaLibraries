@@ -35,74 +35,6 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
     PhoneUi mUi;
     UiController mUiController;
 
-    class TabAdapter extends BaseAdapter {
-        Context context;
-        TabControl tabControl;
-        final NavScreen this$0;
-
-        public TabAdapter(NavScreen navScreen, Context context, TabControl tabControl) {
-            this.this$0 = navScreen;
-            this.context = context;
-            this.tabControl = tabControl;
-        }
-
-        @Override
-        public int getCount() {
-            return this.tabControl.getTabCount();
-        }
-
-        @Override
-        public Tab getItem(int i) {
-            return this.tabControl.getTab(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            NavTabView navTabView = new NavTabView(this.this$0.mActivity);
-            Tab item = getItem(i);
-            navTabView.setWebView(item);
-            this.this$0.mTabViews.put(item, navTabView.mImage);
-            navTabView.setOnClickListener(new View.OnClickListener(this, navTabView, item, i) {
-                final TabAdapter this$1;
-                final int val$position;
-                final Tab val$tab;
-                final NavTabView val$tabview;
-
-                {
-                    this.this$1 = this;
-                    this.val$tabview = navTabView;
-                    this.val$tab = item;
-                    this.val$position = i;
-                }
-
-                @Override
-                public void onClick(View view2) {
-                    if (this.val$tabview.isClose(view2)) {
-                        this.this$1.this$0.mNewTab.setClickable(false);
-                        this.this$1.this$0.mScroller.animateOut(this.val$tabview);
-                        this.this$1.this$0.mTabViews.remove(this.val$tab);
-                    } else if (!this.val$tabview.isTitle(view2)) {
-                        if (this.val$tabview.isWebView(view2)) {
-                            this.this$1.this$0.close(this.val$position);
-                        }
-                    } else {
-                        this.this$1.this$0.switchToTab(this.val$tab);
-                        this.this$1.this$0.mUi.getTitleBar().setSkipTitleBarAnimations(true);
-                        this.this$1.this$0.close(this.val$position, false);
-                        this.this$1.this$0.mUi.editUrl(false, true);
-                        this.this$1.this$0.mUi.getTitleBar().setSkipTitleBarAnimations(false);
-                    }
-                }
-            });
-            return navTabView;
-        }
-    }
-
     public NavScreen(Activity activity, UiController uiController, PhoneUi phoneUi) {
         super(activity);
         this.mActivity = activity;
@@ -112,33 +44,80 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         init();
     }
 
+    public void reload() {
+        int scrollValue = this.mScroller.getScrollValue();
+        removeAllViews();
+        if (this.mPopup != null) {
+            this.mPopup.dismiss();
+        }
+        this.mOrientation = this.mActivity.getResources().getConfiguration().orientation;
+        init();
+        this.mScroller.setScrollValue(scrollValue);
+        this.mAdapter.notifyDataSetChanged();
+    }
+
+    protected void showMenu() {
+        this.mPopup = new PopupMenu(((View) this).mContext, this.mMore);
+        Menu menu = this.mPopup.getMenu();
+        this.mPopup.getMenuInflater().inflate(R.menu.browser, menu);
+        this.mUiController.updateMenuState(this.mUiController.getCurrentTab(), menu);
+        this.mPopup.setOnMenuItemClickListener(this);
+        this.mPopup.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        return this.mUiController.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration configuration) {
+        Log.d("NavScreen", "NavScreen.onConfigurationChanged() new orientation = " + configuration.orientation + ", original orientation = " + this.mOrientation);
+        if (configuration.orientation != this.mOrientation) {
+            int scrollValue = this.mScroller.getScrollValue();
+            removeAllViews();
+            if (this.mPopup != null) {
+                this.mPopup.dismiss();
+            }
+            this.mOrientation = configuration.orientation;
+            init();
+            this.mScroller.setScrollValue(scrollValue);
+            this.mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void refreshAdapter() {
+        this.mScroller.handleDataChanged(this.mUiController.getTabControl().getTabPosition(this.mUi.getActiveTab()));
+    }
+
     private void init() {
-        LayoutInflater.from(this.mContext).inflate(2130968609, this);
-        setContentDescription(this.mContext.getResources().getString(2131493309));
-        this.mBookmarks = (ImageButton) findViewById(2131558445);
-        this.mNewTab = (ImageButton) findViewById(2131558494);
-        this.mMore = (ImageButton) findViewById(2131558495);
+        int i;
+        LayoutInflater.from(((View) this).mContext).inflate(R.layout.nav_screen, this);
+        setContentDescription(((View) this).mContext.getResources().getString(R.string.accessibility_transition_navscreen));
+        this.mBookmarks = (ImageButton) findViewById(R.id.bookmarks);
+        this.mNewTab = (ImageButton) findViewById(R.id.newtab);
+        this.mMore = (ImageButton) findViewById(R.id.more);
         this.mBookmarks.setOnClickListener(this);
         this.mNewTab.setOnClickListener(this);
         this.mMore.setOnClickListener(this);
-        this.mScroller = (NavTabScroller) findViewById(2131558492);
+        this.mScroller = (NavTabScroller) findViewById(R.id.scroller);
         TabControl tabControl = this.mUiController.getTabControl();
         this.mTabViews = new HashMap<>(tabControl.getTabCount());
-        this.mAdapter = new TabAdapter(this, this.mContext, tabControl);
-        this.mScroller.setOrientation(this.mOrientation == 2 ? 0 : 1);
+        this.mAdapter = new TabAdapter(((View) this).mContext, tabControl);
+        NavTabScroller navTabScroller = this.mScroller;
+        if (this.mOrientation != 2) {
+            i = 1;
+        } else {
+            i = 0;
+        }
+        navTabScroller.setOrientation(i);
         this.mScroller.setAdapter(this.mAdapter, this.mUiController.getTabControl().getTabPosition(this.mUi.getActiveTab()));
-        this.mScroller.setOnRemoveListener(new NavTabScroller.OnRemoveListener(this) {
-            final NavScreen this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mScroller.setOnRemoveListener(new NavTabScroller.OnRemoveListener() {
             @Override
-            public void onRemovePosition(int i) {
-                this.this$0.onCloseTab(this.this$0.mAdapter.getItem(i));
-                this.this$0.mNewTab.setClickable(true);
-                this.this$0.updateBookMarkButton();
+            public void onRemovePosition(int i2) {
+                NavScreen.this.onCloseTab(NavScreen.this.mAdapter.getItem(i2));
+                NavScreen.this.mNewTab.setClickable(true);
+                NavScreen.this.updateBookMarkButton();
             }
         });
         this.mNeedsMenu = !ViewConfiguration.get(getContext()).hasPermanentMenuKey();
@@ -146,6 +125,27 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
             this.mMore.setVisibility(8);
         }
         updateBookMarkButton();
+    }
+
+    private void updateBookMarkButton() {
+        if (this.mUiController.getTabControl().getTabCount() == 0) {
+            this.mBookmarks.setVisibility(8);
+            this.mNewTab.setVisibility(8);
+        } else {
+            this.mBookmarks.setVisibility(0);
+            this.mNewTab.setVisibility(0);
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (this.mBookmarks == view) {
+            this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
+        } else if (this.mNewTab == view) {
+            openNewTab();
+        } else if (this.mMore == view) {
+            showMenu();
+        }
     }
 
     private void onCloseTab(Tab tab) {
@@ -168,23 +168,15 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
     }
 
     private void openNewTab() {
-        Tab tabOpenTab = this.mUiController.openTab("about:blank", false, false, false);
+        final Tab tabOpenTab = this.mUiController.openTab("about:blank", false, false, false);
         if (tabOpenTab != null) {
             this.mUiController.setBlockEvents(true);
             int tabPosition = this.mUi.mTabControl.getTabPosition(tabOpenTab);
-            this.mScroller.setOnLayoutListener(new NavTabScroller.OnLayoutListener(this, tabOpenTab) {
-                final NavScreen this$0;
-                final Tab val$tab;
-
-                {
-                    this.this$0 = this;
-                    this.val$tab = tabOpenTab;
-                }
-
+            this.mScroller.setOnLayoutListener(new NavTabScroller.OnLayoutListener() {
                 @Override
                 public void onLayout(int i, int i2, int i3, int i4) {
-                    this.this$0.mUi.hideNavScreen(this.this$0.mUi.mTabControl.getTabPosition(this.val$tab), true);
-                    this.this$0.switchToTab(this.val$tab);
+                    NavScreen.this.mUi.hideNavScreen(NavScreen.this.mUi.mTabControl.getTabPosition(tabOpenTab), true);
+                    NavScreen.this.switchToTab(tabOpenTab);
                 }
             });
             this.mScroller.handleDataChanged(tabPosition);
@@ -202,16 +194,6 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         }
     }
 
-    private void updateBookMarkButton() {
-        if (this.mUiController.getTabControl().getTabCount() == 0) {
-            this.mBookmarks.setVisibility(8);
-            this.mNewTab.setVisibility(8);
-        } else {
-            this.mBookmarks.setVisibility(0);
-            this.mNewTab.setVisibility(0);
-        }
-    }
-
     protected void close(int i) {
         close(i, true);
     }
@@ -224,36 +206,60 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         return this.mScroller.getTabView(i);
     }
 
-    @Override
-    public void onClick(View view) {
-        if (this.mBookmarks == view) {
-            this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
-        } else if (this.mNewTab == view) {
-            openNewTab();
-        } else if (this.mMore == view) {
-            showMenu();
-        }
-    }
+    class TabAdapter extends BaseAdapter {
+        Context context;
+        TabControl tabControl;
 
-    @Override
-    protected void onConfigurationChanged(Configuration configuration) {
-        Log.d("NavScreen", "NavScreen.onConfigurationChanged() new orientation = " + configuration.orientation + ", original orientation = " + this.mOrientation);
-        if (configuration.orientation != this.mOrientation) {
-            int scrollValue = this.mScroller.getScrollValue();
-            removeAllViews();
-            if (this.mPopup != null) {
-                this.mPopup.dismiss();
-            }
-            this.mOrientation = configuration.orientation;
-            init();
-            this.mScroller.setScrollValue(scrollValue);
-            this.mAdapter.notifyDataSetChanged();
+        public TabAdapter(Context context, TabControl tabControl) {
+            this.context = context;
+            this.tabControl = tabControl;
         }
-    }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem menuItem) {
-        return this.mUiController.onOptionsItemSelected(menuItem);
+        @Override
+        public int getCount() {
+            return this.tabControl.getTabCount();
+        }
+
+        @Override
+        public Tab getItem(int i) {
+            return this.tabControl.getTab(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(final int i, View view, ViewGroup viewGroup) {
+            final NavTabView navTabView = new NavTabView(NavScreen.this.mActivity);
+            final Tab item = getItem(i);
+            navTabView.setWebView(item);
+            NavScreen.this.mTabViews.put(item, navTabView.mImage);
+            navTabView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view2) {
+                    if (navTabView.isClose(view2)) {
+                        NavScreen.this.mNewTab.setClickable(false);
+                        NavScreen.this.mScroller.animateOut(navTabView);
+                        NavScreen.this.mTabViews.remove(item);
+                    } else {
+                        if (navTabView.isTitle(view2)) {
+                            NavScreen.this.switchToTab(item);
+                            NavScreen.this.mUi.getTitleBar().setSkipTitleBarAnimations(true);
+                            NavScreen.this.close(i, false);
+                            NavScreen.this.mUi.editUrl(false, true);
+                            NavScreen.this.mUi.getTitleBar().setSkipTitleBarAnimations(false);
+                            return;
+                        }
+                        if (navTabView.isWebView(view2)) {
+                            NavScreen.this.close(i);
+                        }
+                    }
+                }
+            });
+            return navTabView;
+        }
     }
 
     @Override
@@ -262,30 +268,5 @@ public class NavScreen extends RelativeLayout implements View.OnClickListener, P
         if (view != null) {
             view.invalidate();
         }
-    }
-
-    public void refreshAdapter() {
-        this.mScroller.handleDataChanged(this.mUiController.getTabControl().getTabPosition(this.mUi.getActiveTab()));
-    }
-
-    public void reload() {
-        int scrollValue = this.mScroller.getScrollValue();
-        removeAllViews();
-        if (this.mPopup != null) {
-            this.mPopup.dismiss();
-        }
-        this.mOrientation = this.mActivity.getResources().getConfiguration().orientation;
-        init();
-        this.mScroller.setScrollValue(scrollValue);
-        this.mAdapter.notifyDataSetChanged();
-    }
-
-    protected void showMenu() {
-        this.mPopup = new PopupMenu(this.mContext, this.mMore);
-        Menu menu = this.mPopup.getMenu();
-        this.mPopup.getMenuInflater().inflate(2131755010, menu);
-        this.mUiController.updateMenuState(this.mUiController.getCurrentTab(), menu);
-        this.mPopup.setOnMenuItemClickListener(this);
-        this.mPopup.show();
     }
 }

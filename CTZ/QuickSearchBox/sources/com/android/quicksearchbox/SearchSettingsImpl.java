@@ -18,25 +18,11 @@ public class SearchSettingsImpl implements SearchSettings {
     }
 
     @Override
-    public String getSearchBaseDomain() {
-        return getSearchPreferences().getString("search_base_domain", null);
-    }
-
-    @Override
-    public long getSearchBaseDomainApplyTime() {
-        return getSearchPreferences().getLong("search_base_domain_apply_time", -1L);
+    public void upgradeSettingsIfNeeded() {
     }
 
     public SharedPreferences getSearchPreferences() {
         return getContext().getSharedPreferences("SearchSettings", 0);
-    }
-
-    @Override
-    public void setSearchBaseDomain(String str) {
-        SharedPreferences.Editor editorEdit = getSearchPreferences().edit();
-        editorEdit.putString("search_base_domain", str);
-        editorEdit.putLong("search_base_domain_apply_time", System.currentTimeMillis());
-        SharedPreferencesCompat.apply(editorEdit);
     }
 
     @Override
@@ -45,6 +31,20 @@ public class SearchSettingsImpl implements SearchSettings {
     }
 
     @Override
-    public void upgradeSettingsIfNeeded() {
+    public long getSearchBaseDomainApplyTime() {
+        return getSearchPreferences().getLong("search_base_domain_apply_time", -1L);
+    }
+
+    @Override
+    public String getSearchBaseDomain() {
+        return getSearchPreferences().getString("search_base_domain", null);
+    }
+
+    @Override
+    public void setSearchBaseDomain(String str) {
+        SharedPreferences.Editor editorEdit = getSearchPreferences().edit();
+        editorEdit.putString("search_base_domain", str);
+        editorEdit.putLong("search_base_domain_apply_time", System.currentTimeMillis());
+        SharedPreferencesCompat.apply(editorEdit);
     }
 }

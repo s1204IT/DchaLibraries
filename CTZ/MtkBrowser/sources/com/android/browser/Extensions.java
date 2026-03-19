@@ -29,12 +29,8 @@ public class Extensions {
     public static IBrowserBookmarkExt getBookmarkPlugin(Context context) {
         if (sBookmarkPlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sBookmarkPlugin == null) {
-                        sBookmarkPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserBookmarkExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sBookmarkPlugin == null) {
+                    sBookmarkPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserBookmarkExt();
                 }
             }
         }
@@ -44,12 +40,8 @@ public class Extensions {
     public static IBrowserDownloadExt getDownloadPlugin(Context context) {
         if (sDownloadPlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sDownloadPlugin == null) {
-                        sDownloadPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserDownloadExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sDownloadPlugin == null) {
+                    sDownloadPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserDownloadExt();
                 }
             }
         }
@@ -59,12 +51,8 @@ public class Extensions {
     public static IBrowserHistoryExt getHistoryPlugin(Context context) {
         if (sHistoryPlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sHistoryPlugin == null) {
-                        sHistoryPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserHistoryExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sHistoryPlugin == null) {
+                    sHistoryPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserHistoryExt();
                 }
             }
         }
@@ -74,42 +62,19 @@ public class Extensions {
     public static IBrowserMiscExt getMiscPlugin(Context context) {
         if (sMiscPlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sMiscPlugin == null) {
-                        sMiscPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserMiscExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sMiscPlugin == null) {
+                    sMiscPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserMiscExt();
                 }
             }
         }
         return sMiscPlugin;
     }
 
-    public static INetworkStateHandlerExt getNetworkStateHandlerPlugin(Context context) {
-        if (sNetworkPlugin == null) {
-            synchronized (Extensions.class) {
-                try {
-                    if (sNetworkPlugin == null) {
-                        sNetworkPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeNetworkStateHandlerExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
-                }
-            }
-        }
-        return sNetworkPlugin;
-    }
-
     public static IBrowserRegionalPhoneExt getRegionalPhonePlugin(Context context) {
         if (sRegionalPhonePlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sRegionalPhonePlugin == null) {
-                        sRegionalPhonePlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserRegionalPhoneExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sRegionalPhonePlugin == null) {
+                    sRegionalPhonePlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserRegionalPhoneExt();
                 }
             }
         }
@@ -119,12 +84,8 @@ public class Extensions {
     public static IBrowserSettingExt getSettingPlugin(Context context) {
         if (sSettingPlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sSettingPlugin == null) {
-                        sSettingPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserSettingExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sSettingPlugin == null) {
+                    sSettingPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserSettingExt();
                 }
             }
         }
@@ -134,12 +95,8 @@ public class Extensions {
     public static IBrowserSiteNavigationExt getSiteNavigationPlugin(Context context) {
         if (sSiteNavigationPlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sSiteNavigationPlugin == null) {
-                        sSiteNavigationPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserSiteNavigationExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sSiteNavigationPlugin == null) {
+                    sSiteNavigationPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserSiteNavigationExt();
                 }
             }
         }
@@ -149,34 +106,37 @@ public class Extensions {
     public static IBrowserUrlExt getUrlPlugin(Context context) {
         if (sUrlPlugin == null) {
             synchronized (Extensions.class) {
-                try {
-                    if (sUrlPlugin == null) {
-                        sUrlPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserUrlExt();
-                    }
-                } catch (Throwable th) {
-                    throw th;
+                if (sUrlPlugin == null) {
+                    sUrlPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeBrowserUrlExt();
                 }
             }
         }
         return sUrlPlugin;
     }
 
+    public static INetworkStateHandlerExt getNetworkStateHandlerPlugin(Context context) {
+        if (sNetworkPlugin == null) {
+            synchronized (Extensions.class) {
+                if (sNetworkPlugin == null) {
+                    sNetworkPlugin = OpBrowserCustomizationFactoryBase.getOpFactory(context).makeNetworkStateHandlerExt();
+                }
+            }
+        }
+        return sNetworkPlugin;
+    }
+
     static void resetPlugins() {
         synchronized (Extensions.class) {
-            try {
-                sBookmarkPlugin = null;
-                sDownloadPlugin = null;
-                sHistoryPlugin = null;
-                sMiscPlugin = null;
-                sRegionalPhonePlugin = null;
-                sSettingPlugin = null;
-                sSiteNavigationPlugin = null;
-                sUrlPlugin = null;
-                sNetworkPlugin = null;
-                OpBrowserCustomizationFactoryBase.resetOpFactory();
-            } catch (Throwable th) {
-                throw th;
-            }
+            sBookmarkPlugin = null;
+            sDownloadPlugin = null;
+            sHistoryPlugin = null;
+            sMiscPlugin = null;
+            sRegionalPhonePlugin = null;
+            sSettingPlugin = null;
+            sSiteNavigationPlugin = null;
+            sUrlPlugin = null;
+            sNetworkPlugin = null;
+            OpBrowserCustomizationFactoryBase.resetOpFactory();
         }
     }
 }

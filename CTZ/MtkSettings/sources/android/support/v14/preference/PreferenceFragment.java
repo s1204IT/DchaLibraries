@@ -282,7 +282,7 @@ public abstract class PreferenceFragment extends Fragment implements DialogPrefe
         this.mHandler.obtainMessage(1).sendToTarget();
     }
 
-    public void bindPreferences() {
+    private void bindPreferences() {
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         if (preferenceScreen != null) {
             getListView().setAdapter(onCreateAdapter(preferenceScreen));

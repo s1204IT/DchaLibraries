@@ -1,0 +1,127 @@
+package android.support.v7.widget;
+
+import android.content.res.ColorStateList;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Outline;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+
+class RoundRectDrawable extends Drawable {
+    private ColorStateList mBackground;
+    private final RectF mBoundsF;
+    private final Rect mBoundsI;
+    private boolean mInsetForPadding;
+    private boolean mInsetForRadius;
+    private float mPadding;
+    private final Paint mPaint;
+    private float mRadius;
+    private ColorStateList mTint;
+    private PorterDuffColorFilter mTintFilter;
+    private PorterDuff.Mode mTintMode;
+
+    @Override
+    public void draw(Canvas canvas) {
+        boolean clearColorFilter;
+        Paint paint = this.mPaint;
+        if (this.mTintFilter != null && paint.getColorFilter() == null) {
+            paint.setColorFilter(this.mTintFilter);
+            clearColorFilter = true;
+        } else {
+            clearColorFilter = false;
+        }
+        canvas.drawRoundRect(this.mBoundsF, this.mRadius, this.mRadius, paint);
+        if (clearColorFilter) {
+            paint.setColorFilter(null);
+        }
+    }
+
+    private void updateBounds(Rect bounds) {
+        if (bounds == null) {
+            bounds = getBounds();
+        }
+        this.mBoundsF.set(bounds.left, bounds.top, bounds.right, bounds.bottom);
+        this.mBoundsI.set(bounds);
+        if (this.mInsetForPadding) {
+            float vInset = RoundRectDrawableWithShadow.calculateVerticalPadding(this.mPadding, this.mRadius, this.mInsetForRadius);
+            float hInset = RoundRectDrawableWithShadow.calculateHorizontalPadding(this.mPadding, this.mRadius, this.mInsetForRadius);
+            this.mBoundsI.inset((int) Math.ceil(hInset), (int) Math.ceil(vInset));
+            this.mBoundsF.set(this.mBoundsI);
+        }
+    }
+
+    @Override
+    protected void onBoundsChange(Rect bounds) {
+        super.onBoundsChange(bounds);
+        updateBounds(bounds);
+    }
+
+    @Override
+    public void getOutline(Outline outline) {
+        outline.setRoundRect(this.mBoundsI, this.mRadius);
+    }
+
+    @Override
+    public void setAlpha(int alpha) {
+        this.mPaint.setAlpha(alpha);
+    }
+
+    @Override
+    public void setColorFilter(ColorFilter cf) {
+        this.mPaint.setColorFilter(cf);
+    }
+
+    @Override
+    public int getOpacity() {
+        return -3;
+    }
+
+    public float getRadius() {
+        return this.mRadius;
+    }
+
+    @Override
+    public void setTintList(ColorStateList tint) {
+        this.mTint = tint;
+        this.mTintFilter = createTintFilter(this.mTint, this.mTintMode);
+        invalidateSelf();
+    }
+
+    @Override
+    public void setTintMode(PorterDuff.Mode tintMode) {
+        this.mTintMode = tintMode;
+        this.mTintFilter = createTintFilter(this.mTint, this.mTintMode);
+        invalidateSelf();
+    }
+
+    @Override
+    protected boolean onStateChange(int[] stateSet) {
+        int newColor = this.mBackground.getColorForState(stateSet, this.mBackground.getDefaultColor());
+        boolean colorChanged = newColor != this.mPaint.getColor();
+        if (colorChanged) {
+            this.mPaint.setColor(newColor);
+        }
+        if (this.mTint != null && this.mTintMode != null) {
+            this.mTintFilter = createTintFilter(this.mTint, this.mTintMode);
+            return true;
+        }
+        return colorChanged;
+    }
+
+    @Override
+    public boolean isStateful() {
+        return (this.mTint != null && this.mTint.isStateful()) || (this.mBackground != null && this.mBackground.isStateful()) || super.isStateful();
+    }
+
+    private PorterDuffColorFilter createTintFilter(ColorStateList tint, PorterDuff.Mode tintMode) {
+        if (tint == null || tintMode == null) {
+            return null;
+        }
+        int color = tint.getColorForState(getState(), 0);
+        return new PorterDuffColorFilter(color, tintMode);
+    }
+}

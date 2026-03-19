@@ -102,7 +102,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         return 0;
     }
 
-    public String getPinPasswordErrorMessage(int i, boolean z) {
+    private String getPinPasswordErrorMessage(int i, boolean z) {
         String string;
         if (i == 0) {
             string = getContext().getString(com.android.systemui.R.string.kg_password_wrong_pin_code_pukked);
@@ -220,7 +220,7 @@ public class KeyguardSimPinView extends KeyguardPinBasedInputView {
         return this.mSimUnlockProgressDialog;
     }
 
-    public Dialog getSimRemainingAttemptsDialog(int i) {
+    private Dialog getSimRemainingAttemptsDialog(int i) {
         String pinPasswordErrorMessage = getPinPasswordErrorMessage(i, false);
         if (this.mRemainingAttemptsDialog == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);

@@ -61,7 +61,7 @@ public class ActivityLaunchAnimator {
         setAnimationPending((i == 2 || i == 0) && this.mStatusBar.getBarState() == 0);
     }
 
-    public void setAnimationPending(boolean z) {
+    private void setAnimationPending(boolean z) {
         this.mAnimationPending = z;
         this.mStatusBarWindow.setExpandAnimationPending(z);
         if (z) {
@@ -156,7 +156,7 @@ public class ActivityLaunchAnimator {
             ActivityLaunchAnimator.this.setAnimationPending(false);
         }
 
-        public void invokeCallback(IRemoteAnimationFinishedCallback iRemoteAnimationFinishedCallback) {
+        private void invokeCallback(IRemoteAnimationFinishedCallback iRemoteAnimationFinishedCallback) {
             try {
                 iRemoteAnimationFinishedCallback.onAnimationFinished();
             } catch (RemoteException e) {
@@ -173,7 +173,7 @@ public class ActivityLaunchAnimator {
             return null;
         }
 
-        public void setExpandAnimationRunning(boolean z) {
+        private void setExpandAnimationRunning(boolean z) {
             ActivityLaunchAnimator.this.mNotificationPanel.setLaunchingNotification(z);
             this.mSourceNotification.setExpandAnimationRunning(z);
             ActivityLaunchAnimator.this.mStatusBarWindow.setExpandAnimationRunning(z);
@@ -184,16 +184,16 @@ public class ActivityLaunchAnimator {
             }
         }
 
-        public void applyParamsToNotificationList(ExpandAnimationParameters expandAnimationParameters) {
+        private void applyParamsToNotificationList(ExpandAnimationParameters expandAnimationParameters) {
             ActivityLaunchAnimator.this.mNotificationContainer.applyExpandAnimationParams(expandAnimationParameters);
             ActivityLaunchAnimator.this.mNotificationPanel.applyExpandAnimationParams(expandAnimationParameters);
         }
 
-        public void applyParamsToNotification(ExpandAnimationParameters expandAnimationParameters) {
+        private void applyParamsToNotification(ExpandAnimationParameters expandAnimationParameters) {
             this.mSourceNotification.applyExpandAnimationParams(expandAnimationParameters);
         }
 
-        public void applyParamsToWindow(RemoteAnimationTarget remoteAnimationTarget) {
+        private void applyParamsToWindow(RemoteAnimationTarget remoteAnimationTarget) {
             Matrix matrix = new Matrix();
             matrix.postTranslate(0.0f, this.mParams.top - remoteAnimationTarget.position.y);
             this.mWindowCrop.set(this.mParams.left, 0, this.mParams.right, this.mParams.getHeight());

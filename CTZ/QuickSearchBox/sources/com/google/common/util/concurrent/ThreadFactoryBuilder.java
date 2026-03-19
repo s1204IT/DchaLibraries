@@ -13,49 +13,6 @@ public final class ThreadFactoryBuilder {
     private Thread.UncaughtExceptionHandler uncaughtExceptionHandler = null;
     private ThreadFactory backingThreadFactory = null;
 
-    private static ThreadFactory build(ThreadFactoryBuilder threadFactoryBuilder) {
-        String str = threadFactoryBuilder.nameFormat;
-        return new ThreadFactory(threadFactoryBuilder.backingThreadFactory != null ? threadFactoryBuilder.backingThreadFactory : Executors.defaultThreadFactory(), str, str != null ? new AtomicLong(0L) : null, threadFactoryBuilder.daemon, threadFactoryBuilder.priority, threadFactoryBuilder.uncaughtExceptionHandler) {
-            final ThreadFactory val$backingThreadFactory;
-            final AtomicLong val$count;
-            final Boolean val$daemon;
-            final String val$nameFormat;
-            final Integer val$priority;
-            final Thread.UncaughtExceptionHandler val$uncaughtExceptionHandler;
-
-            {
-                this.val$backingThreadFactory = threadFactory;
-                this.val$nameFormat = str;
-                this.val$count = atomicLong;
-                this.val$daemon = bool;
-                this.val$priority = num;
-                this.val$uncaughtExceptionHandler = uncaughtExceptionHandler;
-            }
-
-            @Override
-            public Thread newThread(Runnable runnable) {
-                Thread threadNewThread = this.val$backingThreadFactory.newThread(runnable);
-                if (this.val$nameFormat != null) {
-                    threadNewThread.setName(String.format(this.val$nameFormat, Long.valueOf(this.val$count.getAndIncrement())));
-                }
-                if (this.val$daemon != null) {
-                    threadNewThread.setDaemon(this.val$daemon.booleanValue());
-                }
-                if (this.val$priority != null) {
-                    threadNewThread.setPriority(this.val$priority.intValue());
-                }
-                if (this.val$uncaughtExceptionHandler != null) {
-                    threadNewThread.setUncaughtExceptionHandler(this.val$uncaughtExceptionHandler);
-                }
-                return threadNewThread;
-            }
-        };
-    }
-
-    public ThreadFactory build() {
-        return build(this);
-    }
-
     public ThreadFactoryBuilder setNameFormat(String str) {
         String.format(str, 0);
         this.nameFormat = str;
@@ -65,5 +22,43 @@ public final class ThreadFactoryBuilder {
     public ThreadFactoryBuilder setThreadFactory(ThreadFactory threadFactory) {
         this.backingThreadFactory = (ThreadFactory) Preconditions.checkNotNull(threadFactory);
         return this;
+    }
+
+    public ThreadFactory build() {
+        return build(this);
+    }
+
+    private static ThreadFactory build(ThreadFactoryBuilder threadFactoryBuilder) {
+        ThreadFactory threadFactoryDefaultThreadFactory;
+        final String str = threadFactoryBuilder.nameFormat;
+        final Boolean bool = threadFactoryBuilder.daemon;
+        final Integer num = threadFactoryBuilder.priority;
+        final Thread.UncaughtExceptionHandler uncaughtExceptionHandler = threadFactoryBuilder.uncaughtExceptionHandler;
+        if (threadFactoryBuilder.backingThreadFactory != null) {
+            threadFactoryDefaultThreadFactory = threadFactoryBuilder.backingThreadFactory;
+        } else {
+            threadFactoryDefaultThreadFactory = Executors.defaultThreadFactory();
+        }
+        final ThreadFactory threadFactory = threadFactoryDefaultThreadFactory;
+        final AtomicLong atomicLong = str != null ? new AtomicLong(0L) : null;
+        return new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable runnable) {
+                Thread threadNewThread = threadFactory.newThread(runnable);
+                if (str != null) {
+                    threadNewThread.setName(String.format(str, Long.valueOf(atomicLong.getAndIncrement())));
+                }
+                if (bool != null) {
+                    threadNewThread.setDaemon(bool.booleanValue());
+                }
+                if (num != null) {
+                    threadNewThread.setPriority(num.intValue());
+                }
+                if (uncaughtExceptionHandler != null) {
+                    threadNewThread.setUncaughtExceptionHandler(uncaughtExceptionHandler);
+                }
+                return threadNewThread;
+            }
+        };
     }
 }

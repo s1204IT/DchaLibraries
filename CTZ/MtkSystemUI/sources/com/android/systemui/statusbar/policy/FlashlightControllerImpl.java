@@ -165,7 +165,7 @@ public class FlashlightControllerImpl implements FlashlightController {
         return null;
     }
 
-    public void dispatchModeChanged(boolean z) {
+    private void dispatchModeChanged(boolean z) {
         dispatchListeners(1, z);
     }
 
@@ -173,7 +173,7 @@ public class FlashlightControllerImpl implements FlashlightController {
         dispatchListeners(1, false);
     }
 
-    public void dispatchAvailabilityChanged(boolean z) {
+    private void dispatchAvailabilityChanged(boolean z) {
         dispatchListeners(2, z);
     }
 

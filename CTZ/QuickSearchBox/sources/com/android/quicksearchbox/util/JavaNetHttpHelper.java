@@ -15,16 +15,39 @@ public class JavaNetHttpHelper implements HttpHelper {
     private final HttpHelper.UrlRewriter mRewriter;
     private final String mUserAgent;
 
-    public static class PassThroughRewriter implements HttpHelper.UrlRewriter {
-        @Override
-        public String rewrite(String str) {
-            return str;
-        }
-    }
-
     public JavaNetHttpHelper(HttpHelper.UrlRewriter urlRewriter, String str) {
         this.mUserAgent = str + " (" + Build.DEVICE + " " + Build.ID + ")";
         this.mRewriter = urlRewriter;
+    }
+
+    @Override
+    public String get(HttpHelper.GetRequest getRequest) throws IOException {
+        return get(getRequest.getUrl(), getRequest.getHeaders());
+    }
+
+    public String get(String str, Map<String, String> map) throws Throwable {
+        HttpURLConnection httpURLConnectionCreateConnection;
+        try {
+            httpURLConnectionCreateConnection = createConnection(str, map);
+            try {
+                httpURLConnectionCreateConnection.setRequestMethod("GET");
+                httpURLConnectionCreateConnection.connect();
+                String responseFrom = getResponseFrom(httpURLConnectionCreateConnection);
+                if (httpURLConnectionCreateConnection != null) {
+                    httpURLConnectionCreateConnection.disconnect();
+                }
+                return responseFrom;
+            } catch (Throwable th) {
+                th = th;
+                if (httpURLConnectionCreateConnection != null) {
+                    httpURLConnectionCreateConnection.disconnect();
+                }
+                throw th;
+            }
+        } catch (Throwable th2) {
+            th = th2;
+            httpURLConnectionCreateConnection = null;
+        }
     }
 
     private HttpURLConnection createConnection(String str, Map<String, String> map) throws IOException {
@@ -53,41 +76,18 @@ public class JavaNetHttpHelper implements HttpHelper {
         char[] cArr = new char[4096];
         while (true) {
             int i = bufferedReader.read(cArr);
-            if (i == -1) {
+            if (i != -1) {
+                sb.append(cArr, 0, i);
+            } else {
                 return sb.toString();
             }
-            sb.append(cArr, 0, i);
         }
     }
 
-    @Override
-    public String get(HttpHelper.GetRequest getRequest) throws IOException {
-        return get(getRequest.getUrl(), getRequest.getHeaders());
-    }
-
-    public String get(String str, Map<String, String> map) throws Throwable {
-        HttpURLConnection httpURLConnectionCreateConnection;
-        try {
-            httpURLConnectionCreateConnection = createConnection(str, map);
-            try {
-                httpURLConnectionCreateConnection.setRequestMethod("GET");
-                httpURLConnectionCreateConnection.connect();
-                String responseFrom = getResponseFrom(httpURLConnectionCreateConnection);
-                if (httpURLConnectionCreateConnection != null) {
-                    httpURLConnectionCreateConnection.disconnect();
-                }
-                return responseFrom;
-            } catch (Throwable th) {
-                th = th;
-                if (httpURLConnectionCreateConnection == null) {
-                    throw th;
-                }
-                httpURLConnectionCreateConnection.disconnect();
-                throw th;
-            }
-        } catch (Throwable th2) {
-            th = th2;
-            httpURLConnectionCreateConnection = null;
+    public static class PassThroughRewriter implements HttpHelper.UrlRewriter {
+        @Override
+        public String rewrite(String str) {
+            return str;
         }
     }
 }

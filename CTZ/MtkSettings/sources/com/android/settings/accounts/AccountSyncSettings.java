@@ -331,7 +331,7 @@ public class AccountSyncSettings extends AccountPreferenceBase {
     }
 
     @Override
-    public void onSyncStateUpdated() {
+    protected void onSyncStateUpdated() {
         if (isResumed()) {
             setFeedsState();
             Activity activity = getActivity();

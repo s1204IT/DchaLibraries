@@ -39,37 +39,6 @@ public class XLargeUi extends BaseUi {
         setUseQuickControls(BrowserSettings.getInstance().useQuickControls());
     }
 
-    private void checkHideActionBar() {
-        if (this.mUseQuickControls) {
-            this.mHandler.post(new Runnable(this) {
-                final XLargeUi this$0;
-
-                {
-                    this.this$0 = this;
-                }
-
-                @Override
-                public void run() {
-                    this.this$0.mActionBar.hide();
-                }
-            });
-        }
-    }
-
-    private Drawable getFaviconBackground() {
-        if (this.mFaviconBackground == null) {
-            this.mFaviconBackground = new PaintDrawable();
-            Resources resources = this.mActivity.getResources();
-            this.mFaviconBackground.getPaint().setColor(resources.getColor(2131361800));
-            this.mFaviconBackground.setCornerRadius(resources.getDimension(2131427361));
-        }
-        return this.mFaviconBackground;
-    }
-
-    private boolean isTypingKey(KeyEvent keyEvent) {
-        return keyEvent.getUnicodeChar() > 0;
-    }
-
     private void setupActionBar() {
         this.mActionBar.setNavigationMode(0);
         this.mActionBar.setDisplayOptions(16);
@@ -77,8 +46,162 @@ public class XLargeUi extends BaseUi {
     }
 
     @Override
+    public void showComboView(UI.ComboViews comboViews, Bundle bundle) {
+        super.showComboView(comboViews, bundle);
+        if (this.mUseQuickControls) {
+            this.mActionBar.show();
+        }
+    }
+
+    @Override
+    public void setUseQuickControls(boolean z) {
+        super.setUseQuickControls(z);
+        checkHideActionBar();
+        if (!z) {
+            this.mActionBar.show();
+        }
+        this.mTabBar.setUseQuickControls(this.mUseQuickControls);
+        Iterator<Tab> it = this.mTabControl.getTabs().iterator();
+        while (it.hasNext()) {
+            it.next().updateShouldCaptureThumbnails();
+        }
+    }
+
+    private void checkHideActionBar() {
+        if (this.mUseQuickControls) {
+            this.mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    XLargeUi.this.mActionBar.hide();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        this.mNavBar.clearCompletions();
+        checkHideActionBar();
+    }
+
+    @Override
+    public void onDestroy() {
+        hideTitleBar();
+    }
+
+    void stopWebViewScrolling() {
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItemFindItem = menu.findItem(R.id.bookmarks_menu_id);
+        if (menuItemFindItem != null) {
+            menuItemFindItem.setVisible(false);
+            return true;
+        }
+        return true;
+    }
+
+    @Override
     public void addTab(Tab tab) {
         this.mTabBar.onNewTab(tab);
+    }
+
+    protected void onAddTabCompleted(Tab tab) {
+        checkHideActionBar();
+    }
+
+    @Override
+    public void setActiveTab(Tab tab) {
+        this.mTitleBar.cancelTitleBarAnimation(true);
+        this.mTitleBar.setSkipTitleBarAnimations(true);
+        super.setActiveTab(tab);
+        if (((BrowserWebView) tab.getWebView()) == null) {
+            Log.e("XLargeUi", "active tab with no webview detected");
+            return;
+        }
+        this.mTabBar.onSetActiveTab(tab);
+        updateLockIconToLatest(tab);
+        this.mTitleBar.setSkipTitleBarAnimations(false);
+    }
+
+    @Override
+    public void updateTabs(List<Tab> list) {
+        this.mTabBar.updateTabs(list);
+        checkHideActionBar();
+    }
+
+    @Override
+    public void removeTab(Tab tab) {
+        this.mTitleBar.cancelTitleBarAnimation(true);
+        this.mTitleBar.setSkipTitleBarAnimations(true);
+        super.removeTab(tab);
+        this.mTabBar.onRemoveTab(tab);
+        this.mTitleBar.setSkipTitleBarAnimations(false);
+    }
+
+    protected void onRemoveTabCompleted(Tab tab) {
+        checkHideActionBar();
+    }
+
+    int getContentWidth() {
+        if (this.mContentView != null) {
+            return this.mContentView.getWidth();
+        }
+        return 0;
+    }
+
+    @Override
+    public void editUrl(boolean z, boolean z2) {
+        super.editUrl(z, z2);
+    }
+
+    @Override
+    public void onActionModeStarted(ActionMode actionMode) {
+        if (!this.mTitleBar.isEditingUrl()) {
+            hideTitleBar();
+        }
+    }
+
+    @Override
+    public void onActionModeFinished(boolean z) {
+        checkHideActionBar();
+        if (z) {
+            showTitleBar();
+        }
+    }
+
+    @Override
+    protected void updateNavigationState(Tab tab) {
+        this.mNavBar.updateNavigationState(tab);
+    }
+
+    @Override
+    public void setUrlTitle(Tab tab) {
+        super.setUrlTitle(tab);
+        this.mTabBar.onUrlAndTitle(tab, tab.getUrl(), tab.getTitle());
+    }
+
+    @Override
+    public void setFavicon(Tab tab) {
+        super.setFavicon(tab);
+        this.mTabBar.onFavicon(tab, tab.getFavicon());
+    }
+
+    @Override
+    public void showCustomView(View view, int i, WebChromeClient.CustomViewCallback customViewCallback) {
+        super.showCustomView(view, i, customViewCallback);
+        this.mActionBar.hide();
+    }
+
+    @Override
+    public void onHideCustomView() {
+        super.onHideCustomView();
+        if (!this.mUseQuickControls) {
+            this.mActionBar.show();
+        }
+        checkHideActionBar();
     }
 
     @Override
@@ -99,16 +222,23 @@ public class XLargeUi extends BaseUi {
         return false;
     }
 
-    @Override
-    public void editUrl(boolean z, boolean z2) {
-        super.editUrl(z, z2);
+    private boolean isTypingKey(KeyEvent keyEvent) {
+        return keyEvent.getUnicodeChar() > 0;
     }
 
-    int getContentWidth() {
-        if (this.mContentView != null) {
-            return this.mContentView.getWidth();
+    @Override
+    public boolean shouldCaptureThumbnails() {
+        return this.mUseQuickControls;
+    }
+
+    private Drawable getFaviconBackground() {
+        if (this.mFaviconBackground == null) {
+            this.mFaviconBackground = new PaintDrawable();
+            Resources resources = this.mActivity.getResources();
+            this.mFaviconBackground.getPaint().setColor(resources.getColor(R.color.tabFaviconBackground));
+            this.mFaviconBackground.setCornerRadius(resources.getDimension(R.dimen.tab_favicon_corner_radius));
         }
-        return 0;
+        return this.mFaviconBackground;
     }
 
     @Override
@@ -130,147 +260,10 @@ public class XLargeUi extends BaseUi {
     }
 
     @Override
-    public void onActionModeFinished(boolean z) {
-        checkHideActionBar();
-        if (z) {
-            showTitleBar();
-        }
-    }
-
-    @Override
-    public void onActionModeStarted(ActionMode actionMode) {
-        if (this.mTitleBar.isEditingUrl()) {
-            return;
-        }
-        hideTitleBar();
-    }
-
-    protected void onAddTabCompleted(Tab tab) {
-        checkHideActionBar();
-    }
-
-    @Override
-    public void onDestroy() {
-        hideTitleBar();
-    }
-
-    @Override
-    public void onHideCustomView() {
-        super.onHideCustomView();
-        if (!this.mUseQuickControls) {
-            this.mActionBar.show();
-        }
-        checkHideActionBar();
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItemFindItem = menu.findItem(2131558582);
-        if (menuItemFindItem == null) {
-            return true;
-        }
-        menuItemFindItem.setVisible(false);
-        return true;
-    }
-
-    @Override
     public void onProgressChanged(Tab tab) {
         super.onProgressChanged(tab);
         if (tab.inForeground()) {
             tab.updateBookmarkedStatus();
         }
-    }
-
-    protected void onRemoveTabCompleted(Tab tab) {
-        checkHideActionBar();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        this.mNavBar.clearCompletions();
-        checkHideActionBar();
-    }
-
-    @Override
-    public void removeTab(Tab tab) {
-        this.mTitleBar.cancelTitleBarAnimation(true);
-        this.mTitleBar.setSkipTitleBarAnimations(true);
-        super.removeTab(tab);
-        this.mTabBar.onRemoveTab(tab);
-        this.mTitleBar.setSkipTitleBarAnimations(false);
-    }
-
-    @Override
-    public void setActiveTab(Tab tab) {
-        this.mTitleBar.cancelTitleBarAnimation(true);
-        this.mTitleBar.setSkipTitleBarAnimations(true);
-        super.setActiveTab(tab);
-        if (((BrowserWebView) tab.getWebView()) == null) {
-            Log.e("XLargeUi", "active tab with no webview detected");
-            return;
-        }
-        this.mTabBar.onSetActiveTab(tab);
-        updateLockIconToLatest(tab);
-        this.mTitleBar.setSkipTitleBarAnimations(false);
-    }
-
-    @Override
-    public void setFavicon(Tab tab) {
-        super.setFavicon(tab);
-        this.mTabBar.onFavicon(tab, tab.getFavicon());
-    }
-
-    @Override
-    public void setUrlTitle(Tab tab) {
-        super.setUrlTitle(tab);
-        this.mTabBar.onUrlAndTitle(tab, tab.getUrl(), tab.getTitle());
-    }
-
-    @Override
-    public void setUseQuickControls(boolean z) {
-        super.setUseQuickControls(z);
-        checkHideActionBar();
-        if (!z) {
-            this.mActionBar.show();
-        }
-        this.mTabBar.setUseQuickControls(this.mUseQuickControls);
-        Iterator<Tab> it = this.mTabControl.getTabs().iterator();
-        while (it.hasNext()) {
-            it.next().updateShouldCaptureThumbnails();
-        }
-    }
-
-    @Override
-    public boolean shouldCaptureThumbnails() {
-        return this.mUseQuickControls;
-    }
-
-    @Override
-    public void showComboView(UI.ComboViews comboViews, Bundle bundle) {
-        super.showComboView(comboViews, bundle);
-        if (this.mUseQuickControls) {
-            this.mActionBar.show();
-        }
-    }
-
-    @Override
-    public void showCustomView(View view, int i, WebChromeClient.CustomViewCallback customViewCallback) {
-        super.showCustomView(view, i, customViewCallback);
-        this.mActionBar.hide();
-    }
-
-    void stopWebViewScrolling() {
-    }
-
-    @Override
-    protected void updateNavigationState(Tab tab) {
-        this.mNavBar.updateNavigationState(tab);
-    }
-
-    @Override
-    public void updateTabs(List<Tab> list) {
-        this.mTabBar.updateTabs(list);
-        checkHideActionBar();
     }
 }

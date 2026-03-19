@@ -334,7 +334,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    public VolumeRow getActiveRow() {
+    private VolumeRow getActiveRow() {
         for (VolumeRow volumeRow : this.mRows) {
             if (volumeRow.stream == this.mActiveStream) {
                 return volumeRow;
@@ -357,7 +357,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         return null;
     }
 
-    public static int getImpliedLevel(SeekBar seekBar, int i) {
+    private static int getImpliedLevel(SeekBar seekBar, int i) {
         int max = seekBar.getMax();
         int i2 = max / 100;
         int i3 = i2 - 1;
@@ -515,7 +515,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         Prefs.putInt(this.mContext, "RingerGuidanceCount", i2 + 1);
     }
 
-    public void showH(int i) {
+    private void showH(int i) {
         if (D.BUG) {
             Log.d(TAG, "showH r=" + Events.DISMISS_REASONS[i]);
         }
@@ -610,7 +610,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         return false;
     }
 
-    public void updateRowsH(VolumeRow volumeRow) {
+    private void updateRowsH(VolumeRow volumeRow) {
         if (D.BUG) {
             Log.d(TAG, "updateRowsH");
         }
@@ -887,7 +887,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    public void recheckH(VolumeRow volumeRow) {
+    private void recheckH(VolumeRow volumeRow) {
         if (volumeRow == null) {
             if (D.BUG) {
                 Log.d(TAG, "recheckH ALL");
@@ -905,7 +905,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         updateVolumeRowH(volumeRow);
     }
 
-    public void setStreamImportantH(int i, boolean z) {
+    private void setStreamImportantH(int i, boolean z) {
         for (VolumeRow volumeRow : this.mRows) {
             if (volumeRow.stream == i) {
                 volumeRow.important = z;
@@ -914,7 +914,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    public void showSafetyWarningH(int i) {
+    private void showSafetyWarningH(int i) {
         if ((i & 1025) != 0 || this.mShowing) {
             synchronized (this.mSafetyWarningLock) {
                 if (this.mSafetyWarning != null) {
@@ -951,7 +951,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    final class H extends Handler {
+    private final class H extends Handler {
         public H() {
             super(Looper.getMainLooper());
         }
@@ -984,7 +984,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    final class CustomDialog extends Dialog implements DialogInterface {
+    private final class CustomDialog extends Dialog implements DialogInterface {
         public CustomDialog(Context context) {
             super(context, R.style.qs_theme);
         }
@@ -1076,7 +1076,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    final class Accessibility extends View.AccessibilityDelegate {
+    private final class Accessibility extends View.AccessibilityDelegate {
         private boolean mFeedbackEnabled;
         private final AccessibilityManager.AccessibilityServicesStateChangeListener mListener;
 
@@ -1127,7 +1127,7 @@ public class VolumeDialogImpl implements VolumeDialog {
             return super.onRequestSendAccessibilityEvent(viewGroup, view, accessibilityEvent);
         }
 
-        public void updateFeedbackEnabled() {
+        private void updateFeedbackEnabled() {
             this.mFeedbackEnabled = computeFeedbackEnabled();
         }
 
@@ -1141,7 +1141,7 @@ public class VolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    static class VolumeRow {
+    private static class VolumeRow {
         private ObjectAnimator anim;
         private int animTargetProgress;
         private ColorStateList cachedTint;

@@ -18,11 +18,28 @@ public class CursorBackedSourceResult extends CursorBackedSuggestionCursor imple
     }
 
     @Override
-    public Collection<String> getExtraColumns() {
-        if (this.mCursor == null) {
-            return null;
-        }
-        return CursorBackedSuggestionExtras.getExtraColumns(this.mCursor);
+    public GoogleSource getSuggestionSource() {
+        return this.mSource;
+    }
+
+    @Override
+    public ComponentName getSuggestionIntentComponent() {
+        return this.mSource.getIntentComponent();
+    }
+
+    @Override
+    public boolean isSuggestionShortcut() {
+        return false;
+    }
+
+    @Override
+    public boolean isHistorySuggestion() {
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return this.mSource + "[" + getUserQuery() + "]";
     }
 
     @Override
@@ -34,27 +51,10 @@ public class CursorBackedSourceResult extends CursorBackedSuggestionCursor imple
     }
 
     @Override
-    public ComponentName getSuggestionIntentComponent() {
-        return this.mSource.getIntentComponent();
-    }
-
-    @Override
-    public GoogleSource getSuggestionSource() {
-        return this.mSource;
-    }
-
-    @Override
-    public boolean isHistorySuggestion() {
-        return false;
-    }
-
-    @Override
-    public boolean isSuggestionShortcut() {
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return this.mSource + "[" + getUserQuery() + "]";
+    public Collection<String> getExtraColumns() {
+        if (this.mCursor == null) {
+            return null;
+        }
+        return CursorBackedSuggestionExtras.getExtraColumns(this.mCursor);
     }
 }

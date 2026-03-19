@@ -24,11 +24,11 @@ class BookmarkItem extends HorizontalScrollView {
         this.mEnableScrolling = false;
         setClickable(false);
         setEnableScrolling(false);
-        LayoutInflater.from(context).inflate(2130968605, this);
-        this.mTextView = (TextView) findViewById(2131558407);
-        this.mUrlText = (TextView) findViewById(2131558408);
-        this.mImageView = (ImageView) findViewById(2131558406);
-        findViewById(2131558487).setVisibility(8);
+        LayoutInflater.from(context).inflate(R.layout.history_item, this);
+        this.mTextView = (TextView) findViewById(R.id.title);
+        this.mUrlText = (TextView) findViewById(R.id.url);
+        this.mImageView = (ImageView) findViewById(R.id.favicon);
+        findViewById(R.id.star).setVisibility(8);
     }
 
     String getName() {
@@ -39,47 +39,11 @@ class BookmarkItem extends HorizontalScrollView {
         return this.mUrl;
     }
 
-    @Override
-    protected void measureChild(View view, int i, int i2) {
-        if (this.mEnableScrolling) {
-            super.measureChild(view, i, i2);
-        } else {
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            view.measure(getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight, layoutParams.width), getChildMeasureSpec(i2, this.mPaddingTop + this.mPaddingBottom, layoutParams.height));
-        }
-    }
-
-    @Override
-    protected void measureChildWithMargins(View view, int i, int i2, int i3, int i4) {
-        if (this.mEnableScrolling) {
-            super.measureChildWithMargins(view, i, i2, i3, i4);
-        } else {
-            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-            view.measure(getChildMeasureSpec(i, this.mPaddingLeft + this.mPaddingRight + marginLayoutParams.leftMargin + marginLayoutParams.rightMargin + i2, marginLayoutParams.width), getChildMeasureSpec(i3, this.mPaddingTop + this.mPaddingBottom + marginLayoutParams.topMargin + marginLayoutParams.bottomMargin + i4, marginLayoutParams.height));
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent motionEvent) {
-        if (this.mEnableScrolling) {
-            return super.onTouchEvent(motionEvent);
-        }
-        return false;
-    }
-
-    void setEnableScrolling(boolean z) {
-        this.mEnableScrolling = z;
-        setFocusable(this.mEnableScrolling);
-        setFocusableInTouchMode(this.mEnableScrolling);
-        requestDisallowInterceptTouchEvent(!this.mEnableScrolling);
-        requestLayout();
-    }
-
     void setFavicon(Bitmap bitmap) {
         if (bitmap != null) {
             this.mImageView.setImageBitmap(bitmap);
         } else {
-            this.mImageView.setImageResource(2130837505);
+            this.mImageView.setImageResource(R.drawable.app_web_browser_sm);
         }
     }
 
@@ -108,5 +72,41 @@ class BookmarkItem extends HorizontalScrollView {
             strStripUrl = strStripUrl.substring(0, 80);
         }
         this.mUrlText.setText(strStripUrl);
+    }
+
+    void setEnableScrolling(boolean z) {
+        this.mEnableScrolling = z;
+        setFocusable(this.mEnableScrolling);
+        setFocusableInTouchMode(this.mEnableScrolling);
+        requestDisallowInterceptTouchEvent(!this.mEnableScrolling);
+        requestLayout();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+        if (this.mEnableScrolling) {
+            return super.onTouchEvent(motionEvent);
+        }
+        return false;
+    }
+
+    @Override
+    protected void measureChild(View view, int i, int i2) {
+        if (this.mEnableScrolling) {
+            super.measureChild(view, i, i2);
+        } else {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            view.measure(getChildMeasureSpec(i, ((View) this).mPaddingLeft + ((View) this).mPaddingRight, layoutParams.width), getChildMeasureSpec(i2, ((View) this).mPaddingTop + ((View) this).mPaddingBottom, layoutParams.height));
+        }
+    }
+
+    @Override
+    protected void measureChildWithMargins(View view, int i, int i2, int i3, int i4) {
+        if (this.mEnableScrolling) {
+            super.measureChildWithMargins(view, i, i2, i3, i4);
+        } else {
+            ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            view.measure(getChildMeasureSpec(i, ((View) this).mPaddingLeft + ((View) this).mPaddingRight + marginLayoutParams.leftMargin + marginLayoutParams.rightMargin + i2, ((ViewGroup.LayoutParams) marginLayoutParams).width), getChildMeasureSpec(i3, ((View) this).mPaddingTop + ((View) this).mPaddingBottom + marginLayoutParams.topMargin + marginLayoutParams.bottomMargin + i4, ((ViewGroup.LayoutParams) marginLayoutParams).height));
+        }
     }
 }

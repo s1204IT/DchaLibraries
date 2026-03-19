@@ -303,11 +303,11 @@ public final class DeviceProfilesSettings extends InstrumentedDialogFragment imp
         showOrHideProfileGroup();
     }
 
-    public CheckBox findProfile(String str) {
+    private CheckBox findProfile(String str) {
         return (CheckBox) this.mProfileContainer.findViewWithTag(str);
     }
 
-    public void refreshProfilePreference(CheckBox checkBox, LocalBluetoothProfile localBluetoothProfile) {
+    private void refreshProfilePreference(CheckBox checkBox, LocalBluetoothProfile localBluetoothProfile) {
         BluetoothDevice device = this.mCachedDevice.getDevice();
         checkBox.setEnabled(!this.mCachedDevice.isBusy());
         if (localBluetoothProfile instanceof MapProfile) {

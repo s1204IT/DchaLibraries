@@ -136,7 +136,7 @@ public class ActionRow extends FrameLayout {
         riv.setBackgroundColor(color);
     }
 
-    public boolean handleRemoteInputClick(View view, SliceItem action, RemoteInput input) {
+    private boolean handleRemoteInputClick(View view, SliceItem action, RemoteInput input) {
         if (input == null) {
             return false;
         }

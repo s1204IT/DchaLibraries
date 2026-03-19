@@ -76,7 +76,7 @@ public class ConnectedDeviceDashboardFragment extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         DiscoverableFooterPreferenceController discoverableFooterPreferenceController = new DiscoverableFooterPreferenceController(context);
         arrayList.add(discoverableFooterPreferenceController);

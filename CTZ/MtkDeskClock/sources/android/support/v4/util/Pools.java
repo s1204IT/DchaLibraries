@@ -1,0 +1,90 @@
+package android.support.v4.util;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+public final class Pools {
+
+    public interface Pool<T> {
+        @Nullable
+        T acquire();
+
+        boolean release(@NonNull T t);
+    }
+
+    private Pools() {
+    }
+
+    public static class SimplePool<T> implements Pool<T> {
+        private final Object[] mPool;
+        private int mPoolSize;
+
+        public SimplePool(int maxPoolSize) {
+            if (maxPoolSize <= 0) {
+                throw new IllegalArgumentException("The max pool size must be > 0");
+            }
+            this.mPool = new Object[maxPoolSize];
+        }
+
+        @Override
+        public T acquire() {
+            if (this.mPoolSize <= 0) {
+                return null;
+            }
+            int i = this.mPoolSize - 1;
+            T t = (T) this.mPool[i];
+            this.mPool[i] = null;
+            this.mPoolSize--;
+            return t;
+        }
+
+        @Override
+        public boolean release(@NonNull T instance) {
+            if (isInPool(instance)) {
+                throw new IllegalStateException("Already in the pool!");
+            }
+            if (this.mPoolSize < this.mPool.length) {
+                this.mPool[this.mPoolSize] = instance;
+                this.mPoolSize++;
+                return true;
+            }
+            return false;
+        }
+
+        private boolean isInPool(@NonNull T instance) {
+            for (int i = 0; i < this.mPoolSize; i++) {
+                if (this.mPool[i] == instance) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    public static class SynchronizedPool<T> extends SimplePool<T> {
+        private final Object mLock;
+
+        public SynchronizedPool(int maxPoolSize) {
+            super(maxPoolSize);
+            this.mLock = new Object();
+        }
+
+        @Override
+        public T acquire() {
+            T t;
+            synchronized (this.mLock) {
+                t = (T) super.acquire();
+            }
+            return t;
+        }
+
+        @Override
+        public boolean release(@NonNull T element) {
+            boolean zRelease;
+            synchronized (this.mLock) {
+                zRelease = super.release(element);
+            }
+            return zRelease;
+        }
+    }
+}

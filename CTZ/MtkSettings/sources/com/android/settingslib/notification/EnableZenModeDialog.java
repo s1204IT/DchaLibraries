@@ -229,11 +229,11 @@ public class EnableZenModeDialog {
         return condition != null && ZenModeConfig.isValidCountdownConditionId(condition.id);
     }
 
-    public boolean isForever(Condition condition) {
+    private boolean isForever(Condition condition) {
         return condition != null && this.mForeverId.equals(condition.id);
     }
 
-    public Uri getRealConditionId(Condition condition) {
+    private Uri getRealConditionId(Condition condition) {
         if (isForever(condition)) {
             return null;
         }
@@ -356,7 +356,7 @@ public class EnableZenModeDialog {
         childAt.setVisibility(i);
     }
 
-    public void onClickTimeButton(View view, ConditionTag conditionTag, boolean z, int i) {
+    private void onClickTimeButton(View view, ConditionTag conditionTag, boolean z, int i) {
         Condition timeCondition;
         int i2;
         MetricsLogger.action(this.mContext, 163, z);
@@ -392,7 +392,7 @@ public class EnableZenModeDialog {
         conditionTag.rb.setChecked(true);
     }
 
-    public void updateAlarmWarningText(Condition condition) {
+    private void updateAlarmWarningText(Condition condition) {
         String strComputeAlarmWarningText = computeAlarmWarningText(condition);
         this.mZenAlarmWarning.setText(strComputeAlarmWarningText);
         this.mZenAlarmWarning.setVisibility(strComputeAlarmWarningText == null ? 8 : 0);

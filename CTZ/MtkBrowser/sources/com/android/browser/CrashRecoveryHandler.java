@@ -21,50 +21,38 @@ public class CrashRecoveryHandler {
     private boolean mIsPreloading = false;
     private boolean mDidPreload = false;
     private Bundle mRecoveryState = null;
-    private Runnable mCreateState = new Runnable(this) {
-        final CrashRecoveryHandler this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private Runnable mCreateState = new Runnable() {
         @Override
         public void run() {
             try {
-                Message.obtain(this.this$0.mBackgroundHandler, 1, this.this$0.mController.createSaveState()).sendToTarget();
-                this.this$0.mForegroundHandler.removeCallbacks(this.this$0.mCreateState);
+                Message.obtain(CrashRecoveryHandler.this.mBackgroundHandler, 1, CrashRecoveryHandler.this.mController.createSaveState()).sendToTarget();
+                CrashRecoveryHandler.this.mForegroundHandler.removeCallbacks(CrashRecoveryHandler.this.mCreateState);
             } catch (Throwable th) {
                 Log.w("BrowserCrashRecovery", "Failed to save state", th);
             }
         }
     };
     private Handler mForegroundHandler = new Handler();
-    private Handler mBackgroundHandler = new Handler(this, BackgroundHandler.getLooper()) {
-        final CrashRecoveryHandler this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private Handler mBackgroundHandler = new Handler(BackgroundHandler.getLooper()) {
         @Override
         public void handleMessage(Message message) {
             switch (message.what) {
                 case 1:
-                    this.this$0.writeState((Bundle) message.obj);
+                    CrashRecoveryHandler.this.writeState((Bundle) message.obj);
                     return;
                 case 2:
-                    File file = new File(this.this$0.mContext.getCacheDir(), "browser_state.parcel");
+                    File file = new File(CrashRecoveryHandler.this.mContext.getCacheDir(), "browser_state.parcel");
                     if (file.exists()) {
                         file.delete();
                         return;
                     }
                     return;
                 case 3:
-                    this.this$0.mRecoveryState = this.this$0.loadCrashState();
-                    synchronized (this.this$0) {
-                        this.this$0.mIsPreloading = false;
-                        this.this$0.mDidPreload = true;
-                        this.this$0.notifyAll();
+                    CrashRecoveryHandler.this.mRecoveryState = CrashRecoveryHandler.this.loadCrashState();
+                    synchronized (CrashRecoveryHandler.this) {
+                        CrashRecoveryHandler.this.mIsPreloading = false;
+                        CrashRecoveryHandler.this.mDidPreload = true;
+                        CrashRecoveryHandler.this.notifyAll();
                         break;
                     }
                     return;
@@ -73,11 +61,6 @@ public class CrashRecoveryHandler {
             }
         }
     };
-
-    private CrashRecoveryHandler(Controller controller) {
-        this.mController = controller;
-        this.mContext = this.mController.getActivity().getApplicationContext();
-    }
 
     public static CrashRecoveryHandler initialize(Controller controller) {
         if (sInstance == null) {
@@ -88,84 +71,9 @@ public class CrashRecoveryHandler {
         return sInstance;
     }
 
-    private Bundle loadCrashState() {
-        FileInputStream fileInputStream;
-        Parcel parcelObtain;
-        FileInputStream fileInputStream2;
-        ByteArrayOutputStream byteArrayOutputStream;
-        byte[] bArr;
-        FileInputStream fileInputStream3 = null;
-        synchronized (this) {
-            if (!shouldRestore()) {
-                return null;
-            }
-            try {
-                BrowserSettings.getInstance().setLastRunPaused(false);
-                parcelObtain = Parcel.obtain();
-            } catch (Throwable th) {
-                th = th;
-                fileInputStream3 = fileInputStream;
-            }
-            try {
-                fileInputStream2 = new FileInputStream(new File(this.mContext.getCacheDir(), "browser_state.parcel"));
-                try {
-                    byteArrayOutputStream = new ByteArrayOutputStream();
-                    bArr = new byte[4096];
-                } catch (FileNotFoundException e) {
-                    parcelObtain.recycle();
-                    if (fileInputStream2 != null) {
-                    }
-                    return null;
-                } catch (Throwable th2) {
-                    th = th2;
-                    Log.w("BrowserCrashRecovery", "Failed to recover state!", th);
-                    parcelObtain.recycle();
-                    if (fileInputStream2 != null) {
-                    }
-                    return null;
-                }
-            } catch (FileNotFoundException e2) {
-                fileInputStream2 = null;
-            } catch (Throwable th3) {
-                th = th3;
-                fileInputStream2 = null;
-            }
-            while (true) {
-                int i = fileInputStream2.read(bArr);
-                if (i <= 0) {
-                    break;
-                }
-                byteArrayOutputStream.write(bArr, 0, i);
-                fileInputStream2.close();
-                return null;
-            }
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-            parcelObtain.unmarshall(byteArray, 0, byteArray.length);
-            parcelObtain.setDataPosition(0);
-            Bundle bundle = parcelObtain.readBundle();
-            if (bundle != null) {
-                if (!bundle.isEmpty()) {
-                    parcelObtain.recycle();
-                    try {
-                        fileInputStream2.close();
-                    } catch (IOException e3) {
-                    }
-                    return bundle;
-                }
-            }
-            parcelObtain.recycle();
-            fileInputStream2.close();
-            return null;
-        }
-    }
-
-    private boolean shouldRestore() {
-        BrowserSettings browserSettings = BrowserSettings.getInstance();
-        return System.currentTimeMillis() - browserSettings.getLastRecovered() > 300000 || browserSettings.wasLastRunPaused();
-    }
-
-    private void updateLastRecovered(long j) {
-        BrowserSettings.getInstance().setLastRecovered(j);
+    private CrashRecoveryHandler(Controller controller) {
+        this.mController = controller;
+        this.mContext = this.mController.getActivity().getApplicationContext();
     }
 
     public void backupState() {
@@ -177,14 +85,80 @@ public class CrashRecoveryHandler {
         updateLastRecovered(0L);
     }
 
-    public void preloadCrashState() {
-        synchronized (this) {
-            if (this.mIsPreloading) {
-                return;
-            }
-            this.mIsPreloading = true;
-            this.mBackgroundHandler.sendEmptyMessage(3);
+    private boolean shouldRestore() {
+        BrowserSettings browserSettings = BrowserSettings.getInstance();
+        return System.currentTimeMillis() - browserSettings.getLastRecovered() > 300000 || browserSettings.wasLastRunPaused();
+    }
+
+    private void updateLastRecovered(long j) {
+        BrowserSettings.getInstance().setLastRecovered(j);
+    }
+
+    private synchronized Bundle loadCrashState() {
+        FileInputStream fileInputStream;
+        ByteArrayOutputStream byteArrayOutputStream;
+        byte[] bArr;
+        Parcel parcelShouldRestore = shouldRestore();
+        FileInputStream fileInputStream2 = null;
+        if (parcelShouldRestore == 0) {
+            return null;
         }
+        try {
+            BrowserSettings.getInstance().setLastRunPaused(false);
+            parcelShouldRestore = Parcel.obtain();
+        } catch (Throwable th) {
+            th = th;
+        }
+        try {
+            fileInputStream = new FileInputStream(new File(this.mContext.getCacheDir(), "browser_state.parcel"));
+            try {
+                byteArrayOutputStream = new ByteArrayOutputStream();
+                bArr = new byte[4096];
+            } catch (FileNotFoundException e) {
+                parcelShouldRestore.recycle();
+                if (fileInputStream != null) {
+                }
+                return null;
+            } catch (Throwable th2) {
+                th = th2;
+                Log.w("BrowserCrashRecovery", "Failed to recover state!", th);
+                parcelShouldRestore.recycle();
+                if (fileInputStream != null) {
+                }
+                return null;
+            }
+        } catch (FileNotFoundException e2) {
+            fileInputStream = null;
+        } catch (Throwable th3) {
+            th = th3;
+            fileInputStream = null;
+        }
+        while (true) {
+            int i = fileInputStream.read(bArr);
+            if (i <= 0) {
+                break;
+            }
+            byteArrayOutputStream.write(bArr, 0, i);
+            fileInputStream.close();
+            return null;
+        }
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        parcelShouldRestore.unmarshall(byteArray, 0, byteArray.length);
+        parcelShouldRestore.setDataPosition(0);
+        Bundle bundle = parcelShouldRestore.readBundle();
+        if (bundle != null) {
+            if (!bundle.isEmpty()) {
+                parcelShouldRestore.recycle();
+                try {
+                    fileInputStream.close();
+                } catch (IOException e3) {
+                }
+                return bundle;
+            }
+        }
+        parcelShouldRestore.recycle();
+        fileInputStream.close();
+        return null;
     }
 
     public void startRecovery(Intent intent) {
@@ -204,27 +178,35 @@ public class CrashRecoveryHandler {
         this.mRecoveryState = null;
     }
 
-    void writeState(Bundle bundle) {
+    public void preloadCrashState() {
         synchronized (this) {
-            Parcel parcelObtain = Parcel.obtain();
-            try {
-                try {
-                    bundle.writeToParcel(parcelObtain, 0);
-                    File file = new File(this.mContext.getCacheDir(), "browser_state.parcel.journal");
-                    FileOutputStream fileOutputStream = new FileOutputStream(file);
-                    fileOutputStream.write(parcelObtain.marshall());
-                    fileOutputStream.close();
-                    File file2 = new File(this.mContext.getCacheDir(), "browser_state.parcel");
-                    if (!file.renameTo(file2)) {
-                        file2.delete();
-                        file.renameTo(file2);
-                    }
-                } catch (Throwable th) {
-                    Log.i("BrowserCrashRecovery", "Failed to save persistent state", th);
-                }
-            } finally {
-                parcelObtain.recycle();
+            if (this.mIsPreloading) {
+                return;
             }
+            this.mIsPreloading = true;
+            this.mBackgroundHandler.sendEmptyMessage(3);
+        }
+    }
+
+    synchronized void writeState(Bundle bundle) {
+        Parcel parcelObtain = Parcel.obtain();
+        try {
+            try {
+                bundle.writeToParcel(parcelObtain, 0);
+                File file = new File(this.mContext.getCacheDir(), "browser_state.parcel.journal");
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                fileOutputStream.write(parcelObtain.marshall());
+                fileOutputStream.close();
+                File file2 = new File(this.mContext.getCacheDir(), "browser_state.parcel");
+                if (!file.renameTo(file2)) {
+                    file2.delete();
+                    file.renameTo(file2);
+                }
+            } catch (Throwable th) {
+                Log.i("BrowserCrashRecovery", "Failed to save persistent state", th);
+            }
+        } finally {
+            parcelObtain.recycle();
         }
     }
 }

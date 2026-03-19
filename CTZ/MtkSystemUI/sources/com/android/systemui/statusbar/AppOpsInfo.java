@@ -126,7 +126,7 @@ public class AppOpsInfo extends LinearLayout implements NotificationGuts.GutsCon
         }
     }
 
-    public void closeControls(View view) {
+    private void closeControls(View view) {
         this.mMetricsLogger.visibility(1345, false);
         int[] iArr = new int[2];
         int[] iArr2 = new int[2];

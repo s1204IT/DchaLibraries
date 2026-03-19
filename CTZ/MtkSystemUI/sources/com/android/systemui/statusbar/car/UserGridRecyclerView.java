@@ -200,7 +200,7 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
             }
 
             @Override
-            public UserInfo doInBackground(String... strArr) {
+            protected UserInfo doInBackground(String... strArr) {
                 return UserGridRecyclerView.this.mUserManagerHelper.createNewUser(strArr[0]);
             }
 
@@ -209,7 +209,7 @@ public class UserGridRecyclerView extends PagedListView implements UserManagerHe
             }
 
             @Override
-            public void onPostExecute(UserInfo userInfo) {
+            protected void onPostExecute(UserInfo userInfo) {
                 if (userInfo != null) {
                     UserGridRecyclerView.this.mUserManagerHelper.switchToUser(userInfo);
                 }

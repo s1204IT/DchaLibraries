@@ -144,7 +144,7 @@ public class PowerUI extends SystemUI {
         this.mLowBatteryAlertCloseLevel = this.mLowBatteryReminderLevels[0] + this.mContext.getResources().getInteger(R.integer.config_defaultBinderHeavyHitterAutoSamplerBatchSize);
     }
 
-    public int findBatteryLevelBucket(int i) {
+    private int findBatteryLevelBucket(int i) {
         if (i >= this.mLowBatteryAlertCloseLevel) {
             return 1;
         }
@@ -256,7 +256,7 @@ public class PowerUI extends SystemUI {
         }
     }
 
-    public void maybeShowBatteryWarning(boolean z, boolean z2, int i, int i2) {
+    protected void maybeShowBatteryWarning(boolean z, boolean z2, int i, int i2) {
         Estimate estimate;
         boolean zIsPowerSaveMode = this.mPowerManager.isPowerSaveMode();
         boolean z3 = i2 != i || z2;
@@ -320,7 +320,7 @@ public class PowerUI extends SystemUI {
         return (!this.mLowWarningShownThisChargeCycle && ((j > this.mEnhancedEstimates.getLowWarningThreshold() ? 1 : (j == this.mEnhancedEstimates.getLowWarningThreshold() ? 0 : -1)) < 0 || this.mBatteryLevel <= this.mLowBatteryReminderLevels[0])) || (!this.mSevereWarningShownThisChargeCycle && ((j > this.mEnhancedEstimates.getSevereWarningThreshold() ? 1 : (j == this.mEnhancedEstimates.getSevereWarningThreshold() ? 0 : -1)) < 0 || this.mBatteryLevel <= this.mLowBatteryReminderLevels[1]));
     }
 
-    public void initTemperatureWarning() {
+    private void initTemperatureWarning() {
         ContentResolver contentResolver = this.mContext.getContentResolver();
         if (Settings.Global.getInt(contentResolver, "show_temperature_warning", this.mContext.getResources().getInteger(com.android.systemui.R.integer.config_showTemperatureWarning)) == 0) {
             return;

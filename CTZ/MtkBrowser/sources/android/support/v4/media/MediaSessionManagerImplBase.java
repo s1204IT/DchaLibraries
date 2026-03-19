@@ -12,18 +12,18 @@ class MediaSessionManagerImplBase {
         private int mPid;
         private int mUid;
 
-        RemoteUserInfo(String str, int i, int i2) {
-            this.mPackageName = str;
-            this.mPid = i;
-            this.mUid = i2;
+        RemoteUserInfo(String packageName, int pid, int uid) {
+            this.mPackageName = packageName;
+            this.mPid = pid;
+            this.mUid = uid;
         }
 
         public boolean equals(Object obj) {
             if (!(obj instanceof RemoteUserInfo)) {
                 return false;
             }
-            RemoteUserInfo remoteUserInfo = (RemoteUserInfo) obj;
-            return TextUtils.equals(this.mPackageName, remoteUserInfo.mPackageName) && this.mPid == remoteUserInfo.mPid && this.mUid == remoteUserInfo.mUid;
+            RemoteUserInfo otherUserInfo = (RemoteUserInfo) obj;
+            return TextUtils.equals(this.mPackageName, otherUserInfo.mPackageName) && this.mPid == otherUserInfo.mPid && this.mUid == otherUserInfo.mUid;
         }
 
         public int hashCode() {

@@ -197,7 +197,7 @@ public class KeyguardSliceView extends LinearLayout implements Observer<Slice>, 
         }
     }
 
-    public static CharSequence findBestLineBreak(CharSequence charSequence) {
+    private static CharSequence findBestLineBreak(CharSequence charSequence) {
         if (TextUtils.isEmpty(charSequence)) {
             return charSequence;
         }

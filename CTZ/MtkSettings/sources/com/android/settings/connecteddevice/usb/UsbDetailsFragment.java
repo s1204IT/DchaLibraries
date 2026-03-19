@@ -80,7 +80,7 @@ public class UsbDetailsFragment extends DashboardFragment {
         return new ArrayList(this.mControllers);
     }
 
-    public static List<UsbDetailsController> createControllerList(Context context, UsbBackend usbBackend, UsbDetailsFragment usbDetailsFragment) {
+    private static List<UsbDetailsController> createControllerList(Context context, UsbBackend usbBackend, UsbDetailsFragment usbDetailsFragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new UsbDetailsHeaderController(context, usbDetailsFragment, usbBackend));
         arrayList.add(new UsbDetailsDataRoleController(context, usbDetailsFragment, usbBackend));

@@ -112,7 +112,7 @@ public class LocationControllerImpl extends BroadcastReceiver implements Locatio
         }
     }
 
-    final class H extends Handler {
+    private final class H extends Handler {
         private H() {
         }
 

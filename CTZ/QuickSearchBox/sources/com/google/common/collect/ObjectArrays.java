@@ -3,17 +3,14 @@ package com.google.common.collect;
 public final class ObjectArrays {
     static final Object[] EMPTY_ARRAY = new Object[0];
 
+    public static <T> T[] newArray(T[] tArr, int i) {
+        return (T[]) Platform.newArray(tArr, i);
+    }
+
     static <T> T[] arraysCopyOf(T[] tArr, int i) {
         T[] tArr2 = (T[]) newArray(tArr, i);
         System.arraycopy(tArr, 0, tArr2, 0, Math.min(tArr.length, i));
         return tArr2;
-    }
-
-    static Object checkElementNotNull(Object obj, int i) {
-        if (obj != null) {
-            return obj;
-        }
-        throw new NullPointerException("at index " + i);
     }
 
     static Object[] checkElementsNotNull(Object... objArr) {
@@ -27,7 +24,10 @@ public final class ObjectArrays {
         return objArr;
     }
 
-    public static <T> T[] newArray(T[] tArr, int i) {
-        return (T[]) Platform.newArray(tArr, i);
+    static Object checkElementNotNull(Object obj, int i) {
+        if (obj == null) {
+            throw new NullPointerException("at index " + i);
+        }
+        return obj;
     }
 }

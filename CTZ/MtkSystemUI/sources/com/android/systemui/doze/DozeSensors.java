@@ -144,7 +144,7 @@ public class DozeSensors {
         return this.mProxSensor.mCurrentlyFar;
     }
 
-    class ProxSensor implements SensorEventListener {
+    private class ProxSensor implements SensorEventListener {
         final AlarmTimeout mCooldownTimer;
         Boolean mCurrentlyFar;
         long mLastNear;
@@ -182,7 +182,7 @@ public class DozeSensors {
             }
         }
 
-        public void updateRegistered() {
+        private void updateRegistered() {
             setRegistered(this.mRequested && !this.mCooldownTimer.isScheduled());
         }
 
@@ -226,7 +226,7 @@ public class DozeSensors {
         }
     }
 
-    class TriggerSensor extends TriggerEventListener {
+    private class TriggerSensor extends TriggerEventListener {
         final boolean mConfigured;
         private boolean mDisabled;
         final int mPulseReason;

@@ -38,101 +38,65 @@ class TabControl {
         this.mTabQueue = new ArrayList<>(this.mMaxTabs);
     }
 
-    private WebView createNewWebView() {
-        return createNewWebView(false);
-    }
-
-    private WebView createNewWebView(boolean z) {
-        return this.mController.getWebViewFactory().createWebView(z);
-    }
-
-    private Vector<Tab> getHalfLeastUsedTabs(Tab tab) {
-        int i;
-        Vector<Tab> vector = new Vector<>();
-        if (getTabCount() == 1 || tab == null) {
-            return vector;
-        }
-        if (this.mTabQueue.size() == 0) {
-            return vector;
-        }
-        int i2 = 0;
-        Iterator<Tab> it = this.mTabQueue.iterator();
-        while (true) {
-            i = i2;
-            if (!it.hasNext()) {
-                break;
-            }
-            Tab next = it.next();
-            if (next != null && next.getWebView() != null) {
-                i++;
-                if (next != tab && next != tab.getParent()) {
-                    vector.add(next);
-                }
-            }
-            i2 = i;
-        }
-        String str = SystemProperties.get("ro.vendor.gmo.ram_optimize");
-        int i3 = (i <= 2 || str == null || !str.equals("1")) ? i / 2 : (i + 1) / 2;
-        if (vector.size() > i3) {
-            vector.setSize(i3);
-        }
-        return vector;
-    }
-
-    static long getNextId() {
+    static synchronized long getNextId() {
         long j;
-        synchronized (TabControl.class) {
-            try {
-                j = sNextId;
-                sNextId = 1 + j;
-            } catch (Throwable th) {
-                throw th;
-            }
-        }
+        j = sNextId;
+        sNextId = 1 + j;
         return j;
     }
 
-    private boolean hasState(long j, Bundle bundle) {
-        Bundle bundle2;
-        return (j == -1 || (bundle2 = bundle.getBundle(Long.toString(j))) == null || bundle2.isEmpty()) ? false : true;
-    }
-
-    private boolean isIncognito(long j, Bundle bundle) {
-        Bundle bundle2 = bundle.getBundle(Long.toString(j));
-        if (bundle2 == null || bundle2.isEmpty()) {
-            return false;
-        }
-        return bundle2.getBoolean("privateBrowsingEnabled");
-    }
-
-    private boolean setCurrentTab(Tab tab, boolean z) {
-        Tab tab2 = getTab(this.mCurrentTab);
-        if (tab2 == tab && !z) {
-            return true;
-        }
-        if (tab2 != null) {
-            tab2.putInBackground();
-            this.mCurrentTab = -1;
-        }
+    WebView getCurrentWebView() {
+        Tab tab = getTab(this.mCurrentTab);
         if (tab == null) {
-            return false;
+            return null;
         }
-        int iIndexOf = this.mTabQueue.indexOf(tab);
-        if (iIndexOf != -1) {
-            this.mTabQueue.remove(iIndexOf);
-        }
-        this.mTabQueue.add(tab);
-        this.mCurrentTab = this.mTabs.indexOf(tab);
-        if (tab.getWebView() == null) {
-            tab.setWebView(createNewWebView());
-        }
-        tab.putInForeground();
-        this.mController.getUi().updateBottomBarState(tab.getWebView().canScrollVertically(-1) || tab.getWebView().canScrollVertically(1), tab.canGoBack() || tab.getParent() != null, tab.canGoForward());
-        return true;
+        return tab.getWebView();
     }
 
-    private boolean tabMatchesUrl(Tab tab, String str) {
-        return str.equals(tab.getUrl()) || str.equals(tab.getOriginalUrl());
+    WebView getCurrentTopWebView() {
+        Tab tab = getTab(this.mCurrentTab);
+        if (tab == null) {
+            return null;
+        }
+        return tab.getTopWindow();
+    }
+
+    WebView getCurrentSubWindow() {
+        Tab tab = getTab(this.mCurrentTab);
+        if (tab == null) {
+            return null;
+        }
+        return tab.getSubWebView();
+    }
+
+    List<Tab> getTabs() {
+        return this.mTabs;
+    }
+
+    Tab getTab(int i) {
+        if (i >= 0 && i < this.mTabs.size()) {
+            return this.mTabs.get(i);
+        }
+        return null;
+    }
+
+    Tab getCurrentTab() {
+        return getTab(this.mCurrentTab);
+    }
+
+    int getCurrentPosition() {
+        return this.mCurrentTab;
+    }
+
+    int getTabPosition(Tab tab) {
+        if (tab == null) {
+            return -1;
+        }
+        return this.mTabs.indexOf(tab);
+    }
+
+    boolean canCreateNewTab() {
+        return this.mMaxTabs > this.mTabs.size();
     }
 
     void addPreloadedTab(Tab tab) {
@@ -150,32 +114,8 @@ class TabControl {
         tab.putInBackground();
     }
 
-    boolean canCreateNewTab() {
-        return this.mMaxTabs > this.mTabs.size();
-    }
-
-    long canRestoreState(Bundle bundle, boolean z) {
-        long[] longArray = bundle == null ? null : bundle.getLongArray("positions");
-        if (longArray == null) {
-            return -1L;
-        }
-        long j = bundle.getLong("current");
-        if (!z && (!hasState(j, bundle) || isIncognito(j, bundle))) {
-            int length = longArray.length;
-            int i = 0;
-            while (true) {
-                if (i >= length) {
-                    j = -1;
-                    break;
-                }
-                j = longArray[i];
-                if (hasState(j, bundle) && !isIncognito(j, bundle)) {
-                    break;
-                }
-                i++;
-            }
-        }
-        return j;
+    Tab createNewTab(boolean z) {
+        return createNewTab(null, z);
     }
 
     Tab createNewTab(Bundle bundle, boolean z) {
@@ -190,190 +130,6 @@ class TabControl {
         }
         tab.putInBackground();
         return tab;
-    }
-
-    Tab createNewTab(boolean z) {
-        return createNewTab(null, z);
-    }
-
-    void destroy() {
-        Log.d("TabControl", "TabControl.destroy()--->Destroy all the tabs");
-        Iterator<Tab> it = this.mTabs.iterator();
-        while (it.hasNext()) {
-            it.next().destroy();
-        }
-        this.mTabs.clear();
-        this.mTabQueue.clear();
-    }
-
-    Tab findTabWithUrl(String str) {
-        if (str == null) {
-            return null;
-        }
-        Tab currentTab = getCurrentTab();
-        if (currentTab != null && tabMatchesUrl(currentTab, str)) {
-            return currentTab;
-        }
-        for (Tab tab : this.mTabs) {
-            if (tabMatchesUrl(tab, str)) {
-                return tab;
-            }
-        }
-        return null;
-    }
-
-    void freeMemory() {
-        if (getTabCount() == 0) {
-            return;
-        }
-        String str = SystemProperties.get("ro.vendor.gmo.ram_optimize");
-        Vector<Tab> halfLeastUsedTabs = getHalfLeastUsedTabs(getCurrentTab());
-        this.mFreeTabIndex.clear();
-        if (halfLeastUsedTabs.size() > 0) {
-            Log.w("TabControl", "Free " + halfLeastUsedTabs.size() + " tabs in the browser");
-            for (Tab tab : halfLeastUsedTabs) {
-                this.mFreeTabIndex.add(Integer.valueOf(getTabPosition(tab) + 1));
-                tab.saveState();
-                tab.destroy();
-            }
-            if (str == null || !str.equals("1")) {
-                return;
-            }
-        }
-        Log.w("TabControl", "Free WebView's unused memory and cache");
-        WebView currentWebView = getCurrentWebView();
-        if (currentWebView != null) {
-            currentWebView.freeMemory();
-        }
-    }
-
-    int getCurrentPosition() {
-        return this.mCurrentTab;
-    }
-
-    WebView getCurrentSubWindow() {
-        Tab tab = getTab(this.mCurrentTab);
-        if (tab == null) {
-            return null;
-        }
-        return tab.getSubWebView();
-    }
-
-    Tab getCurrentTab() {
-        return getTab(this.mCurrentTab);
-    }
-
-    WebView getCurrentTopWebView() {
-        Tab tab = getTab(this.mCurrentTab);
-        if (tab == null) {
-            return null;
-        }
-        return tab.getTopWindow();
-    }
-
-    WebView getCurrentWebView() {
-        Tab tab = getTab(this.mCurrentTab);
-        if (tab == null) {
-            return null;
-        }
-        return tab.getWebView();
-    }
-
-    protected CopyOnWriteArrayList<Integer> getFreeTabIndex() {
-        return this.mFreeTabIndex;
-    }
-
-    Tab getLeastUsedTab(Tab tab) {
-        if (getTabCount() == 1 || tab == null) {
-            return null;
-        }
-        if (this.mTabQueue.size() == 0) {
-            return null;
-        }
-        for (Tab tab2 : this.mTabQueue) {
-            if (tab2 != null && tab2.getWebView() != null && tab2 != tab && tab2 != tab.getParent()) {
-                return tab2;
-            }
-        }
-        return null;
-    }
-
-    public OnThumbnailUpdatedListener getOnThumbnailUpdatedListener() {
-        return this.mOnThumbnailUpdatedListener;
-    }
-
-    Tab getTab(int i) {
-        if (i < 0 || i >= this.mTabs.size()) {
-            return null;
-        }
-        return this.mTabs.get(i);
-    }
-
-    int getTabCount() {
-        return this.mTabs.size();
-    }
-
-    Tab getTabFromAppId(String str) {
-        if (str == null) {
-            return null;
-        }
-        for (Tab tab : this.mTabs) {
-            if (str.equals(tab.getAppId())) {
-                return tab;
-            }
-        }
-        return null;
-    }
-
-    Tab getTabFromView(WebView webView) {
-        Iterator<Tab> it = this.mTabs.iterator();
-        while (it.hasNext()) {
-            Tab next = it.next();
-            if (next.getSubWebView() == webView || next.getWebView() == webView) {
-                return next;
-            }
-        }
-        return null;
-    }
-
-    int getTabPosition(Tab tab) {
-        if (tab == null) {
-            return -1;
-        }
-        return this.mTabs.indexOf(tab);
-    }
-
-    List<Tab> getTabs() {
-        return this.mTabs;
-    }
-
-    int getVisibleWebviewNums() {
-        int i = 0;
-        if (this.mTabs.size() == 0) {
-            return 0;
-        }
-        Iterator<Tab> it = this.mTabs.iterator();
-        while (true) {
-            int i2 = i;
-            if (!it.hasNext()) {
-                return i2;
-            }
-            Tab next = it.next();
-            if (next != null && next.getWebView() != null) {
-                i2++;
-            }
-            i = i2;
-        }
-    }
-
-    void recreateWebView(Tab tab) {
-        if (tab.getWebView() != null) {
-            tab.destroy();
-        }
-        tab.setWebView(createNewWebView(), false);
-        if (getCurrentTab() == tab) {
-            setCurrentTab(tab, true);
-        }
     }
 
     void removeParentChildRelationShips() {
@@ -400,11 +156,100 @@ class TabControl {
         this.mTabQueue.remove(tab);
         if (this.mOnTabCountChangedListener != null) {
             this.mOnTabCountChangedListener.onTabCountChanged();
+            return true;
         }
         return true;
     }
 
+    void destroy() {
+        Log.d("TabControl", "TabControl.destroy()--->Destroy all the tabs");
+        Iterator<Tab> it = this.mTabs.iterator();
+        while (it.hasNext()) {
+            it.next().destroy();
+        }
+        this.mTabs.clear();
+        this.mTabQueue.clear();
+    }
+
+    int getTabCount() {
+        return this.mTabs.size();
+    }
+
+    void saveState(Bundle bundle) {
+        int tabCount = getTabCount();
+        if (tabCount == 0) {
+            return;
+        }
+        long[] jArr = new long[tabCount];
+        int i = 0;
+        Iterator<Tab> it = this.mTabs.iterator();
+        while (true) {
+            if (it.hasNext()) {
+                Tab next = it.next();
+                Bundle bundleSaveState = next.saveState();
+                if (bundleSaveState != null) {
+                    int i2 = i + 1;
+                    jArr[i] = next.getId();
+                    String string = Long.toString(next.getId());
+                    if (bundle.containsKey(string)) {
+                        for (Tab tab : this.mTabs) {
+                            if (DEBUG) {
+                                Log.e("TabControl", tab.toString());
+                            }
+                        }
+                        throw new IllegalStateException("Error saving state, duplicate tab ids!");
+                    }
+                    bundle.putBundle(string, bundleSaveState);
+                    i = i2;
+                } else {
+                    jArr[i] = -1;
+                    next.deleteThumbnail();
+                    i++;
+                }
+            } else {
+                if (!bundle.isEmpty()) {
+                    bundle.putLongArray("positions", jArr);
+                    Tab currentTab = getCurrentTab();
+                    bundle.putLong("current", currentTab != null ? currentTab.getId() : -1L);
+                    return;
+                }
+                return;
+            }
+        }
+    }
+
+    long canRestoreState(Bundle bundle, boolean z) {
+        long[] longArray = bundle == null ? null : bundle.getLongArray("positions");
+        if (longArray == null) {
+            return -1L;
+        }
+        long j = bundle.getLong("current");
+        if (!z && (!hasState(j, bundle) || isIncognito(j, bundle))) {
+            for (long j2 : longArray) {
+                if (hasState(j2, bundle) && !isIncognito(j2, bundle)) {
+                    return j2;
+                }
+            }
+            return -1L;
+        }
+        return j;
+    }
+
+    private boolean hasState(long j, Bundle bundle) {
+        Bundle bundle2;
+        return (j == -1 || (bundle2 = bundle.getBundle(Long.toString(j))) == null || bundle2.isEmpty()) ? false : true;
+    }
+
+    private boolean isIncognito(long j, Bundle bundle) {
+        Bundle bundle2 = bundle.getBundle(Long.toString(j));
+        if (bundle2 != null && !bundle2.isEmpty()) {
+            return bundle2.getBoolean("privateBrowsingEnabled");
+        }
+        return false;
+    }
+
     void restoreState(Bundle bundle, long j, boolean z, boolean z2) {
+        int i;
         Tab tab;
         if (j == -1) {
             return;
@@ -439,9 +284,14 @@ class TabControl {
         }
         sNextId = j2 + 1;
         if (this.mCurrentTab == -1 && getTabCount() > 0) {
+            i = 0;
             setCurrentTab(getTab(0));
+        } else {
+            i = 0;
         }
-        for (long j4 : longArray) {
+        int length = longArray.length;
+        while (i < length) {
+            long j4 = longArray[i];
             Tab tab3 = (Tab) map.get(Long.valueOf(j4));
             Bundle bundle3 = bundle.getBundle(Long.toString(j4));
             if (bundle3 != null && tab3 != null) {
@@ -450,60 +300,201 @@ class TabControl {
                     tab.addChildTab(tab3);
                 }
             }
+            i++;
         }
     }
 
-    void saveState(Bundle bundle) {
-        int tabCount = getTabCount();
-        if (tabCount == 0) {
+    void freeMemory() {
+        if (getTabCount() == 0) {
             return;
         }
-        long[] jArr = new long[tabCount];
-        int i = 0;
-        Iterator<Tab> it = this.mTabs.iterator();
-        while (true) {
-            int i2 = i;
-            if (!it.hasNext()) {
-                if (bundle.isEmpty()) {
-                    return;
-                }
-                bundle.putLongArray("positions", jArr);
-                Tab currentTab = getCurrentTab();
-                bundle.putLong("current", currentTab != null ? currentTab.getId() : -1L);
+        String str = SystemProperties.get("ro.vendor.gmo.ram_optimize");
+        Vector<Tab> halfLeastUsedTabs = getHalfLeastUsedTabs(getCurrentTab());
+        this.mFreeTabIndex.clear();
+        if (halfLeastUsedTabs.size() > 0) {
+            Log.w("TabControl", "Free " + halfLeastUsedTabs.size() + " tabs in the browser");
+            for (Tab tab : halfLeastUsedTabs) {
+                this.mFreeTabIndex.add(Integer.valueOf(getTabPosition(tab) + 1));
+                tab.saveState();
+                tab.destroy();
+            }
+            if (str == null || !str.equals("1")) {
                 return;
             }
-            Tab next = it.next();
-            Bundle bundleSaveState = next.saveState();
-            if (bundleSaveState != null) {
-                jArr[i2] = next.getId();
-                String string = Long.toString(next.getId());
-                if (bundle.containsKey(string)) {
-                    for (Tab tab : this.mTabs) {
-                        if (DEBUG) {
-                            Log.e("TabControl", tab.toString());
-                        }
-                    }
-                    throw new IllegalStateException("Error saving state, duplicate tab ids!");
-                }
-                bundle.putBundle(string, bundleSaveState);
-            } else {
-                jArr[i2] = -1;
-                next.deleteThumbnail();
-            }
-            i = i2 + 1;
+        }
+        Log.w("TabControl", "Free WebView's unused memory and cache");
+        WebView currentWebView = getCurrentWebView();
+        if (currentWebView != null) {
+            currentWebView.freeMemory();
         }
     }
 
-    void setActiveTab(Tab tab) {
-        this.mController.setActiveTab(tab);
+    int getVisibleWebviewNums() {
+        int i = 0;
+        if (this.mTabs.size() == 0) {
+            return 0;
+        }
+        for (Tab tab : this.mTabs) {
+            if (tab != null && tab.getWebView() != null) {
+                i++;
+            }
+        }
+        return i;
+    }
+
+    protected CopyOnWriteArrayList<Integer> getFreeTabIndex() {
+        return this.mFreeTabIndex;
+    }
+
+    private Vector<Tab> getHalfLeastUsedTabs(Tab tab) {
+        int i;
+        Vector<Tab> vector = new Vector<>();
+        if (getTabCount() == 1 || tab == null || this.mTabQueue.size() == 0) {
+            return vector;
+        }
+        int i2 = 0;
+        for (Tab tab2 : this.mTabQueue) {
+            if (tab2 != null && tab2.getWebView() != null) {
+                i2++;
+                if (tab2 != tab && tab2 != tab.getParent()) {
+                    vector.add(tab2);
+                }
+            }
+        }
+        String str = SystemProperties.get("ro.vendor.gmo.ram_optimize");
+        if (i2 > 2 && str != null && str.equals("1")) {
+            i = (i2 + 1) / 2;
+        } else {
+            i = i2 / 2;
+        }
+        if (vector.size() > i) {
+            vector.setSize(i);
+        }
+        return vector;
+    }
+
+    Tab getLeastUsedTab(Tab tab) {
+        if (getTabCount() == 1 || tab == null || this.mTabQueue.size() == 0) {
+            return null;
+        }
+        for (Tab tab2 : this.mTabQueue) {
+            if (tab2 != null && tab2.getWebView() != null && tab2 != tab && tab2 != tab.getParent()) {
+                return tab2;
+            }
+        }
+        return null;
+    }
+
+    Tab getTabFromView(WebView webView) {
+        for (Tab tab : this.mTabs) {
+            if (tab.getSubWebView() == webView || tab.getWebView() == webView) {
+                return tab;
+            }
+        }
+        return null;
+    }
+
+    Tab getTabFromAppId(String str) {
+        if (str == null) {
+            return null;
+        }
+        for (Tab tab : this.mTabs) {
+            if (str.equals(tab.getAppId())) {
+                return tab;
+            }
+        }
+        return null;
+    }
+
+    void stopAllLoading() {
+        for (Tab tab : this.mTabs) {
+            WebView webView = tab.getWebView();
+            if (webView != null) {
+                webView.stopLoading();
+            }
+            WebView subWebView = tab.getSubWebView();
+            if (subWebView != null) {
+                subWebView.stopLoading();
+            }
+        }
+    }
+
+    private boolean tabMatchesUrl(Tab tab, String str) {
+        return str.equals(tab.getUrl()) || str.equals(tab.getOriginalUrl());
+    }
+
+    Tab findTabWithUrl(String str) {
+        if (str == null) {
+            return null;
+        }
+        Tab currentTab = getCurrentTab();
+        if (currentTab != null && tabMatchesUrl(currentTab, str)) {
+            return currentTab;
+        }
+        for (Tab tab : this.mTabs) {
+            if (tabMatchesUrl(tab, str)) {
+                return tab;
+            }
+        }
+        return null;
+    }
+
+    void recreateWebView(Tab tab) {
+        if (tab.getWebView() != null) {
+            tab.destroy();
+        }
+        tab.setWebView(createNewWebView(), false);
+        if (getCurrentTab() == tab) {
+            setCurrentTab(tab, true);
+        }
+    }
+
+    private WebView createNewWebView() {
+        return createNewWebView(false);
+    }
+
+    private WebView createNewWebView(boolean z) {
+        return this.mController.getWebViewFactory().createWebView(z);
     }
 
     boolean setCurrentTab(Tab tab) {
         return setCurrentTab(tab, false);
     }
 
-    public void setOnTabCountChangedListener(OnTabCountChangedListener onTabCountChangedListener) {
-        this.mOnTabCountChangedListener = onTabCountChangedListener;
+    private boolean setCurrentTab(Tab tab, boolean z) {
+        Tab tab2 = getTab(this.mCurrentTab);
+        if (tab2 == tab && !z) {
+            return true;
+        }
+        if (tab2 != null) {
+            tab2.putInBackground();
+            this.mCurrentTab = -1;
+        }
+        boolean z2 = false;
+        if (tab == null) {
+            return false;
+        }
+        int iIndexOf = this.mTabQueue.indexOf(tab);
+        if (iIndexOf != -1) {
+            this.mTabQueue.remove(iIndexOf);
+        }
+        this.mTabQueue.add(tab);
+        this.mCurrentTab = this.mTabs.indexOf(tab);
+        if (tab.getWebView() == null) {
+            tab.setWebView(createNewWebView());
+        }
+        tab.putInForeground();
+        boolean z3 = tab.getWebView().canScrollVertically(-1) || tab.getWebView().canScrollVertically(1);
+        UI ui = this.mController.getUi();
+        if (tab.canGoBack() || tab.getParent() != null) {
+            z2 = true;
+        }
+        ui.updateBottomBarState(z3, z2, tab.canGoForward());
+        return true;
+    }
+
+    void setActiveTab(Tab tab) {
+        this.mController.setActiveTab(tab);
     }
 
     public void setOnThumbnailUpdatedListener(OnThumbnailUpdatedListener onThumbnailUpdatedListener) {
@@ -519,16 +510,11 @@ class TabControl {
         }
     }
 
-    void stopAllLoading() {
-        for (Tab tab : this.mTabs) {
-            WebView webView = tab.getWebView();
-            if (webView != null) {
-                webView.stopLoading();
-            }
-            WebView subWebView = tab.getSubWebView();
-            if (subWebView != null) {
-                subWebView.stopLoading();
-            }
-        }
+    public OnThumbnailUpdatedListener getOnThumbnailUpdatedListener() {
+        return this.mOnThumbnailUpdatedListener;
+    }
+
+    public void setOnTabCountChangedListener(OnTabCountChangedListener onTabCountChangedListener) {
+        this.mOnTabCountChangedListener = onTabCountChangedListener;
     }
 }

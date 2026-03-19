@@ -18,69 +18,37 @@ public class ReportFragment extends Fragment {
         void onStart();
     }
 
-    private void dispatch(Lifecycle.Event event) {
-        ComponentCallbacks2 activity = getActivity();
-        if (activity instanceof LifecycleRegistryOwner) {
-            ((LifecycleRegistryOwner) activity).getLifecycle().handleLifecycleEvent(event);
-        } else if (activity instanceof LifecycleOwner) {
-            Lifecycle lifecycle = ((LifecycleOwner) activity).getLifecycle();
-            if (lifecycle instanceof LifecycleRegistry) {
-                ((LifecycleRegistry) lifecycle).handleLifecycleEvent(event);
-            }
-        }
-    }
-
-    private void dispatchCreate(ActivityInitializationListener activityInitializationListener) {
-        if (activityInitializationListener != null) {
-            activityInitializationListener.onCreate();
-        }
-    }
-
-    private void dispatchResume(ActivityInitializationListener activityInitializationListener) {
-        if (activityInitializationListener != null) {
-            activityInitializationListener.onResume();
-        }
-    }
-
-    private void dispatchStart(ActivityInitializationListener activityInitializationListener) {
-        if (activityInitializationListener != null) {
-            activityInitializationListener.onStart();
-        }
-    }
-
     public static void injectIfNeededIn(Activity activity) {
-        FragmentManager fragmentManager = activity.getFragmentManager();
-        if (fragmentManager.findFragmentByTag("android.arch.lifecycle.LifecycleDispatcher.report_fragment_tag") == null) {
-            fragmentManager.beginTransaction().add(new ReportFragment(), "android.arch.lifecycle.LifecycleDispatcher.report_fragment_tag").commit();
-            fragmentManager.executePendingTransactions();
+        FragmentManager manager = activity.getFragmentManager();
+        if (manager.findFragmentByTag("android.arch.lifecycle.LifecycleDispatcher.report_fragment_tag") == null) {
+            manager.beginTransaction().add(new ReportFragment(), "android.arch.lifecycle.LifecycleDispatcher.report_fragment_tag").commit();
+            manager.executePendingTransactions();
+        }
+    }
+
+    private void dispatchCreate(ActivityInitializationListener listener) {
+        if (listener != null) {
+            listener.onCreate();
+        }
+    }
+
+    private void dispatchStart(ActivityInitializationListener listener) {
+        if (listener != null) {
+            listener.onStart();
+        }
+    }
+
+    private void dispatchResume(ActivityInitializationListener listener) {
+        if (listener != null) {
+            listener.onResume();
         }
     }
 
     @Override
-    public void onActivityCreated(Bundle bundle) {
-        super.onActivityCreated(bundle);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         dispatchCreate(this.mProcessListener);
         dispatch(Lifecycle.Event.ON_CREATE);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        dispatch(Lifecycle.Event.ON_DESTROY);
-        this.mProcessListener = null;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        dispatch(Lifecycle.Event.ON_PAUSE);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        dispatchResume(this.mProcessListener);
-        dispatch(Lifecycle.Event.ON_RESUME);
     }
 
     @Override
@@ -91,8 +59,40 @@ public class ReportFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        dispatchResume(this.mProcessListener);
+        dispatch(Lifecycle.Event.ON_RESUME);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        dispatch(Lifecycle.Event.ON_PAUSE);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         dispatch(Lifecycle.Event.ON_STOP);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        dispatch(Lifecycle.Event.ON_DESTROY);
+        this.mProcessListener = null;
+    }
+
+    private void dispatch(Lifecycle.Event event) {
+        ComponentCallbacks2 activity = getActivity();
+        if (activity instanceof LifecycleRegistryOwner) {
+            ((LifecycleRegistryOwner) activity).getLifecycle().handleLifecycleEvent(event);
+        } else if (activity instanceof LifecycleOwner) {
+            ?? lifecycle = ((LifecycleOwner) activity).getLifecycle();
+            if (lifecycle instanceof LifecycleRegistry) {
+                lifecycle.handleLifecycleEvent(event);
+            }
+        }
     }
 }

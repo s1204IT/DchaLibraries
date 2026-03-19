@@ -17,40 +17,6 @@ public class FragmentTabHost extends TabHost implements TabHost.OnTabChangeListe
     private TabHost.OnTabChangeListener mOnTabChangeListener;
     private final ArrayList<TabInfo> mTabs;
 
-    static class SavedState extends View.BaseSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel parcel) {
-                return new SavedState(parcel);
-            }
-
-            @Override
-            public SavedState[] newArray(int i) {
-                return new SavedState[i];
-            }
-        };
-        String curTab;
-
-        SavedState(Parcel parcel) {
-            super(parcel);
-            this.curTab = parcel.readString();
-        }
-
-        SavedState(Parcelable parcelable) {
-            super(parcelable);
-        }
-
-        public String toString() {
-            return "FragmentTabHost.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " curTab=" + this.curTab + "}";
-        }
-
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-            super.writeToParcel(parcel, i);
-            parcel.writeString(this.curTab);
-        }
-    }
-
     static final class TabInfo {
         final Bundle args;
         final Class<?> clss;
@@ -58,63 +24,75 @@ public class FragmentTabHost extends TabHost implements TabHost.OnTabChangeListe
         final String tag;
     }
 
-    private FragmentTransaction doTabChanged(String str, FragmentTransaction fragmentTransaction) {
-        TabInfo tabInfoForTag = getTabInfoForTag(str);
-        if (this.mLastTab != tabInfoForTag) {
-            if (fragmentTransaction == null) {
-                fragmentTransaction = this.mFragmentManager.beginTransaction();
+    static class SavedState extends View.BaseSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
             }
-            if (this.mLastTab != null && this.mLastTab.fragment != null) {
-                fragmentTransaction.detach(this.mLastTab.fragment);
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
             }
-            if (tabInfoForTag != null) {
-                if (tabInfoForTag.fragment == null) {
-                    tabInfoForTag.fragment = Fragment.instantiate(this.mContext, tabInfoForTag.clss.getName(), tabInfoForTag.args);
-                    fragmentTransaction.add(this.mContainerId, tabInfoForTag.fragment, tabInfoForTag.tag);
-                } else {
-                    fragmentTransaction.attach(tabInfoForTag.fragment);
-                }
-            }
-            this.mLastTab = tabInfoForTag;
+        };
+        String curTab;
+
+        SavedState(Parcelable superState) {
+            super(superState);
         }
-        return fragmentTransaction;
+
+        SavedState(Parcel in) {
+            super(in);
+            this.curTab = in.readString();
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeString(this.curTab);
+        }
+
+        public String toString() {
+            return "FragmentTabHost.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " curTab=" + this.curTab + "}";
+        }
     }
 
-    private TabInfo getTabInfoForTag(String str) {
-        int size = this.mTabs.size();
-        for (int i = 0; i < size; i++) {
-            TabInfo tabInfo = this.mTabs.get(i);
-            if (tabInfo.tag.equals(str)) {
-                return tabInfo;
-            }
-        }
-        return null;
+    @Override
+    @Deprecated
+    public void setup() {
+        throw new IllegalStateException("Must call setup() that takes a Context and FragmentManager");
+    }
+
+    @Override
+    public void setOnTabChangedListener(TabHost.OnTabChangeListener l) {
+        this.mOnTabChangeListener = l;
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        String currentTabTag = getCurrentTabTag();
-        FragmentTransaction fragmentTransactionBeginTransaction = null;
-        int size = this.mTabs.size();
-        for (int i = 0; i < size; i++) {
-            TabInfo tabInfo = this.mTabs.get(i);
-            tabInfo.fragment = this.mFragmentManager.findFragmentByTag(tabInfo.tag);
-            if (tabInfo.fragment != null && !tabInfo.fragment.isDetached()) {
-                if (tabInfo.tag.equals(currentTabTag)) {
-                    this.mLastTab = tabInfo;
+        String currentTag = getCurrentTabTag();
+        FragmentTransaction ft = null;
+        int count = this.mTabs.size();
+        for (int i = 0; i < count; i++) {
+            TabInfo tab = this.mTabs.get(i);
+            tab.fragment = this.mFragmentManager.findFragmentByTag(tab.tag);
+            if (tab.fragment != null && !tab.fragment.isDetached()) {
+                if (tab.tag.equals(currentTag)) {
+                    this.mLastTab = tab;
                 } else {
-                    if (fragmentTransactionBeginTransaction == null) {
-                        fragmentTransactionBeginTransaction = this.mFragmentManager.beginTransaction();
+                    if (ft == null) {
+                        ft = this.mFragmentManager.beginTransaction();
                     }
-                    fragmentTransactionBeginTransaction.detach(tabInfo.fragment);
+                    ft.detach(tab.fragment);
                 }
             }
         }
         this.mAttached = true;
-        FragmentTransaction fragmentTransactionDoTabChanged = doTabChanged(currentTabTag, fragmentTransactionBeginTransaction);
-        if (fragmentTransactionDoTabChanged != null) {
-            fragmentTransactionDoTabChanged.commit();
+        FragmentTransaction ft2 = doTabChanged(currentTag, ft);
+        if (ft2 != null) {
+            ft2.commit();
             this.mFragmentManager.executePendingTransactions();
         }
     }
@@ -126,42 +104,64 @@ public class FragmentTabHost extends TabHost implements TabHost.OnTabChangeListe
     }
 
     @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.curTab = getCurrentTabTag();
+        return ss;
+    }
+
+    @Override
     protected void onRestoreInstanceState(Parcelable parcelable) {
         if (!(parcelable instanceof SavedState)) {
             super.onRestoreInstanceState(parcelable);
-            return;
+        } else {
+            super.onRestoreInstanceState(parcelable.getSuperState());
+            setCurrentTabByTag(parcelable.curTab);
         }
-        SavedState savedState = (SavedState) parcelable;
-        super.onRestoreInstanceState(savedState.getSuperState());
-        setCurrentTabByTag(savedState.curTab);
     }
 
     @Override
-    protected Parcelable onSaveInstanceState() {
-        SavedState savedState = new SavedState(super.onSaveInstanceState());
-        savedState.curTab = getCurrentTabTag();
-        return savedState;
-    }
-
-    @Override
-    public void onTabChanged(String str) {
-        FragmentTransaction fragmentTransactionDoTabChanged;
-        if (this.mAttached && (fragmentTransactionDoTabChanged = doTabChanged(str, null)) != null) {
-            fragmentTransactionDoTabChanged.commit();
+    public void onTabChanged(String tabId) {
+        FragmentTransaction ft;
+        if (this.mAttached && (ft = doTabChanged(tabId, null)) != null) {
+            ft.commit();
         }
         if (this.mOnTabChangeListener != null) {
-            this.mOnTabChangeListener.onTabChanged(str);
+            this.mOnTabChangeListener.onTabChanged(tabId);
         }
     }
 
-    @Override
-    public void setOnTabChangedListener(TabHost.OnTabChangeListener onTabChangeListener) {
-        this.mOnTabChangeListener = onTabChangeListener;
+    private FragmentTransaction doTabChanged(String tag, FragmentTransaction ft) {
+        TabInfo newTab = getTabInfoForTag(tag);
+        if (this.mLastTab != newTab) {
+            if (ft == null) {
+                ft = this.mFragmentManager.beginTransaction();
+            }
+            if (this.mLastTab != null && this.mLastTab.fragment != null) {
+                ft.detach(this.mLastTab.fragment);
+            }
+            if (newTab != null) {
+                if (newTab.fragment == null) {
+                    newTab.fragment = Fragment.instantiate(this.mContext, newTab.clss.getName(), newTab.args);
+                    ft.add(this.mContainerId, newTab.fragment, newTab.tag);
+                } else {
+                    ft.attach(newTab.fragment);
+                }
+            }
+            this.mLastTab = newTab;
+        }
+        return ft;
     }
 
-    @Override
-    @Deprecated
-    public void setup() {
-        throw new IllegalStateException("Must call setup() that takes a Context and FragmentManager");
+    private TabInfo getTabInfoForTag(String tabId) {
+        int count = this.mTabs.size();
+        for (int i = 0; i < count; i++) {
+            TabInfo tab = this.mTabs.get(i);
+            if (tab.tag.equals(tabId)) {
+                return tab;
+            }
+        }
+        return null;
     }
 }

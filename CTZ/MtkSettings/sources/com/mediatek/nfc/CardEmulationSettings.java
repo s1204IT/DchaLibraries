@@ -141,7 +141,7 @@ public class CardEmulationSettings extends SettingsPreferenceFragment implements
         this.mItemKeys.clear();
     }
 
-    public void updatePreferences() {
+    private void updatePreferences() {
         removeAll();
         String string = Settings.Global.getString(getContentResolver(), "nfc_multise_active");
         String string2 = Settings.Global.getString(getContentResolver(), "nfc_multise_previous");

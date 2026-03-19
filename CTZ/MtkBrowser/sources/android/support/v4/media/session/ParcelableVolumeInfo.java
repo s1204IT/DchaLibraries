@@ -6,13 +6,13 @@ import android.os.Parcelable;
 public class ParcelableVolumeInfo implements Parcelable {
     public static final Parcelable.Creator<ParcelableVolumeInfo> CREATOR = new Parcelable.Creator<ParcelableVolumeInfo>() {
         @Override
-        public ParcelableVolumeInfo createFromParcel(Parcel parcel) {
-            return new ParcelableVolumeInfo(parcel);
+        public ParcelableVolumeInfo createFromParcel(Parcel in) {
+            return new ParcelableVolumeInfo(in);
         }
 
         @Override
-        public ParcelableVolumeInfo[] newArray(int i) {
-            return new ParcelableVolumeInfo[i];
+        public ParcelableVolumeInfo[] newArray(int size) {
+            return new ParcelableVolumeInfo[size];
         }
     };
     public int audioStream;
@@ -21,12 +21,12 @@ public class ParcelableVolumeInfo implements Parcelable {
     public int maxVolume;
     public int volumeType;
 
-    public ParcelableVolumeInfo(Parcel parcel) {
-        this.volumeType = parcel.readInt();
-        this.controlType = parcel.readInt();
-        this.maxVolume = parcel.readInt();
-        this.currentVolume = parcel.readInt();
-        this.audioStream = parcel.readInt();
+    public ParcelableVolumeInfo(Parcel from) {
+        this.volumeType = from.readInt();
+        this.controlType = from.readInt();
+        this.maxVolume = from.readInt();
+        this.currentVolume = from.readInt();
+        this.audioStream = from.readInt();
     }
 
     @Override
@@ -35,11 +35,11 @@ public class ParcelableVolumeInfo implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(this.volumeType);
-        parcel.writeInt(this.controlType);
-        parcel.writeInt(this.maxVolume);
-        parcel.writeInt(this.currentVolume);
-        parcel.writeInt(this.audioStream);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.volumeType);
+        dest.writeInt(this.controlType);
+        dest.writeInt(this.maxVolume);
+        dest.writeInt(this.currentVolume);
+        dest.writeInt(this.audioStream);
     }
 }

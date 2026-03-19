@@ -8,7 +8,7 @@ abstract class AbstractSetMultimap<K, V> extends AbstractMapBasedMultimap<K, V> 
     private static final long serialVersionUID = 7431625294878419160L;
 
     @Override
-    public abstract Set<V> createCollection();
+    abstract Set<V> createCollection();
 
     @Override
     public Set<Map.Entry<K, V>> entries() {

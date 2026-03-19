@@ -138,7 +138,7 @@ public class SimDialogActivity extends Activity {
         finish();
     }
 
-    public void setDefaultDataSubId(Context context, int i) {
+    private void setDefaultDataSubId(Context context, int i) {
         Log.d(TAG, "setDefaultDataSubId, sub=" + i);
         SubscriptionManager subscriptionManagerFrom = SubscriptionManager.from(context);
         mSimManagementExt.setDataState(i);
@@ -147,17 +147,17 @@ public class SimDialogActivity extends Activity {
         this.mNewDataSubId = i;
     }
 
-    public static void setDefaultSmsSubId(Context context, int i) {
+    private static void setDefaultSmsSubId(Context context, int i) {
         Log.d(TAG, "setDefaultSmsSubId, sub=" + i);
         SubscriptionManager.from(context).setDefaultSmsSubId(i);
     }
 
-    public void setUserSelectedOutgoingPhoneAccount(PhoneAccountHandle phoneAccountHandle) {
+    private void setUserSelectedOutgoingPhoneAccount(PhoneAccountHandle phoneAccountHandle) {
         Log.d(TAG, "setUserSelectedOutgoingPhoneAccount, phoneAccount=" + phoneAccountHandle);
         TelecomManager.from(this).setUserSelectedOutgoingPhoneAccount(phoneAccountHandle);
     }
 
-    public PhoneAccountHandle subscriptionIdToPhoneAccountHandle(int i) {
+    private PhoneAccountHandle subscriptionIdToPhoneAccountHandle(int i) {
         TelecomManager telecomManagerFrom = TelecomManager.from(this);
         TelephonyManager telephonyManagerFrom = TelephonyManager.from(this);
         ListIterator<PhoneAccountHandle> listIterator = telecomManagerFrom.getCallCapablePhoneAccounts().listIterator();
@@ -447,7 +447,7 @@ public class SimDialogActivity extends Activity {
         super.onDestroy();
     }
 
-    public int getPickSmsDefaultSub(List<SubscriptionInfo> list, int i) {
+    private int getPickSmsDefaultSub(List<SubscriptionInfo> list, int i) {
         int subscriptionId;
         if (i >= 1) {
             if (i >= 1 && i < list.size() + 1) {
@@ -499,7 +499,7 @@ public class SimDialogActivity extends Activity {
         }
     }
 
-    public void dismissSimDialog() {
+    private void dismissSimDialog() {
         if (this.mDialog != null && this.mDialog.isShowing()) {
             this.mDialog.dismiss();
             this.mDialog = null;

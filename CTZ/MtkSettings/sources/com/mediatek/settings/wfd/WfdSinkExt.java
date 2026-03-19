@@ -76,7 +76,7 @@ public class WfdSinkExt {
         this.mSinkFragment = wfdSinkSurfaceFragment;
     }
 
-    public void handleWfdStatusChanged(WifiDisplayStatus wifiDisplayStatus) {
+    private void handleWfdStatusChanged(WifiDisplayStatus wifiDisplayStatus) {
         boolean z = wifiDisplayStatus != null && wifiDisplayStatus.getFeatureState() == 3;
         Log.d("@M_WfdSinkExt", "handleWfdStatusChanged bStateOn: " + z);
         if (z) {

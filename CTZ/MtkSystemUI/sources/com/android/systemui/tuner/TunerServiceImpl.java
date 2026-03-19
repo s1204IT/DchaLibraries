@@ -153,7 +153,7 @@ public class TunerServiceImpl extends TunerService {
         }
     }
 
-    public void reloadSetting(Uri uri) {
+    private void reloadSetting(Uri uri) {
         String str = this.mListeningUris.get(uri);
         Set<TunerService.Tunable> set = this.mTunableLookup.get(str);
         if (set == null) {
@@ -166,7 +166,7 @@ public class TunerServiceImpl extends TunerService {
         }
     }
 
-    public void reloadAll() {
+    private void reloadAll() {
         for (String str : this.mTunableLookup.keySet()) {
             String stringForUser = Settings.Secure.getStringForUser(this.mContentResolver, str, this.mCurrentUser);
             Iterator<TunerService.Tunable> it = this.mTunableLookup.get(str).iterator();

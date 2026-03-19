@@ -12,37 +12,22 @@ import java.util.List;
 
 class MediaBrowserServiceCompatApi21 {
 
-    static class BrowserRoot {
-        final Bundle mExtras;
-        final String mRootId;
+    public interface ServiceCompatProxy {
+        BrowserRoot onGetRoot(String str, int i, Bundle bundle);
 
-        BrowserRoot(String str, Bundle bundle) {
-            this.mRootId = str;
-            this.mExtras = bundle;
-        }
+        void onLoadChildren(String str, ResultWrapper<List<Parcel>> resultWrapper);
     }
 
-    static class MediaBrowserServiceAdaptor extends MediaBrowserService {
-        final ServiceCompatProxy mServiceProxy;
+    public static Object createService(Context context, ServiceCompatProxy serviceProxy) {
+        return new MediaBrowserServiceAdaptor(context, serviceProxy);
+    }
 
-        MediaBrowserServiceAdaptor(Context context, ServiceCompatProxy serviceCompatProxy) {
-            attachBaseContext(context);
-            this.mServiceProxy = serviceCompatProxy;
-        }
+    public static void onCreate(Object serviceObj) {
+        ((MediaBrowserService) serviceObj).onCreate();
+    }
 
-        @Override
-        public MediaBrowserService.BrowserRoot onGetRoot(String str, int i, Bundle bundle) {
-            BrowserRoot browserRootOnGetRoot = this.mServiceProxy.onGetRoot(str, i, bundle == null ? null : new Bundle(bundle));
-            if (browserRootOnGetRoot == null) {
-                return null;
-            }
-            return new MediaBrowserService.BrowserRoot(browserRootOnGetRoot.mRootId, browserRootOnGetRoot.mExtras);
-        }
-
-        @Override
-        public void onLoadChildren(String str, MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result) {
-            this.mServiceProxy.onLoadChildren(str, new ResultWrapper<>(result));
-        }
+    public static IBinder onBind(Object serviceObj, Intent intent) {
+        return ((MediaBrowserService) serviceObj).onBind(intent);
     }
 
     static class ResultWrapper<T> {
@@ -52,50 +37,64 @@ class MediaBrowserServiceCompatApi21 {
             this.mResultObj = result;
         }
 
-        List<MediaBrowser.MediaItem> parcelListToItemList(List<Parcel> list) {
-            if (list == null) {
+        public void sendResult(T t) {
+            if (t instanceof List) {
+                this.mResultObj.sendResult(parcelListToItemList((List) t));
+            } else {
+                if (t instanceof Parcel) {
+                    t.setDataPosition(0);
+                    this.mResultObj.sendResult(MediaBrowser.MediaItem.CREATOR.createFromParcel(t));
+                    t.recycle();
+                    return;
+                }
+                this.mResultObj.sendResult(null);
+            }
+        }
+
+        List<MediaBrowser.MediaItem> parcelListToItemList(List<Parcel> parcelList) {
+            if (parcelList == null) {
                 return null;
             }
             ArrayList arrayList = new ArrayList();
-            for (Parcel parcel : list) {
+            for (Parcel parcel : parcelList) {
                 parcel.setDataPosition(0);
                 arrayList.add(MediaBrowser.MediaItem.CREATOR.createFromParcel(parcel));
                 parcel.recycle();
             }
             return arrayList;
         }
+    }
 
-        public void sendResult(T t) {
-            if (t instanceof List) {
-                this.mResultObj.sendResult(parcelListToItemList((List) t));
-                return;
-            }
-            if (!(t instanceof Parcel)) {
-                this.mResultObj.sendResult(null);
-                return;
-            }
-            Parcel parcel = (Parcel) t;
-            parcel.setDataPosition(0);
-            this.mResultObj.sendResult(MediaBrowser.MediaItem.CREATOR.createFromParcel(parcel));
-            parcel.recycle();
+    static class BrowserRoot {
+        final Bundle mExtras;
+        final String mRootId;
+
+        BrowserRoot(String rootId, Bundle extras) {
+            this.mRootId = rootId;
+            this.mExtras = extras;
         }
     }
 
-    public interface ServiceCompatProxy {
-        BrowserRoot onGetRoot(String str, int i, Bundle bundle);
+    static class MediaBrowserServiceAdaptor extends MediaBrowserService {
+        final ServiceCompatProxy mServiceProxy;
 
-        void onLoadChildren(String str, ResultWrapper<List<Parcel>> resultWrapper);
-    }
+        MediaBrowserServiceAdaptor(Context context, ServiceCompatProxy serviceWrapper) {
+            attachBaseContext(context);
+            this.mServiceProxy = serviceWrapper;
+        }
 
-    public static Object createService(Context context, ServiceCompatProxy serviceCompatProxy) {
-        return new MediaBrowserServiceAdaptor(context, serviceCompatProxy);
-    }
+        @Override
+        public MediaBrowserService.BrowserRoot onGetRoot(String clientPackageName, int clientUid, Bundle rootHints) {
+            BrowserRoot browserRoot = this.mServiceProxy.onGetRoot(clientPackageName, clientUid, rootHints == null ? null : new Bundle(rootHints));
+            if (browserRoot == null) {
+                return null;
+            }
+            return new MediaBrowserService.BrowserRoot(browserRoot.mRootId, browserRoot.mExtras);
+        }
 
-    public static IBinder onBind(Object obj, Intent intent) {
-        return ((MediaBrowserService) obj).onBind(intent);
-    }
-
-    public static void onCreate(Object obj) {
-        ((MediaBrowserService) obj).onCreate();
+        @Override
+        public void onLoadChildren(String parentId, MediaBrowserService.Result<List<MediaBrowser.MediaItem>> result) {
+            this.mServiceProxy.onLoadChildren(parentId, new ResultWrapper<>(result));
+        }
     }
 }

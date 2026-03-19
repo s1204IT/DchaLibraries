@@ -95,7 +95,7 @@ class TooltipCompatHandler implements View.OnAttachStateChangeListener, View.OnH
         hide();
     }
 
-    public void show(boolean fromTouch) {
+    private void show(boolean fromTouch) {
         long timeout;
         if (!ViewCompat.isAttachedToWindow(this.mAnchor)) {
             return;
@@ -120,7 +120,7 @@ class TooltipCompatHandler implements View.OnAttachStateChangeListener, View.OnH
         this.mAnchor.postDelayed(this.mHideRunnable, timeout);
     }
 
-    public void hide() {
+    private void hide() {
         if (sActiveHandler == this) {
             sActiveHandler = null;
             if (this.mPopup != null) {

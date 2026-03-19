@@ -10,19 +10,13 @@ public class FirmwareUpdateActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        setContentView(2130903040);
-        this.FirmUpButton = (Button) findViewById(2131099649);
-        this.FirmUpButton.setOnClickListener(new View.OnClickListener(this) {
-            final FirmwareUpdateActivity this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        setContentView(R.layout.main);
+        this.FirmUpButton = (Button) findViewById(R.id.button1);
+        this.FirmUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                this.this$0.UpdateCancel = false;
-                this.this$0.startprogress();
+                FirmwareUpdateActivity.this.UpdateCancel = false;
+                FirmwareUpdateActivity.this.startprogress();
             }
         });
     }

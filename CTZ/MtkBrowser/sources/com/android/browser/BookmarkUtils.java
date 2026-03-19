@@ -29,99 +29,25 @@ import com.android.browser.provider.BrowserContract;
 
 public class BookmarkUtils {
 
-    class AnonymousClass1 implements DialogInterface.OnClickListener {
-        final Context val$context;
-        final long val$id;
-        final Message val$msg;
-
-        AnonymousClass1(Message message, long j, Context context) {
-            this.val$msg = message;
-            this.val$id = j;
-            this.val$context = context;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-            if (this.val$msg != null) {
-                this.val$msg.sendToTarget();
-            }
-            new Thread(new Runnable(this) {
-                final AnonymousClass1 this$0;
-
-                {
-                    this.this$0 = this;
-                }
-
-                @Override
-                public void run() {
-                    this.this$0.val$context.getContentResolver().delete(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, this.this$0.val$id), null, null);
-                }
-            }).start();
-        }
-    }
-
-    class AnonymousClass2 implements DialogInterface.OnClickListener {
-        final Context val$context;
-        final long val$id;
-        final Message val$msg;
-
-        AnonymousClass2(Message message, long j, Context context) {
-            this.val$msg = message;
-            this.val$id = j;
-            this.val$context = context;
-        }
-
-        @Override
-        public void onClick(DialogInterface dialogInterface, int i) {
-            if (this.val$msg != null) {
-                this.val$msg.sendToTarget();
-            }
-            new Thread(new Runnable(this) {
-                final AnonymousClass2 this$0;
-
-                {
-                    this.this$0 = this;
-                }
-
-                private void deleteBookmarkById(long j) {
-                    this.this$0.val$context.getContentResolver().delete(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, j), null, null);
-                }
-
-                private void deleteFoldBookmarks(long j) {
-                    Cursor cursorQuery = this.this$0.val$context.getContentResolver().query(BookmarkUtils.getBookmarksUri(this.this$0.val$context), new String[]{"_id"}, "parent = ? AND deleted = ?", new String[]{j + "", "0"}, null);
-                    deleteBookmarkById(j);
-                    while (cursorQuery.moveToNext()) {
-                        deleteFoldBookmarks(cursorQuery.getInt(0));
-                    }
-                    cursorQuery.close();
-                }
-
-                @Override
-                public void run() {
-                    deleteFoldBookmarks(this.this$0.val$id);
-                }
-            }).start();
-        }
-    }
-
     enum BookmarkIconType {
         ICON_INSTALLABLE_WEB_APP,
         ICON_HOME_SHORTCUT,
         ICON_WIDGET
     }
 
-    static Intent createAddToHomeIntent(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
-        Intent intent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
-        intent.putExtra("android.intent.extra.shortcut.INTENT", createShortcutIntent(str));
-        intent.putExtra("android.intent.extra.shortcut.NAME", str2);
-        intent.putExtra("android.intent.extra.shortcut.ICON", createIcon(context, bitmap, bitmap2, BookmarkIconType.ICON_HOME_SHORTCUT));
-        intent.putExtra("duplicate", false);
-        return intent;
-    }
-
     static Bitmap createIcon(Context context, Bitmap bitmap, Bitmap bitmap2, BookmarkIconType bookmarkIconType) {
         ActivityManager activityManager = (ActivityManager) context.getSystemService("activity");
         return createIcon(context, bitmap, bitmap2, bookmarkIconType, activityManager.getLauncherLargeIconSize(), activityManager.getLauncherLargeIconDensity());
+    }
+
+    static Drawable createListFaviconBackground(Context context) {
+        PaintDrawable paintDrawable = new PaintDrawable();
+        Resources resources = context.getResources();
+        int dimensionPixelSize = resources.getDimensionPixelSize(R.dimen.list_favicon_padding);
+        paintDrawable.setPadding(dimensionPixelSize, dimensionPixelSize, dimensionPixelSize, dimensionPixelSize);
+        paintDrawable.getPaint().setColor(context.getResources().getColor(R.color.bookmarkListFaviconBackground));
+        paintDrawable.setCornerRadius(resources.getDimension(R.dimen.list_favicon_corner_radius));
+        return paintDrawable;
     }
 
     private static Bitmap createIcon(Context context, Bitmap bitmap, Bitmap bitmap2, BookmarkIconType bookmarkIconType, int i, int i2) {
@@ -143,14 +69,22 @@ public class BookmarkUtils {
         return bitmapCreateBitmap;
     }
 
-    static Drawable createListFaviconBackground(Context context) {
-        PaintDrawable paintDrawable = new PaintDrawable();
-        Resources resources = context.getResources();
-        int dimensionPixelSize = resources.getDimensionPixelSize(2131427359);
-        paintDrawable.setPadding(dimensionPixelSize, dimensionPixelSize, dimensionPixelSize, dimensionPixelSize);
-        paintDrawable.getPaint().setColor(context.getResources().getColor(2131361799));
-        paintDrawable.setCornerRadius(resources.getDimension(2131427360));
-        return paintDrawable;
+    static Intent createAddToHomeIntent(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
+        Intent intent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        intent.putExtra("android.intent.extra.shortcut.INTENT", createShortcutIntent(str));
+        intent.putExtra("android.intent.extra.shortcut.NAME", str2);
+        intent.putExtra("android.intent.extra.shortcut.ICON", createIcon(context, bitmap, bitmap2, BookmarkIconType.ICON_HOME_SHORTCUT));
+        intent.putExtra("duplicate", false);
+        return intent;
+    }
+
+    static void createShortcutToHome(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
+        ShortcutManager shortcutManager = (ShortcutManager) context.getSystemService(ShortcutManager.class);
+        if (shortcutManager.isRequestPinShortcutSupported()) {
+            Log.d("TestShortcut", "isRequestPinShortcutSupported true." + shortcutManager.requestPinShortcut(new ShortcutInfo.Builder(context, "bookmark" + str.hashCode()).setShortLabel(str2).setIcon(Icon.createWithBitmap(createIcon(context, bitmap, bitmap2, BookmarkIconType.ICON_HOME_SHORTCUT))).setIntent(createShortcutIntent(str)).build(), null));
+            return;
+        }
+        Log.d("TestShortcut", "isRequestPinShortcutSupported false.");
     }
 
     static Intent createShortcutIntent(String str) {
@@ -159,45 +93,22 @@ public class BookmarkUtils {
         return intent;
     }
 
-    static void createShortcutToHome(Context context, String str, String str2, Bitmap bitmap, Bitmap bitmap2) {
-        ShortcutManager shortcutManager = (ShortcutManager) context.getSystemService(ShortcutManager.class);
-        if (!shortcutManager.isRequestPinShortcutSupported()) {
-            Log.d("TestShortcut", "isRequestPinShortcutSupported false.");
-            return;
+    private static Bitmap getIconBackground(Context context, BookmarkIconType bookmarkIconType, int i) {
+        if (bookmarkIconType == BookmarkIconType.ICON_HOME_SHORTCUT) {
+            ?? drawableForDensity = context.getResources().getDrawableForDensity(R.mipmap.ic_launcher_shortcut_browser_bookmark, i);
+            if (drawableForDensity instanceof BitmapDrawable) {
+                return drawableForDensity.getBitmap();
+            }
+            return null;
         }
-        Log.d("TestShortcut", "isRequestPinShortcutSupported true." + shortcutManager.requestPinShortcut(new ShortcutInfo.Builder(context, "bookmark" + str.hashCode()).setShortLabel(str2).setIcon(Icon.createWithBitmap(createIcon(context, bitmap, bitmap2, BookmarkIconType.ICON_HOME_SHORTCUT))).setIntent(createShortcutIntent(str)).build(), null));
-    }
-
-    static void displayRemoveBookmarkDialog(long j, String str, Context context, Message message) {
-        new AlertDialog.Builder(context).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(context.getString(2131493021, str)).setPositiveButton(2131492964, new AnonymousClass1(message, j, context)).setNegativeButton(2131492963, (DialogInterface.OnClickListener) null).show();
-    }
-
-    static void displayRemoveFolderDialog(long j, String str, Context context, Message message) {
-        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert).setMessage(context.getString(2131492865, str)).setPositiveButton(2131492964, new AnonymousClass2(message, j, context)).setNegativeButton(2131492963, (DialogInterface.OnClickListener) null).show();
-    }
-
-    private static void drawFaviconToCanvas(Context context, Bitmap bitmap, Canvas canvas, Rect rect, BookmarkIconType bookmarkIconType) {
-        Paint paint = new Paint(3);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        if (bookmarkIconType == BookmarkIconType.ICON_WIDGET) {
-            paint.setColor(context.getResources().getColor(2131361798));
-        } else {
-            paint.setColor(-1);
+        if (bookmarkIconType == BookmarkIconType.ICON_INSTALLABLE_WEB_APP) {
+            ?? drawableForDensity2 = context.getResources().getDrawableForDensity(R.mipmap.ic_launcher_browser, i);
+            if (drawableForDensity2 instanceof BitmapDrawable) {
+                return drawableForDensity2.getBitmap();
+            }
+            return null;
         }
-        int dimensionPixelSize = context.getResources().getDimensionPixelSize(2131427341);
-        int width = bookmarkIconType == BookmarkIconType.ICON_WIDGET ? canvas.getWidth() : context.getResources().getDimensionPixelSize(2131427342);
-        float f = (width - dimensionPixelSize) / 2;
-        float f2 = width / 2;
-        float fExactCenterX = rect.exactCenterX() - f2;
-        float fExactCenterY = rect.exactCenterY() - f2;
-        if (bookmarkIconType != BookmarkIconType.ICON_WIDGET) {
-            fExactCenterY -= f;
-        }
-        float f3 = width;
-        RectF rectF = new RectF(fExactCenterX, fExactCenterY, fExactCenterX + f3, f3 + fExactCenterY);
-        canvas.drawRoundRect(rectF, 3.0f, 3.0f, paint);
-        rectF.inset(f, f);
-        canvas.drawBitmap(bitmap, (Rect) null, rectF, (Paint) null);
+        return null;
     }
 
     private static void drawTouchIconToCanvas(Bitmap bitmap, Canvas canvas, Rect rect) {
@@ -214,22 +125,83 @@ public class BookmarkUtils {
         canvas.drawPath(path, paint);
     }
 
+    private static void drawFaviconToCanvas(Context context, Bitmap bitmap, Canvas canvas, Rect rect, BookmarkIconType bookmarkIconType) {
+        int dimensionPixelSize;
+        Paint paint = new Paint(3);
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        if (bookmarkIconType == BookmarkIconType.ICON_WIDGET) {
+            paint.setColor(context.getResources().getColor(R.color.bookmarkWidgetFaviconBackground));
+        } else {
+            paint.setColor(-1);
+        }
+        int dimensionPixelSize2 = context.getResources().getDimensionPixelSize(R.dimen.favicon_size);
+        if (bookmarkIconType == BookmarkIconType.ICON_WIDGET) {
+            dimensionPixelSize = canvas.getWidth();
+        } else {
+            dimensionPixelSize = context.getResources().getDimensionPixelSize(R.dimen.favicon_padded_size);
+        }
+        float f = (dimensionPixelSize - dimensionPixelSize2) / 2;
+        float f2 = dimensionPixelSize / 2;
+        float fExactCenterX = rect.exactCenterX() - f2;
+        float fExactCenterY = rect.exactCenterY() - f2;
+        if (bookmarkIconType != BookmarkIconType.ICON_WIDGET) {
+            fExactCenterY -= f;
+        }
+        float f3 = dimensionPixelSize;
+        RectF rectF = new RectF(fExactCenterX, fExactCenterY, fExactCenterX + f3, f3 + fExactCenterY);
+        canvas.drawRoundRect(rectF, 3.0f, 3.0f, paint);
+        rectF.inset(f, f);
+        canvas.drawBitmap(bitmap, (Rect) null, rectF, (Paint) null);
+    }
+
     static Uri getBookmarksUri(Context context) {
         return BrowserContract.Bookmarks.CONTENT_URI;
     }
 
-    private static Bitmap getIconBackground(Context context, BookmarkIconType bookmarkIconType, int i) {
-        if (bookmarkIconType == BookmarkIconType.ICON_HOME_SHORTCUT) {
-            Drawable drawableForDensity = context.getResources().getDrawableForDensity(2130903041, i);
-            if (drawableForDensity instanceof BitmapDrawable) {
-                return ((BitmapDrawable) drawableForDensity).getBitmap();
+    static void displayRemoveBookmarkDialog(final long j, String str, final Context context, final Message message) {
+        new AlertDialog.Builder(context).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(context.getString(R.string.delete_bookmark_warning, str)).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (message != null) {
+                    message.sendToTarget();
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        context.getContentResolver().delete(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, j), null, null);
+                    }
+                }).start();
             }
-        } else if (bookmarkIconType == BookmarkIconType.ICON_INSTALLABLE_WEB_APP) {
-            Drawable drawableForDensity2 = context.getResources().getDrawableForDensity(2130903040, i);
-            if (drawableForDensity2 instanceof BitmapDrawable) {
-                return ((BitmapDrawable) drawableForDensity2).getBitmap();
+        }).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).show();
+    }
+
+    static void displayRemoveFolderDialog(final long j, String str, final Context context, final Message message) {
+        new AlertDialog.Builder(context).setIcon(android.R.drawable.ic_dialog_alert).setMessage(context.getString(R.string.delete_folder_warning, str)).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (message != null) {
+                    message.sendToTarget();
+                }
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        deleteFoldBookmarks(j);
+                    }
+
+                    private void deleteFoldBookmarks(long j2) {
+                        Cursor cursorQuery = context.getContentResolver().query(BookmarkUtils.getBookmarksUri(context), new String[]{"_id"}, "parent = ? AND deleted = ?", new String[]{j2 + "", "0"}, null);
+                        deleteBookmarkById(j2);
+                        while (cursorQuery.moveToNext()) {
+                            deleteFoldBookmarks(cursorQuery.getInt(0));
+                        }
+                        cursorQuery.close();
+                    }
+
+                    private void deleteBookmarkById(long j2) {
+                        context.getContentResolver().delete(ContentUris.withAppendedId(BrowserContract.Bookmarks.CONTENT_URI, j2), null, null);
+                    }
+                }).start();
             }
-        }
-        return null;
+        }).setNegativeButton(R.string.cancel, (DialogInterface.OnClickListener) null).show();
     }
 }

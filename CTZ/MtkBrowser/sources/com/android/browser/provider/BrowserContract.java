@@ -10,15 +10,6 @@ public class BrowserContract {
         public static final Uri CONTENT_URI = BrowserContract.AUTHORITY_URI.buildUpon().appendPath("accounts").build();
     }
 
-    public static final class Bookmarks {
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(BrowserContract.AUTHORITY_URI, "bookmarks");
-        public static final Uri CONTENT_URI_DEFAULT_FOLDER = Uri.withAppendedPath(CONTENT_URI, "folder");
-
-        public static final Uri buildFolderUri(long j) {
-            return ContentUris.withAppendedId(CONTENT_URI_DEFAULT_FOLDER, j);
-        }
-    }
-
     public static final class Combined {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BrowserContract.AUTHORITY_URI, "combined");
     }
@@ -33,5 +24,14 @@ public class BrowserContract {
 
     public static final class Searches {
         public static final Uri CONTENT_URI = Uri.withAppendedPath(BrowserContract.AUTHORITY_URI, "searches");
+    }
+
+    public static final class Bookmarks {
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BrowserContract.AUTHORITY_URI, "bookmarks");
+        public static final Uri CONTENT_URI_DEFAULT_FOLDER = Uri.withAppendedPath(CONTENT_URI, "folder");
+
+        public static final Uri buildFolderUri(long j) {
+            return ContentUris.withAppendedId(CONTENT_URI_DEFAULT_FOLDER, j);
+        }
     }
 }

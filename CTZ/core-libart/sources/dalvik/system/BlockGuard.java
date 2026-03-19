@@ -1,0 +1,107 @@
+package dalvik.system;
+
+public final class BlockGuard {
+    public static final int DISALLOW_DISK_READ = 2;
+    public static final int DISALLOW_DISK_WRITE = 1;
+    public static final int DISALLOW_NETWORK = 4;
+    public static final int PASS_RESTRICTIONS_VIA_RPC = 8;
+    public static final int PENALTY_DEATH = 64;
+    public static final int PENALTY_DIALOG = 32;
+    public static final int PENALTY_LOG = 16;
+    public static final Policy LAX_POLICY = new Policy() {
+        @Override
+        public void onWriteToDisk() {
+        }
+
+        @Override
+        public void onReadFromDisk() {
+        }
+
+        @Override
+        public void onNetwork() {
+        }
+
+        @Override
+        public void onUnbufferedIO() {
+        }
+
+        @Override
+        public int getPolicyMask() {
+            return 0;
+        }
+    };
+    private static ThreadLocal<Policy> threadPolicy = new ThreadLocal<Policy>() {
+        @Override
+        protected Policy initialValue() {
+            return BlockGuard.LAX_POLICY;
+        }
+    };
+
+    public interface Policy {
+        int getPolicyMask();
+
+        void onNetwork();
+
+        void onReadFromDisk();
+
+        void onUnbufferedIO();
+
+        void onWriteToDisk();
+    }
+
+    public static class BlockGuardPolicyException extends RuntimeException {
+        private final String mMessage;
+        private final int mPolicyState;
+        private final int mPolicyViolated;
+
+        public BlockGuardPolicyException(int i, int i2) {
+            this(i, i2, null);
+        }
+
+        public BlockGuardPolicyException(int i, int i2, String str) {
+            this.mPolicyState = i;
+            this.mPolicyViolated = i2;
+            this.mMessage = str;
+            fillInStackTrace();
+        }
+
+        public int getPolicy() {
+            return this.mPolicyState;
+        }
+
+        public int getPolicyViolation() {
+            return this.mPolicyViolated;
+        }
+
+        @Override
+        public String getMessage() {
+            String str;
+            StringBuilder sb = new StringBuilder();
+            sb.append("policy=");
+            sb.append(this.mPolicyState);
+            sb.append(" violation=");
+            sb.append(this.mPolicyViolated);
+            if (this.mMessage == null) {
+                str = "";
+            } else {
+                str = " msg=" + this.mMessage;
+            }
+            sb.append(str);
+            return sb.toString();
+        }
+    }
+
+    public static Policy getThreadPolicy() {
+        return threadPolicy.get();
+    }
+
+    public static void setThreadPolicy(Policy policy) {
+        if (policy == null) {
+            throw new NullPointerException("policy == null");
+        }
+        threadPolicy.set(policy);
+    }
+
+    private BlockGuard() {
+    }
+}

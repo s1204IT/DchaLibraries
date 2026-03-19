@@ -7,13 +7,6 @@ final class ReverseNaturalOrdering extends Ordering<Comparable> implements Seria
     static final ReverseNaturalOrdering INSTANCE = new ReverseNaturalOrdering();
     private static final long serialVersionUID = 0;
 
-    private ReverseNaturalOrdering() {
-    }
-
-    private Object readResolve() {
-        return INSTANCE;
-    }
-
     @Override
     public int compare(Comparable comparable, Comparable comparable2) {
         Preconditions.checkNotNull(comparable);
@@ -28,7 +21,14 @@ final class ReverseNaturalOrdering extends Ordering<Comparable> implements Seria
         return Ordering.natural();
     }
 
+    private Object readResolve() {
+        return INSTANCE;
+    }
+
     public String toString() {
         return "Ordering.natural().reverse()";
+    }
+
+    private ReverseNaturalOrdering() {
     }
 }

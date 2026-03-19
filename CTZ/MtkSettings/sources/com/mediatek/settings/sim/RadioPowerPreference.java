@@ -103,7 +103,7 @@ public class RadioPowerPreference extends Preference {
         setRadioOn(z4);
     }
 
-    public void logInEng(String str) {
+    private void logInEng(String str) {
         if (ENG_LOAD) {
             Log.d("RadioPowerPreference", str);
         }

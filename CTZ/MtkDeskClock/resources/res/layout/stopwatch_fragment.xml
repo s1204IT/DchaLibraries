@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false">
+    <android.support.percent.PercentFrameLayout
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.android.deskclock.TimerCircleFrameLayout
+            android:layout_gravity="center"
+            android:id="@+id/stopwatch_time_wrapper"
+            app:layout_aspectRatio="100%"
+            app:layout_heightPercent="@fraction/timer_circle_height_percent"
+            app:layout_widthPercent="@fraction/timer_circle_width_percent">
+            <include layout="@layout/stopwatch_time"/>
+            <com.android.deskclock.stopwatch.StopwatchCircleView
+                android:id="@+id/stopwatch_circle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.android.deskclock.TimerCircleFrameLayout>
+    </android.support.percent.PercentFrameLayout>
+    <android.support.v7.widget.RecyclerView
+        android:layout_gravity="center"
+        android:id="@+id/laps_list"
+        android:paddingBottom="@dimen/fab_height"
+        android:clipToPadding="false"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+</LinearLayout>

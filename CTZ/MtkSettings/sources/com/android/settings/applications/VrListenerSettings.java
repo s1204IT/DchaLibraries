@@ -22,7 +22,7 @@ public class VrListenerSettings extends ManagedServiceSettings {
     }
 
     @Override
-    public boolean setEnabled(ComponentName componentName, String str, boolean z) {
+    protected boolean setEnabled(ComponentName componentName, String str, boolean z) {
         logSpecialPermissionChange(z, componentName.getPackageName());
         return super.setEnabled(componentName, str, z);
     }

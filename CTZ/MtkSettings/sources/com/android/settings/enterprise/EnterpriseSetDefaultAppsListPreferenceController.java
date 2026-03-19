@@ -89,7 +89,7 @@ public class EnterpriseSetDefaultAppsListPreferenceController extends AbstractPr
         return null;
     }
 
-    public void updateUi() {
+    private void updateUi() {
         Context context = this.mParent.getPreferenceManager().getContext();
         PreferenceScreen preferenceScreen = this.mParent.getPreferenceScreen();
         if (preferenceScreen == null) {

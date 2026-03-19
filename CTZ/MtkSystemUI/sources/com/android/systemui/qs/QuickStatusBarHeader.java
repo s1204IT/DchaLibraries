@@ -127,7 +127,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements View.OnClick
         this.mDateView = (DateView) findViewById(R.id.date);
     }
 
-    public void updateStatusText() {
+    private void updateStatusText() {
         if (updateRingerStatus() || updateAlarmStatus()) {
             this.mStatusSeparator.setVisibility(((this.mNextAlarmTextView.getVisibility() == 0) && (this.mRingerModeTextView.getVisibility() == 0)) ? 0 : 8);
             updateTooltipShow();
@@ -376,7 +376,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements View.OnClick
         }
     }
 
-    public void hideLongPressTooltip(final boolean z) {
+    private void hideLongPressTooltip(final boolean z) {
         this.mLongPressTooltipView.animate().cancel();
         if (this.mLongPressTooltipView.getVisibility() == 0 && this.mLongPressTooltipView.getAlpha() != 0.0f) {
             this.mHandler.removeCallbacks(this.mAutoFadeOutTooltipRunnable);
@@ -397,7 +397,7 @@ public class QuickStatusBarHeader extends RelativeLayout implements View.OnClick
         }
     }
 
-    public void showStatus() {
+    private void showStatus() {
         this.mStatusContainer.setAlpha(0.0f);
         this.mStatusContainer.setVisibility(0);
         this.mStatusContainer.animate().alpha(1.0f).setDuration(300L).setListener(null).start();

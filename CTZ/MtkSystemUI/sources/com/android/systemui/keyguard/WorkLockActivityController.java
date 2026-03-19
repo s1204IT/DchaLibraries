@@ -38,7 +38,7 @@ public class WorkLockActivityController {
         activityManagerWrapper.registerTaskStackListener(this.mLockListener);
     }
 
-    public void startWorkChallengeInTask(int i, int i2) {
+    private void startWorkChallengeInTask(int i, int i2) {
         ActivityManager.TaskDescription taskDescription;
         try {
             taskDescription = this.mIam.getTaskDescription(i);

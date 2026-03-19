@@ -75,7 +75,7 @@ public class SeekbarListItem extends ListItem<ViewHolder> {
     }
 
     @Override
-    public void onBind(ViewHolder viewHolder) {
+    protected void onBind(ViewHolder viewHolder) {
         hideSubViews(viewHolder);
         Iterator<ListItem.ViewBinder<ViewHolder>> it = this.mBinders.iterator();
         while (it.hasNext()) {

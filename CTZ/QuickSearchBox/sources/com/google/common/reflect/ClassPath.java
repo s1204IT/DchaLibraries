@@ -36,6 +36,39 @@ public final class ClassPath {
     };
     private static final Splitter CLASS_PATH_ATTRIBUTE_SEPARATOR = Splitter.on(" ").omitEmptyStrings();
 
+    public static class ResourceInfo {
+        final ClassLoader loader;
+        private final String resourceName;
+
+        static ResourceInfo of(String str, ClassLoader classLoader) {
+            if (str.endsWith(".class")) {
+                return new ClassInfo(str, classLoader);
+            }
+            return new ResourceInfo(str, classLoader);
+        }
+
+        ResourceInfo(String str, ClassLoader classLoader) {
+            this.resourceName = (String) Preconditions.checkNotNull(str);
+            this.loader = (ClassLoader) Preconditions.checkNotNull(classLoader);
+        }
+
+        public int hashCode() {
+            return this.resourceName.hashCode();
+        }
+
+        public boolean equals(Object obj) {
+            if (!(obj instanceof ResourceInfo)) {
+                return false;
+            }
+            ResourceInfo resourceInfo = (ResourceInfo) obj;
+            return this.resourceName.equals(resourceInfo.resourceName) && this.loader == resourceInfo.loader;
+        }
+
+        public String toString() {
+            return this.resourceName;
+        }
+    }
+
     public static final class ClassInfo extends ResourceInfo {
         private final String className;
 
@@ -50,34 +83,25 @@ public final class ClassPath {
         }
     }
 
-    public static class ResourceInfo {
-        final ClassLoader loader;
-        private final String resourceName;
-
-        ResourceInfo(String str, ClassLoader classLoader) {
-            this.resourceName = (String) Preconditions.checkNotNull(str);
-            this.loader = (ClassLoader) Preconditions.checkNotNull(classLoader);
+    static ImmutableMap<URI, ClassLoader> getClassPathEntries(ClassLoader classLoader) {
+        LinkedHashMap linkedHashMapNewLinkedHashMap = Maps.newLinkedHashMap();
+        ClassLoader parent = classLoader.getParent();
+        if (parent != null) {
+            linkedHashMapNewLinkedHashMap.putAll(getClassPathEntries(parent));
         }
-
-        static ResourceInfo of(String str, ClassLoader classLoader) {
-            return str.endsWith(".class") ? new ClassInfo(str, classLoader) : new ResourceInfo(str, classLoader);
-        }
-
-        public boolean equals(Object obj) {
-            if (!(obj instanceof ResourceInfo)) {
-                return false;
+        if (classLoader instanceof URLClassLoader) {
+            for (URL url : classLoader.getURLs()) {
+                try {
+                    URI uri = url.toURI();
+                    if (!linkedHashMapNewLinkedHashMap.containsKey(uri)) {
+                        linkedHashMapNewLinkedHashMap.put(uri, classLoader);
+                    }
+                } catch (URISyntaxException e) {
+                    throw new IllegalArgumentException(e);
+                }
             }
-            ResourceInfo resourceInfo = (ResourceInfo) obj;
-            return this.resourceName.equals(resourceInfo.resourceName) && this.loader == resourceInfo.loader;
         }
-
-        public int hashCode() {
-            return this.resourceName.hashCode();
-        }
-
-        public String toString() {
-            return this.resourceName;
-        }
+        return ImmutableMap.copyOf((Map) linkedHashMapNewLinkedHashMap);
     }
 
     static final class Scanner {
@@ -87,27 +111,21 @@ public final class ClassPath {
         Scanner() {
         }
 
-        static URI getClassPathEntry(File file, String str) throws URISyntaxException {
-            URI uri = new URI(str);
-            return uri.isAbsolute() ? uri : new File(file.getParentFile(), str.replace('/', File.separatorChar)).toURI();
+        void scan(URI uri, ClassLoader classLoader) throws IOException {
+            if (uri.getScheme().equals("file") && this.scannedUris.add(uri)) {
+                scanFrom(new File(uri), classLoader);
+            }
         }
 
-        static ImmutableSet<URI> getClassPathFromManifest(File file, Manifest manifest) {
-            if (manifest == null) {
-                return ImmutableSet.of();
+        void scanFrom(File file, ClassLoader classLoader) throws IOException {
+            if (!file.exists()) {
+                return;
             }
-            ImmutableSet.Builder builder = ImmutableSet.builder();
-            String value = manifest.getMainAttributes().getValue(Attributes.Name.CLASS_PATH.toString());
-            if (value != null) {
-                for (String str : ClassPath.CLASS_PATH_ATTRIBUTE_SEPARATOR.split(value)) {
-                    try {
-                        builder.add(getClassPathEntry(file, str));
-                    } catch (URISyntaxException e) {
-                        ClassPath.logger.warning("Invalid Class-Path entry: " + str);
-                    }
-                }
+            if (file.isDirectory()) {
+                scanDirectory(file, classLoader);
+            } else {
+                scanJar(file, classLoader);
             }
-            return builder.build();
         }
 
         private void scanDirectory(File file, ClassLoader classLoader) throws IOException {
@@ -153,55 +171,49 @@ public final class ClassPath {
                             this.resources.add(ResourceInfo.of(jarEntryNextElement.getName(), classLoader));
                         }
                     }
-                } finally {
                     try {
                         jarFile.close();
                     } catch (IOException e) {
                     }
+                } catch (Throwable th) {
+                    try {
+                        jarFile.close();
+                    } catch (IOException e2) {
+                    }
+                    throw th;
                 }
-            } catch (IOException e2) {
+            } catch (IOException e3) {
             }
         }
 
-        void scan(URI uri, ClassLoader classLoader) throws IOException {
-            if (uri.getScheme().equals("file") && this.scannedUris.add(uri)) {
-                scanFrom(new File(uri), classLoader);
+        static ImmutableSet<URI> getClassPathFromManifest(File file, Manifest manifest) {
+            if (manifest == null) {
+                return ImmutableSet.of();
             }
-        }
-
-        void scanFrom(File file, ClassLoader classLoader) throws IOException {
-            if (file.exists()) {
-                if (file.isDirectory()) {
-                    scanDirectory(file, classLoader);
-                } else {
-                    scanJar(file, classLoader);
+            ImmutableSet.Builder builder = ImmutableSet.builder();
+            String value = manifest.getMainAttributes().getValue(Attributes.Name.CLASS_PATH.toString());
+            if (value != null) {
+                for (String str : ClassPath.CLASS_PATH_ATTRIBUTE_SEPARATOR.split(value)) {
+                    try {
+                        builder.add(getClassPathEntry(file, str));
+                    } catch (URISyntaxException e) {
+                        ClassPath.logger.warning("Invalid Class-Path entry: " + str);
+                    }
                 }
             }
+            return builder.build();
+        }
+
+        static URI getClassPathEntry(File file, String str) throws URISyntaxException {
+            URI uri = new URI(str);
+            if (uri.isAbsolute()) {
+                return uri;
+            }
+            return new File(file.getParentFile(), str.replace('/', File.separatorChar)).toURI();
         }
     }
 
     static String getClassName(String str) {
         return str.substring(0, str.length() - ".class".length()).replace('/', '.');
-    }
-
-    static ImmutableMap<URI, ClassLoader> getClassPathEntries(ClassLoader classLoader) {
-        LinkedHashMap linkedHashMapNewLinkedHashMap = Maps.newLinkedHashMap();
-        ClassLoader parent = classLoader.getParent();
-        if (parent != null) {
-            linkedHashMapNewLinkedHashMap.putAll(getClassPathEntries(parent));
-        }
-        if (classLoader instanceof URLClassLoader) {
-            for (URL url : ((URLClassLoader) classLoader).getURLs()) {
-                try {
-                    URI uri = url.toURI();
-                    if (!linkedHashMapNewLinkedHashMap.containsKey(uri)) {
-                        linkedHashMapNewLinkedHashMap.put(uri, classLoader);
-                    }
-                } catch (URISyntaxException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }
-        }
-        return ImmutableMap.copyOf((Map) linkedHashMapNewLinkedHashMap);
     }
 }

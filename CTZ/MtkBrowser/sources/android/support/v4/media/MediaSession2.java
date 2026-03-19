@@ -7,6 +7,17 @@ import android.os.Bundle;
 public class MediaSession2 implements AutoCloseable {
     private final SupportLibraryImpl mImpl;
 
+    interface SupportLibraryImpl extends AutoCloseable {
+    }
+
+    @Override
+    public void close() {
+        try {
+            this.mImpl.close();
+        } catch (Exception e) {
+        }
+    }
+
     public static final class CommandButton {
         private SessionCommand2 mCommand;
         private String mDisplayName;
@@ -14,49 +25,12 @@ public class MediaSession2 implements AutoCloseable {
         private Bundle mExtras;
         private int mIconResId;
 
-        public static final class Builder {
-            private SessionCommand2 mCommand;
-            private String mDisplayName;
-            private boolean mEnabled;
-            private Bundle mExtras;
-            private int mIconResId;
-
-            public CommandButton build() {
-                return new CommandButton(this.mCommand, this.mIconResId, this.mDisplayName, this.mExtras, this.mEnabled);
-            }
-
-            public Builder setCommand(SessionCommand2 sessionCommand2) {
-                this.mCommand = sessionCommand2;
-                return this;
-            }
-
-            public Builder setDisplayName(String str) {
-                this.mDisplayName = str;
-                return this;
-            }
-
-            public Builder setEnabled(boolean z) {
-                this.mEnabled = z;
-                return this;
-            }
-
-            public Builder setExtras(Bundle bundle) {
-                this.mExtras = bundle;
-                return this;
-            }
-
-            public Builder setIconResId(int i) {
-                this.mIconResId = i;
-                return this;
-            }
-        }
-
-        private CommandButton(SessionCommand2 sessionCommand2, int i, String str, Bundle bundle, boolean z) {
-            this.mCommand = sessionCommand2;
-            this.mIconResId = i;
-            this.mDisplayName = str;
-            this.mExtras = bundle;
-            this.mEnabled = z;
+        private CommandButton(SessionCommand2 command, int iconResId, String displayName, Bundle extras, boolean enabled) {
+            this.mCommand = command;
+            this.mIconResId = iconResId;
+            this.mDisplayName = displayName;
+            this.mExtras = extras;
+            this.mEnabled = enabled;
         }
 
         public static CommandButton fromBundle(Bundle bundle) {
@@ -75,16 +49,42 @@ public class MediaSession2 implements AutoCloseable {
                 return null;
             }
         }
-    }
 
-    interface SupportLibraryImpl extends AutoCloseable {
-    }
+        public static final class Builder {
+            private SessionCommand2 mCommand;
+            private String mDisplayName;
+            private boolean mEnabled;
+            private Bundle mExtras;
+            private int mIconResId;
 
-    @Override
-    public void close() {
-        try {
-            this.mImpl.close();
-        } catch (Exception e) {
+            public Builder setCommand(SessionCommand2 command) {
+                this.mCommand = command;
+                return this;
+            }
+
+            public Builder setIconResId(int resId) {
+                this.mIconResId = resId;
+                return this;
+            }
+
+            public Builder setDisplayName(String displayName) {
+                this.mDisplayName = displayName;
+                return this;
+            }
+
+            public Builder setEnabled(boolean enabled) {
+                this.mEnabled = enabled;
+                return this;
+            }
+
+            public Builder setExtras(Bundle extras) {
+                this.mExtras = extras;
+                return this;
+            }
+
+            public CommandButton build() {
+                return new CommandButton(this.mCommand, this.mIconResId, this.mDisplayName, this.mExtras, this.mEnabled);
+            }
         }
     }
 }

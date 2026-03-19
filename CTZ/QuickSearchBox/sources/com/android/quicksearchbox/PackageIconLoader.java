@@ -26,63 +26,6 @@ public class PackageIconLoader implements IconLoader {
     private final String mPackageName;
     private final Handler mUiThread;
 
-    private class IconLaterTask extends CachedLater<Drawable> implements NamedTask {
-        private final Uri mUri;
-        final PackageIconLoader this$0;
-
-        public IconLaterTask(PackageIconLoader packageIconLoader, Uri uri) {
-            this.this$0 = packageIconLoader;
-            this.mUri = uri;
-        }
-
-        private Drawable getIcon() {
-            try {
-                return this.this$0.getDrawable(this.mUri);
-            } catch (Throwable th) {
-                Log.e("QSB.PackageIconLoader", "Failed to load icon " + this.mUri, th);
-                return null;
-            }
-        }
-
-        @Override
-        protected void create() {
-            this.this$0.mIconLoaderExecutor.execute(this);
-        }
-
-        @Override
-        public String getName() {
-            return this.this$0.mPackageName;
-        }
-
-        @Override
-        public void run() {
-            this.this$0.mUiThread.post(new Runnable(this, getIcon()) {
-                final IconLaterTask this$1;
-                final Drawable val$icon;
-
-                {
-                    this.this$1 = this;
-                    this.val$icon = drawable;
-                }
-
-                @Override
-                public void run() {
-                    this.this$1.store(this.val$icon);
-                }
-            });
-        }
-    }
-
-    private class OpenResourceIdResult {
-        public int id;
-        public Resources r;
-        final PackageIconLoader this$0;
-
-        private OpenResourceIdResult(PackageIconLoader packageIconLoader) {
-            this.this$0 = packageIconLoader;
-        }
-    }
-
     public PackageIconLoader(Context context, String str, Handler handler, NamedTaskExecutor namedTaskExecutor) {
         this.mContext = context;
         this.mPackageName = str;
@@ -94,6 +37,7 @@ public class PackageIconLoader implements IconLoader {
         if (this.mPackageContext == null) {
             try {
                 this.mPackageContext = this.mContext.createPackageContext(this.mPackageName, 4);
+                return true;
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e("QSB.PackageIconLoader", "Application not found " + this.mPackageName);
                 return false;
@@ -102,7 +46,44 @@ public class PackageIconLoader implements IconLoader {
         return true;
     }
 
-    public Drawable getDrawable(Uri uri) {
+    @Override
+    public NowOrLater<Drawable> getIcon(String str) {
+        NowOrLater<Drawable> iconLaterTask;
+        if (TextUtils.isEmpty(str) || "0".equals(str)) {
+            return new Now(null);
+        }
+        if (!ensurePackageContext()) {
+            return new Now(null);
+        }
+        try {
+            return new Now(this.mPackageContext.getResources().getDrawable(Integer.parseInt(str)));
+        } catch (Resources.NotFoundException e) {
+            Log.w("QSB.PackageIconLoader", "Icon resource not found: " + str);
+            return new Now(null);
+        } catch (NumberFormatException e2) {
+            Uri uri = Uri.parse(str);
+            if ("android.resource".equals(uri.getScheme())) {
+                iconLaterTask = new Now<>(getDrawable(uri));
+            } else {
+                iconLaterTask = new IconLaterTask(uri);
+            }
+            return iconLaterTask;
+        }
+    }
+
+    @Override
+    public Uri getIconUri(String str) {
+        if (TextUtils.isEmpty(str) || "0".equals(str) || !ensurePackageContext()) {
+            return null;
+        }
+        try {
+            return Util.getResourceUri(this.mPackageContext, Integer.parseInt(str));
+        } catch (NumberFormatException e) {
+            return Uri.parse(str);
+        }
+    }
+
+    private Drawable getDrawable(Uri uri) {
         try {
             if ("android.resource".equals(uri.getScheme())) {
                 OpenResourceIdResult resourceId = getResourceId(uri);
@@ -117,15 +98,13 @@ public class PackageIconLoader implements IconLoader {
                 throw new FileNotFoundException("Failed to open " + uri);
             }
             try {
-                Drawable drawableCreateFromStream = Drawable.createFromStream(inputStreamOpenInputStream, null);
+                return Drawable.createFromStream(inputStreamOpenInputStream, null);
+            } finally {
                 try {
                     inputStreamOpenInputStream.close();
-                    return drawableCreateFromStream;
                 } catch (IOException e2) {
                     Log.e("QSB.PackageIconLoader", "Error closing icon stream for " + uri, e2);
-                    return drawableCreateFromStream;
                 }
-            } finally {
             }
         } catch (FileNotFoundException e3) {
             Log.w("QSB.PackageIconLoader", "Icon not found: " + uri + ", " + e3.getMessage());
@@ -133,6 +112,14 @@ public class PackageIconLoader implements IconLoader {
         }
         Log.w("QSB.PackageIconLoader", "Icon not found: " + uri + ", " + e3.getMessage());
         return null;
+    }
+
+    private class OpenResourceIdResult {
+        public int id;
+        public Resources r;
+
+        private OpenResourceIdResult() {
+        }
     }
 
     private OpenResourceIdResult getResourceId(Uri uri) throws FileNotFoundException {
@@ -154,52 +141,58 @@ public class PackageIconLoader implements IconLoader {
                 } catch (NumberFormatException e) {
                     throw new FileNotFoundException("Single path segment is not a resource ID: " + uri);
                 }
-            } else {
-                if (size != 2) {
-                    throw new FileNotFoundException("More than two path segments: " + uri);
-                }
+            } else if (size == 2) {
                 identifier = resourcesForApplication.getIdentifier(pathSegments.get(1), pathSegments.get(0), authority);
+            } else {
+                throw new FileNotFoundException("More than two path segments: " + uri);
             }
-            if (identifier != 0) {
-                OpenResourceIdResult openResourceIdResult = new OpenResourceIdResult();
-                openResourceIdResult.r = resourcesForApplication;
-                openResourceIdResult.id = identifier;
-                return openResourceIdResult;
+            if (identifier == 0) {
+                throw new FileNotFoundException("No resource found for: " + uri);
             }
-            throw new FileNotFoundException("No resource found for: " + uri);
+            OpenResourceIdResult openResourceIdResult = new OpenResourceIdResult();
+            openResourceIdResult.r = resourcesForApplication;
+            openResourceIdResult.id = identifier;
+            return openResourceIdResult;
         } catch (PackageManager.NameNotFoundException e2) {
             throw new FileNotFoundException("Failed to get resources: " + e2);
         }
     }
 
-    @Override
-    public NowOrLater<Drawable> getIcon(String str) {
-        if (TextUtils.isEmpty(str) || "0".equals(str)) {
-            return new Now(null);
-        }
-        if (!ensurePackageContext()) {
-            return new Now(null);
-        }
-        try {
-            return new Now(this.mPackageContext.getResources().getDrawable(Integer.parseInt(str)));
-        } catch (Resources.NotFoundException e) {
-            Log.w("QSB.PackageIconLoader", "Icon resource not found: " + str);
-            return new Now(null);
-        } catch (NumberFormatException e2) {
-            Uri uri = Uri.parse(str);
-            return "android.resource".equals(uri.getScheme()) ? new Now(getDrawable(uri)) : new IconLaterTask(this, uri);
-        }
-    }
+    private class IconLaterTask extends CachedLater<Drawable> implements NamedTask {
+        private final Uri mUri;
 
-    @Override
-    public Uri getIconUri(String str) {
-        if (TextUtils.isEmpty(str) || "0".equals(str) || !ensurePackageContext()) {
-            return null;
+        public IconLaterTask(Uri uri) {
+            this.mUri = uri;
         }
-        try {
-            return Util.getResourceUri(this.mPackageContext, Integer.parseInt(str));
-        } catch (NumberFormatException e) {
-            return Uri.parse(str);
+
+        @Override
+        protected void create() {
+            PackageIconLoader.this.mIconLoaderExecutor.execute(this);
+        }
+
+        @Override
+        public void run() {
+            final Drawable icon = getIcon();
+            PackageIconLoader.this.mUiThread.post(new Runnable() {
+                @Override
+                public void run() {
+                    IconLaterTask.this.store(icon);
+                }
+            });
+        }
+
+        @Override
+        public String getName() {
+            return PackageIconLoader.this.mPackageName;
+        }
+
+        private Drawable getIcon() {
+            try {
+                return PackageIconLoader.this.getDrawable(this.mUri);
+            } catch (Throwable th) {
+                Log.e("QSB.PackageIconLoader", "Failed to load icon " + this.mUri, th);
+                return null;
+            }
         }
     }
 }

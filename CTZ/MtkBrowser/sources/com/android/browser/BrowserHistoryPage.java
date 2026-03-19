@@ -49,31 +49,175 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
     private ViewGroup mPrefsContainer;
     private View mRoot;
     private IBrowserHistoryExt mBrowserHistoryExt = null;
-    private AdapterView.OnItemClickListener mGroupItemClickListener = new AdapterView.OnItemClickListener(this) {
-        final BrowserHistoryPage this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private AdapterView.OnItemClickListener mGroupItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long j) {
-            this.this$0.mChildWrapper.setSelectedGroup(i);
-            this.this$0.mGroupList.setItemChecked(i, true);
+            BrowserHistoryPage.this.mChildWrapper.setSelectedGroup(i);
+            BrowserHistoryPage.this.mGroupList.setItemChecked(i, true);
         }
     };
-    private AdapterView.OnItemClickListener mChildItemClickListener = new AdapterView.OnItemClickListener(this) {
-        final BrowserHistoryPage this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private AdapterView.OnItemClickListener mChildItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long j) {
-            this.this$0.mCallback.openUrl(((HistoryItem) view).getUrl());
+            BrowserHistoryPage.this.mCallback.openUrl(((HistoryItem) view).getUrl());
         }
     };
+
+    interface HistoryQuery {
+        public static final String[] PROJECTION = {"_id", "date", "title", "url", "favicon", "visits", "bookmark"};
+    }
+
+    private void copy(CharSequence charSequence) {
+        ((ClipboardManager) getActivity().getSystemService("clipboard")).setText(charSequence);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Uri.Builder builderBuildUpon = BrowserContract.Combined.CONTENT_URI.buildUpon();
+        switch (i) {
+            case 1:
+                return new CursorLoader(getActivity(), builderBuildUpon.build(), HistoryQuery.PROJECTION, "visits > 0", null, "date DESC");
+            case 2:
+                return new CursorLoader(getActivity(), builderBuildUpon.appendQueryParameter("limit", this.mMostVisitsLimit).build(), HistoryQuery.PROJECTION, "visits > 0", null, "visits DESC");
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    void selectGroup(int i) {
+        this.mGroupItemClickListener.onItemClick(null, this.mAdapter.getGroupView(i, false, null, null), i, i);
+    }
+
+    void checkIfEmpty() {
+        if (this.mAdapter.mMostVisited != null && this.mAdapter.mHistoryCursor != null) {
+            boolean zIsTablet = BrowserActivity.isTablet(getActivity());
+            if (this.mAdapter.isEmpty()) {
+                if (zIsTablet) {
+                    this.mRoot.findViewById(R.id.tab_history).setVisibility(8);
+                } else {
+                    this.mRoot.findViewById(R.id.history).setVisibility(8);
+                }
+                this.mRoot.findViewById(android.R.id.empty).setVisibility(0);
+                return;
+            }
+            if (zIsTablet) {
+                this.mRoot.findViewById(R.id.tab_history).setVisibility(0);
+            } else {
+                this.mRoot.findViewById(R.id.history).setVisibility(0);
+            }
+            this.mRoot.findViewById(android.R.id.empty).setVisibility(8);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        switch (loader.getId()) {
+            case 1:
+                this.mAdapter.changeCursor(cursor);
+                if (!this.mAdapter.isEmpty() && this.mGroupList != null && this.mGroupList.getCheckedItemPosition() == -1) {
+                    selectGroup(0);
+                }
+                checkIfEmpty();
+                return;
+            case 2:
+                this.mAdapter.changeMostVisitedCursor(cursor);
+                checkIfEmpty();
+                return;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        setHasOptionsMenu(true);
+        this.mDisableNewWindow = getArguments().getBoolean("disable_new_window", false);
+        this.mMostVisitsLimit = Integer.toString(getResources().getInteger(R.integer.most_visits_limit));
+        this.mCallback = (CombinedBookmarksCallbacks) getActivity();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
+        this.mRoot = layoutInflater.inflate(R.layout.history, viewGroup, false);
+        this.mAdapter = new HistoryAdapter(getActivity());
+        ViewStub viewStub = (ViewStub) this.mRoot.findViewById(R.id.pref_stub);
+        if (viewStub != null) {
+            inflateTwoPane(viewStub);
+        } else {
+            inflateSinglePane();
+        }
+        getLoaderManager().restartLoader(1, null, this);
+        getLoaderManager().restartLoader(2, null, this);
+        return this.mRoot;
+    }
+
+    private void inflateSinglePane() {
+        this.mHistoryList = (ExpandableListView) this.mRoot.findViewById(R.id.history);
+        this.mHistoryList.setAdapter(this.mAdapter);
+        this.mHistoryList.setOnChildClickListener(this);
+        registerForContextMenu(this.mHistoryList);
+    }
+
+    private void inflateTwoPane(ViewStub viewStub) {
+        viewStub.setLayoutResource(R.layout.preference_list_content);
+        viewStub.inflate();
+        this.mGroupList = (ListView) this.mRoot.findViewById(android.R.id.list);
+        this.mPrefsContainer = (ViewGroup) this.mRoot.findViewById(R.id.prefs_frame);
+        this.mFragmentBreadCrumbs = (FragmentBreadCrumbs) this.mRoot.findViewById(android.R.id.title);
+        this.mFragmentBreadCrumbs.setMaxVisible(1);
+        this.mFragmentBreadCrumbs.setActivity(getActivity());
+        this.mPrefsContainer.setVisibility(0);
+        this.mGroupList.setAdapter((ListAdapter) new HistoryGroupWrapper(this.mAdapter));
+        this.mGroupList.setOnItemClickListener(this.mGroupItemClickListener);
+        this.mGroupList.setChoiceMode(1);
+        this.mChildWrapper = new HistoryChildWrapper(this.mAdapter);
+        this.mChildList = new ListView(getActivity());
+        this.mChildList.setAdapter((ListAdapter) this.mChildWrapper);
+        this.mChildList.setOnItemClickListener(this.mChildItemClickListener);
+        registerForContextMenu(this.mChildList);
+        ((ViewGroup) this.mRoot.findViewById(R.id.prefs)).addView(this.mChildList);
+    }
+
+    @Override
+    public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i2, long j) {
+        this.mCallback.openUrl(((HistoryItem) view).getUrl());
+        return true;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getLoaderManager().destroyLoader(1);
+        getLoaderManager().destroyLoader(2);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        super.onCreateOptionsMenu(menu, menuInflater);
+        this.mBrowserHistoryExt = Extensions.getHistoryPlugin(getActivity());
+        this.mBrowserHistoryExt.createHistoryPageOptionsMenu(menu, menuInflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        this.mBrowserHistoryExt = Extensions.getHistoryPlugin(getActivity());
+        if (this.mBrowserHistoryExt.historyPageOptionsMenuItemSelected(menuItem, getActivity())) {
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        this.mBrowserHistoryExt = Extensions.getHistoryPlugin(getActivity());
+        this.mBrowserHistoryExt.prepareHistoryPageOptionsMenuItem(menu, this.mAdapter == null, this.mAdapter.isEmpty());
+    }
 
     static class ClearHistoryTask extends Thread {
         ContentResolver mResolver;
@@ -89,20 +233,185 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         }
     }
 
+    View getTargetView(ContextMenu.ContextMenuInfo contextMenuInfo) {
+        if (contextMenuInfo instanceof AdapterView.AdapterContextMenuInfo) {
+            return ((AdapterView.AdapterContextMenuInfo) contextMenuInfo).targetView;
+        }
+        if (contextMenuInfo instanceof ExpandableListView.ExpandableListContextMenuInfo) {
+            return ((ExpandableListView.ExpandableListContextMenuInfo) contextMenuInfo).targetView;
+        }
+        return null;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+        ?? targetView = getTargetView(contextMenuInfo);
+        if (!(targetView instanceof HistoryItem)) {
+            return;
+        }
+        Activity activity = getActivity();
+        activity.getMenuInflater().inflate(R.menu.historycontext, contextMenu);
+        if (this.mContextHeader == null) {
+            this.mContextHeader = new HistoryItem(activity, false);
+            this.mContextHeader.setEnableScrolling(true);
+        } else if (this.mContextHeader.getParent() != null) {
+            ((ViewGroup) this.mContextHeader.getParent()).removeView(this.mContextHeader);
+        }
+        targetView.copyTo(this.mContextHeader);
+        contextMenu.setHeaderView(this.mContextHeader);
+        if (this.mDisableNewWindow) {
+            contextMenu.findItem(R.id.new_window_context_menu_id).setVisible(false);
+        }
+        if (targetView.isBookmark()) {
+            contextMenu.findItem(R.id.save_to_bookmarks_menu_id).setTitle(R.string.remove_from_bookmarks);
+        }
+        PackageManager packageManager = activity.getPackageManager();
+        Intent intent = new Intent("android.intent.action.SEND");
+        intent.setType("text/plain");
+        contextMenu.findItem(R.id.share_link_context_menu_id).setVisible(packageManager.resolveActivity(intent, 65536) != null);
+        super.onCreateContextMenu(contextMenu, view, contextMenuInfo);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem menuItem) throws Throwable {
+        ContextMenu.ContextMenuInfo menuInfo = menuItem.getMenuInfo();
+        if (menuInfo == null) {
+            return false;
+        }
+        ?? targetView = getTargetView(menuInfo);
+        if (!(targetView instanceof HistoryItem)) {
+            return false;
+        }
+        String url = targetView.getUrl();
+        String name = targetView.getName();
+        Activity activity = getActivity();
+        int itemId = menuItem.getItemId();
+        if (itemId != R.id.save_to_bookmarks_menu_id) {
+            switch (itemId) {
+                case R.id.open_context_menu_id:
+                    this.mCallback.openUrl(url);
+                    break;
+                case R.id.new_window_context_menu_id:
+                    this.mCallback.openInNewTab(url);
+                    break;
+                default:
+                    switch (itemId) {
+                        case R.id.share_link_context_menu_id:
+                            com.android.browser.provider.Browser.sendString(activity, url, activity.getText(R.string.choosertitle_sharevia).toString());
+                            break;
+                        case R.id.copy_url_context_menu_id:
+                            copy(url);
+                            break;
+                        case R.id.delete_context_menu_id:
+                            com.android.browser.provider.Browser.deleteFromHistory(activity.getContentResolver(), url);
+                            break;
+                        case R.id.homepage_context_menu_id:
+                            BrowserSettings.getInstance().setHomePage(url);
+                            BrowserSettings.getInstance().setHomePagePicker("other");
+                            Toast.makeText(activity, R.string.homepage_set, 1).show();
+                            break;
+                    }
+                    break;
+            }
+            return false;
+        }
+        if (targetView.isBookmark()) {
+            Bookmarks.removeFromBookmarks(activity, activity.getContentResolver(), url, name);
+        } else {
+            com.android.browser.provider.Browser.saveBookmark(activity, name, url);
+        }
+        return true;
+    }
+
+    private static abstract class HistoryWrapper extends BaseAdapter {
+        protected HistoryAdapter mAdapter;
+        private DataSetObserver mObserver = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                HistoryWrapper.this.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onInvalidated() {
+                super.onInvalidated();
+                HistoryWrapper.this.notifyDataSetInvalidated();
+            }
+        };
+
+        public HistoryWrapper(HistoryAdapter historyAdapter) {
+            this.mAdapter = historyAdapter;
+            this.mAdapter.registerDataSetObserver(this.mObserver);
+        }
+    }
+
+    private static class HistoryGroupWrapper extends HistoryWrapper {
+        public HistoryGroupWrapper(HistoryAdapter historyAdapter) {
+            super(historyAdapter);
+        }
+
+        @Override
+        public int getCount() {
+            return this.mAdapter.getGroupCount();
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            return this.mAdapter.getGroupView(i, false, view, viewGroup);
+        }
+    }
+
+    private static class HistoryChildWrapper extends HistoryWrapper {
+        private int mSelectedGroup;
+
+        public HistoryChildWrapper(HistoryAdapter historyAdapter) {
+            super(historyAdapter);
+        }
+
+        void setSelectedGroup(int i) {
+            this.mSelectedGroup = i;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getCount() {
+            return this.mAdapter.getChildrenCount(this.mSelectedGroup);
+        }
+
+        @Override
+        public Object getItem(int i) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+            return this.mAdapter.getChildView(this.mSelectedGroup, i, false, view, viewGroup);
+        }
+    }
+
     private class HistoryAdapter extends DateSortedExpandableListAdapter {
         Drawable mFaviconBackground;
         private Cursor mHistoryCursor;
         private Cursor mMostVisited;
-        final BrowserHistoryPage this$0;
 
-        HistoryAdapter(BrowserHistoryPage browserHistoryPage, Context context) {
+        HistoryAdapter(Context context) {
             super(context, 1);
-            this.this$0 = browserHistoryPage;
             this.mFaviconBackground = BookmarkUtils.createListFaviconBackground(context);
-        }
-
-        private boolean isMostVisitedEmpty() {
-            return this.mMostVisited == null || this.mMostVisited.isClosed() || this.mMostVisited.getCount() == 0;
         }
 
         @Override
@@ -135,416 +444,99 @@ public class BrowserHistoryPage extends Fragment implements LoaderManager.Loader
         }
 
         @Override
-        public View getChildView(int i, int i2, boolean z, View view, ViewGroup viewGroup) {
-            HistoryItem historyItem;
-            if (view == null || !(view instanceof HistoryItem)) {
-                historyItem = new HistoryItem(getContext());
-                historyItem.setPadding(historyItem.getPaddingLeft() + 10, historyItem.getPaddingTop(), historyItem.getPaddingRight(), historyItem.getPaddingBottom());
-                historyItem.setFaviconBackground(this.mFaviconBackground);
-            } else {
-                historyItem = (HistoryItem) view;
-            }
-            if (moveCursorToChildPosition(i, i2)) {
-                Cursor cursor = getCursor(i);
-                historyItem.setName(cursor.getString(2));
-                historyItem.setUrl(cursor.getString(3));
-                byte[] blob = cursor.getBlob(4);
-                if (blob != null) {
-                    historyItem.setFavicon(BitmapFactory.decodeByteArray(blob, 0, blob.length));
-                } else {
-                    historyItem.setFavicon(null);
-                }
-                historyItem.setIsBookmark(cursor.getInt(6) == 1);
-            }
-            return historyItem;
-        }
-
-        @Override
-        public int getChildrenCount(int i) {
-            if (i < super.getGroupCount()) {
-                return super.getChildrenCount(i);
-            }
-            if (isMostVisitedEmpty()) {
-                return 0;
-            }
-            return this.mMostVisited.getCount();
-        }
-
-        Cursor getCursor(int i) {
-            return i >= super.getGroupCount() ? this.mMostVisited : this.mHistoryCursor;
-        }
-
-        @Override
         public int getGroupCount() {
             return super.getGroupCount() + (!isMostVisitedEmpty());
         }
 
         @Override
-        public View getGroupView(int i, boolean z, View view, ViewGroup viewGroup) {
-            if (i < super.getGroupCount()) {
-                return super.getGroupView(i, z, view, viewGroup);
+        public int getChildrenCount(int i) {
+            if (i >= super.getGroupCount()) {
+                if (isMostVisitedEmpty()) {
+                    return 0;
+                }
+                return this.mMostVisited.getCount();
             }
-            if (this.mMostVisited == null || this.mMostVisited.isClosed()) {
-                throw new IllegalStateException("Data is not valid");
-            }
-            TextView textView = (view == null || !(view instanceof TextView)) ? (TextView) LayoutInflater.from(getContext()).inflate(2130968604, (ViewGroup) null) : (TextView) view;
-            textView.setText(2131492952);
-            return textView;
+            return super.getChildrenCount(i);
         }
 
         @Override
         public boolean isEmpty() {
-            if (super.isEmpty()) {
-                return isMostVisitedEmpty();
+            if (!super.isEmpty()) {
+                return false;
             }
-            return false;
+            return isMostVisitedEmpty();
+        }
+
+        private boolean isMostVisitedEmpty() {
+            return this.mMostVisited == null || this.mMostVisited.isClosed() || this.mMostVisited.getCount() == 0;
+        }
+
+        Cursor getCursor(int i) {
+            if (i >= super.getGroupCount()) {
+                return this.mMostVisited;
+            }
+            return this.mHistoryCursor;
+        }
+
+        @Override
+        public View getGroupView(int i, boolean z, View view, ViewGroup viewGroup) {
+            ?? r4;
+            if (i >= super.getGroupCount()) {
+                if (this.mMostVisited == null || this.mMostVisited.isClosed()) {
+                    throw new IllegalStateException("Data is not valid");
+                }
+                if (view != null) {
+                    boolean z2 = view instanceof TextView;
+                    r4 = view;
+                    if (!z2) {
+                        r4 = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.history_header, (ViewGroup) null);
+                    }
+                }
+                r4.setText(R.string.tab_most_visited);
+                return r4;
+            }
+            return super.getGroupView(i, z, view, viewGroup);
         }
 
         @Override
         boolean moveCursorToChildPosition(int i, int i2) {
-            if (i < super.getGroupCount()) {
-                return super.moveCursorToChildPosition(i, i2);
-            }
-            if (this.mMostVisited == null || this.mMostVisited.isClosed()) {
+            if (i >= super.getGroupCount()) {
+                if (this.mMostVisited != null && !this.mMostVisited.isClosed()) {
+                    this.mMostVisited.moveToPosition(i2);
+                    return true;
+                }
                 return false;
             }
-            this.mMostVisited.moveToPosition(i2);
-            return true;
-        }
-    }
-
-    private static class HistoryChildWrapper extends HistoryWrapper {
-        private int mSelectedGroup;
-
-        public HistoryChildWrapper(HistoryAdapter historyAdapter) {
-            super(historyAdapter);
+            return super.moveCursorToChildPosition(i, i2);
         }
 
         @Override
-        public int getCount() {
-            return this.mAdapter.getChildrenCount(this.mSelectedGroup);
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            return this.mAdapter.getChildView(this.mSelectedGroup, i, false, view, viewGroup);
-        }
-
-        void setSelectedGroup(int i) {
-            this.mSelectedGroup = i;
-            notifyDataSetChanged();
-        }
-    }
-
-    private static class HistoryGroupWrapper extends HistoryWrapper {
-        public HistoryGroupWrapper(HistoryAdapter historyAdapter) {
-            super(historyAdapter);
-        }
-
-        @Override
-        public int getCount() {
-            return this.mAdapter.getGroupCount();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-            return this.mAdapter.getGroupView(i, false, view, viewGroup);
-        }
-    }
-
-    interface HistoryQuery {
-        public static final String[] PROJECTION = {"_id", "date", "title", "url", "favicon", "visits", "bookmark"};
-    }
-
-    private static abstract class HistoryWrapper extends BaseAdapter {
-        protected HistoryAdapter mAdapter;
-        private DataSetObserver mObserver = new DataSetObserver(this) {
-            final HistoryWrapper this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                this.this$0.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onInvalidated() {
-                super.onInvalidated();
-                this.this$0.notifyDataSetInvalidated();
-            }
-        };
-
-        public HistoryWrapper(HistoryAdapter historyAdapter) {
-            this.mAdapter = historyAdapter;
-            this.mAdapter.registerDataSetObserver(this.mObserver);
-        }
-    }
-
-    private void copy(CharSequence charSequence) {
-        ((ClipboardManager) getActivity().getSystemService("clipboard")).setText(charSequence);
-    }
-
-    private void inflateSinglePane() {
-        this.mHistoryList = (ExpandableListView) this.mRoot.findViewById(2131558484);
-        this.mHistoryList.setAdapter(this.mAdapter);
-        this.mHistoryList.setOnChildClickListener(this);
-        registerForContextMenu(this.mHistoryList);
-    }
-
-    private void inflateTwoPane(ViewStub viewStub) {
-        viewStub.setLayoutResource(2130968615);
-        viewStub.inflate();
-        this.mGroupList = (ListView) this.mRoot.findViewById(android.R.id.list);
-        this.mPrefsContainer = (ViewGroup) this.mRoot.findViewById(2131558505);
-        this.mFragmentBreadCrumbs = (FragmentBreadCrumbs) this.mRoot.findViewById(android.R.id.title);
-        this.mFragmentBreadCrumbs.setMaxVisible(1);
-        this.mFragmentBreadCrumbs.setActivity(getActivity());
-        this.mPrefsContainer.setVisibility(0);
-        this.mGroupList.setAdapter((ListAdapter) new HistoryGroupWrapper(this.mAdapter));
-        this.mGroupList.setOnItemClickListener(this.mGroupItemClickListener);
-        this.mGroupList.setChoiceMode(1);
-        this.mChildWrapper = new HistoryChildWrapper(this.mAdapter);
-        this.mChildList = new ListView(getActivity());
-        this.mChildList.setAdapter((ListAdapter) this.mChildWrapper);
-        this.mChildList.setOnItemClickListener(this.mChildItemClickListener);
-        registerForContextMenu(this.mChildList);
-        ((ViewGroup) this.mRoot.findViewById(2131558506)).addView(this.mChildList);
-    }
-
-    void checkIfEmpty() {
-        if (this.mAdapter.mMostVisited == null || this.mAdapter.mHistoryCursor == null) {
-            return;
-        }
-        boolean zIsTablet = BrowserActivity.isTablet(getActivity());
-        if (this.mAdapter.isEmpty()) {
-            if (zIsTablet) {
-                this.mRoot.findViewById(2131558486).setVisibility(8);
-            } else {
-                this.mRoot.findViewById(2131558484).setVisibility(8);
-            }
-            this.mRoot.findViewById(android.R.id.empty).setVisibility(0);
-            return;
-        }
-        if (zIsTablet) {
-            this.mRoot.findViewById(2131558486).setVisibility(0);
-        } else {
-            this.mRoot.findViewById(2131558484).setVisibility(0);
-        }
-        this.mRoot.findViewById(android.R.id.empty).setVisibility(8);
-    }
-
-    View getTargetView(ContextMenu.ContextMenuInfo contextMenuInfo) {
-        if (contextMenuInfo instanceof AdapterView.AdapterContextMenuInfo) {
-            return ((AdapterView.AdapterContextMenuInfo) contextMenuInfo).targetView;
-        }
-        if (contextMenuInfo instanceof ExpandableListView.ExpandableListContextMenuInfo) {
-            return ((ExpandableListView.ExpandableListContextMenuInfo) contextMenuInfo).targetView;
-        }
-        return null;
-    }
-
-    @Override
-    public boolean onChildClick(ExpandableListView expandableListView, View view, int i, int i2, long j) {
-        this.mCallback.openUrl(((HistoryItem) view).getUrl());
-        return true;
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem menuItem) throws Throwable {
-        ContextMenu.ContextMenuInfo menuInfo = menuItem.getMenuInfo();
-        if (menuInfo == null) {
-            return false;
-        }
-        View targetView = getTargetView(menuInfo);
-        if (!(targetView instanceof HistoryItem)) {
-            return false;
-        }
-        HistoryItem historyItem = (HistoryItem) targetView;
-        String url = historyItem.getUrl();
-        String name = historyItem.getName();
-        Activity activity = getActivity();
-        int itemId = menuItem.getItemId();
-        if (itemId == 2131558641) {
-            if (historyItem.isBookmark()) {
-                Bookmarks.removeFromBookmarks(activity, activity.getContentResolver(), url, name);
-            } else {
-                com.android.browser.provider.Browser.saveBookmark(activity, name, url);
-            }
-            return true;
-        }
-        switch (itemId) {
-            case 2131558433:
-                this.mCallback.openUrl(url);
-                break;
-            case 2131558434:
-                this.mCallback.openInNewTab(url);
-                break;
-            default:
-                switch (itemId) {
-                    case 2131558565:
-                        com.android.browser.provider.Browser.sendString(activity, url, activity.getText(2131493051).toString());
-                        break;
-                    case 2131558566:
-                        copy(url);
-                        break;
-                    case 2131558567:
-                        com.android.browser.provider.Browser.deleteFromHistory(activity.getContentResolver(), url);
-                        break;
-                    case 2131558568:
-                        BrowserSettings.getInstance().setHomePage(url);
-                        BrowserSettings.getInstance().setHomePagePicker("other");
-                        Toast.makeText(activity, 2131493012, 1).show();
-                        break;
+        public View getChildView(int i, int i2, boolean z, View view, ViewGroup viewGroup) {
+            HistoryItem historyItem;
+            if (view != null) {
+                boolean z2 = view instanceof HistoryItem;
+                historyItem = view;
+                if (!z2) {
+                    HistoryItem historyItem2 = new HistoryItem(getContext());
+                    historyItem2.setPadding(historyItem2.getPaddingLeft() + 10, historyItem2.getPaddingTop(), historyItem2.getPaddingRight(), historyItem2.getPaddingBottom());
+                    historyItem2.setFaviconBackground(this.mFaviconBackground);
+                    historyItem = historyItem2;
                 }
-                break;
-        }
-        return false;
-    }
-
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        setHasOptionsMenu(true);
-        this.mDisableNewWindow = getArguments().getBoolean("disable_new_window", false);
-        this.mMostVisitsLimit = Integer.toString(getResources().getInteger(2131623940));
-        this.mCallback = (CombinedBookmarksCallbacks) getActivity();
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-        View targetView = getTargetView(contextMenuInfo);
-        if (targetView instanceof HistoryItem) {
-            HistoryItem historyItem = (HistoryItem) targetView;
-            Activity activity = getActivity();
-            activity.getMenuInflater().inflate(2131755014, contextMenu);
-            if (this.mContextHeader == null) {
-                this.mContextHeader = new HistoryItem(activity, false);
-                this.mContextHeader.setEnableScrolling(true);
-            } else if (this.mContextHeader.getParent() != null) {
-                ((ViewGroup) this.mContextHeader.getParent()).removeView(this.mContextHeader);
             }
-            historyItem.copyTo(this.mContextHeader);
-            contextMenu.setHeaderView(this.mContextHeader);
-            if (this.mDisableNewWindow) {
-                contextMenu.findItem(2131558434).setVisible(false);
+            if (!moveCursorToChildPosition(i, i2)) {
+                return historyItem;
             }
-            if (historyItem.isBookmark()) {
-                contextMenu.findItem(2131558641).setTitle(2131493007);
+            Cursor cursor = getCursor(i);
+            historyItem.setName(cursor.getString(2));
+            historyItem.setUrl(cursor.getString(3));
+            byte[] blob = cursor.getBlob(4);
+            if (blob != null) {
+                historyItem.setFavicon(BitmapFactory.decodeByteArray(blob, 0, blob.length));
+            } else {
+                historyItem.setFavicon(null);
             }
-            PackageManager packageManager = activity.getPackageManager();
-            Intent intent = new Intent("android.intent.action.SEND");
-            intent.setType("text/plain");
-            contextMenu.findItem(2131558565).setVisible(packageManager.resolveActivity(intent, 65536) != null);
-            super.onCreateContextMenu(contextMenu, view, contextMenuInfo);
+            historyItem.setIsBookmark(cursor.getInt(6) == 1);
+            return historyItem;
         }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        Uri.Builder builderBuildUpon = BrowserContract.Combined.CONTENT_URI.buildUpon();
-        switch (i) {
-            case 1:
-                return new CursorLoader(getActivity(), builderBuildUpon.build(), HistoryQuery.PROJECTION, "visits > 0", null, "date DESC");
-            case 2:
-                return new CursorLoader(getActivity(), builderBuildUpon.appendQueryParameter("limit", this.mMostVisitsLimit).build(), HistoryQuery.PROJECTION, "visits > 0", null, "visits DESC");
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        super.onCreateOptionsMenu(menu, menuInflater);
-        this.mBrowserHistoryExt = Extensions.getHistoryPlugin(getActivity());
-        this.mBrowserHistoryExt.createHistoryPageOptionsMenu(menu, menuInflater);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        this.mRoot = layoutInflater.inflate(2130968603, viewGroup, false);
-        this.mAdapter = new HistoryAdapter(this, getActivity());
-        ViewStub viewStub = (ViewStub) this.mRoot.findViewById(2131558485);
-        if (viewStub != null) {
-            inflateTwoPane(viewStub);
-        } else {
-            inflateSinglePane();
-        }
-        getLoaderManager().restartLoader(1, null, this);
-        getLoaderManager().restartLoader(2, null, this);
-        return this.mRoot;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getLoaderManager().destroyLoader(1);
-        getLoaderManager().destroyLoader(2);
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        switch (loader.getId()) {
-            case 1:
-                this.mAdapter.changeCursor(cursor);
-                if (!this.mAdapter.isEmpty() && this.mGroupList != null && this.mGroupList.getCheckedItemPosition() == -1) {
-                    selectGroup(0);
-                }
-                checkIfEmpty();
-                return;
-            case 2:
-                this.mAdapter.changeMostVisitedCursor(cursor);
-                checkIfEmpty();
-                return;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        this.mBrowserHistoryExt = Extensions.getHistoryPlugin(getActivity());
-        if (this.mBrowserHistoryExt.historyPageOptionsMenuItemSelected(menuItem, getActivity())) {
-            return true;
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        this.mBrowserHistoryExt = Extensions.getHistoryPlugin(getActivity());
-        this.mBrowserHistoryExt.prepareHistoryPageOptionsMenuItem(menu, this.mAdapter == null, this.mAdapter.isEmpty());
-    }
-
-    void selectGroup(int i) {
-        this.mGroupItemClickListener.onItemClick(null, this.mAdapter.getGroupView(i, false, null, null), i, i);
     }
 }

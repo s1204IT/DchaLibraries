@@ -21,7 +21,7 @@ public class VolumeSizesLoader extends AsyncLoader<PrivateStorageInfo> {
     }
 
     @Override
-    public void onDiscardResult(PrivateStorageInfo privateStorageInfo) {
+    protected void onDiscardResult(PrivateStorageInfo privateStorageInfo) {
     }
 
     @Override

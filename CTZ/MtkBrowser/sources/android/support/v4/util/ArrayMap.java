@@ -9,70 +9,54 @@ public class ArrayMap<K, V> extends SimpleArrayMap<K, V> implements Map<K, V> {
 
     private MapCollections<K, V> getCollection() {
         if (this.mCollections == null) {
-            this.mCollections = new MapCollections<K, V>(this) {
-                final ArrayMap this$0;
-
-                {
-                    this.this$0 = this;
+            this.mCollections = new MapCollections<K, V>() {
+                @Override
+                protected int colGetSize() {
+                    return ArrayMap.this.mSize;
                 }
 
                 @Override
-                protected void colClear() {
-                    this.this$0.clear();
+                protected Object colGetEntry(int index, int offset) {
+                    return ArrayMap.this.mArray[(index << 1) + offset];
                 }
 
                 @Override
-                protected Object colGetEntry(int i, int i2) {
-                    return this.this$0.mArray[(i << 1) + i2];
+                protected int colIndexOfKey(Object key) {
+                    return ArrayMap.this.indexOfKey(key);
+                }
+
+                @Override
+                protected int colIndexOfValue(Object value) {
+                    return ArrayMap.this.indexOfValue(value);
                 }
 
                 @Override
                 protected Map<K, V> colGetMap() {
-                    return this.this$0;
+                    return ArrayMap.this;
                 }
 
                 @Override
-                protected int colGetSize() {
-                    return this.this$0.mSize;
+                protected void colPut(K key, V value) {
+                    ArrayMap.this.put(key, value);
                 }
 
                 @Override
-                protected int colIndexOfKey(Object obj) {
-                    return this.this$0.indexOfKey(obj);
+                protected V colSetValue(int index, V value) {
+                    return ArrayMap.this.setValueAt(index, value);
                 }
 
                 @Override
-                protected int colIndexOfValue(Object obj) {
-                    return this.this$0.indexOfValue(obj);
+                protected void colRemoveAt(int index) {
+                    ArrayMap.this.removeAt(index);
                 }
 
                 @Override
-                protected void colPut(K k, V v) {
-                    this.this$0.put(k, v);
-                }
-
-                @Override
-                protected void colRemoveAt(int i) {
-                    this.this$0.removeAt(i);
-                }
-
-                @Override
-                protected V colSetValue(int i, V v) {
-                    return this.this$0.setValueAt(i, v);
+                protected void colClear() {
+                    ArrayMap.this.clear();
                 }
             };
         }
         return this.mCollections;
-    }
-
-    @Override
-    public Set<Map.Entry<K, V>> entrySet() {
-        return getCollection().getEntrySet();
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return getCollection().getKeySet();
     }
 
     @Override
@@ -85,6 +69,16 @@ public class ArrayMap<K, V> extends SimpleArrayMap<K, V> implements Map<K, V> {
 
     public boolean retainAll(Collection<?> collection) {
         return MapCollections.retainAllHelper(this, collection);
+    }
+
+    @Override
+    public Set<Map.Entry<K, V>> entrySet() {
+        return getCollection().getEntrySet();
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return getCollection().getKeySet();
     }
 
     @Override

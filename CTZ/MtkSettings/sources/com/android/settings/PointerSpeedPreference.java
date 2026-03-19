@@ -67,7 +67,7 @@ public class PointerSpeedPreference extends SeekBarDialogPreference implements S
         this.mIm.tryPointerSpeed(seekBar.getProgress() - 7);
     }
 
-    public void onSpeedChanged() {
+    private void onSpeedChanged() {
         this.mSeekBar.setProgress(this.mIm.getPointerSpeed(getContext()) + 7);
     }
 

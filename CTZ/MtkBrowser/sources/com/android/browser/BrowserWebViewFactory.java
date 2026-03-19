@@ -14,6 +14,10 @@ public class BrowserWebViewFactory implements WebViewFactory {
         this.mContext = context;
     }
 
+    protected BrowserWebView instantiateWebView(AttributeSet attributeSet, int i, boolean z) {
+        return new BrowserWebView(this.mContext, attributeSet, i, z);
+    }
+
     @Override
     public WebView createWebView(boolean z) {
         BrowserWebView browserWebViewInstantiateWebView = instantiateWebView(null, android.R.attr.webViewStyle, z);
@@ -26,20 +30,20 @@ public class BrowserWebViewFactory implements WebViewFactory {
     protected void initWebViewSettings(WebView webView) {
         webView.setScrollbarFadingEnabled(true);
         webView.setScrollBarStyle(33554432);
+        boolean z = false;
         webView.setMapTrackballToArrowKeys(false);
         webView.getSettings().setBuiltInZoomControls(true);
         webView.setOverScrollMode(2);
         PackageManager packageManager = this.mContext.getPackageManager();
-        webView.getSettings().setDisplayZoomControls(!(packageManager.hasSystemFeature("android.hardware.touchscreen.multitouch") || packageManager.hasSystemFeature("android.hardware.faketouch.multitouch.distinct")));
+        if (packageManager.hasSystemFeature("android.hardware.touchscreen.multitouch") || packageManager.hasSystemFeature("android.hardware.faketouch.multitouch.distinct")) {
+            z = true;
+        }
+        webView.getSettings().setDisplayZoomControls(!z);
         BrowserSettings.getInstance().startManagingSettings(webView.getSettings());
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptThirdPartyCookies(webView, cookieManager.acceptCookie());
         if (Build.VERSION.SDK_INT >= 19) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
-    }
-
-    protected BrowserWebView instantiateWebView(AttributeSet attributeSet, int i, boolean z) {
-        return new BrowserWebView(this.mContext, attributeSet, i, z);
     }
 }

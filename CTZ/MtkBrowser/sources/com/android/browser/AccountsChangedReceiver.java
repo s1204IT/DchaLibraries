@@ -13,24 +13,16 @@ import com.android.browser.provider.BrowserContract;
 public class AccountsChangedReceiver extends BroadcastReceiver {
     private static final String[] PROJECTION = {"account_name", "account_type"};
 
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        new DeleteRemovedAccounts(context).start();
+    }
+
     static class DeleteRemovedAccounts extends Thread {
         Context mContext;
 
         public DeleteRemovedAccounts(Context context) {
             this.mContext = context.getApplicationContext();
-        }
-
-        boolean contains(Account[] accountArr, String str, String str2) {
-            for (Account account : accountArr) {
-                if (TextUtils.equals(account.name, str) && TextUtils.equals(account.type, str2)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        void delete(ContentResolver contentResolver, String str, String str2) {
-            contentResolver.delete(BrowserContract.Bookmarks.CONTENT_URI.buildUpon().appendQueryParameter("caller_is_syncadapter", "true").build(), "account_name=? AND account_type=?", new String[]{str, str2});
         }
 
         @Override
@@ -52,10 +44,18 @@ public class AccountsChangedReceiver extends BroadcastReceiver {
             }
             cursorQuery.close();
         }
-    }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        new DeleteRemovedAccounts(context).start();
+        void delete(ContentResolver contentResolver, String str, String str2) {
+            contentResolver.delete(BrowserContract.Bookmarks.CONTENT_URI.buildUpon().appendQueryParameter("caller_is_syncadapter", "true").build(), "account_name=? AND account_type=?", new String[]{str, str2});
+        }
+
+        boolean contains(Account[] accountArr, String str, String str2) {
+            for (Account account : accountArr) {
+                if (TextUtils.equals(account.name, str) && TextUtils.equals(account.type, str2)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

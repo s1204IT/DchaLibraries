@@ -314,11 +314,11 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         this.mNeedsFocus = false;
     }
 
-    public boolean canRemoveTiles() {
+    private boolean canRemoveTiles() {
         return this.mCurrentSpecs.size() > 6;
     }
 
-    public void selectPosition(int i, View view) {
+    private void selectPosition(int i, View view) {
         if (this.mAccessibilityAction == 1) {
             List<TileQueryHelper.TileInfo> list = this.mTiles;
             int i2 = this.mEditIndex;
@@ -334,7 +334,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         notifyDataSetChanged();
     }
 
-    public void showAccessibilityDialog(final int i, final View view) {
+    private void showAccessibilityDialog(final int i, final View view) {
         final TileQueryHelper.TileInfo tileInfo = this.mTiles.get(i);
         AlertDialog alertDialogCreate = new AlertDialog.Builder(this.mContext).setItems(new CharSequence[]{this.mContext.getString(R.string.accessibility_qs_edit_move_tile, tileInfo.state.label), this.mContext.getString(R.string.accessibility_qs_edit_remove_tile, tileInfo.state.label)}, new DialogInterface.OnClickListener() {
             @Override
@@ -353,7 +353,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         alertDialogCreate.show();
     }
 
-    public void startAccessibleAdd(int i) {
+    private void startAccessibleAdd(int i) {
         this.mAccessibilityFromIndex = i;
         this.mAccessibilityAction = 1;
         List<TileQueryHelper.TileInfo> list = this.mTiles;
@@ -364,7 +364,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         notifyDataSetChanged();
     }
 
-    public void startAccessibleMove(int i) {
+    private void startAccessibleMove(int i) {
         this.mAccessibilityFromIndex = i;
         this.mAccessibilityAction = 2;
         notifyDataSetChanged();
@@ -374,7 +374,7 @@ public class TileAdapter extends RecyclerView.Adapter<Holder> implements TileQue
         return this.mSizeLookup;
     }
 
-    public boolean move(int i, int i2, View view) {
+    private boolean move(int i, int i2, View view) {
         if (i2 == i) {
             return true;
         }

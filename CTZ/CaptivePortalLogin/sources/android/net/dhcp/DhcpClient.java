@@ -3,6 +3,7 @@ package android.net.dhcp;
 import android.content.Context;
 import android.net.DhcpResults;
 import android.net.NetworkUtils;
+import android.net.StaticIpConfiguration;
 import android.net.TrafficStats;
 import android.net.dhcp.DhcpPacket;
 import android.net.metrics.DhcpClientEvent;
@@ -131,7 +132,7 @@ public class DhcpClient extends StateMachine {
 
     public static DhcpClient makeDhcpClient(Context context, StateMachine stateMachine, InterfaceParams interfaceParams) {
         try {
-            Class clsLoadClass = new PathClassLoader("/system/framework/mediatek-framework-net.jar", context.getClassLoader()).loadClass("com.mediatek.net.dhcp.MtkDhcpClient");
+            Class<?> clsLoadClass = new PathClassLoader("/system/framework/mediatek-framework-net.jar", context.getClassLoader()).loadClass("com.mediatek.net.dhcp.MtkDhcpClient");
             Method declaredMethod = clsLoadClass.getDeclaredMethod("makeDhcpClient", Context.class, StateMachine.class, InterfaceParams.class);
             declaredMethod.setAccessible(true);
             return (DhcpClient) declaredMethod.invoke(clsLoadClass, context, stateMachine, interfaceParams);
@@ -144,7 +145,7 @@ public class DhcpClient extends StateMachine {
         }
     }
 
-    public boolean initInterface() {
+    private boolean initInterface() {
         if (this.mIface == null) {
             this.mIface = InterfaceParams.getByName(this.mIfaceName);
         }
@@ -157,12 +158,12 @@ public class DhcpClient extends StateMachine {
         return true;
     }
 
-    public void startNewTransaction() {
+    private void startNewTransaction() {
         this.mTransactionId = this.mRandom.nextInt();
         this.mTransactionStartMillis = SystemClock.elapsedRealtime();
     }
 
-    public boolean initSockets() {
+    private boolean initSockets() {
         return initPacketSocket() && initUdpSocket();
     }
 
@@ -178,7 +179,7 @@ public class DhcpClient extends StateMachine {
         }
     }
 
-    public boolean initUdpSocket() {
+    private boolean initUdpSocket() {
         int andSetThreadStatsTag = TrafficStats.getAndSetThreadStatsTag(-192);
         try {
             this.mUdpSock = Os.socket(OsConstants.AF_INET, OsConstants.SOCK_DGRAM, OsConstants.IPPROTO_UDP);
@@ -197,7 +198,7 @@ public class DhcpClient extends StateMachine {
         }
     }
 
-    public boolean connectUdpSock(Inet4Address inet4Address) {
+    private boolean connectUdpSock(Inet4Address inet4Address) {
         try {
             Os.connect(this.mUdpSock, inet4Address, 67);
             return true;
@@ -207,14 +208,14 @@ public class DhcpClient extends StateMachine {
         }
     }
 
-    public static void closeQuietly(FileDescriptor fileDescriptor) {
+    private static void closeQuietly(FileDescriptor fileDescriptor) {
         try {
             IoBridge.closeAndSignalBlockedThreads(fileDescriptor);
         } catch (IOException e) {
         }
     }
 
-    public void closeSockets() {
+    private void closeSockets() {
         closeQuietly(this.mUdpSock);
         closeQuietly(this.mPacketSock);
     }
@@ -290,16 +291,16 @@ public class DhcpClient extends StateMachine {
         }
     }
 
-    public boolean sendDiscoverPacket() {
+    private boolean sendDiscoverPacket() {
         return transmitPacket(DhcpPacket.buildDiscoverPacket(0, this.mTransactionId, getSecs(), this.mHwAddr, false, REQUESTED_PARAMS), "DHCPDISCOVER", 0, DhcpPacket.INADDR_BROADCAST);
     }
 
-    public boolean sendRequestPacket(Inet4Address inet4Address, Inet4Address inet4Address2, Inet4Address inet4Address3, Inet4Address inet4Address4) {
+    private boolean sendRequestPacket(Inet4Address inet4Address, Inet4Address inet4Address2, Inet4Address inet4Address3, Inet4Address inet4Address4) {
         int i = DhcpPacket.INADDR_ANY.equals(inet4Address) ? 0 : 2;
         return transmitPacket(DhcpPacket.buildRequestPacket(i, this.mTransactionId, getSecs(), inet4Address, false, this.mHwAddr, inet4Address2, inet4Address3, REQUESTED_PARAMS, null), "DHCPREQUEST ciaddr=" + inet4Address.getHostAddress() + " request=" + inet4Address2.getHostAddress() + " serverid=" + (inet4Address3 != null ? inet4Address3.getHostAddress() : null), i, inet4Address4);
     }
 
-    public void scheduleLeaseTimers() {
+    private void scheduleLeaseTimers() {
         if (this.mDhcpLeaseExpiry == 0) {
             Log.d("DhcpClient", "Infinite lease, no timer scheduling needed");
             return;
@@ -320,18 +321,18 @@ public class DhcpClient extends StateMachine {
         this.mController.sendMessage(196612, 1, 0, new DhcpResults(this.mDhcpLease));
     }
 
-    public void notifyFailure() {
+    private void notifyFailure() {
         this.mController.sendMessage(196612, 2, 0, (Object) null);
     }
 
-    public void acceptDhcpResults(DhcpResults dhcpResults, String str) {
+    private void acceptDhcpResults(DhcpResults dhcpResults, String str) {
         this.mDhcpLease = dhcpResults;
         this.mOffer = null;
         Log.d("DhcpClient", str + " lease: " + this.mDhcpLease);
         notifySuccess();
     }
 
-    public void clearDhcpState() {
+    private void clearDhcpState() {
         this.mDhcpLease = null;
         this.mDhcpLeaseExpiry = 0L;
         this.mOffer = null;
@@ -613,7 +614,7 @@ public class DhcpClient extends StateMachine {
 
         @Override
         protected boolean sendPacket() {
-            return DhcpClient.this.sendRequestPacket(DhcpPacket.INADDR_ANY, (Inet4Address) DhcpClient.this.mOffer.ipAddress.getAddress(), DhcpClient.this.mOffer.serverAddress, DhcpPacket.INADDR_BROADCAST);
+            return DhcpClient.this.sendRequestPacket(DhcpPacket.INADDR_ANY, (Inet4Address) ((StaticIpConfiguration) DhcpClient.this.mOffer).ipAddress.getAddress(), DhcpClient.this.mOffer.serverAddress, DhcpPacket.INADDR_BROADCAST);
         }
 
         @Override
@@ -674,7 +675,7 @@ public class DhcpClient extends StateMachine {
         @Override
         public void enter() {
             super.enter();
-            DhcpClient.this.mController.sendMessage(196616, DhcpClient.this.mDhcpLease.ipAddress);
+            DhcpClient.this.mController.sendMessage(196616, ((StaticIpConfiguration) DhcpClient.this.mDhcpLease).ipAddress);
         }
 
         @Override
@@ -751,7 +752,7 @@ public class DhcpClient extends StateMachine {
 
         @Override
         protected boolean sendPacket() {
-            return DhcpClient.this.sendRequestPacket((Inet4Address) DhcpClient.this.mDhcpLease.ipAddress.getAddress(), DhcpPacket.INADDR_ANY, null, packetDestination());
+            return DhcpClient.this.sendRequestPacket((Inet4Address) ((StaticIpConfiguration) DhcpClient.this.mDhcpLease).ipAddress.getAddress(), DhcpPacket.INADDR_ANY, null, packetDestination());
         }
 
         @Override
@@ -768,7 +769,7 @@ public class DhcpClient extends StateMachine {
                 }
                 DhcpResults dhcpResults = dhcpPacket.toDhcpResults();
                 if (dhcpResults != null) {
-                    if (!DhcpClient.this.mDhcpLease.ipAddress.equals(dhcpResults.ipAddress)) {
+                    if (!((StaticIpConfiguration) DhcpClient.this.mDhcpLease).ipAddress.equals(((StaticIpConfiguration) dhcpResults).ipAddress)) {
                         Log.d("DhcpClient", "Renewed lease not for our current IP address!");
                         DhcpClient.this.notifyFailure();
                         DhcpClient.this.transitionTo(DhcpClient.this.mDhcpInitState);
@@ -839,11 +840,11 @@ public class DhcpClient extends StateMachine {
         }
     }
 
-    public void logError(int i) {
+    private void logError(int i) {
         this.mMetricsLog.log(this.mIfaceName, new DhcpErrorEvent(i));
     }
 
-    public void logState(String str, int i) {
+    private void logState(String str, int i) {
         this.mMetricsLog.log(this.mIfaceName, new DhcpClientEvent(str, i));
     }
 }

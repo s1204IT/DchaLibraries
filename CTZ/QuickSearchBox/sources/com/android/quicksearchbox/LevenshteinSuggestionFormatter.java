@@ -9,6 +9,28 @@ public class LevenshteinSuggestionFormatter extends SuggestionFormatter {
         super(textAppearanceFactory);
     }
 
+    @Override
+    public Spanned formatSuggestion(String str, String str2) {
+        int length;
+        LevenshteinDistance.Token[] tokenArr = tokenize(normalizeQuery(str));
+        LevenshteinDistance.Token[] tokenArr2 = tokenize(str2);
+        int[] iArrFindMatches = findMatches(tokenArr, tokenArr2);
+        SpannableString spannableString = new SpannableString(str2);
+        int length2 = iArrFindMatches.length;
+        for (int i = 0; i < length2; i++) {
+            LevenshteinDistance.Token token = tokenArr2[i];
+            int i2 = iArrFindMatches[i];
+            if (i2 >= 0) {
+                length = tokenArr[i2].length();
+            } else {
+                length = 0;
+            }
+            applySuggestedTextStyle(spannableString, token.mStart + length, token.mEnd);
+            applyQueryTextStyle(spannableString, token.mStart, token.mStart + length);
+        }
+        return spannableString;
+    }
+
     private String normalizeQuery(String str) {
         return str.toLowerCase();
     }
@@ -29,45 +51,28 @@ public class LevenshteinSuggestionFormatter extends SuggestionFormatter {
         return iArr;
     }
 
-    @Override
-    public Spanned formatSuggestion(String str, String str2) {
-        LevenshteinDistance.Token[] tokenArr = tokenize(normalizeQuery(str));
-        LevenshteinDistance.Token[] tokenArr2 = tokenize(str2);
-        int[] iArrFindMatches = findMatches(tokenArr, tokenArr2);
-        SpannableString spannableString = new SpannableString(str2);
-        int length = iArrFindMatches.length;
-        for (int i = 0; i < length; i++) {
-            LevenshteinDistance.Token token = tokenArr2[i];
-            int i2 = iArrFindMatches[i];
-            int length2 = i2 >= 0 ? tokenArr[i2].length() : 0;
-            applySuggestedTextStyle(spannableString, token.mStart + length2, token.mEnd);
-            applyQueryTextStyle(spannableString, token.mStart, length2 + token.mStart);
-        }
-        return spannableString;
-    }
-
     LevenshteinDistance.Token[] tokenize(String str) {
         int length = str.length();
         char[] charArray = str.toCharArray();
         LevenshteinDistance.Token[] tokenArr = new LevenshteinDistance.Token[length];
         int i = 0;
         int i2 = 0;
-        while (i2 < length) {
-            while (i2 < length && (charArray[i2] == ' ' || charArray[i2] == '\t')) {
-                i2++;
+        while (i < length) {
+            while (i < length && (charArray[i] == ' ' || charArray[i] == '\t')) {
+                i++;
             }
-            int i3 = i2;
+            int i3 = i;
             while (i3 < length && charArray[i3] != ' ' && charArray[i3] != '\t') {
                 i3++;
             }
-            if (i2 != i3) {
-                tokenArr[i] = new LevenshteinDistance.Token(charArray, i2, i3);
-                i++;
+            if (i != i3) {
+                tokenArr[i2] = new LevenshteinDistance.Token(charArray, i, i3);
+                i2++;
             }
-            i2 = i3;
+            i = i3;
         }
-        LevenshteinDistance.Token[] tokenArr2 = new LevenshteinDistance.Token[i];
-        System.arraycopy(tokenArr, 0, tokenArr2, 0, i);
+        LevenshteinDistance.Token[] tokenArr2 = new LevenshteinDistance.Token[i2];
+        System.arraycopy(tokenArr, 0, tokenArr2, 0, i2);
         return tokenArr2;
     }
 }

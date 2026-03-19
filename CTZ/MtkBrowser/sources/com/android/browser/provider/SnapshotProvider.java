@@ -23,6 +23,16 @@ public class SnapshotProvider extends ContentProvider {
     static final UriMatcher URI_MATCHER = new UriMatcher(-1);
     static final byte[] NULL_BLOB_HACK = new byte[0];
 
+    public interface Snapshots {
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(SnapshotProvider.AUTHORITY_URI, "snapshots");
+    }
+
+    static {
+        URI_MATCHER.addURI("com.android.browser.snapshots", "snapshots", 10);
+        URI_MATCHER.addURI("com.android.browser.snapshots", "snapshots/#", 11);
+        DELETE_PROJECTION = new String[]{"viewstate_path", "job_id"};
+    }
+
     static final class SnapshotDatabaseHelper extends SQLiteOpenHelper {
         public SnapshotDatabaseHelper(Context context) {
             super(context, "snapshots.db", (SQLiteDatabase.CursorFactory) null, 4);
@@ -55,14 +65,100 @@ public class SnapshotProvider extends ContentProvider {
         }
     }
 
-    public interface Snapshots {
-        public static final Uri CONTENT_URI = Uri.withAppendedPath(SnapshotProvider.AUTHORITY_URI, "snapshots");
+    static File getOldDatabasePath(Context context) {
+        return new File(context.getExternalFilesDir(null), "snapshots.db");
     }
 
-    static {
-        URI_MATCHER.addURI("com.android.browser.snapshots", "snapshots", 10);
-        URI_MATCHER.addURI("com.android.browser.snapshots", "snapshots/#", 11);
-        DELETE_PROJECTION = new String[]{"viewstate_path", "job_id"};
+    private void migrateToDataFolder() {
+        File databasePath = getContext().getDatabasePath("snapshots.db");
+        if (databasePath.exists()) {
+            return;
+        }
+        File oldDatabasePath = getOldDatabasePath(getContext());
+        if (oldDatabasePath.exists()) {
+            if (!oldDatabasePath.renameTo(databasePath)) {
+                FileUtils.copyFile(oldDatabasePath, databasePath);
+            }
+            oldDatabasePath.delete();
+        }
+    }
+
+    @Override
+    public boolean onCreate() {
+        migrateToDataFolder();
+        this.mOpenHelper = new SnapshotDatabaseHelper(getContext());
+        return true;
+    }
+
+    SQLiteDatabase getWritableDatabase() {
+        return this.mOpenHelper.getWritableDatabase();
+    }
+
+    SQLiteDatabase getReadableDatabase() {
+        return this.mOpenHelper.getReadableDatabase();
+    }
+
+    @Override
+    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
+        SQLiteDatabase readableDatabase = getReadableDatabase();
+        if (readableDatabase == null) {
+            return null;
+        }
+        readableDatabase.beginTransaction();
+        try {
+            int iMatch = URI_MATCHER.match(uri);
+            SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
+            String queryParameter = uri.getQueryParameter("limit");
+            switch (iMatch) {
+                case 10:
+                    break;
+                case 11:
+                    str = DatabaseUtils.concatenateWhere(str, "_id=?");
+                    strArr2 = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unknown URL " + uri.toString());
+            }
+            sQLiteQueryBuilder.setTables("snapshots");
+            Cursor cursorQuery = sQLiteQueryBuilder.query(readableDatabase, strArr, str, strArr2, null, null, str2, queryParameter);
+            cursorQuery.setNotificationUri(getContext().getContentResolver(), AUTHORITY_URI);
+            readableDatabase.setTransactionSuccessful();
+            return cursorQuery;
+        } finally {
+            readableDatabase.endTransaction();
+        }
+    }
+
+    @Override
+    public String getType(Uri uri) {
+        return null;
+    }
+
+    @Override
+    public Uri insert(Uri uri, ContentValues contentValues) {
+        SQLiteDatabase writableDatabase = getWritableDatabase();
+        if (writableDatabase == null) {
+            return null;
+        }
+        writableDatabase.beginTransaction();
+        try {
+            if (URI_MATCHER.match(uri) == 10) {
+                if (!contentValues.containsKey("view_state")) {
+                    contentValues.put("view_state", NULL_BLOB_HACK);
+                }
+                long jInsert = writableDatabase.insert("snapshots", "title", contentValues);
+                if (jInsert < 0) {
+                    return null;
+                }
+                Uri uriWithAppendedId = ContentUris.withAppendedId(uri, jInsert);
+                getContext().getContentResolver().notifyChange(uriWithAppendedId, (ContentObserver) null, false);
+                writableDatabase.setTransactionSuccessful();
+                return uriWithAppendedId;
+            }
+            throw new UnsupportedOperationException("Unknown insert URI " + uri);
+        } finally {
+            writableDatabase.endTransaction();
+        }
     }
 
     private void deleteDataFiles(SQLiteDatabase sQLiteDatabase, String str, String[] strArr) {
@@ -89,174 +185,74 @@ public class SnapshotProvider extends ContentProvider {
 
     private void deleteSavePageDir(File file) {
         if (file.isFile()) {
-            if (file.delete()) {
+            if (!file.delete()) {
+                file.deleteOnExit();
                 return;
             }
-            file.deleteOnExit();
             return;
         }
         if (file.isDirectory()) {
             File[] fileArrListFiles = file.listFiles();
             if (fileArrListFiles == null || fileArrListFiles.length == 0) {
-                if (file.delete()) {
+                if (!file.delete()) {
+                    file.deleteOnExit();
                     return;
                 }
-                file.deleteOnExit();
                 return;
             }
             for (File file2 : fileArrListFiles) {
                 deleteSavePageDir(file2);
             }
-            if (file.delete()) {
-                return;
+            if (!file.delete()) {
+                file.deleteOnExit();
             }
-            file.deleteOnExit();
-        }
-    }
-
-    static File getOldDatabasePath(Context context) {
-        return new File(context.getExternalFilesDir(null), "snapshots.db");
-    }
-
-    private void migrateToDataFolder() {
-        File databasePath = getContext().getDatabasePath("snapshots.db");
-        if (databasePath.exists()) {
-            return;
-        }
-        File oldDatabasePath = getOldDatabasePath(getContext());
-        if (oldDatabasePath.exists()) {
-            if (!oldDatabasePath.renameTo(databasePath)) {
-                FileUtils.copyFile(oldDatabasePath, databasePath);
-            }
-            oldDatabasePath.delete();
         }
     }
 
     @Override
     public int delete(Uri uri, String str, String[] strArr) {
-        int iDelete = 0;
         SQLiteDatabase writableDatabase = getWritableDatabase();
-        if (writableDatabase != null) {
-            writableDatabase.beginTransaction();
-            try {
-                switch (URI_MATCHER.match(uri)) {
-                    case 10:
-                        break;
-                    case 11:
-                        str = DatabaseUtils.concatenateWhere(str, "snapshots._id=?");
-                        strArr = DatabaseUtils.appendSelectionArgs(strArr, new String[]{Long.toString(ContentUris.parseId(uri))});
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("Unknown delete URI " + uri);
-                }
-                deleteDataFiles(writableDatabase, str, strArr);
-                iDelete = writableDatabase.delete("snapshots", str, strArr);
-                if (iDelete > 0) {
-                    getContext().getContentResolver().notifyChange(uri, (ContentObserver) null, false);
-                }
-                writableDatabase.setTransactionSuccessful();
-            } finally {
-                writableDatabase.endTransaction();
-            }
+        if (writableDatabase == null) {
+            return 0;
         }
-        return iDelete;
-    }
-
-    SQLiteDatabase getReadableDatabase() {
-        return this.mOpenHelper.getReadableDatabase();
-    }
-
-    @Override
-    public String getType(Uri uri) {
-        return null;
-    }
-
-    SQLiteDatabase getWritableDatabase() {
-        return this.mOpenHelper.getWritableDatabase();
-    }
-
-    @Override
-    public Uri insert(Uri uri, ContentValues contentValues) {
-        Uri uriWithAppendedId = null;
-        SQLiteDatabase writableDatabase = getWritableDatabase();
-        if (writableDatabase != null) {
-            writableDatabase.beginTransaction();
-            try {
-                if (URI_MATCHER.match(uri) != 10) {
-                    throw new UnsupportedOperationException("Unknown insert URI " + uri);
-                }
-                if (!contentValues.containsKey("view_state")) {
-                    contentValues.put("view_state", NULL_BLOB_HACK);
-                }
-                long jInsert = writableDatabase.insert("snapshots", "title", contentValues);
-                if (jInsert >= 0) {
-                    uriWithAppendedId = ContentUris.withAppendedId(uri, jInsert);
-                    getContext().getContentResolver().notifyChange(uriWithAppendedId, (ContentObserver) null, false);
-                    writableDatabase.setTransactionSuccessful();
-                }
-            } finally {
-                writableDatabase.endTransaction();
+        writableDatabase.beginTransaction();
+        try {
+            switch (URI_MATCHER.match(uri)) {
+                case 10:
+                    break;
+                case 11:
+                    str = DatabaseUtils.concatenateWhere(str, "snapshots._id=?");
+                    strArr = DatabaseUtils.appendSelectionArgs(strArr, new String[]{Long.toString(ContentUris.parseId(uri))});
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unknown delete URI " + uri);
             }
-        }
-        return uriWithAppendedId;
-    }
-
-    @Override
-    public boolean onCreate() {
-        migrateToDataFolder();
-        this.mOpenHelper = new SnapshotDatabaseHelper(getContext());
-        return true;
-    }
-
-    @Override
-    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
-        String[] strArrAppendSelectionArgs;
-        String strConcatenateWhere;
-        Cursor cursorQuery = null;
-        SQLiteDatabase readableDatabase = getReadableDatabase();
-        if (readableDatabase != null) {
-            readableDatabase.beginTransaction();
-            try {
-                int iMatch = URI_MATCHER.match(uri);
-                SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
-                String queryParameter = uri.getQueryParameter("limit");
-                switch (iMatch) {
-                    case 10:
-                        strArrAppendSelectionArgs = strArr2;
-                        strConcatenateWhere = str;
-                        break;
-                    case 11:
-                        strConcatenateWhere = DatabaseUtils.concatenateWhere(str, "_id=?");
-                        strArrAppendSelectionArgs = DatabaseUtils.appendSelectionArgs(strArr2, new String[]{Long.toString(ContentUris.parseId(uri))});
-                        break;
-                    default:
-                        throw new UnsupportedOperationException("Unknown URL " + uri.toString());
-                }
-                sQLiteQueryBuilder.setTables("snapshots");
-                cursorQuery = sQLiteQueryBuilder.query(readableDatabase, strArr, strConcatenateWhere, strArrAppendSelectionArgs, null, null, str2, queryParameter);
-                cursorQuery.setNotificationUri(getContext().getContentResolver(), AUTHORITY_URI);
-                readableDatabase.setTransactionSuccessful();
-            } finally {
-                readableDatabase.endTransaction();
+            deleteDataFiles(writableDatabase, str, strArr);
+            int iDelete = writableDatabase.delete("snapshots", str, strArr);
+            if (iDelete > 0) {
+                getContext().getContentResolver().notifyChange(uri, (ContentObserver) null, false);
             }
+            writableDatabase.setTransactionSuccessful();
+            return iDelete;
+        } finally {
+            writableDatabase.endTransaction();
         }
-        return cursorQuery;
     }
 
     @Override
     public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
-        int iUpdate = 0;
         SQLiteDatabase writableDatabase = getWritableDatabase();
-        if (writableDatabase != null) {
-            writableDatabase.beginTransaction();
-            try {
-                iUpdate = writableDatabase.update("snapshots", contentValues, str, strArr);
-                getContext().getContentResolver().notifyChange(uri, (ContentObserver) null, false);
-                writableDatabase.setTransactionSuccessful();
-            } finally {
-                writableDatabase.endTransaction();
-            }
+        if (writableDatabase == null) {
+            return 0;
         }
-        return iUpdate;
+        writableDatabase.beginTransaction();
+        try {
+            int iUpdate = writableDatabase.update("snapshots", contentValues, str, strArr);
+            getContext().getContentResolver().notifyChange(uri, (ContentObserver) null, false);
+            writableDatabase.setTransactionSuccessful();
+            return iUpdate;
+        } finally {
+            writableDatabase.endTransaction();
+        }
     }
 }

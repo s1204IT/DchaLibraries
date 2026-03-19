@@ -26,10 +26,10 @@ public class DefaultSearchEngine implements SearchEngine {
         SearchableInfo searchableInfo;
         SearchManager searchManager = (SearchManager) context.getSystemService("search");
         ComponentName webSearchActivity = searchManager.getWebSearchActivity();
-        if (webSearchActivity != null && (searchableInfo = searchManager.getSearchableInfo(webSearchActivity)) != null) {
-            return new DefaultSearchEngine(context, searchableInfo);
+        if (webSearchActivity == null || (searchableInfo = searchManager.getSearchableInfo(webSearchActivity)) == null) {
+            return null;
         }
-        return null;
+        return new DefaultSearchEngine(context, searchableInfo);
     }
 
     private CharSequence loadLabel(Context context, ComponentName componentName) {
@@ -45,12 +45,10 @@ public class DefaultSearchEngine implements SearchEngine {
     @Override
     public String getName() {
         String packageName = this.mSearchable.getSearchActivity().getPackageName();
-        return ("com.google.android.googlequicksearchbox".equals(packageName) || "com.android.quicksearchbox".equals(packageName)) ? "google" : packageName;
-    }
-
-    @Override
-    public Cursor getSuggestions(Context context, String str) {
-        return ((SearchManager) context.getSystemService("search")).getSuggestions(this.mSearchable, str);
+        if ("com.google.android.googlequicksearchbox".equals(packageName) || "com.android.quicksearchbox".equals(packageName)) {
+            return "google";
+        }
+        return packageName;
     }
 
     @Override
@@ -75,6 +73,11 @@ public class DefaultSearchEngine implements SearchEngine {
         } catch (ActivityNotFoundException e) {
             Log.e("DefaultSearchEngine", "Web search activity not found: " + this.mSearchable.getSearchActivity());
         }
+    }
+
+    @Override
+    public Cursor getSuggestions(Context context, String str) {
+        return ((SearchManager) context.getSystemService("search")).getSuggestions(this.mSearchable, str);
     }
 
     @Override

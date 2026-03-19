@@ -102,7 +102,7 @@ public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNam
         return buildPreferenceControllers(context, getActivity(), this, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, MyDeviceInfoFragment myDeviceInfoFragment, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Activity activity, MyDeviceInfoFragment myDeviceInfoFragment, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new EmergencyInfoPreferenceController(context));
         arrayList.add(new PhoneNumberPreferenceController(context, lifecycle));
@@ -164,7 +164,7 @@ public class MyDeviceInfoFragment extends DashboardFragment implements DeviceNam
         ((DeviceNamePreferenceController) use(DeviceNamePreferenceController.class)).confirmDeviceName();
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final SummaryLoader mSummaryLoader;
 
         public SummaryProvider(SummaryLoader summaryLoader) {

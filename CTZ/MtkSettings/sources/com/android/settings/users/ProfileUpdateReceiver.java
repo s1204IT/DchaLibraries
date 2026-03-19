@@ -26,7 +26,7 @@ public class ProfileUpdateReceiver extends BroadcastReceiver {
         }.start();
     }
 
-    public static void copyProfileName(Context context) {
+    private static void copyProfileName(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("profile", 0);
         if (sharedPreferences.contains("name_copied_once")) {
             return;

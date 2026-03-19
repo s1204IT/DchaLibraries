@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import com.android.quicksearchbox.Config;
+import com.android.quicksearchbox.R;
 import com.android.quicksearchbox.Source;
 import com.android.quicksearchbox.SourceResult;
 import com.android.quicksearchbox.SuggestionCursor;
@@ -29,6 +30,74 @@ public class GoogleSuggestClient extends AbstractGoogleSource {
     private static final String USER_AGENT = "Android/" + Build.VERSION.RELEASE;
     private final HttpClient mHttpClient;
     private String mSuggestUri;
+
+    public GoogleSuggestClient(Context context, Handler handler, NamedTaskExecutor namedTaskExecutor, Config config) {
+        super(context, handler, namedTaskExecutor);
+        this.mHttpClient = AndroidHttpClient.newInstance(USER_AGENT, context);
+        this.mHttpClient.getParams().setLongParameter("http.conn-manager.timeout", config.getHttpConnectTimeout());
+        this.mSuggestUri = null;
+    }
+
+    @Override
+    public ComponentName getIntentComponent() {
+        return new ComponentName(getContext(), (Class<?>) GoogleSearch.class);
+    }
+
+    @Override
+    public SourceResult queryInternal(String str) {
+        return query(str);
+    }
+
+    @Override
+    public SourceResult queryExternal(String str) {
+        return query(str);
+    }
+
+    private SourceResult query(String str) {
+        if (TextUtils.isEmpty(str)) {
+            return null;
+        }
+        if (!isNetworkConnected()) {
+            Log.i("GoogleSearch", "Not connected to network.");
+            return null;
+        }
+        try {
+            String strEncode = URLEncoder.encode(str, "UTF-8");
+            if (this.mSuggestUri == null) {
+                this.mSuggestUri = getContext().getResources().getString(R.string.google_suggest_base, GoogleSearch.getLanguage(Locale.getDefault()));
+            }
+            HttpResponse httpResponseExecute = this.mHttpClient.execute(new HttpGet(this.mSuggestUri + strEncode));
+            if (httpResponseExecute.getStatusLine().getStatusCode() == 200) {
+                JSONArray jSONArray = new JSONArray(EntityUtils.toString(httpResponseExecute.getEntity()));
+                return new GoogleSuggestCursor(this, str, jSONArray.getJSONArray(1), jSONArray.getJSONArray(2));
+            }
+        } catch (UnsupportedEncodingException e) {
+            Log.w("GoogleSearch", "Error", e);
+        } catch (IOException e2) {
+            Log.w("GoogleSearch", "Error", e2);
+        } catch (JSONException e3) {
+            Log.w("GoogleSearch", "Error", e3);
+        }
+        return null;
+    }
+
+    @Override
+    public SuggestionCursor refreshShortcut(String str, String str2) {
+        return null;
+    }
+
+    private boolean isNetworkConnected() {
+        NetworkInfo activeNetworkInfo = getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private NetworkInfo getActiveNetworkInfo() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService("connectivity");
+        if (connectivityManager == null) {
+            return null;
+        }
+        return connectivityManager.getActiveNetworkInfo();
+    }
 
     private static class GoogleSuggestCursor extends AbstractGoogleSourceResult {
         private final JSONArray mPopularity;
@@ -64,76 +133,5 @@ public class GoogleSuggestClient extends AbstractGoogleSource {
                 return null;
             }
         }
-    }
-
-    public GoogleSuggestClient(Context context, Handler handler, NamedTaskExecutor namedTaskExecutor, Config config) {
-        super(context, handler, namedTaskExecutor);
-        this.mHttpClient = AndroidHttpClient.newInstance(USER_AGENT, context);
-        this.mHttpClient.getParams().setLongParameter("http.conn-manager.timeout", config.getHttpConnectTimeout());
-        this.mSuggestUri = null;
-    }
-
-    private NetworkInfo getActiveNetworkInfo() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService("connectivity");
-        if (connectivityManager == null) {
-            return null;
-        }
-        return connectivityManager.getActiveNetworkInfo();
-    }
-
-    private boolean isNetworkConnected() {
-        NetworkInfo activeNetworkInfo = getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
-
-    private SourceResult query(String str) {
-        if (TextUtils.isEmpty(str)) {
-            return null;
-        }
-        if (!isNetworkConnected()) {
-            Log.i("GoogleSearch", "Not connected to network.");
-            return null;
-        }
-        try {
-            String strEncode = URLEncoder.encode(str, "UTF-8");
-            if (this.mSuggestUri == null) {
-                this.mSuggestUri = getContext().getResources().getString(2131296262, GoogleSearch.getLanguage(Locale.getDefault()));
-            }
-            HttpResponse httpResponseExecute = this.mHttpClient.execute(new HttpGet(this.mSuggestUri + strEncode));
-            if (httpResponseExecute.getStatusLine().getStatusCode() != 200) {
-                return null;
-            }
-            JSONArray jSONArray = new JSONArray(EntityUtils.toString(httpResponseExecute.getEntity()));
-            return new GoogleSuggestCursor(this, str, jSONArray.getJSONArray(1), jSONArray.getJSONArray(2));
-        } catch (UnsupportedEncodingException e) {
-            Log.w("GoogleSearch", "Error", e);
-            return null;
-        } catch (IOException e2) {
-            Log.w("GoogleSearch", "Error", e2);
-            return null;
-        } catch (JSONException e3) {
-            Log.w("GoogleSearch", "Error", e3);
-            return null;
-        }
-    }
-
-    @Override
-    public ComponentName getIntentComponent() {
-        return new ComponentName(getContext(), (Class<?>) GoogleSearch.class);
-    }
-
-    @Override
-    public SourceResult queryExternal(String str) {
-        return query(str);
-    }
-
-    @Override
-    public SourceResult queryInternal(String str) {
-        return query(str);
-    }
-
-    @Override
-    public SuggestionCursor refreshShortcut(String str, String str2) {
-        return null;
     }
 }

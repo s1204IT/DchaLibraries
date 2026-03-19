@@ -142,7 +142,7 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
         });
     }
 
-    public void updateHardKeyboards(List<HardKeyboardDeviceInfo> list) {
+    private void updateHardKeyboards(List<HardKeyboardDeviceInfo> list) {
         if (Objects.equals(this.mLastHardKeyboards, list)) {
             return;
         }
@@ -192,11 +192,11 @@ public final class PhysicalKeyboardFragment extends SettingsPreferenceFragment i
         getActivity().getContentResolver().unregisterContentObserver(this.mContentObserver);
     }
 
-    public void updateShowVirtualKeyboardSwitch() {
+    private void updateShowVirtualKeyboardSwitch() {
         this.mShowVirtualKeyboardSwitch.setChecked(this.mSettings.isShowImeWithHardKeyboardEnabled());
     }
 
-    public void toggleKeyboardShortcutsMenu() {
+    private void toggleKeyboardShortcutsMenu() {
         getActivity().requestShowKeyboardShortcuts();
     }
 

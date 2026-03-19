@@ -60,7 +60,7 @@ public class SmartBatterySettings extends DashboardFragment {
         return buildPreferenceControllers(context, (SettingsActivity) getActivity(), this);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SettingsActivity settingsActivity, InstrumentedPreferenceFragment instrumentedPreferenceFragment) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SettingsActivity settingsActivity, InstrumentedPreferenceFragment instrumentedPreferenceFragment) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new SmartBatteryPreferenceController(context));
         if (settingsActivity != null && instrumentedPreferenceFragment != null) {

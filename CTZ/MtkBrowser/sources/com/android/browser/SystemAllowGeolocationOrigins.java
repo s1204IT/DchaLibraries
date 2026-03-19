@@ -14,16 +14,10 @@ import java.util.Set;
 
 class SystemAllowGeolocationOrigins {
     private final Context mContext;
-    private Runnable mMaybeApplySetting = new Runnable(this) {
-        final SystemAllowGeolocationOrigins this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    private Runnable mMaybeApplySetting = new Runnable() {
         @Override
         public void run() {
-            String systemSetting = this.this$0.getSystemSetting();
+            String systemSetting = SystemAllowGeolocationOrigins.this.getSystemSetting();
             SharedPreferences preferences = BrowserSettings.getInstance().getPreferences();
             String string = preferences.getString("last_read_allow_geolocation_origins", "");
             if (TextUtils.equals(string, systemSetting)) {
@@ -32,41 +26,28 @@ class SystemAllowGeolocationOrigins {
             preferences.edit().putString("last_read_allow_geolocation_origins", systemSetting).apply();
             HashSet allowGeolocationOrigins = SystemAllowGeolocationOrigins.parseAllowGeolocationOrigins(string);
             HashSet allowGeolocationOrigins2 = SystemAllowGeolocationOrigins.parseAllowGeolocationOrigins(systemSetting);
-            Set minus = this.this$0.setMinus(allowGeolocationOrigins2, allowGeolocationOrigins);
-            this.this$0.removeOrigins(this.this$0.setMinus(allowGeolocationOrigins, allowGeolocationOrigins2));
-            this.this$0.addOrigins(minus);
+            Set minus = SystemAllowGeolocationOrigins.this.setMinus(allowGeolocationOrigins2, allowGeolocationOrigins);
+            SystemAllowGeolocationOrigins.this.removeOrigins(SystemAllowGeolocationOrigins.this.setMinus(allowGeolocationOrigins, allowGeolocationOrigins2));
+            SystemAllowGeolocationOrigins.this.addOrigins(minus);
         }
     };
-    private final SettingObserver mSettingObserver = new SettingObserver(this);
-
-    private class SettingObserver extends ContentObserver {
-        final SystemAllowGeolocationOrigins this$0;
-
-        SettingObserver(SystemAllowGeolocationOrigins systemAllowGeolocationOrigins) {
-            super(new Handler());
-            this.this$0 = systemAllowGeolocationOrigins;
-        }
-
-        @Override
-        public void onChange(boolean z) {
-            this.this$0.maybeApplySettingAsync();
-        }
-    }
+    private final SettingObserver mSettingObserver = new SettingObserver();
 
     public SystemAllowGeolocationOrigins(Context context) {
         this.mContext = context.getApplicationContext();
     }
 
-    private void addOrigins(Set<String> set) {
-        Iterator<String> it = set.iterator();
-        while (it.hasNext()) {
-            GeolocationPermissions.getInstance().allow(it.next());
-        }
+    public void start() {
+        this.mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor("allowed_geolocation_origins"), false, this.mSettingObserver);
+        maybeApplySettingAsync();
     }
 
-    private String getSystemSetting() {
-        String string = Settings.Secure.getString(this.mContext.getContentResolver(), "allowed_geolocation_origins");
-        return string == null ? "" : string;
+    public void stop() {
+        this.mContext.getContentResolver().unregisterContentObserver(this.mSettingObserver);
+    }
+
+    void maybeApplySettingAsync() {
+        BackgroundHandler.execute(this.mMaybeApplySetting);
     }
 
     private static HashSet<String> parseAllowGeolocationOrigins(String str) {
@@ -81,28 +62,6 @@ class SystemAllowGeolocationOrigins {
         return hashSet;
     }
 
-    private void removeOrigins(Set<String> set) {
-        for (String str : set) {
-            GeolocationPermissions.getInstance().getAllowed(str, new ValueCallback<Boolean>(this, str) {
-                final SystemAllowGeolocationOrigins this$0;
-                final String val$origin;
-
-                {
-                    this.this$0 = this;
-                    this.val$origin = str;
-                }
-
-                @Override
-                public void onReceiveValue(Boolean bool) {
-                    if (bool == null || !bool.booleanValue()) {
-                        return;
-                    }
-                    GeolocationPermissions.getInstance().clear(this.val$origin);
-                }
-            });
-        }
-    }
-
     private <A> Set<A> setMinus(Set<A> set, Set<A> set2) {
         HashSet hashSet = new HashSet(set.size());
         for (A a : set) {
@@ -113,16 +72,39 @@ class SystemAllowGeolocationOrigins {
         return hashSet;
     }
 
-    void maybeApplySettingAsync() {
-        BackgroundHandler.execute(this.mMaybeApplySetting);
+    private String getSystemSetting() {
+        String string = Settings.Secure.getString(this.mContext.getContentResolver(), "allowed_geolocation_origins");
+        return string == null ? "" : string;
     }
 
-    public void start() {
-        this.mContext.getContentResolver().registerContentObserver(Settings.Secure.getUriFor("allowed_geolocation_origins"), false, this.mSettingObserver);
-        maybeApplySettingAsync();
+    private void addOrigins(Set<String> set) {
+        Iterator<String> it = set.iterator();
+        while (it.hasNext()) {
+            GeolocationPermissions.getInstance().allow(it.next());
+        }
     }
 
-    public void stop() {
-        this.mContext.getContentResolver().unregisterContentObserver(this.mSettingObserver);
+    private void removeOrigins(Set<String> set) {
+        for (final String str : set) {
+            GeolocationPermissions.getInstance().getAllowed(str, new ValueCallback<Boolean>() {
+                @Override
+                public void onReceiveValue(Boolean bool) {
+                    if (bool != null && bool.booleanValue()) {
+                        GeolocationPermissions.getInstance().clear(str);
+                    }
+                }
+            });
+        }
+    }
+
+    private class SettingObserver extends ContentObserver {
+        SettingObserver() {
+            super(new Handler());
+        }
+
+        @Override
+        public void onChange(boolean z) {
+            SystemAllowGeolocationOrigins.this.maybeApplySettingAsync();
+        }
     }
 }

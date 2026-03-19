@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape android:shape="line">
+            <corners android:radius="@dimen/seekbar_track_corner"/>
+            <stroke
+                android:width="@dimen/seekbar_track_height"
+                android:color="@color/car_grey_300"/>
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="line">
+                <stroke
+                    android:width="@dimen/seekbar_track_height"
+                    android:color="@color/car_teal_700"/>
+            </shape>
+        </clip>
+    </item>
+</layer-list>

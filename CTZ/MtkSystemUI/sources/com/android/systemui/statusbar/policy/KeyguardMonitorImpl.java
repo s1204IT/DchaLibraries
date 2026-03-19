@@ -98,7 +98,7 @@ public class KeyguardMonitorImpl extends KeyguardUpdateMonitorCallback implement
         return this.mKeyguardUpdateMonitor.isDeviceInteractive();
     }
 
-    public void updateCanSkipBouncerState() {
+    private void updateCanSkipBouncerState() {
         this.mCanSkipBouncer = this.mKeyguardUpdateMonitor.getUserCanSkipBouncer(this.mCurrentUser);
     }
 

@@ -74,7 +74,7 @@ public abstract class CurrentUserTracker {
             return this.mCurrentUserId;
         }
 
-        public void addTracker(Consumer<Integer> consumer) {
+        private void addTracker(Consumer<Integer> consumer) {
             if (!this.mCallbacks.contains(consumer)) {
                 this.mCallbacks.add(consumer);
             }
@@ -85,7 +85,7 @@ public abstract class CurrentUserTracker {
             }
         }
 
-        public void removeTracker(Consumer<Integer> consumer) {
+        private void removeTracker(Consumer<Integer> consumer) {
             if (this.mCallbacks.contains(consumer)) {
                 this.mCallbacks.remove(consumer);
                 if (this.mCallbacks.size() == 0 && this.mReceiverRegistered) {

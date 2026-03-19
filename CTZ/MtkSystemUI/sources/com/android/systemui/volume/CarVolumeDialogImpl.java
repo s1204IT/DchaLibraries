@@ -187,7 +187,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         this.mHandler.obtainMessage(1, i, 0).sendToTarget();
     }
 
-    public void showH(int i) {
+    private void showH(int i) {
         if (D.BUG) {
             Log.d(TAG, "showH r=" + Events.DISMISS_REASONS[i]);
         }
@@ -311,7 +311,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    public VolumeItem getVolumeItemForUsages(int[] iArr) {
+    private VolumeItem getVolumeItemForUsages(int[] iArr) {
         int i = Integer.MAX_VALUE;
         VolumeItem volumeItem = null;
         for (int i2 : iArr) {
@@ -324,7 +324,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         return volumeItem;
     }
 
-    public static int getSeekbarValue(CarAudioManager carAudioManager, int i) {
+    private static int getSeekbarValue(CarAudioManager carAudioManager, int i) {
         try {
             return carAudioManager.getGroupVolume(i);
         } catch (CarNotConnectedException e) {
@@ -342,7 +342,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    public SeekbarListItem addSeekbarListItem(VolumeItem volumeItem, int i, int i2, View.OnClickListener onClickListener) {
+    private SeekbarListItem addSeekbarListItem(VolumeItem volumeItem, int i, int i2, View.OnClickListener onClickListener) {
         SeekbarListItem seekbarListItem = new SeekbarListItem(this.mContext);
         seekbarListItem.setMax(getMaxSeekbarValue(this.mCarAudioManager, i));
         int color = this.mContext.getResources().getColor(R.color.car_volume_dialog_tint);
@@ -365,7 +365,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         return seekbarListItem;
     }
 
-    public VolumeItem findVolumeItem(SeekbarListItem seekbarListItem) {
+    private VolumeItem findVolumeItem(SeekbarListItem seekbarListItem) {
         for (int i = 0; i < this.mVolumeItems.size(); i++) {
             VolumeItem volumeItemValueAt = this.mVolumeItems.valueAt(i);
             if (volumeItemValueAt.listItem == seekbarListItem) {
@@ -375,7 +375,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         return null;
     }
 
-    public void cleanupAudioManager() {
+    private void cleanupAudioManager() {
         try {
             this.mCarAudioManager.unregisterVolumeCallback(this.mVolumeChangeCallback.asBinder());
         } catch (CarNotConnectedException e) {
@@ -385,7 +385,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         this.mCarAudioManager = null;
     }
 
-    final class H extends Handler {
+    private final class H extends Handler {
         public H() {
             super(Looper.getMainLooper());
         }
@@ -403,7 +403,7 @@ public class CarVolumeDialogImpl implements VolumeDialog {
         }
     }
 
-    final class CustomDialog extends Dialog implements DialogInterface {
+    private final class CustomDialog extends Dialog implements DialogInterface {
         public CustomDialog(Context context) {
             super(context, R.style.qs_theme);
         }

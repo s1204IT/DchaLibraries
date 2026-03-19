@@ -37,20 +37,9 @@ public class TitleBar extends RelativeLayout {
 
     public TitleBar(Context context, UiController uiController, BaseUi baseUi, FrameLayout frameLayout) {
         super(context, null);
-        this.mHideTileBarAnimatorListener = new Animator.AnimatorListener(this) {
-            final TitleBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mHideTileBarAnimatorListener = new Animator.AnimatorListener() {
             @Override
-            public void onAnimationCancel(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                this.this$0.onScrollChanged();
+            public void onAnimationStart(Animator animator) {
             }
 
             @Override
@@ -58,7 +47,12 @@ public class TitleBar extends RelativeLayout {
             }
 
             @Override
-            public void onAnimationStart(Animator animator) {
+            public void onAnimationEnd(Animator animator) {
+                TitleBar.this.onScrollChanged();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
             }
         };
         this.mUiController = uiController;
@@ -70,37 +64,45 @@ public class TitleBar extends RelativeLayout {
         setFixedTitleBar();
     }
 
-    private int calculateEmbeddedHeight() {
-        int height = this.mNavBar.getHeight();
-        return (this.mAutoLogin == null || this.mAutoLogin.getVisibility() != 0) ? height : height + this.mAutoLogin.getHeight();
-    }
-
-    private int calculateEmbeddedMeasuredHeight() {
-        int measuredHeight = this.mNavBar.getMeasuredHeight();
-        return (this.mAutoLogin == null || this.mAutoLogin.getVisibility() != 0) ? measuredHeight : measuredHeight + this.mAutoLogin.getMeasuredHeight();
-    }
-
-    private boolean inAutoLogin() {
-        return this.mAutoLogin != null && this.mAutoLogin.getVisibility() == 0;
+    private void initLayout(Context context) {
+        LayoutInflater.from(context).inflate(R.layout.title_bar, this);
+        this.mProgress = (PageProgressView) findViewById(R.id.progress);
+        this.mNavBar = (NavigationBarBase) findViewById(R.id.taburlbar);
+        this.mNavBar.setTitleBar(this);
     }
 
     private void inflateAutoLoginBar() {
         if (this.mAutoLogin != null) {
             return;
         }
-        this.mAutoLogin = (AutologinBar) ((ViewStub) findViewById(2131558530)).inflate();
+        this.mAutoLogin = (AutologinBar) ((ViewStub) findViewById(R.id.autologin_stub)).inflate();
         this.mAutoLogin.setTitleBar(this);
     }
 
-    private void initLayout(Context context) {
-        LayoutInflater.from(context).inflate(2130968630, this);
-        this.mProgress = (PageProgressView) findViewById(2131558531);
-        this.mNavBar = (NavigationBarBase) findViewById(2131558528);
-        this.mNavBar.setTitleBar(this);
+    @Override
+    protected void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        setFixedTitleBar();
     }
 
-    private ViewGroup.LayoutParams makeLayoutParams() {
-        return new FrameLayout.LayoutParams(-1, -2);
+    @Override
+    protected void onMeasure(int i, int i2) {
+        super.onMeasure(i, i2);
+        if (this.mIsFixedTitleBar) {
+            this.mBaseUi.setContentViewMarginTop(-(getMeasuredHeight() - calculateEmbeddedMeasuredHeight()));
+        } else {
+            this.mBaseUi.setContentViewMarginTop(0);
+        }
+    }
+
+    @Override
+    public boolean gatherTransparentRegion(Region region) {
+        if (region != null) {
+            int[] iArr = new int[2];
+            getLocationInWindow(iArr);
+            region.op(0, 0, (iArr[0] + ((View) this).mRight) - ((View) this).mLeft, (iArr[1] + ((View) this).mBottom) - ((View) this).mTop, Region.Op.DIFFERENCE);
+        }
+        return true;
     }
 
     private void setFixedTitleBar() {
@@ -122,55 +124,6 @@ public class TitleBar extends RelativeLayout {
         }
     }
 
-    void cancelTitleBarAnimation(boolean z) {
-        if (this.mTitleBarAnimator != null) {
-            this.mTitleBarAnimator.cancel();
-            this.mTitleBarAnimator = null;
-        }
-        if (z) {
-            setTranslationY(0.0f);
-        }
-    }
-
-    @Override
-    public View focusSearch(View view, int i) {
-        WebView currentWebView = getCurrentWebView();
-        return (130 == i && hasFocus() && currentWebView != null && currentWebView.hasFocusable() && currentWebView.getParent() != null) ? currentWebView : super.focusSearch(view, i);
-    }
-
-    @Override
-    public boolean gatherTransparentRegion(Region region) {
-        if (region != null) {
-            int[] iArr = new int[2];
-            getLocationInWindow(iArr);
-            region.op(0, 0, (iArr[0] + this.mRight) - this.mLeft, (iArr[1] + this.mBottom) - this.mTop, Region.Op.DIFFERENCE);
-        }
-        return true;
-    }
-
-    public WebView getCurrentWebView() {
-        Tab activeTab = this.mBaseUi.getActiveTab();
-        if (activeTab != null) {
-            return activeTab.getWebView();
-        }
-        return null;
-    }
-
-    public int getEmbeddedHeight() {
-        if (this.mIsFixedTitleBar) {
-            return 0;
-        }
-        return calculateEmbeddedHeight();
-    }
-
-    public NavigationBarBase getNavigationBar() {
-        return this.mNavBar;
-    }
-
-    public PageProgressView getProgressView() {
-        return this.mProgress;
-    }
-
     public BaseUi getUi() {
         return this.mBaseUi;
     }
@@ -179,147 +132,12 @@ public class TitleBar extends RelativeLayout {
         return this.mUiController;
     }
 
-    public int getVisibleTitleHeight() {
-        Tab activeTab = this.mBaseUi.getActiveTab();
-        WebView webView = activeTab != null ? activeTab.getWebView() : null;
-        if (webView != null) {
-            return webView.getVisibleTitleHeight();
-        }
-        return 0;
-    }
-
-    void hide() {
-        if (this.mIsFixedTitleBar) {
-            return;
-        }
-        if (this.mUseQuickControls) {
-            setVisibility(8);
-        } else if (this.mSkipTitleBarAnimations) {
-            onScrollChanged();
-        } else {
-            cancelTitleBarAnimation(false);
-            this.mTitleBarAnimator = ObjectAnimator.ofFloat(this, "translationY", getTranslationY(), getVisibleTitleHeight() + (-getEmbeddedHeight()));
-            this.mTitleBarAnimator.addListener(this.mHideTileBarAnimatorListener);
-            setupTitleBarAnimator(this.mTitleBarAnimator);
-            this.mTitleBarAnimator.start();
-        }
-        this.mShowing = false;
-    }
-
-    public void hideAutoLogin(boolean z) {
-        if (this.mUseQuickControls) {
-            this.mAutoLogin.setVisibility(8);
-            this.mBaseUi.refreshWebView();
-        } else if (z) {
-            Animation animationLoadAnimation = AnimationUtils.loadAnimation(getContext(), 2131034113);
-            animationLoadAnimation.setAnimationListener(new Animation.AnimationListener(this) {
-                final TitleBar this$0;
-
-                {
-                    this.this$0 = this;
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    this.this$0.mAutoLogin.setVisibility(8);
-                    this.this$0.mBaseUi.refreshWebView();
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-                }
-
-                @Override
-                public void onAnimationStart(Animation animation) {
-                }
-            });
-            this.mAutoLogin.startAnimation(animationLoadAnimation);
-        } else if (this.mAutoLogin.getAnimation() == null) {
-            this.mAutoLogin.setVisibility(8);
-            this.mBaseUi.refreshWebView();
-        }
-    }
-
-    public boolean isEditingUrl() {
-        return this.mNavBar.isEditingUrl();
-    }
-
-    public boolean isInLoad() {
-        return this.mInLoad;
-    }
-
-    boolean isShowing() {
-        return this.mShowing;
-    }
-
-    @Override
-    protected void onConfigurationChanged(Configuration configuration) {
-        super.onConfigurationChanged(configuration);
-        setFixedTitleBar();
-    }
-
-    @Override
-    protected void onMeasure(int i, int i2) {
-        super.onMeasure(i, i2);
-        if (!this.mIsFixedTitleBar) {
-            this.mBaseUi.setContentViewMarginTop(0);
-            return;
-        }
-        this.mBaseUi.setContentViewMarginTop(-(getMeasuredHeight() - calculateEmbeddedMeasuredHeight()));
-    }
-
-    public void onResume() {
-        setFixedTitleBar();
-    }
-
-    public void onScrollChanged() {
-        if (this.mShowing || this.mIsFixedTitleBar) {
-            return;
-        }
-        int visibleTitleHeight = getVisibleTitleHeight() - getEmbeddedHeight();
-        setTranslationY(visibleTitleHeight);
-        if (visibleTitleHeight > (-this.mSlop)) {
-            show();
-            this.mBaseUi.showBottomBarForDuration(2000L);
-        } else if (visibleTitleHeight < (-this.mSlop)) {
-            this.mBaseUi.hideBottomBar();
-        }
-    }
-
-    public void onTabDataChanged(Tab tab) {
-        this.mNavBar.setVisibility(0);
-    }
-
-    public void setProgress(int i) {
-        if (i < 100) {
-            if (!this.mInLoad) {
-                this.mProgress.setVisibility(0);
-                this.mInLoad = true;
-                this.mNavBar.onProgressStarted();
-            }
-            this.mProgress.setProgress((i * 10000) / 100);
-            if (this.mShowing) {
-                return;
-            }
-            show();
-            return;
-        }
-        this.mProgress.setProgress(10000);
-        this.mProgress.setVisibility(8);
-        this.mInLoad = false;
-        this.mNavBar.onProgressStopped();
-        if (isEditingUrl() || wantsToBeVisible() || this.mUseQuickControls) {
-            return;
-        }
-        this.mBaseUi.showTitleBarForDuration();
-    }
-
     void setSkipTitleBarAnimations(boolean z) {
         this.mSkipTitleBarAnimations = z;
     }
 
     void setupTitleBarAnimator(Animator animator) {
-        int integer = this.mContext.getResources().getInteger(2131623944);
+        int integer = ((View) this).mContext.getResources().getInteger(R.integer.titlebar_animation_duration);
         animator.setInterpolator(new DecelerateInterpolator(2.5f));
         animator.setDuration(integer);
     }
@@ -331,7 +149,7 @@ public class TitleBar extends RelativeLayout {
             setVisibility(0);
             setTranslationY(0.0f);
         } else {
-            float visibleTitleHeight = getVisibleTitleHeight() + (-getEmbeddedHeight());
+            float visibleTitleHeight = (-getEmbeddedHeight()) + getVisibleTitleHeight();
             if (getTranslationY() != 0.0f) {
                 visibleTitleHeight = Math.max(visibleTitleHeight, getTranslationY());
             }
@@ -342,17 +160,91 @@ public class TitleBar extends RelativeLayout {
         this.mShowing = true;
     }
 
-    public void showAutoLogin(boolean z) {
+    void hide() {
+        if (this.mIsFixedTitleBar) {
+            return;
+        }
         if (this.mUseQuickControls) {
-            this.mBaseUi.showTitleBar();
+            setVisibility(8);
+        } else if (!this.mSkipTitleBarAnimations) {
+            cancelTitleBarAnimation(false);
+            this.mTitleBarAnimator = ObjectAnimator.ofFloat(this, "translationY", getTranslationY(), (-getEmbeddedHeight()) + getVisibleTitleHeight());
+            this.mTitleBarAnimator.addListener(this.mHideTileBarAnimatorListener);
+            setupTitleBarAnimator(this.mTitleBarAnimator);
+            this.mTitleBarAnimator.start();
+        } else {
+            onScrollChanged();
         }
-        if (this.mAutoLogin == null) {
-            inflateAutoLoginBar();
+        this.mShowing = false;
+    }
+
+    boolean isShowing() {
+        return this.mShowing;
+    }
+
+    void cancelTitleBarAnimation(boolean z) {
+        if (this.mTitleBarAnimator != null) {
+            this.mTitleBarAnimator.cancel();
+            this.mTitleBarAnimator = null;
         }
-        this.mAutoLogin.setVisibility(0);
         if (z) {
-            this.mAutoLogin.startAnimation(AnimationUtils.loadAnimation(getContext(), 2131034112));
+            setTranslationY(0.0f);
         }
+    }
+
+    public int getVisibleTitleHeight() {
+        Tab activeTab = this.mBaseUi.getActiveTab();
+        WebView webView = activeTab != null ? activeTab.getWebView() : null;
+        if (webView != null) {
+            return webView.getVisibleTitleHeight();
+        }
+        return 0;
+    }
+
+    public void setProgress(int i) {
+        if (i >= 100) {
+            this.mProgress.setProgress(10000);
+            this.mProgress.setVisibility(8);
+            this.mInLoad = false;
+            this.mNavBar.onProgressStopped();
+            if (!isEditingUrl() && !wantsToBeVisible() && !this.mUseQuickControls) {
+                this.mBaseUi.showTitleBarForDuration();
+                return;
+            }
+            return;
+        }
+        if (!this.mInLoad) {
+            this.mProgress.setVisibility(0);
+            this.mInLoad = true;
+            this.mNavBar.onProgressStarted();
+        }
+        this.mProgress.setProgress((i * 10000) / 100);
+        if (!this.mShowing) {
+            show();
+        }
+    }
+
+    public int getEmbeddedHeight() {
+        if (this.mIsFixedTitleBar) {
+            return 0;
+        }
+        return calculateEmbeddedHeight();
+    }
+
+    private int calculateEmbeddedHeight() {
+        int height = this.mNavBar.getHeight();
+        if (this.mAutoLogin != null && this.mAutoLogin.getVisibility() == 0) {
+            return height + this.mAutoLogin.getHeight();
+        }
+        return height;
+    }
+
+    private int calculateEmbeddedMeasuredHeight() {
+        int measuredHeight = this.mNavBar.getMeasuredHeight();
+        if (this.mAutoLogin != null && this.mAutoLogin.getVisibility() == 0) {
+            return measuredHeight + this.mAutoLogin.getMeasuredHeight();
+        }
+        return measuredHeight;
     }
 
     public void updateAutoLogin(Tab tab, boolean z) {
@@ -366,11 +258,114 @@ public class TitleBar extends RelativeLayout {
         this.mAutoLogin.updateAutoLogin(tab, z);
     }
 
-    public boolean useQuickControls() {
-        return this.mUseQuickControls;
+    public void showAutoLogin(boolean z) {
+        if (this.mUseQuickControls) {
+            this.mBaseUi.showTitleBar();
+        }
+        if (this.mAutoLogin == null) {
+            inflateAutoLoginBar();
+        }
+        this.mAutoLogin.setVisibility(0);
+        if (z) {
+            this.mAutoLogin.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.autologin_enter));
+        }
+    }
+
+    public void hideAutoLogin(boolean z) {
+        if (this.mUseQuickControls) {
+            this.mAutoLogin.setVisibility(8);
+            this.mBaseUi.refreshWebView();
+        } else if (z) {
+            Animation animationLoadAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.autologin_exit);
+            animationLoadAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    TitleBar.this.mAutoLogin.setVisibility(8);
+                    TitleBar.this.mBaseUi.refreshWebView();
+                }
+
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+            this.mAutoLogin.startAnimation(animationLoadAnimation);
+        } else if (this.mAutoLogin.getAnimation() == null) {
+            this.mAutoLogin.setVisibility(8);
+            this.mBaseUi.refreshWebView();
+        }
     }
 
     public boolean wantsToBeVisible() {
         return inAutoLogin();
+    }
+
+    private boolean inAutoLogin() {
+        return this.mAutoLogin != null && this.mAutoLogin.getVisibility() == 0;
+    }
+
+    public boolean isEditingUrl() {
+        return this.mNavBar.isEditingUrl();
+    }
+
+    public WebView getCurrentWebView() {
+        Tab activeTab = this.mBaseUi.getActiveTab();
+        if (activeTab != null) {
+            return activeTab.getWebView();
+        }
+        return null;
+    }
+
+    public PageProgressView getProgressView() {
+        return this.mProgress;
+    }
+
+    public NavigationBarBase getNavigationBar() {
+        return this.mNavBar;
+    }
+
+    public boolean useQuickControls() {
+        return this.mUseQuickControls;
+    }
+
+    public boolean isInLoad() {
+        return this.mInLoad;
+    }
+
+    private ViewGroup.LayoutParams makeLayoutParams() {
+        return new FrameLayout.LayoutParams(-1, -2);
+    }
+
+    @Override
+    public View focusSearch(View view, int i) {
+        WebView currentWebView = getCurrentWebView();
+        if (130 == i && hasFocus() && currentWebView != null && currentWebView.hasFocusable() && currentWebView.getParent() != null) {
+            return currentWebView;
+        }
+        return super.focusSearch(view, i);
+    }
+
+    public void onTabDataChanged(Tab tab) {
+        this.mNavBar.setVisibility(0);
+    }
+
+    public void onScrollChanged() {
+        if (!this.mShowing && !this.mIsFixedTitleBar) {
+            int visibleTitleHeight = getVisibleTitleHeight() - getEmbeddedHeight();
+            setTranslationY(visibleTitleHeight);
+            if (visibleTitleHeight > (-this.mSlop)) {
+                show();
+                this.mBaseUi.showBottomBarForDuration(2000L);
+            } else if (visibleTitleHeight < (-this.mSlop)) {
+                this.mBaseUi.hideBottomBar();
+            }
+        }
+    }
+
+    public void onResume() {
+        setFixedTitleBar();
     }
 }

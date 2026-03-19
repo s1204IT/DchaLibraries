@@ -9,14 +9,17 @@ public final class MediaSessionManager {
     static final boolean DEBUG = Log.isLoggable("MediaSessionManager", 3);
     private static final Object sLock = new Object();
 
+    interface RemoteUserInfoImpl {
+    }
+
     public static final class RemoteUserInfo {
         RemoteUserInfoImpl mImpl;
 
-        public RemoteUserInfo(String str, int i, int i2) {
+        public RemoteUserInfo(String packageName, int pid, int uid) {
             if (Build.VERSION.SDK_INT >= 28) {
-                this.mImpl = new MediaSessionManagerImplApi28.RemoteUserInfo(str, i, i2);
+                this.mImpl = new MediaSessionManagerImplApi28.RemoteUserInfo(packageName, pid, uid);
             } else {
-                this.mImpl = new MediaSessionManagerImplBase.RemoteUserInfo(str, i, i2);
+                this.mImpl = new MediaSessionManagerImplBase.RemoteUserInfo(packageName, pid, uid);
             }
         }
 
@@ -27,8 +30,5 @@ public final class MediaSessionManager {
         public int hashCode() {
             return this.mImpl.hashCode();
         }
-    }
-
-    interface RemoteUserInfoImpl {
     }
 }

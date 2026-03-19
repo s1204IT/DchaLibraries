@@ -11,17 +11,17 @@ public class MediaItem2 {
     private MediaMetadata2 mMetadata;
     private final UUID mUUID;
 
-    private MediaItem2(String str, DataSourceDesc dataSourceDesc, MediaMetadata2 mediaMetadata2, int i, UUID uuid) {
-        if (str == null) {
+    private MediaItem2(String mediaId, DataSourceDesc dsd, MediaMetadata2 metadata, int flags, UUID uuid) {
+        if (mediaId == null) {
             throw new IllegalArgumentException("mediaId shouldn't be null");
         }
-        if (mediaMetadata2 != null && !TextUtils.equals(str, mediaMetadata2.getMediaId())) {
+        if (metadata != null && !TextUtils.equals(mediaId, metadata.getMediaId())) {
             throw new IllegalArgumentException("metadata's id should be matched with the mediaid");
         }
-        this.mId = str;
-        this.mDataSourceDesc = dataSourceDesc;
-        this.mMetadata = mediaMetadata2;
-        this.mFlags = i;
+        this.mId = mediaId;
+        this.mDataSourceDesc = dsd;
+        this.mMetadata = metadata;
+        this.mFlags = flags;
         this.mUUID = uuid == null ? UUID.randomUUID() : uuid;
     }
 
@@ -29,30 +29,37 @@ public class MediaItem2 {
         if (bundle == null) {
             return null;
         }
-        return fromBundle(bundle, UUID.fromString(bundle.getString("android.media.mediaitem2.uuid")));
+        String uuidString = bundle.getString("android.media.mediaitem2.uuid");
+        return fromBundle(bundle, UUID.fromString(uuidString));
     }
 
     static MediaItem2 fromBundle(Bundle bundle, UUID uuid) {
+        MediaMetadata2 mediaMetadata2FromBundle = null;
         if (bundle == null) {
             return null;
         }
-        String string = bundle.getString("android.media.mediaitem2.id");
-        Bundle bundle2 = bundle.getBundle("android.media.mediaitem2.metadata");
-        return new MediaItem2(string, null, bundle2 != null ? MediaMetadata2.fromBundle(bundle2) : null, bundle.getInt("android.media.mediaitem2.flags"), uuid);
+        String id = bundle.getString("android.media.mediaitem2.id");
+        Bundle metadataBundle = bundle.getBundle("android.media.mediaitem2.metadata");
+        if (metadataBundle != null) {
+            mediaMetadata2FromBundle = MediaMetadata2.fromBundle(metadataBundle);
+        }
+        MediaMetadata2 metadata = mediaMetadata2FromBundle;
+        int flags = bundle.getInt("android.media.mediaitem2.flags");
+        return new MediaItem2(id, null, metadata, flags, uuid);
     }
 
-    public boolean equals(Object obj) {
-        if (obj instanceof MediaItem2) {
-            return this.mUUID.equals(((MediaItem2) obj).mUUID);
-        }
-        return false;
+    public String toString() {
+        return "MediaItem2{mFlags=" + this.mFlags + ", mMetadata=" + this.mMetadata + '}';
     }
 
     public int hashCode() {
         return this.mUUID.hashCode();
     }
 
-    public String toString() {
-        return "MediaItem2{mFlags=" + this.mFlags + ", mMetadata=" + this.mMetadata + '}';
+    public boolean equals(Object obj) {
+        if (!(obj instanceof MediaItem2)) {
+            return false;
+        }
+        return this.mUUID.equals(obj.mUUID);
     }
 }

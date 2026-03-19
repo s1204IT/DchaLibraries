@@ -6,6 +6,7 @@ import android.preference.PreferenceFragment;
 import android.webkit.WebView;
 import com.android.browser.BrowserSettings;
 import com.android.browser.Extensions;
+import com.android.browser.R;
 import com.mediatek.browser.ext.IBrowserSettingExt;
 import java.text.NumberFormat;
 
@@ -18,7 +19,7 @@ public class AccessibilityPreferencesFragment extends PreferenceFragment impleme
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
         this.mControlWebView = new WebView(getActivity());
-        addPreferencesFromResource(2131099648);
+        addPreferencesFromResource(R.xml.accessibility_preferences);
         BrowserSettings browserSettings = BrowserSettings.getInstance();
         this.mFormat = NumberFormat.getPercentInstance();
         Preference preferenceFindPreference = findPreference("min_font_size");
@@ -35,16 +36,34 @@ public class AccessibilityPreferencesFragment extends PreferenceFragment impleme
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.mControlWebView.destroy();
-        this.mControlWebView = null;
+    public void onResume() {
+        super.onResume();
+        this.mControlWebView.resumeTimers();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         this.mControlWebView.pauseTimers();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.mControlWebView.destroy();
+        this.mControlWebView = null;
+    }
+
+    void updateMinFontSummary(Preference preference, int i) {
+        preference.setSummary(getActivity().getString(R.string.pref_min_font_size_value, Integer.valueOf(i)));
+    }
+
+    void updateTextZoomSummary(Preference preference, int i) {
+        preference.setSummary(this.mFormat.format(((double) i) / 100.0d));
+    }
+
+    void updateDoubleTapZoomSummary(Preference preference, int i) {
+        preference.setSummary(this.mFormat.format(((double) i) / 100.0d));
     }
 
     @Override
@@ -64,23 +83,5 @@ public class AccessibilityPreferencesFragment extends PreferenceFragment impleme
         this.mBrowserSettingExt = Extensions.getSettingPlugin(getActivity());
         this.mBrowserSettingExt.updatePreferenceItem(preference, obj);
         return true;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        this.mControlWebView.resumeTimers();
-    }
-
-    void updateDoubleTapZoomSummary(Preference preference, int i) {
-        preference.setSummary(this.mFormat.format(((double) i) / 100.0d));
-    }
-
-    void updateMinFontSummary(Preference preference, int i) {
-        preference.setSummary(getActivity().getString(2131493138, Integer.valueOf(i)));
-    }
-
-    void updateTextZoomSummary(Preference preference, int i) {
-        preference.setSummary(this.mFormat.format(((double) i) / 100.0d));
     }
 }

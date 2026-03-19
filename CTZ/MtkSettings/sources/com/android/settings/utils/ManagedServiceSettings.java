@@ -78,7 +78,7 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         this.mServiceListing.setListening(false);
     }
 
-    public void updateList(List<ServiceInfo> list) {
+    private void updateList(List<ServiceInfo> list) {
         int managedProfileId = Utils.getManagedProfileId((UserManager) this.mContext.getSystemService("user"), UserHandle.myUserId());
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.removeAll();
@@ -129,7 +129,7 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         return this.mServiceListing.isEnabled(componentName);
     }
 
-    public boolean setEnabled(ComponentName componentName, String str, boolean z) {
+    protected boolean setEnabled(ComponentName componentName, String str, boolean z) {
         if (!z) {
             this.mServiceListing.setEnabled(componentName, false);
             return true;
@@ -141,7 +141,7 @@ public abstract class ManagedServiceSettings extends EmptyTextSettings {
         return false;
     }
 
-    public void enable(ComponentName componentName) {
+    protected void enable(ComponentName componentName) {
         this.mServiceListing.setEnabled(componentName, true);
     }
 

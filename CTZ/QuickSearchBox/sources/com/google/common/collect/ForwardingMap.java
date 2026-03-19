@@ -5,7 +5,25 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class ForwardingMap<K, V> extends ForwardingObject implements Map<K, V> {
+    @Override
+    protected abstract Map<K, V> delegate();
+
     protected ForwardingMap() {
+    }
+
+    @Override
+    public int size() {
+        return delegate().size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return delegate().isEmpty();
+    }
+
+    @Override
+    public V remove(Object obj) {
+        return delegate().remove(obj);
     }
 
     @Override
@@ -24,36 +42,8 @@ public abstract class ForwardingMap<K, V> extends ForwardingObject implements Ma
     }
 
     @Override
-    public abstract Map<K, V> delegate();
-
-    @Override
-    public Set<Map.Entry<K, V>> entrySet() {
-        return delegate().entrySet();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj == this || delegate().equals(obj);
-    }
-
-    @Override
     public V get(Object obj) {
         return delegate().get(obj);
-    }
-
-    @Override
-    public int hashCode() {
-        return delegate().hashCode();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return delegate().isEmpty();
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return delegate().keySet();
     }
 
     @Override
@@ -67,21 +57,31 @@ public abstract class ForwardingMap<K, V> extends ForwardingObject implements Ma
     }
 
     @Override
-    public V remove(Object obj) {
-        return delegate().remove(obj);
-    }
-
-    @Override
-    public int size() {
-        return delegate().size();
-    }
-
-    protected String standardToString() {
-        return Maps.toStringImpl(this);
+    public Set<K> keySet() {
+        return delegate().keySet();
     }
 
     @Override
     public Collection<V> values() {
         return delegate().values();
+    }
+
+    @Override
+    public Set<Map.Entry<K, V>> entrySet() {
+        return delegate().entrySet();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || delegate().equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return delegate().hashCode();
+    }
+
+    protected String standardToString() {
+        return Maps.toStringImpl(this);
     }
 }

@@ -378,18 +378,18 @@ public class MediaRouteButton extends View {
         }
 
         @Override
-        public Drawable doInBackground(Void... params) {
+        protected Drawable doInBackground(Void... params) {
             return MediaRouteButton.this.getContext().getResources().getDrawable(this.mResId);
         }
 
         @Override
-        public void onPostExecute(Drawable remoteIndicator) {
+        protected void onPostExecute(Drawable remoteIndicator) {
             cacheAndReset(remoteIndicator);
             MediaRouteButton.this.setRemoteIndicatorDrawable(remoteIndicator);
         }
 
         @Override
-        public void onCancelled(Drawable remoteIndicator) {
+        protected void onCancelled(Drawable remoteIndicator) {
             cacheAndReset(remoteIndicator);
         }
 

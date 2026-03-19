@@ -5,38 +5,37 @@ class ContainerHelpers {
     static final long[] EMPTY_LONGS = new long[0];
     static final Object[] EMPTY_OBJECTS = new Object[0];
 
-    static int binarySearch(int[] iArr, int i, int i2) {
-        int i3 = 0;
-        int i4 = i - 1;
-        while (i3 <= i4) {
-            int i5 = (i3 + i4) >>> 1;
-            int i6 = iArr[i5];
-            if (i6 < i2) {
-                i3 = i5 + 1;
+    public static int idealIntArraySize(int need) {
+        return idealByteArraySize(need * 4) / 4;
+    }
+
+    public static int idealByteArraySize(int need) {
+        for (int i = 4; i < 32; i++) {
+            if (need <= (1 << i) - 12) {
+                return (1 << i) - 12;
+            }
+        }
+        return need;
+    }
+
+    public static boolean equal(Object a, Object b) {
+        return a == b || (a != null && a.equals(b));
+    }
+
+    static int binarySearch(int[] array, int size, int value) {
+        int lo = 0;
+        int hi = size - 1;
+        while (lo <= hi) {
+            int mid = (lo + hi) >>> 1;
+            int midVal = array[mid];
+            if (midVal < value) {
+                lo = mid + 1;
+            } else if (midVal > value) {
+                hi = mid - 1;
             } else {
-                if (i6 <= i2) {
-                    return i5;
-                }
-                i4 = i5 - 1;
+                return mid;
             }
         }
-        return i3 ^ (-1);
-    }
-
-    public static boolean equal(Object obj, Object obj2) {
-        return obj == obj2 || (obj != null && obj.equals(obj2));
-    }
-
-    public static int idealByteArraySize(int i) {
-        for (int i2 = 4; i2 < 32; i2++) {
-            if (i <= (1 << i2) - 12) {
-                return (1 << i2) - 12;
-            }
-        }
-        return i;
-    }
-
-    public static int idealIntArraySize(int i) {
-        return idealByteArraySize(i * 4) / 4;
+        return ~lo;
     }
 }

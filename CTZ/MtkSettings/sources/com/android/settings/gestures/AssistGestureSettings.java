@@ -55,7 +55,7 @@ public class AssistGestureSettings extends DashboardFragment {
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.addAll(FeatureFactory.getFactory(context).getAssistGestureFeatureProvider().getControllers(context, lifecycle));
         return arrayList;

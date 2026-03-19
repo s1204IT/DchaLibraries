@@ -16,7 +16,7 @@ public class TaskKeyLruCache<V> extends TaskKeyCache<V> {
         this.mEvictionCallback = evictionCallback;
         this.mCache = new LruCache<Integer, V>(i) {
             @Override
-            public void entryRemoved(boolean z, Integer num, V v, V v2) {
+            protected void entryRemoved(boolean z, Integer num, V v, V v2) {
                 if (TaskKeyLruCache.this.mEvictionCallback != null) {
                     TaskKeyLruCache.this.mEvictionCallback.onEntryEvicted(TaskKeyLruCache.this.mKeys.get(num.intValue()));
                 }

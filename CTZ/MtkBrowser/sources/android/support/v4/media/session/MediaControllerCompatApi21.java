@@ -29,76 +29,40 @@ class MediaControllerCompatApi21 {
         void onSessionEvent(String str, Bundle bundle);
     }
 
-    static class CallbackProxy<T extends Callback> extends MediaController.Callback {
-        protected final T mCallback;
+    public static Object createCallback(Callback callback) {
+        return new CallbackProxy(callback);
+    }
 
-        public CallbackProxy(T t) {
-            this.mCallback = t;
-        }
+    public static void unregisterCallback(Object controllerObj, Object callbackObj) {
+        ((MediaController) controllerObj).unregisterCallback((MediaController.Callback) callbackObj);
+    }
 
-        @Override
-        public void onAudioInfoChanged(MediaController.PlaybackInfo playbackInfo) {
-            this.mCallback.onAudioInfoChanged(playbackInfo.getPlaybackType(), PlaybackInfo.getLegacyAudioStream(playbackInfo), playbackInfo.getVolumeControl(), playbackInfo.getMaxVolume(), playbackInfo.getCurrentVolume());
-        }
-
-        @Override
-        public void onExtrasChanged(Bundle bundle) {
-            this.mCallback.onExtrasChanged(bundle);
-        }
-
-        @Override
-        public void onMetadataChanged(MediaMetadata mediaMetadata) {
-            this.mCallback.onMetadataChanged(mediaMetadata);
-        }
-
-        @Override
-        public void onPlaybackStateChanged(PlaybackState playbackState) {
-            this.mCallback.onPlaybackStateChanged(playbackState);
-        }
-
-        @Override
-        public void onQueueChanged(List<MediaSession.QueueItem> list) {
-            this.mCallback.onQueueChanged(list);
-        }
-
-        @Override
-        public void onQueueTitleChanged(CharSequence charSequence) {
-            this.mCallback.onQueueTitleChanged(charSequence);
-        }
-
-        @Override
-        public void onSessionDestroyed() {
-            this.mCallback.onSessionDestroyed();
-        }
-
-        @Override
-        public void onSessionEvent(String str, Bundle bundle) {
-            this.mCallback.onSessionEvent(str, bundle);
-        }
+    public static void sendCommand(Object controllerObj, String command, Bundle params, ResultReceiver cb) {
+        ((MediaController) controllerObj).sendCommand(command, params, cb);
     }
 
     public static class PlaybackInfo {
-        public static AudioAttributes getAudioAttributes(Object obj) {
-            return ((MediaController.PlaybackInfo) obj).getAudioAttributes();
+        public static AudioAttributes getAudioAttributes(Object volumeInfoObj) {
+            return ((MediaController.PlaybackInfo) volumeInfoObj).getAudioAttributes();
         }
 
-        public static int getLegacyAudioStream(Object obj) {
-            return toLegacyStreamType(getAudioAttributes(obj));
+        public static int getLegacyAudioStream(Object volumeInfoObj) {
+            AudioAttributes attrs = getAudioAttributes(volumeInfoObj);
+            return toLegacyStreamType(attrs);
         }
 
-        private static int toLegacyStreamType(AudioAttributes audioAttributes) {
-            if ((audioAttributes.getFlags() & 1) == 1) {
+        private static int toLegacyStreamType(AudioAttributes aa) {
+            if ((aa.getFlags() & 1) == 1) {
                 return 7;
             }
-            if ((audioAttributes.getFlags() & 4) == 4) {
+            if ((aa.getFlags() & 4) == 4) {
                 return 6;
             }
-            switch (audioAttributes.getUsage()) {
+            switch (aa.getUsage()) {
                 case 1:
                 case 11:
                 case 12:
                 case 14:
-                default:
                     return 3;
                 case 2:
                     return 0;
@@ -116,19 +80,57 @@ class MediaControllerCompatApi21 {
                     return 2;
                 case 13:
                     return 1;
+                default:
+                    return 3;
             }
         }
     }
 
-    public static Object createCallback(Callback callback) {
-        return new CallbackProxy(callback);
-    }
+    static class CallbackProxy<T extends Callback> extends MediaController.Callback {
+        protected final T mCallback;
 
-    public static void sendCommand(Object obj, String str, Bundle bundle, ResultReceiver resultReceiver) {
-        ((MediaController) obj).sendCommand(str, bundle, resultReceiver);
-    }
+        public CallbackProxy(T callback) {
+            this.mCallback = callback;
+        }
 
-    public static void unregisterCallback(Object obj, Object obj2) {
-        ((MediaController) obj).unregisterCallback((MediaController.Callback) obj2);
+        @Override
+        public void onSessionDestroyed() {
+            this.mCallback.onSessionDestroyed();
+        }
+
+        @Override
+        public void onSessionEvent(String event, Bundle extras) {
+            this.mCallback.onSessionEvent(event, extras);
+        }
+
+        @Override
+        public void onPlaybackStateChanged(PlaybackState state) {
+            this.mCallback.onPlaybackStateChanged(state);
+        }
+
+        @Override
+        public void onMetadataChanged(MediaMetadata metadata) {
+            this.mCallback.onMetadataChanged(metadata);
+        }
+
+        @Override
+        public void onQueueChanged(List<MediaSession.QueueItem> queue) {
+            this.mCallback.onQueueChanged(queue);
+        }
+
+        @Override
+        public void onQueueTitleChanged(CharSequence title) {
+            this.mCallback.onQueueTitleChanged(title);
+        }
+
+        @Override
+        public void onExtrasChanged(Bundle extras) {
+            this.mCallback.onExtrasChanged(extras);
+        }
+
+        @Override
+        public void onAudioInfoChanged(MediaController.PlaybackInfo info) {
+            this.mCallback.onAudioInfoChanged(info.getPlaybackType(), PlaybackInfo.getLegacyAudioStream(info), info.getVolumeControl(), info.getMaxVolume(), info.getCurrentVolume());
+        }
     }
 }

@@ -8,12 +8,12 @@ public abstract class Ticker {
         }
     };
 
+    public abstract long read();
+
     protected Ticker() {
     }
 
     public static Ticker systemTicker() {
         return SYSTEM_TICKER;
     }
-
-    public abstract long read();
 }

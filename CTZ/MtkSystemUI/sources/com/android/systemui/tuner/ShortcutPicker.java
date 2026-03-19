@@ -121,7 +121,7 @@ public class ShortcutPicker extends PreferenceFragment implements TunerService.T
         });
     }
 
-    static class AppPreference extends SelectablePreference {
+    private static class AppPreference extends SelectablePreference {
         private boolean mBinding;
         private final LauncherActivityInfo mInfo;
 
@@ -156,7 +156,7 @@ public class ShortcutPicker extends PreferenceFragment implements TunerService.T
         }
     }
 
-    static class ShortcutPreference extends SelectablePreference {
+    private static class ShortcutPreference extends SelectablePreference {
         private boolean mBinding;
         private final ShortcutParser.Shortcut mShortcut;
 

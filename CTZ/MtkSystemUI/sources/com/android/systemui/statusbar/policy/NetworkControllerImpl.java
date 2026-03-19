@@ -205,7 +205,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         return this.mDataSaverController;
     }
 
-    public void registerListeners() {
+    private void registerListeners() {
         for (int i = 0; i < this.mMobileSignalControllers.size(); i++) {
             this.mMobileSignalControllers.valueAt(i).registerListener();
         }
@@ -382,14 +382,14 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     public void setWifiEnabled(final boolean z) {
         new AsyncTask<Void, Void, Void>() {
             @Override
-            public Void doInBackground(Void... voidArr) {
+            protected Void doInBackground(Void... voidArr) {
                 NetworkControllerImpl.this.mWifiManager.setWifiEnabled(z);
                 return null;
             }
         }.execute(new Void[0]);
     }
 
-    public void onUserSwitched(int i) {
+    private void onUserSwitched(int i) {
         this.mCurrentUserId = i;
         this.mAccessPoints.onUserSwitched(i);
         updateConnectivity();
@@ -507,7 +507,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         }
     }
 
-    public void updateMobileControllers() {
+    private void updateMobileControllers() {
         SIMHelper.updateSIMInfos(this.mContext);
         if (!this.mListening) {
             if (DEBUG) {
@@ -625,7 +625,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         updateAirplaneMode(true);
     }
 
-    public void setUserSetupComplete(final boolean z) {
+    private void setUserSetupComplete(final boolean z) {
         this.mReceiverHandler.post(new Runnable() {
             @Override
             public final void run() {
@@ -635,7 +635,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
     }
 
     @VisibleForTesting
-    public void handleSetUserSetupComplete(boolean z) {
+    void handleSetUserSetupComplete(boolean z) {
         this.mUserSetup = z;
         for (int i = 0; i < this.mMobileSignalControllers.size(); i++) {
             this.mMobileSignalControllers.valueAt(i).setUserSetupComplete(this.mUserSetup);
@@ -703,7 +703,7 @@ public class NetworkControllerImpl extends BroadcastReceiver implements DataUsag
         this.mCallbackHandler.setNoSims(this.mHasNoSubs, this.mSimDetected);
     }
 
-    public void updateConnectivity() {
+    private void updateConnectivity() {
         this.mConnectedTransports.clear();
         this.mValidatedTransports.clear();
         SubscriptionManager subscriptionManager = this.mSubscriptionManager;

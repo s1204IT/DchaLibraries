@@ -70,7 +70,7 @@ public class AdvancedWifiCallingSettings extends SettingsPreferenceFragment impl
         this.mSwitchBar.hide();
     }
 
-    public void showAlert(Intent intent) {
+    private void showAlert(Intent intent) {
         CharSequence charSequenceExtra = intent.getCharSequenceExtra("alertTitle");
         CharSequence charSequenceExtra2 = intent.getCharSequenceExtra("alertMessage");
         AlertDialog.Builder builder = new AlertDialog.Builder(this.mContext);
@@ -213,7 +213,7 @@ public class AdvancedWifiCallingSettings extends SettingsPreferenceFragment impl
         }
     }
 
-    public void updateScreen() {
+    private void updateScreen() {
         SettingsActivity settingsActivity = (SettingsActivity) getActivity();
         if (settingsActivity == null) {
             return;

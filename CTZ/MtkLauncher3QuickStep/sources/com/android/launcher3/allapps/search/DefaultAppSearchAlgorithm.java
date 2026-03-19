@@ -76,7 +76,44 @@ public class DefaultAppSearchAlgorithm implements SearchAlgorithm {
     }
 
     private static boolean isBreak(int r2, int r3, int r4) {
-        throw new UnsupportedOperationException("Method not decompiled: com.android.launcher3.allapps.search.DefaultAppSearchAlgorithm.isBreak(int, int, int):boolean");
+        if (r3 != 0) {
+            switch (r3) {
+                case 12:
+                case 13:
+                case 14:
+                default:
+                    if (r2 != 20) {
+                        switch (r2) {
+                            case 1:
+                                if (r4 == 1) {
+                                }
+                                if (r3 == 1) {
+                                }
+                            case 2:
+                                if (r3 > 5 || r3 <= 0) {
+                                }
+                            case 3:
+                                if (r3 == 1) {
+                                }
+                            default:
+                                switch (r2) {
+                                    case 9:
+                                    case 10:
+                                    case 11:
+                                        if (r3 == 9 || r3 == 10 || r3 == 11) {
+                                            break;
+                                        }
+                                        break;
+                                    default:
+                                        switch (r2) {
+                                        }
+                                }
+                        }
+                    }
+            }
+            return false;
+        }
+        return true;
     }
 
     public static class StringMatcher {

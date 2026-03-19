@@ -85,7 +85,7 @@ public class Divider extends SystemUI {
         }
     }
 
-    public void updateVisibility(final boolean z) {
+    private void updateVisibility(final boolean z) {
         this.mView.post(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +98,7 @@ public class Divider extends SystemUI {
         });
     }
 
-    public void updateMinimizedDockedStack(final boolean z, final long j, final boolean z2) {
+    private void updateMinimizedDockedStack(final boolean z, final long j, final boolean z2) {
         this.mView.post(new Runnable() {
             @Override
             public void run() {
@@ -116,7 +116,7 @@ public class Divider extends SystemUI {
         });
     }
 
-    public void notifyDockedStackExistsChanged(final boolean z) {
+    private void notifyDockedStackExistsChanged(final boolean z) {
         this.mView.post(new Runnable() {
             @Override
             public void run() {
@@ -125,7 +125,7 @@ public class Divider extends SystemUI {
         });
     }
 
-    public void updateTouchable() {
+    private void updateTouchable() {
         this.mWindowManager.setTouchable((this.mHomeStackResizable || !this.mMinimized) && !this.mAdjustedForIme);
     }
 

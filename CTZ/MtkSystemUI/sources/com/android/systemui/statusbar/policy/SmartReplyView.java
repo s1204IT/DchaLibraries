@@ -188,7 +188,7 @@ public class SmartReplyView extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         int i = -2;
         return new LayoutParams(i, i);
     }

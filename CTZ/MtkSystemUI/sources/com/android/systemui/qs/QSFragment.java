@@ -186,7 +186,7 @@ public class QSFragment extends Fragment implements QS, CommandQueue.Callbacks {
         updateQsState();
     }
 
-    public void updateQsState() {
+    private void updateQsState() {
         boolean z = true;
         boolean z2 = this.mQsExpanded || this.mStackScrollerOverscrolling || this.mHeaderAnimating;
         this.mQSPanel.setExpanded(this.mQsExpanded);

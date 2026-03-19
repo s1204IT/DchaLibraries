@@ -74,7 +74,7 @@ public class DefaultAppSettings extends DashboardFragment {
         return 130;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         ArrayList arrayList2 = new ArrayList();
         arrayList2.add(new DefaultWorkPhonePreferenceController(context));

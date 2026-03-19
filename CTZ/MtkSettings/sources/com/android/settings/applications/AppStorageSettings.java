@@ -119,7 +119,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         this.mClearUriButton.setOnClickListener(this);
     }
 
-    public void handleClearCacheClick() {
+    void handleClearCacheClick() {
         if (this.mAppsControlDisallowedAdmin != null && !this.mAppsControlDisallowedBySystem) {
             RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getActivity(), this.mAppsControlDisallowedAdmin);
             return;
@@ -131,7 +131,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         this.mPm.deleteApplicationCacheFiles(this.mPackageName, this.mClearCacheObserver);
     }
 
-    public void handleClearDataClick() {
+    void handleClearDataClick() {
         if (this.mAppsControlDisallowedAdmin != null && !this.mAppsControlDisallowedBySystem) {
             RestrictedLockUtils.sendShowAdminSupportDetailsIntent(getActivity(), this.mAppsControlDisallowedAdmin);
             return;
@@ -257,7 +257,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         removePreference("storage_space");
     }
 
-    public void initiateClearUserData() {
+    private void initiateClearUserData() {
         this.mMetricsFeatureProvider.action(getContext(), 876, new Pair[0]);
         this.mButtonsPref.setButton1Enabled(false);
         String str = this.mAppEntry.info.packageName;
@@ -273,7 +273,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
         this.mButtonsPref.setButton1Text(R.string.recompute_size);
     }
 
-    public void processClearMsg(Message message) {
+    private void processClearMsg(Message message) {
         int i = message.arg1;
         String str = this.mAppEntry.info.packageName;
         this.mButtonsPref.setButton1Text(R.string.clear_user_data_text);
@@ -388,7 +388,7 @@ public class AppStorageSettings extends AppInfoWithHeader implements LoaderManag
     public void onLoaderReset(Loader<StorageStatsSource.AppStorageStats> loader) {
     }
 
-    public void updateSize() {
+    private void updateSize() {
         try {
             this.mInfo = getPackageManager().getApplicationInfo(this.mPackageName, 0);
         } catch (PackageManager.NameNotFoundException e) {

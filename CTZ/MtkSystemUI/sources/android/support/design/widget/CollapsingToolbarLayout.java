@@ -460,7 +460,7 @@ public class CollapsingToolbarLayout extends FrameLayout {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-1, -1);
     }
 
@@ -470,7 +470,7 @@ public class CollapsingToolbarLayout extends FrameLayout {
     }
 
     @Override
-    public FrameLayout.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected FrameLayout.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return new LayoutParams(p);
     }
 

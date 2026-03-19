@@ -14,22 +14,22 @@ class RegularImmutableAsList<E> extends ImmutableAsList<E> {
     }
 
     @Override
-    int copyIntoArray(Object[] objArr, int i) {
-        return this.delegateList.copyIntoArray(objArr, i);
-    }
-
-    @Override
     ImmutableCollection<E> delegateCollection() {
         return this.delegate;
     }
 
     @Override
-    public E get(int i) {
-        return this.delegateList.get(i);
+    public UnmodifiableListIterator<E> listIterator(int i) {
+        return this.delegateList.listIterator(i);
     }
 
     @Override
-    public UnmodifiableListIterator<E> listIterator(int i) {
-        return this.delegateList.listIterator(i);
+    int copyIntoArray(Object[] objArr, int i) {
+        return this.delegateList.copyIntoArray(objArr, i);
+    }
+
+    @Override
+    public E get(int i) {
+        return this.delegateList.get(i);
     }
 }

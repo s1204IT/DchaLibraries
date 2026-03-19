@@ -105,7 +105,7 @@ public class QSSecurityFooter implements DialogInterface.OnClickListener, View.O
         this.mHandler.sendEmptyMessage(0);
     }
 
-    public void handleClick() {
+    private void handleClick() {
         showDeviceMonitoringDialog();
     }
 
@@ -118,7 +118,7 @@ public class QSSecurityFooter implements DialogInterface.OnClickListener, View.O
         this.mHandler.sendEmptyMessage(1);
     }
 
-    public void handleRefreshState() {
+    private void handleRefreshState() {
         boolean zIsDeviceManaged = this.mSecurityController.isDeviceManaged();
         UserInfo userInfo = this.mUm.getUserInfo(ActivityManager.getCurrentUser());
         boolean z = UserManager.isDeviceInDemoMode(this.mContext) && userInfo != null && userInfo.isDemo();

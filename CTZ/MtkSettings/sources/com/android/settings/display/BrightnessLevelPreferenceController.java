@@ -87,7 +87,7 @@ public class BrightnessLevelPreferenceController extends AbstractPreferenceContr
         this.mContentResolver.unregisterContentObserver(this.mBrightnessObserver);
     }
 
-    public void updatedSummary(Preference preference) {
+    private void updatedSummary(Preference preference) {
         if (preference != null) {
             preference.setSummary(NumberFormat.getPercentInstance().format(getCurrentBrightness()));
         }

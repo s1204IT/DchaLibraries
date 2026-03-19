@@ -31,7 +31,7 @@ public class UserIconLoader extends AsyncLoader<SparseArray<Drawable>> {
     }
 
     @Override
-    public void onDiscardResult(SparseArray<Drawable> sparseArray) {
+    protected void onDiscardResult(SparseArray<Drawable> sparseArray) {
     }
 
     public static SparseArray<Drawable> loadUserIconsWithContext(Context context) {

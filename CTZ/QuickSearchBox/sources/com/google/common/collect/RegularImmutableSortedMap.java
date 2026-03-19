@@ -7,47 +7,6 @@ final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
     private final transient RegularImmutableSortedSet<K> keySet;
     private final transient ImmutableList<V> valueList;
 
-    private class EntrySet extends ImmutableMapEntrySet<K, V> {
-        final RegularImmutableSortedMap this$0;
-
-        private EntrySet(RegularImmutableSortedMap regularImmutableSortedMap) {
-            this.this$0 = regularImmutableSortedMap;
-        }
-
-        @Override
-        ImmutableList<Map.Entry<K, V>> createAsList() {
-            return new ImmutableAsList<Map.Entry<K, V>>(this) {
-                private final ImmutableList<K> keyList;
-                final EntrySet this$1;
-
-                {
-                    this.this$1 = this;
-                    this.keyList = this.this$1.this$0.keySet().asList();
-                }
-
-                @Override
-                ImmutableCollection<Map.Entry<K, V>> delegateCollection() {
-                    return this.this$1;
-                }
-
-                @Override
-                public Map.Entry<K, V> get(int i) {
-                    return Maps.immutableEntry(this.keyList.get(i), this.this$1.this$0.valueList.get(i));
-                }
-            };
-        }
-
-        @Override
-        public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
-            return asList().iterator();
-        }
-
-        @Override
-        ImmutableMap<K, V> map() {
-            return this.this$0;
-        }
-    }
-
     RegularImmutableSortedMap(RegularImmutableSortedSet<K> regularImmutableSortedSet, ImmutableList<V> immutableList) {
         this.keySet = regularImmutableSortedSet;
         this.valueList = immutableList;
@@ -59,18 +18,55 @@ final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
         this.valueList = immutableList;
     }
 
-    private ImmutableSortedMap<K, V> getSubMap(int i, int i2) {
-        return (i == 0 && i2 == size()) ? this : i == i2 ? emptyMap(comparator()) : from(this.keySet.getSubSet(i, i2), this.valueList.subList(i, i2));
-    }
-
-    @Override
-    ImmutableSortedMap<K, V> createDescendingMap() {
-        return new RegularImmutableSortedMap((RegularImmutableSortedSet) this.keySet.descendingSet(), this.valueList.reverse(), this);
-    }
-
     @Override
     ImmutableSet<Map.Entry<K, V>> createEntrySet() {
         return new EntrySet();
+    }
+
+    private class EntrySet extends ImmutableMapEntrySet<K, V> {
+        private EntrySet() {
+        }
+
+        @Override
+        public UnmodifiableIterator<Map.Entry<K, V>> iterator() {
+            return asList().iterator();
+        }
+
+        @Override
+        ImmutableList<Map.Entry<K, V>> createAsList() {
+            return new ImmutableAsList<Map.Entry<K, V>>() {
+                private final ImmutableList<K> keyList;
+
+                {
+                    this.keyList = RegularImmutableSortedMap.this.keySet().asList();
+                }
+
+                @Override
+                public Map.Entry<K, V> get(int i) {
+                    return Maps.immutableEntry(this.keyList.get(i), RegularImmutableSortedMap.this.valueList.get(i));
+                }
+
+                @Override
+                ImmutableCollection<Map.Entry<K, V>> delegateCollection() {
+                    return EntrySet.this;
+                }
+            };
+        }
+
+        @Override
+        ImmutableMap<K, V> map() {
+            return RegularImmutableSortedMap.this;
+        }
+    }
+
+    @Override
+    public ImmutableSortedSet<K> keySet() {
+        return this.keySet;
+    }
+
+    @Override
+    public ImmutableCollection<V> values() {
+        return this.valueList;
     }
 
     @Override
@@ -82,14 +78,19 @@ final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
         return this.valueList.get(iIndexOf);
     }
 
-    @Override
-    public ImmutableSortedMap<K, V> headMap(K k, boolean z) {
-        return getSubMap(0, this.keySet.headIndex((K) Preconditions.checkNotNull(k), z));
+    private ImmutableSortedMap<K, V> getSubMap(int i, int i2) {
+        if (i == 0 && i2 == size()) {
+            return this;
+        }
+        if (i == i2) {
+            return emptyMap(comparator());
+        }
+        return from(this.keySet.getSubSet(i, i2), this.valueList.subList(i, i2));
     }
 
     @Override
-    public ImmutableSortedSet<K> keySet() {
-        return this.keySet;
+    public ImmutableSortedMap<K, V> headMap(K k, boolean z) {
+        return getSubMap(0, this.keySet.headIndex((K) Preconditions.checkNotNull(k), z));
     }
 
     @Override
@@ -98,7 +99,7 @@ final class RegularImmutableSortedMap<K, V> extends ImmutableSortedMap<K, V> {
     }
 
     @Override
-    public ImmutableCollection<V> values() {
-        return this.valueList;
+    ImmutableSortedMap<K, V> createDescendingMap() {
+        return new RegularImmutableSortedMap((RegularImmutableSortedSet) this.keySet.descendingSet(), this.valueList.reverse(), this);
     }
 }

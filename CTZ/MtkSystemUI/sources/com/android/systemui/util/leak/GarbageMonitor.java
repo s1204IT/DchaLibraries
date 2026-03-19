@@ -77,7 +77,7 @@ public class GarbageMonitor {
         this.mHandler.sendEmptyMessage(3000);
     }
 
-    public boolean gcAndCheckGarbage() {
+    private boolean gcAndCheckGarbage() {
         if (this.mTrackedGarbage.countOldGarbage() > 5) {
             Runtime.getRuntime().gc();
             return true;
@@ -124,7 +124,7 @@ public class GarbageMonitor {
         Log.v("GarbageMonitor", stringBuffer.toString());
     }
 
-    public void update() {
+    private void update() {
         synchronized (this.mPids) {
             Debug.MemoryInfo[] processMemoryInfo = this.mAm.getProcessMemoryInfo(this.mPidsArray);
             int i = 0;
@@ -174,14 +174,14 @@ public class GarbageMonitor {
         }
     }
 
-    public void setTile(MemoryTile memoryTile) {
+    private void setTile(MemoryTile memoryTile) {
         this.mQSTile = memoryTile;
         if (memoryTile != null) {
             memoryTile.update();
         }
     }
 
-    public static String formatBytes(long j) {
+    private static String formatBytes(long j) {
         String[] strArr = {"B", "K", "M", "G", "T"};
         int i = 0;
         while (i < strArr.length && j >= 1024) {
@@ -191,7 +191,7 @@ public class GarbageMonitor {
         return j + strArr[i];
     }
 
-    public void dumpHprofAndShare() {
+    private void dumpHprofAndShare() {
         this.mContext.startActivity(this.mDumpTruck.captureHeaps(getTrackedProcesses()).createShareIntent());
     }
 
@@ -458,7 +458,7 @@ public class GarbageMonitor {
         }
     }
 
-    public static boolean doesFileExist(String str) {
+    private static boolean doesFileExist(String str) {
         if (str == null || str.length() == 0) {
             return false;
         }

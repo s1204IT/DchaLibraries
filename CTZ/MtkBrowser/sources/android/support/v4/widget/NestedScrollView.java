@@ -31,7 +31,7 @@ import android.widget.EdgeEffect;
 import android.widget.FrameLayout;
 import android.widget.OverScroller;
 import android.widget.ScrollView;
-import java.util.ArrayList;
+import java.util.List;
 
 public class NestedScrollView extends FrameLayout implements NestedScrollingChild2, NestedScrollingParent2 {
     private static final AccessibilityDelegate ACCESSIBILITY_DELEGATE = new AccessibilityDelegate();
@@ -63,223 +63,311 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingChil
     private VelocityTracker mVelocityTracker;
     private float mVerticalScrollFactor;
 
-    static class AccessibilityDelegate extends AccessibilityDelegateCompat {
-        AccessibilityDelegate() {
-        }
-
-        @Override
-        public void onInitializeAccessibilityEvent(View view, AccessibilityEvent accessibilityEvent) {
-            super.onInitializeAccessibilityEvent(view, accessibilityEvent);
-            NestedScrollView nestedScrollView = (NestedScrollView) view;
-            accessibilityEvent.setClassName(ScrollView.class.getName());
-            accessibilityEvent.setScrollable(nestedScrollView.getScrollRange() > 0);
-            accessibilityEvent.setScrollX(nestedScrollView.getScrollX());
-            accessibilityEvent.setScrollY(nestedScrollView.getScrollY());
-            AccessibilityRecordCompat.setMaxScrollX(accessibilityEvent, nestedScrollView.getScrollX());
-            AccessibilityRecordCompat.setMaxScrollY(accessibilityEvent, nestedScrollView.getScrollRange());
-        }
-
-        @Override
-        public void onInitializeAccessibilityNodeInfo(View view, AccessibilityNodeInfoCompat accessibilityNodeInfoCompat) {
-            int scrollRange;
-            super.onInitializeAccessibilityNodeInfo(view, accessibilityNodeInfoCompat);
-            NestedScrollView nestedScrollView = (NestedScrollView) view;
-            accessibilityNodeInfoCompat.setClassName(ScrollView.class.getName());
-            if (!nestedScrollView.isEnabled() || (scrollRange = nestedScrollView.getScrollRange()) <= 0) {
-                return;
-            }
-            accessibilityNodeInfoCompat.setScrollable(true);
-            if (nestedScrollView.getScrollY() > 0) {
-                accessibilityNodeInfoCompat.addAction(8192);
-            }
-            if (nestedScrollView.getScrollY() < scrollRange) {
-                accessibilityNodeInfoCompat.addAction(4096);
-            }
-        }
-
-        @Override
-        public boolean performAccessibilityAction(View view, int i, Bundle bundle) {
-            if (super.performAccessibilityAction(view, i, bundle)) {
-                return true;
-            }
-            NestedScrollView nestedScrollView = (NestedScrollView) view;
-            if (!nestedScrollView.isEnabled()) {
-                return false;
-            }
-            if (i == 4096) {
-                int height = nestedScrollView.getHeight();
-                int paddingBottom = nestedScrollView.getPaddingBottom();
-                int iMin = Math.min(((height - paddingBottom) - nestedScrollView.getPaddingTop()) + nestedScrollView.getScrollY(), nestedScrollView.getScrollRange());
-                if (iMin == nestedScrollView.getScrollY()) {
-                    return false;
-                }
-                nestedScrollView.smoothScrollTo(0, iMin);
-                return true;
-            }
-            if (i != 8192) {
-                return false;
-            }
-            int height2 = nestedScrollView.getHeight();
-            int paddingBottom2 = nestedScrollView.getPaddingBottom();
-            int iMax = Math.max(nestedScrollView.getScrollY() - ((height2 - paddingBottom2) - nestedScrollView.getPaddingTop()), 0);
-            if (iMax == nestedScrollView.getScrollY()) {
-                return false;
-            }
-            nestedScrollView.smoothScrollTo(0, iMax);
-            return true;
-        }
-    }
-
     public interface OnScrollChangeListener {
         void onScrollChange(NestedScrollView nestedScrollView, int i, int i2, int i3, int i4);
     }
 
-    static class SavedState extends View.BaseSavedState {
-        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel parcel) {
-                return new SavedState(parcel);
-            }
+    public boolean startNestedScroll(int axes, int type) {
+        return this.mChildHelper.startNestedScroll(axes, type);
+    }
 
-            @Override
-            public SavedState[] newArray(int i) {
-                return new SavedState[i];
-            }
-        };
-        public int scrollPosition;
+    public void stopNestedScroll(int type) {
+        this.mChildHelper.stopNestedScroll(type);
+    }
 
-        SavedState(Parcel parcel) {
-            super(parcel);
-            this.scrollPosition = parcel.readInt();
+    public boolean hasNestedScrollingParent(int type) {
+        return this.mChildHelper.hasNestedScrollingParent(type);
+    }
+
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow, int type) {
+        return this.mChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, type);
+    }
+
+    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow, int type) {
+        return this.mChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, type);
+    }
+
+    @Override
+    public void setNestedScrollingEnabled(boolean enabled) {
+        this.mChildHelper.setNestedScrollingEnabled(enabled);
+    }
+
+    @Override
+    public boolean isNestedScrollingEnabled() {
+        return this.mChildHelper.isNestedScrollingEnabled();
+    }
+
+    @Override
+    public boolean startNestedScroll(int axes) {
+        return startNestedScroll(axes, 0);
+    }
+
+    @Override
+    public void stopNestedScroll() {
+        stopNestedScroll(0);
+    }
+
+    @Override
+    public boolean hasNestedScrollingParent() {
+        return hasNestedScrollingParent(0);
+    }
+
+    @Override
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow) {
+        return dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, offsetInWindow, 0);
+    }
+
+    @Override
+    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
+        return dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow, 0);
+    }
+
+    @Override
+    public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
+        return this.mChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
+    }
+
+    @Override
+    public boolean dispatchNestedPreFling(float velocityX, float velocityY) {
+        return this.mChildHelper.dispatchNestedPreFling(velocityX, velocityY);
+    }
+
+    @Override
+    public boolean onStartNestedScroll(View child, View target, int axes, int type) {
+        return (axes & 2) != 0;
+    }
+
+    @Override
+    public void onNestedScrollAccepted(View child, View target, int axes, int type) {
+        this.mParentHelper.onNestedScrollAccepted(child, target, axes, type);
+        startNestedScroll(2, type);
+    }
+
+    @Override
+    public void onStopNestedScroll(View target, int type) {
+        this.mParentHelper.onStopNestedScroll(target, type);
+        stopNestedScroll(type);
+    }
+
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        int oldScrollY = getScrollY();
+        scrollBy(0, dyUnconsumed);
+        int myConsumed = getScrollY() - oldScrollY;
+        int myUnconsumed = dyUnconsumed - myConsumed;
+        dispatchNestedScroll(0, myConsumed, 0, myUnconsumed, null, type);
+    }
+
+    @Override
+    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed, int type) {
+        dispatchNestedPreScroll(dx, dy, consumed, null, type);
+    }
+
+    @Override
+    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+        return onStartNestedScroll(child, target, nestedScrollAxes, 0);
+    }
+
+    @Override
+    public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
+        onNestedScrollAccepted(child, target, nestedScrollAxes, 0);
+    }
+
+    @Override
+    public void onStopNestedScroll(View target) {
+        onStopNestedScroll(target, 0);
+    }
+
+    @Override
+    public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, 0);
+    }
+
+    @Override
+    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+        onNestedPreScroll(target, dx, dy, consumed, 0);
+    }
+
+    @Override
+    public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
+        if (!consumed) {
+            flingWithNestedDispatch((int) velocityY);
+            return true;
         }
+        return false;
+    }
 
-        SavedState(Parcelable parcelable) {
-            super(parcelable);
-        }
+    @Override
+    public boolean onNestedPreFling(View target, float velocityX, float velocityY) {
+        return dispatchNestedPreFling(velocityX, velocityY);
+    }
 
-        public String toString() {
-            return "HorizontalScrollView.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " scrollPosition=" + this.scrollPosition + "}";
-        }
+    @Override
+    public int getNestedScrollAxes() {
+        return this.mParentHelper.getNestedScrollAxes();
+    }
 
-        @Override
-        public void writeToParcel(Parcel parcel, int i) {
-            super.writeToParcel(parcel, i);
-            parcel.writeInt(this.scrollPosition);
+    @Override
+    public boolean shouldDelayChildPressedState() {
+        return true;
+    }
+
+    @Override
+    protected float getTopFadingEdgeStrength() {
+        if (getChildCount() == 0) {
+            return 0.0f;
         }
+        int length = getVerticalFadingEdgeLength();
+        int scrollY = getScrollY();
+        if (scrollY < length) {
+            return scrollY / length;
+        }
+        return 1.0f;
+    }
+
+    @Override
+    protected float getBottomFadingEdgeStrength() {
+        if (getChildCount() == 0) {
+            return 0.0f;
+        }
+        View child = getChildAt(0);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        int length = getVerticalFadingEdgeLength();
+        int bottomEdge = getHeight() - getPaddingBottom();
+        int span = ((child.getBottom() + ((ViewGroup.MarginLayoutParams) lp).bottomMargin) - getScrollY()) - bottomEdge;
+        if (span < length) {
+            return span / length;
+        }
+        return 1.0f;
+    }
+
+    public int getMaxScrollAmount() {
+        return (int) (0.5f * getHeight());
+    }
+
+    @Override
+    public void addView(View child) {
+        if (getChildCount() > 0) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+        super.addView(child);
+    }
+
+    @Override
+    public void addView(View child, int index) {
+        if (getChildCount() > 0) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+        super.addView(child, index);
+    }
+
+    @Override
+    public void addView(View child, ViewGroup.LayoutParams params) {
+        if (getChildCount() > 0) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+        super.addView(child, params);
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        if (getChildCount() > 0) {
+            throw new IllegalStateException("ScrollView can host only one direct child");
+        }
+        super.addView(child, index, params);
     }
 
     private boolean canScroll() {
         if (getChildCount() <= 0) {
             return false;
         }
-        View childAt = getChildAt(0);
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-        return layoutParams.bottomMargin + (childAt.getHeight() + layoutParams.topMargin) > (getHeight() - getPaddingTop()) - getPaddingBottom();
+        View child = getChildAt(0);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        int childSize = child.getHeight() + ((ViewGroup.MarginLayoutParams) lp).topMargin + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+        int parentSpace = (getHeight() - getPaddingTop()) - getPaddingBottom();
+        return childSize > parentSpace;
     }
 
-    private static int clamp(int i, int i2, int i3) {
-        if (i2 >= i3 || i < 0) {
-            return 0;
-        }
-        return i2 + i > i3 ? i3 - i2 : i;
-    }
-
-    private void doScrollY(int i) {
-        if (i != 0) {
-            if (this.mSmoothScrollingEnabled) {
-                smoothScrollBy(0, i);
-            } else {
-                scrollBy(0, i);
-            }
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (this.mOnScrollChangeListener != null) {
+            this.mOnScrollChangeListener.onScrollChange(this, l, t, oldl, oldt);
         }
     }
 
-    private void endDrag() {
-        this.mIsBeingDragged = false;
-        recycleVelocityTracker();
-        stopNestedScroll(0);
-        if (this.mEdgeGlowTop != null) {
-            this.mEdgeGlowTop.onRelease();
-            this.mEdgeGlowBottom.onRelease();
-        }
-    }
-
-    private void ensureGlows() {
-        if (getOverScrollMode() == 2) {
-            this.mEdgeGlowTop = null;
-            this.mEdgeGlowBottom = null;
-        } else if (this.mEdgeGlowTop == null) {
-            Context context = getContext();
-            this.mEdgeGlowTop = new EdgeEffect(context);
-            this.mEdgeGlowBottom = new EdgeEffect(context);
-        }
-    }
-
-    private View findFocusableViewInBounds(boolean z, int i, int i2) {
-        boolean z2;
-        ArrayList focusables = getFocusables(2);
-        int size = focusables.size();
-        View view = null;
-        int i3 = 0;
-        boolean z3 = false;
-        while (i3 < size) {
-            View view2 = (View) focusables.get(i3);
-            int top = view2.getTop();
-            int bottom = view2.getBottom();
-            if (i >= bottom || top >= i2) {
-                z2 = z3;
-                view2 = view;
-            } else {
-                z2 = i < top && bottom < i2;
-                if (view != null) {
-                    boolean z4 = (z && top < view.getTop()) || (!z && bottom > view.getBottom());
-                    if (z3) {
-                        if (z2 && z4) {
-                            z2 = z3;
-                        }
-                    } else if (z2) {
-                        z2 = true;
-                    } else if (z4) {
-                        z2 = z3;
-                    }
-                }
-            }
-            i3++;
-            view = view2;
-            z3 = z2;
-        }
-        return view;
-    }
-
-    private void flingWithNestedDispatch(int i) {
-        int scrollY = getScrollY();
-        boolean z = (scrollY > 0 || i > 0) && (scrollY < getScrollRange() || i < 0);
-        if (dispatchNestedPreFling(0.0f, i)) {
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (!this.mFillViewport) {
             return;
         }
-        dispatchNestedFling(0.0f, i, z);
-        fling(i);
-    }
-
-    private float getVerticalScrollFactorCompat() {
-        if (this.mVerticalScrollFactor == 0.0f) {
-            TypedValue typedValue = new TypedValue();
-            Context context = getContext();
-            if (!context.getTheme().resolveAttribute(R.attr.listPreferredItemHeight, typedValue, true)) {
-                throw new IllegalStateException("Expected theme to define listPreferredItemHeight.");
+        int heightMode = View.MeasureSpec.getMode(heightMeasureSpec);
+        if (heightMode != 0 && getChildCount() > 0) {
+            View child = getChildAt(0);
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+            int childSize = child.getMeasuredHeight();
+            int parentSpace = (((getMeasuredHeight() - getPaddingTop()) - getPaddingBottom()) - ((ViewGroup.MarginLayoutParams) lp).topMargin) - ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+            if (childSize < parentSpace) {
+                int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, getPaddingLeft() + getPaddingRight() + ((ViewGroup.MarginLayoutParams) lp).leftMargin + ((ViewGroup.MarginLayoutParams) lp).rightMargin, ((ViewGroup.LayoutParams) lp).width);
+                int childHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(parentSpace, 1073741824);
+                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
             }
-            this.mVerticalScrollFactor = typedValue.getDimension(context.getResources().getDisplayMetrics());
         }
-        return this.mVerticalScrollFactor;
     }
 
-    private boolean inChild(int i, int i2) {
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        return super.dispatchKeyEvent(event) || executeKeyEvent(event);
+    }
+
+    public boolean executeKeyEvent(KeyEvent event) {
+        this.mTempRect.setEmpty();
+        if (!canScroll()) {
+            if (!isFocused() || event.getKeyCode() == 4) {
+                return false;
+            }
+            View currentFocused = findFocus();
+            if (currentFocused == this) {
+                currentFocused = null;
+            }
+            View nextFocused = FocusFinder.getInstance().findNextFocus(this, currentFocused, 130);
+            return (nextFocused == null || nextFocused == this || !nextFocused.requestFocus(130)) ? false : true;
+        }
+        if (event.getAction() != 0) {
+            return false;
+        }
+        int keyCode = event.getKeyCode();
+        if (keyCode != 62) {
+            switch (keyCode) {
+                case 19:
+                    if (!event.isAltPressed()) {
+                        boolean handled = arrowScroll(33);
+                    } else {
+                        boolean handled2 = fullScroll(33);
+                    }
+                    break;
+                case 20:
+                    if (!event.isAltPressed()) {
+                        boolean handled3 = arrowScroll(130);
+                    } else {
+                        boolean handled4 = fullScroll(130);
+                    }
+                    break;
+            }
+            return false;
+        }
+        pageScroll(event.isShiftPressed() ? 33 : 130);
+        return false;
+    }
+
+    private boolean inChild(int x, int y) {
         if (getChildCount() <= 0) {
             return false;
         }
         int scrollY = getScrollY();
-        View childAt = getChildAt(0);
-        return i2 >= childAt.getTop() - scrollY && i2 < childAt.getBottom() - scrollY && i >= childAt.getLeft() && i < childAt.getRight();
+        View child = getChildAt(0);
+        return y >= child.getTop() - scrollY && y < child.getBottom() - scrollY && x >= child.getLeft() && x < child.getRight();
     }
 
     private void initOrResetVelocityTracker() {
@@ -296,36 +384,6 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingChil
         }
     }
 
-    private boolean isOffScreen(View view) {
-        return !isWithinDeltaOfScreen(view, 0, getHeight());
-    }
-
-    private static boolean isViewDescendantOf(View view, View view2) {
-        if (view == view2) {
-            return true;
-        }
-        Object parent = view.getParent();
-        return (parent instanceof ViewGroup) && isViewDescendantOf((View) parent, view2);
-    }
-
-    private boolean isWithinDeltaOfScreen(View view, int i, int i2) {
-        view.getDrawingRect(this.mTempRect);
-        offsetDescendantRectToMyCoords(view, this.mTempRect);
-        return this.mTempRect.bottom + i >= getScrollY() && this.mTempRect.top - i <= getScrollY() + i2;
-    }
-
-    private void onSecondaryPointerUp(MotionEvent motionEvent) {
-        int actionIndex = motionEvent.getActionIndex();
-        if (motionEvent.getPointerId(actionIndex) == this.mActivePointerId) {
-            int i = actionIndex == 0 ? 1 : 0;
-            this.mLastMotionY = (int) motionEvent.getY(i);
-            this.mActivePointerId = motionEvent.getPointerId(i);
-            if (this.mVelocityTracker != null) {
-                this.mVelocityTracker.clear();
-            }
-        }
-    }
-
     private void recycleVelocityTracker() {
         if (this.mVelocityTracker != null) {
             this.mVelocityTracker.recycle();
@@ -333,461 +391,17 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingChil
         }
     }
 
-    private boolean scrollAndFocus(int i, int i2, int i3) {
-        boolean z = false;
-        int height = getHeight();
-        int scrollY = getScrollY();
-        int i4 = scrollY + height;
-        boolean z2 = i == 33;
-        View viewFindFocusableViewInBounds = findFocusableViewInBounds(z2, i2, i3);
-        if (viewFindFocusableViewInBounds == null) {
-            viewFindFocusableViewInBounds = this;
+    @Override
+    public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        if (disallowIntercept) {
+            recycleVelocityTracker();
         }
-        if (i2 < scrollY || i3 > i4) {
-            doScrollY(z2 ? i2 - scrollY : i3 - i4);
-            z = true;
-        }
-        if (viewFindFocusableViewInBounds != findFocus()) {
-            viewFindFocusableViewInBounds.requestFocus(i);
-        }
-        return z;
-    }
-
-    private void scrollToChild(View view) {
-        view.getDrawingRect(this.mTempRect);
-        offsetDescendantRectToMyCoords(view, this.mTempRect);
-        int iComputeScrollDeltaToGetChildRectOnScreen = computeScrollDeltaToGetChildRectOnScreen(this.mTempRect);
-        if (iComputeScrollDeltaToGetChildRectOnScreen != 0) {
-            scrollBy(0, iComputeScrollDeltaToGetChildRectOnScreen);
-        }
-    }
-
-    private boolean scrollToChildRect(Rect rect, boolean z) {
-        int iComputeScrollDeltaToGetChildRectOnScreen = computeScrollDeltaToGetChildRectOnScreen(rect);
-        boolean z2 = iComputeScrollDeltaToGetChildRectOnScreen != 0;
-        if (z2) {
-            if (z) {
-                scrollBy(0, iComputeScrollDeltaToGetChildRectOnScreen);
-            } else {
-                smoothScrollBy(0, iComputeScrollDeltaToGetChildRectOnScreen);
-            }
-        }
-        return z2;
+        super.requestDisallowInterceptTouchEvent(disallowIntercept);
     }
 
     @Override
-    public void addView(View view) {
-        if (getChildCount() > 0) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
-        }
-        super.addView(view);
-    }
-
-    @Override
-    public void addView(View view, int i) {
-        if (getChildCount() > 0) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
-        }
-        super.addView(view, i);
-    }
-
-    @Override
-    public void addView(View view, int i, ViewGroup.LayoutParams layoutParams) {
-        if (getChildCount() > 0) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
-        }
-        super.addView(view, i, layoutParams);
-    }
-
-    @Override
-    public void addView(View view, ViewGroup.LayoutParams layoutParams) {
-        if (getChildCount() > 0) {
-            throw new IllegalStateException("ScrollView can host only one direct child");
-        }
-        super.addView(view, layoutParams);
-    }
-
-    public boolean arrowScroll(int i) {
-        int iMin;
-        View viewFindFocus = findFocus();
-        View view = viewFindFocus == this ? null : viewFindFocus;
-        View viewFindNextFocus = FocusFinder.getInstance().findNextFocus(this, view, i);
-        int maxScrollAmount = getMaxScrollAmount();
-        if (viewFindNextFocus == null || !isWithinDeltaOfScreen(viewFindNextFocus, maxScrollAmount, getHeight())) {
-            if (i == 33 && getScrollY() < maxScrollAmount) {
-                iMin = getScrollY();
-            } else if (i != 130 || getChildCount() <= 0) {
-                iMin = maxScrollAmount;
-            } else {
-                View childAt = getChildAt(0);
-                iMin = Math.min((((FrameLayout.LayoutParams) childAt.getLayoutParams()).bottomMargin + childAt.getBottom()) - ((getScrollY() + getHeight()) - getPaddingBottom()), maxScrollAmount);
-            }
-            if (iMin == 0) {
-                return false;
-            }
-            if (i != 130) {
-                iMin = -iMin;
-            }
-            doScrollY(iMin);
-        } else {
-            viewFindNextFocus.getDrawingRect(this.mTempRect);
-            offsetDescendantRectToMyCoords(viewFindNextFocus, this.mTempRect);
-            doScrollY(computeScrollDeltaToGetChildRectOnScreen(this.mTempRect));
-            viewFindNextFocus.requestFocus(i);
-        }
-        if (view != null && view.isFocused() && isOffScreen(view)) {
-            int descendantFocusability = getDescendantFocusability();
-            setDescendantFocusability(131072);
-            requestFocus();
-            setDescendantFocusability(descendantFocusability);
-        }
-        return true;
-    }
-
-    @Override
-    public int computeHorizontalScrollExtent() {
-        return super.computeHorizontalScrollExtent();
-    }
-
-    @Override
-    public int computeHorizontalScrollOffset() {
-        return super.computeHorizontalScrollOffset();
-    }
-
-    @Override
-    public int computeHorizontalScrollRange() {
-        return super.computeHorizontalScrollRange();
-    }
-
-    @Override
-    public void computeScroll() {
-        if (!this.mScroller.computeScrollOffset()) {
-            if (hasNestedScrollingParent(1)) {
-                stopNestedScroll(1);
-            }
-            this.mLastScrollerY = 0;
-            return;
-        }
-        this.mScroller.getCurrX();
-        int currY = this.mScroller.getCurrY();
-        int i = currY - this.mLastScrollerY;
-        if (dispatchNestedPreScroll(0, i, this.mScrollConsumed, null, 1)) {
-            i -= this.mScrollConsumed[1];
-        }
-        if (i != 0) {
-            int scrollRange = getScrollRange();
-            int scrollY = getScrollY();
-            overScrollByCompat(0, i, getScrollX(), scrollY, 0, scrollRange, 0, 0, false);
-            int scrollY2 = getScrollY() - scrollY;
-            if (!dispatchNestedScroll(0, scrollY2, 0, i - scrollY2, null, 1)) {
-                int overScrollMode = getOverScrollMode();
-                if (overScrollMode == 0 || (overScrollMode == 1 && scrollRange > 0)) {
-                    ensureGlows();
-                    if (currY <= 0 && scrollY > 0) {
-                        this.mEdgeGlowTop.onAbsorb((int) this.mScroller.getCurrVelocity());
-                    } else if (currY >= scrollRange && scrollY < scrollRange) {
-                        this.mEdgeGlowBottom.onAbsorb((int) this.mScroller.getCurrVelocity());
-                    }
-                }
-            }
-        }
-        this.mLastScrollerY = currY;
-        ViewCompat.postInvalidateOnAnimation(this);
-    }
-
-    protected int computeScrollDeltaToGetChildRectOnScreen(Rect rect) {
-        int iMax;
-        if (getChildCount() == 0) {
-            return 0;
-        }
-        int height = getHeight();
-        int scrollY = getScrollY();
-        int i = scrollY + height;
-        int verticalFadingEdgeLength = getVerticalFadingEdgeLength();
-        int i2 = rect.top > 0 ? scrollY + verticalFadingEdgeLength : scrollY;
-        View childAt = getChildAt(0);
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-        int i3 = rect.bottom < (childAt.getHeight() + layoutParams.topMargin) + layoutParams.bottomMargin ? i - verticalFadingEdgeLength : i;
-        if (rect.bottom > i3 && rect.top > i2) {
-            iMax = Math.min(rect.height() > height ? (rect.top - i2) + 0 : (rect.bottom - i3) + 0, (layoutParams.bottomMargin + childAt.getBottom()) - i);
-        } else if (rect.top >= i2 || rect.bottom >= i3) {
-            iMax = 0;
-        } else {
-            iMax = Math.max(rect.height() > height ? 0 - (i3 - rect.bottom) : 0 - (i2 - rect.top), -getScrollY());
-        }
-        return iMax;
-    }
-
-    @Override
-    public int computeVerticalScrollExtent() {
-        return super.computeVerticalScrollExtent();
-    }
-
-    @Override
-    public int computeVerticalScrollOffset() {
-        return Math.max(0, super.computeVerticalScrollOffset());
-    }
-
-    @Override
-    public int computeVerticalScrollRange() {
-        int childCount = getChildCount();
-        int height = (getHeight() - getPaddingBottom()) - getPaddingTop();
-        if (childCount == 0) {
-            return height;
-        }
-        View childAt = getChildAt(0);
-        int bottom = ((FrameLayout.LayoutParams) childAt.getLayoutParams()).bottomMargin + childAt.getBottom();
-        int scrollY = getScrollY();
-        int iMax = Math.max(0, bottom - height);
-        return scrollY < 0 ? bottom - scrollY : scrollY > iMax ? bottom + (scrollY - iMax) : bottom;
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        return super.dispatchKeyEvent(keyEvent) || executeKeyEvent(keyEvent);
-    }
-
-    @Override
-    public boolean dispatchNestedFling(float f, float f2, boolean z) {
-        return this.mChildHelper.dispatchNestedFling(f, f2, z);
-    }
-
-    @Override
-    public boolean dispatchNestedPreFling(float f, float f2) {
-        return this.mChildHelper.dispatchNestedPreFling(f, f2);
-    }
-
-    @Override
-    public boolean dispatchNestedPreScroll(int i, int i2, int[] iArr, int[] iArr2) {
-        return dispatchNestedPreScroll(i, i2, iArr, iArr2, 0);
-    }
-
-    public boolean dispatchNestedPreScroll(int i, int i2, int[] iArr, int[] iArr2, int i3) {
-        return this.mChildHelper.dispatchNestedPreScroll(i, i2, iArr, iArr2, i3);
-    }
-
-    @Override
-    public boolean dispatchNestedScroll(int i, int i2, int i3, int i4, int[] iArr) {
-        return dispatchNestedScroll(i, i2, i3, i4, iArr, 0);
-    }
-
-    public boolean dispatchNestedScroll(int i, int i2, int i3, int i4, int[] iArr, int i5) {
-        return this.mChildHelper.dispatchNestedScroll(i, i2, i3, i4, iArr, i5);
-    }
-
-    @Override
-    public void draw(Canvas canvas) {
-        int paddingLeft;
-        int paddingLeft2 = 0;
-        super.draw(canvas);
-        if (this.mEdgeGlowTop != null) {
-            int scrollY = getScrollY();
-            if (!this.mEdgeGlowTop.isFinished()) {
-                int iSave = canvas.save();
-                int width = getWidth();
-                int height = getHeight();
-                int iMin = Math.min(0, scrollY);
-                if (Build.VERSION.SDK_INT < 21 || getClipToPadding()) {
-                    width -= getPaddingLeft() + getPaddingRight();
-                    paddingLeft = getPaddingLeft() + 0;
-                } else {
-                    paddingLeft = 0;
-                }
-                if (Build.VERSION.SDK_INT >= 21 && getClipToPadding()) {
-                    height -= getPaddingTop() + getPaddingBottom();
-                    iMin += getPaddingTop();
-                }
-                canvas.translate(paddingLeft, iMin);
-                this.mEdgeGlowTop.setSize(width, height);
-                if (this.mEdgeGlowTop.draw(canvas)) {
-                    ViewCompat.postInvalidateOnAnimation(this);
-                }
-                canvas.restoreToCount(iSave);
-            }
-            if (this.mEdgeGlowBottom.isFinished()) {
-                return;
-            }
-            int iSave2 = canvas.save();
-            int width2 = getWidth();
-            int height2 = getHeight();
-            int iMax = Math.max(getScrollRange(), scrollY) + height2;
-            if (Build.VERSION.SDK_INT < 21 || getClipToPadding()) {
-                width2 -= getPaddingLeft() + getPaddingRight();
-                paddingLeft2 = getPaddingLeft() + 0;
-            }
-            if (Build.VERSION.SDK_INT >= 21 && getClipToPadding()) {
-                height2 -= getPaddingTop() + getPaddingBottom();
-                iMax -= getPaddingBottom();
-            }
-            canvas.translate(paddingLeft2 - width2, iMax);
-            canvas.rotate(180.0f, width2, 0.0f);
-            this.mEdgeGlowBottom.setSize(width2, height2);
-            if (this.mEdgeGlowBottom.draw(canvas)) {
-                ViewCompat.postInvalidateOnAnimation(this);
-            }
-            canvas.restoreToCount(iSave2);
-        }
-    }
-
-    public boolean executeKeyEvent(KeyEvent keyEvent) {
-        this.mTempRect.setEmpty();
-        if (!canScroll()) {
-            if (!isFocused() || keyEvent.getKeyCode() == 4) {
-                return false;
-            }
-            View viewFindFocus = findFocus();
-            if (viewFindFocus == this) {
-                viewFindFocus = null;
-            }
-            View viewFindNextFocus = FocusFinder.getInstance().findNextFocus(this, viewFindFocus, 130);
-            return (viewFindNextFocus == null || viewFindNextFocus == this || !viewFindNextFocus.requestFocus(130)) ? false : true;
-        }
-        if (keyEvent.getAction() != 0) {
-            return false;
-        }
-        int keyCode = keyEvent.getKeyCode();
-        if (keyCode == 62) {
-            pageScroll(keyEvent.isShiftPressed() ? 33 : 130);
-            return false;
-        }
-        switch (keyCode) {
-            case 19:
-                return !keyEvent.isAltPressed() ? arrowScroll(33) : fullScroll(33);
-            case 20:
-                return !keyEvent.isAltPressed() ? arrowScroll(130) : fullScroll(130);
-            default:
-                return false;
-        }
-    }
-
-    public void fling(int i) {
-        if (getChildCount() > 0) {
-            startNestedScroll(2, 1);
-            this.mScroller.fling(getScrollX(), getScrollY(), 0, i, 0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
-            this.mLastScrollerY = getScrollY();
-            ViewCompat.postInvalidateOnAnimation(this);
-        }
-    }
-
-    public boolean fullScroll(int i) {
-        int childCount;
-        boolean z = i == 130;
-        int height = getHeight();
-        this.mTempRect.top = 0;
-        this.mTempRect.bottom = height;
-        if (z && (childCount = getChildCount()) > 0) {
-            View childAt = getChildAt(childCount - 1);
-            this.mTempRect.bottom = ((FrameLayout.LayoutParams) childAt.getLayoutParams()).bottomMargin + childAt.getBottom() + getPaddingBottom();
-            this.mTempRect.top = this.mTempRect.bottom - height;
-        }
-        return scrollAndFocus(i, this.mTempRect.top, this.mTempRect.bottom);
-    }
-
-    @Override
-    protected float getBottomFadingEdgeStrength() {
-        if (getChildCount() == 0) {
-            return 0.0f;
-        }
-        View childAt = getChildAt(0);
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-        int verticalFadingEdgeLength = getVerticalFadingEdgeLength();
-        int bottom = ((layoutParams.bottomMargin + childAt.getBottom()) - getScrollY()) - (getHeight() - getPaddingBottom());
-        if (bottom < verticalFadingEdgeLength) {
-            return bottom / verticalFadingEdgeLength;
-        }
-        return 1.0f;
-    }
-
-    public int getMaxScrollAmount() {
-        return (int) (0.5f * getHeight());
-    }
-
-    @Override
-    public int getNestedScrollAxes() {
-        return this.mParentHelper.getNestedScrollAxes();
-    }
-
-    int getScrollRange() {
-        if (getChildCount() <= 0) {
-            return 0;
-        }
-        View childAt = getChildAt(0);
-        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-        return Math.max(0, (layoutParams.bottomMargin + (childAt.getHeight() + layoutParams.topMargin)) - ((getHeight() - getPaddingTop()) - getPaddingBottom()));
-    }
-
-    @Override
-    protected float getTopFadingEdgeStrength() {
-        if (getChildCount() == 0) {
-            return 0.0f;
-        }
-        int verticalFadingEdgeLength = getVerticalFadingEdgeLength();
-        int scrollY = getScrollY();
-        if (scrollY < verticalFadingEdgeLength) {
-            return scrollY / verticalFadingEdgeLength;
-        }
-        return 1.0f;
-    }
-
-    @Override
-    public boolean hasNestedScrollingParent() {
-        return hasNestedScrollingParent(0);
-    }
-
-    public boolean hasNestedScrollingParent(int i) {
-        return this.mChildHelper.hasNestedScrollingParent(i);
-    }
-
-    @Override
-    public boolean isNestedScrollingEnabled() {
-        return this.mChildHelper.isNestedScrollingEnabled();
-    }
-
-    @Override
-    protected void measureChild(View view, int i, int i2) {
-        view.measure(getChildMeasureSpec(i, getPaddingLeft() + getPaddingRight(), view.getLayoutParams().width), View.MeasureSpec.makeMeasureSpec(0, 0));
-    }
-
-    @Override
-    protected void measureChildWithMargins(View view, int i, int i2, int i3, int i4) {
-        ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        view.measure(getChildMeasureSpec(i, getPaddingLeft() + getPaddingRight() + marginLayoutParams.leftMargin + marginLayoutParams.rightMargin + i2, marginLayoutParams.width), View.MeasureSpec.makeMeasureSpec(marginLayoutParams.bottomMargin + marginLayoutParams.topMargin, 0));
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        this.mIsLaidOut = false;
-    }
-
-    @Override
-    public boolean onGenericMotionEvent(MotionEvent motionEvent) {
-        if ((motionEvent.getSource() & 2) == 0 || motionEvent.getAction() != 8 || this.mIsBeingDragged) {
-            return false;
-        }
-        float axisValue = motionEvent.getAxisValue(9);
-        if (axisValue == 0.0f) {
-            return false;
-        }
-        int verticalScrollFactorCompat = (int) (axisValue * getVerticalScrollFactorCompat());
-        int scrollRange = getScrollRange();
-        int scrollY = getScrollY();
-        int i = scrollY - verticalScrollFactorCompat;
-        if (i < 0) {
-            scrollRange = 0;
-        } else if (i <= scrollRange) {
-            scrollRange = i;
-        }
-        if (scrollRange == scrollY) {
-            return false;
-        }
-        super.scrollTo(getScrollX(), scrollRange);
-        return true;
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
-        int action = motionEvent.getAction();
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        int action = ev.getAction();
         if (action == 2 && this.mIsBeingDragged) {
             return true;
         }
@@ -795,17 +409,17 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingChil
         if (i != 6) {
             switch (i) {
                 case 0:
-                    int y = (int) motionEvent.getY();
-                    if (!inChild((int) motionEvent.getX(), y)) {
+                    int y = (int) ev.getY();
+                    if (!inChild((int) ev.getX(), y)) {
                         this.mIsBeingDragged = false;
                         recycleVelocityTracker();
                     } else {
                         this.mLastMotionY = y;
-                        this.mActivePointerId = motionEvent.getPointerId(0);
+                        this.mActivePointerId = ev.getPointerId(0);
                         initOrResetVelocityTracker();
-                        this.mVelocityTracker.addMovement(motionEvent);
+                        this.mVelocityTracker.addMovement(ev);
                         this.mScroller.computeScrollOffset();
-                        this.mIsBeingDragged = !this.mScroller.isFinished();
+                        this.mIsBeingDragged = true ^ this.mScroller.isFinished();
                         startNestedScroll(2, 0);
                     }
                     break;
@@ -820,380 +434,362 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingChil
                     stopNestedScroll(0);
                     break;
                 case 2:
-                    int i2 = this.mActivePointerId;
-                    if (i2 != -1) {
-                        int iFindPointerIndex = motionEvent.findPointerIndex(i2);
-                        if (iFindPointerIndex != -1) {
-                            int y2 = (int) motionEvent.getY(iFindPointerIndex);
-                            if (Math.abs(y2 - this.mLastMotionY) > this.mTouchSlop && (getNestedScrollAxes() & 2) == 0) {
+                    int activePointerId = this.mActivePointerId;
+                    if (activePointerId != -1) {
+                        int pointerIndex = ev.findPointerIndex(activePointerId);
+                        if (pointerIndex == -1) {
+                            Log.e("NestedScrollView", "Invalid pointerId=" + activePointerId + " in onInterceptTouchEvent");
+                        } else {
+                            int y2 = (int) ev.getY(pointerIndex);
+                            int yDiff = Math.abs(y2 - this.mLastMotionY);
+                            if (yDiff > this.mTouchSlop && (2 & getNestedScrollAxes()) == 0) {
                                 this.mIsBeingDragged = true;
                                 this.mLastMotionY = y2;
                                 initVelocityTrackerIfNotExists();
-                                this.mVelocityTracker.addMovement(motionEvent);
+                                this.mVelocityTracker.addMovement(ev);
                                 this.mNestedYOffset = 0;
                                 ViewParent parent = getParent();
                                 if (parent != null) {
                                     parent.requestDisallowInterceptTouchEvent(true);
                                 }
                             }
-                        } else {
-                            Log.e("NestedScrollView", "Invalid pointerId=" + i2 + " in onInterceptTouchEvent");
                         }
                     }
                     break;
             }
         } else {
-            onSecondaryPointerUp(motionEvent);
+            onSecondaryPointerUp(ev);
         }
         return this.mIsBeingDragged;
     }
 
     @Override
-    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-        int measuredHeight = 0;
-        super.onLayout(z, i, i2, i3, i4);
-        this.mIsLayoutDirty = false;
-        if (this.mChildToScrollTo != null && isViewDescendantOf(this.mChildToScrollTo, this)) {
-            scrollToChild(this.mChildToScrollTo);
-        }
-        this.mChildToScrollTo = null;
-        if (!this.mIsLaidOut) {
-            if (this.mSavedState != null) {
-                scrollTo(getScrollX(), this.mSavedState.scrollPosition);
-                this.mSavedState = null;
-            }
-            if (getChildCount() > 0) {
-                View childAt = getChildAt(0);
-                FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-                measuredHeight = layoutParams.bottomMargin + childAt.getMeasuredHeight() + layoutParams.topMargin;
-            }
-            int paddingTop = getPaddingTop();
-            int paddingBottom = getPaddingBottom();
-            int scrollY = getScrollY();
-            int iClamp = clamp(scrollY, ((i4 - i2) - paddingTop) - paddingBottom, measuredHeight);
-            if (iClamp != scrollY) {
-                scrollTo(getScrollX(), iClamp);
-            }
-        }
-        scrollTo(getScrollX(), getScrollY());
-        this.mIsLaidOut = true;
-    }
-
-    @Override
-    protected void onMeasure(int i, int i2) {
-        super.onMeasure(i, i2);
-        if (this.mFillViewport && View.MeasureSpec.getMode(i2) != 0 && getChildCount() > 0) {
-            View childAt = getChildAt(0);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-            int measuredHeight = childAt.getMeasuredHeight();
-            int measuredHeight2 = (((getMeasuredHeight() - getPaddingTop()) - getPaddingBottom()) - layoutParams.topMargin) - layoutParams.bottomMargin;
-            if (measuredHeight < measuredHeight2) {
-                childAt.measure(getChildMeasureSpec(i, getPaddingLeft() + getPaddingRight() + layoutParams.leftMargin + layoutParams.rightMargin, layoutParams.width), View.MeasureSpec.makeMeasureSpec(measuredHeight2, 1073741824));
-            }
-        }
-    }
-
-    @Override
-    public boolean onNestedFling(View view, float f, float f2, boolean z) {
-        if (z) {
-            return false;
-        }
-        flingWithNestedDispatch((int) f2);
-        return true;
-    }
-
-    @Override
-    public boolean onNestedPreFling(View view, float f, float f2) {
-        return dispatchNestedPreFling(f, f2);
-    }
-
-    @Override
-    public void onNestedPreScroll(View view, int i, int i2, int[] iArr) {
-        onNestedPreScroll(view, i, i2, iArr, 0);
-    }
-
-    @Override
-    public void onNestedPreScroll(View view, int i, int i2, int[] iArr, int i3) {
-        dispatchNestedPreScroll(i, i2, iArr, null, i3);
-    }
-
-    @Override
-    public void onNestedScroll(View view, int i, int i2, int i3, int i4) {
-        onNestedScroll(view, i, i2, i3, i4, 0);
-    }
-
-    @Override
-    public void onNestedScroll(View view, int i, int i2, int i3, int i4, int i5) {
-        int scrollY = getScrollY();
-        scrollBy(0, i4);
-        int scrollY2 = getScrollY() - scrollY;
-        dispatchNestedScroll(0, scrollY2, 0, i4 - scrollY2, null, i5);
-    }
-
-    @Override
-    public void onNestedScrollAccepted(View view, View view2, int i) {
-        onNestedScrollAccepted(view, view2, i, 0);
-    }
-
-    @Override
-    public void onNestedScrollAccepted(View view, View view2, int i, int i2) {
-        this.mParentHelper.onNestedScrollAccepted(view, view2, i, i2);
-        startNestedScroll(2, i2);
-    }
-
-    @Override
-    protected void onOverScrolled(int i, int i2, boolean z, boolean z2) {
-        super.scrollTo(i, i2);
-    }
-
-    @Override
-    protected boolean onRequestFocusInDescendants(int i, Rect rect) {
-        if (i == 2) {
-            i = 130;
-        } else if (i == 1) {
-            i = 33;
-        }
-        View viewFindNextFocus = rect == null ? FocusFinder.getInstance().findNextFocus(this, null, i) : FocusFinder.getInstance().findNextFocusFromRect(this, rect, i);
-        if (viewFindNextFocus == null || isOffScreen(viewFindNextFocus)) {
-            return false;
-        }
-        return viewFindNextFocus.requestFocus(i, rect);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable parcelable) {
-        if (!(parcelable instanceof SavedState)) {
-            super.onRestoreInstanceState(parcelable);
-            return;
-        }
-        SavedState savedState = (SavedState) parcelable;
-        super.onRestoreInstanceState(savedState.getSuperState());
-        this.mSavedState = savedState;
-        requestLayout();
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        SavedState savedState = new SavedState(super.onSaveInstanceState());
-        savedState.scrollPosition = getScrollY();
-        return savedState;
-    }
-
-    @Override
-    protected void onScrollChanged(int i, int i2, int i3, int i4) {
-        super.onScrollChanged(i, i2, i3, i4);
-        if (this.mOnScrollChangeListener != null) {
-            this.mOnScrollChangeListener.onScrollChange(this, i, i2, i3, i4);
-        }
-    }
-
-    @Override
-    protected void onSizeChanged(int i, int i2, int i3, int i4) {
-        super.onSizeChanged(i, i2, i3, i4);
-        View viewFindFocus = findFocus();
-        if (viewFindFocus == null || this == viewFindFocus || !isWithinDeltaOfScreen(viewFindFocus, 0, i4)) {
-            return;
-        }
-        viewFindFocus.getDrawingRect(this.mTempRect);
-        offsetDescendantRectToMyCoords(viewFindFocus, this.mTempRect);
-        doScrollY(computeScrollDeltaToGetChildRectOnScreen(this.mTempRect));
-    }
-
-    @Override
-    public boolean onStartNestedScroll(View view, View view2, int i) {
-        return onStartNestedScroll(view, view2, i, 0);
-    }
-
-    @Override
-    public boolean onStartNestedScroll(View view, View view2, int i, int i2) {
-        return (i & 2) != 0;
-    }
-
-    @Override
-    public void onStopNestedScroll(View view) {
-        onStopNestedScroll(view, 0);
-    }
-
-    @Override
-    public void onStopNestedScroll(View view, int i) {
-        this.mParentHelper.onStopNestedScroll(view, i);
-        stopNestedScroll(i);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent motionEvent) {
+    public boolean onTouchEvent(MotionEvent ev) {
+        boolean z;
         ViewParent parent;
         initVelocityTrackerIfNotExists();
-        MotionEvent motionEventObtain = MotionEvent.obtain(motionEvent);
-        int actionMasked = motionEvent.getActionMasked();
+        MotionEvent vtev = MotionEvent.obtain(ev);
+        int actionMasked = ev.getActionMasked();
         if (actionMasked == 0) {
             this.mNestedYOffset = 0;
         }
-        motionEventObtain.offsetLocation(0.0f, this.mNestedYOffset);
+        vtev.offsetLocation(0.0f, this.mNestedYOffset);
         switch (actionMasked) {
             case 0:
+                z = true;
                 if (getChildCount() == 0) {
                     return false;
                 }
-                boolean z = !this.mScroller.isFinished();
-                this.mIsBeingDragged = z;
-                if (z && (parent = getParent()) != null) {
+                boolean z2 = !this.mScroller.isFinished();
+                this.mIsBeingDragged = z2;
+                if (z2 && (parent = getParent()) != null) {
                     parent.requestDisallowInterceptTouchEvent(true);
                 }
                 if (!this.mScroller.isFinished()) {
                     this.mScroller.abortAnimation();
                 }
-                this.mLastMotionY = (int) motionEvent.getY();
-                this.mActivePointerId = motionEvent.getPointerId(0);
+                this.mLastMotionY = (int) ev.getY();
+                this.mActivePointerId = ev.getPointerId(0);
                 startNestedScroll(2, 0);
-                break;
+                if (this.mVelocityTracker != null) {
+                    this.mVelocityTracker.addMovement(vtev);
+                }
+                vtev.recycle();
+                return z;
             case 1:
+                z = true;
                 VelocityTracker velocityTracker = this.mVelocityTracker;
                 velocityTracker.computeCurrentVelocity(1000, this.mMaximumVelocity);
-                int yVelocity = (int) velocityTracker.getYVelocity(this.mActivePointerId);
-                if (Math.abs(yVelocity) > this.mMinimumVelocity) {
-                    flingWithNestedDispatch(-yVelocity);
+                int initialVelocity = (int) velocityTracker.getYVelocity(this.mActivePointerId);
+                if (Math.abs(initialVelocity) > this.mMinimumVelocity) {
+                    flingWithNestedDispatch(-initialVelocity);
                 } else if (this.mScroller.springBack(getScrollX(), getScrollY(), 0, 0, 0, getScrollRange())) {
                     ViewCompat.postInvalidateOnAnimation(this);
                 }
                 this.mActivePointerId = -1;
                 endDrag();
-                break;
+                if (this.mVelocityTracker != null) {
+                }
+                vtev.recycle();
+                return z;
             case 2:
-                int iFindPointerIndex = motionEvent.findPointerIndex(this.mActivePointerId);
-                if (iFindPointerIndex != -1) {
-                    int y = (int) motionEvent.getY(iFindPointerIndex);
-                    int i = this.mLastMotionY - y;
-                    if (dispatchNestedPreScroll(0, i, this.mScrollConsumed, this.mScrollOffset, 0)) {
-                        i -= this.mScrollConsumed[1];
-                        motionEventObtain.offsetLocation(0.0f, this.mScrollOffset[1]);
+                int activePointerIndex = ev.findPointerIndex(this.mActivePointerId);
+                if (activePointerIndex == -1) {
+                    Log.e("NestedScrollView", "Invalid pointerId=" + this.mActivePointerId + " in onTouchEvent");
+                } else {
+                    int y = (int) ev.getY(activePointerIndex);
+                    int deltaY = this.mLastMotionY - y;
+                    if (dispatchNestedPreScroll(0, deltaY, this.mScrollConsumed, this.mScrollOffset, 0)) {
+                        deltaY -= this.mScrollConsumed[1];
+                        vtev.offsetLocation(0.0f, this.mScrollOffset[1]);
                         this.mNestedYOffset += this.mScrollOffset[1];
                     }
-                    if (!this.mIsBeingDragged && Math.abs(i) > this.mTouchSlop) {
+                    if (!this.mIsBeingDragged && Math.abs(deltaY) > this.mTouchSlop) {
                         ViewParent parent2 = getParent();
                         if (parent2 != null) {
                             parent2.requestDisallowInterceptTouchEvent(true);
                         }
                         this.mIsBeingDragged = true;
-                        i = i > 0 ? i - this.mTouchSlop : i + this.mTouchSlop;
+                        if (deltaY > 0) {
+                            deltaY -= this.mTouchSlop;
+                        } else {
+                            deltaY += this.mTouchSlop;
+                        }
                     }
                     if (this.mIsBeingDragged) {
                         this.mLastMotionY = y - this.mScrollOffset[1];
-                        int scrollY = getScrollY();
-                        int scrollRange = getScrollRange();
-                        int overScrollMode = getOverScrollMode();
-                        boolean z2 = overScrollMode == 0 || (overScrollMode == 1 && scrollRange > 0);
-                        if (overScrollByCompat(0, i, 0, getScrollY(), 0, scrollRange, 0, 0, true) && !hasNestedScrollingParent(0)) {
+                        int oldY = getScrollY();
+                        int range = getScrollRange();
+                        int overscrollMode = getOverScrollMode();
+                        boolean canOverscroll = overscrollMode == 0 || (overscrollMode == 1 && range > 0);
+                        int deltaY2 = deltaY;
+                        if (overScrollByCompat(0, deltaY, 0, getScrollY(), 0, range, 0, 0, true) && !hasNestedScrollingParent(0)) {
                             this.mVelocityTracker.clear();
                         }
-                        int scrollY2 = getScrollY() - scrollY;
-                        if (dispatchNestedScroll(0, scrollY2, 0, i - scrollY2, this.mScrollOffset, 0)) {
+                        int scrolledDeltaY = getScrollY() - oldY;
+                        int unconsumedY = deltaY2 - scrolledDeltaY;
+                        if (dispatchNestedScroll(0, scrolledDeltaY, 0, unconsumedY, this.mScrollOffset, 0)) {
+                            z = true;
                             this.mLastMotionY -= this.mScrollOffset[1];
-                            motionEventObtain.offsetLocation(0.0f, this.mScrollOffset[1]);
+                            vtev.offsetLocation(0.0f, this.mScrollOffset[1]);
                             this.mNestedYOffset += this.mScrollOffset[1];
-                        } else if (z2) {
-                            ensureGlows();
-                            int i2 = scrollY + i;
-                            if (i2 < 0) {
-                                EdgeEffectCompat.onPull(this.mEdgeGlowTop, i / getHeight(), motionEvent.getX(iFindPointerIndex) / getWidth());
-                                if (!this.mEdgeGlowBottom.isFinished()) {
-                                    this.mEdgeGlowBottom.onRelease();
+                        } else {
+                            z = true;
+                            if (canOverscroll) {
+                                ensureGlows();
+                                int pulledToY = oldY + deltaY2;
+                                if (pulledToY < 0) {
+                                    EdgeEffectCompat.onPull(this.mEdgeGlowTop, deltaY2 / getHeight(), ev.getX(activePointerIndex) / getWidth());
+                                    if (!this.mEdgeGlowBottom.isFinished()) {
+                                        this.mEdgeGlowBottom.onRelease();
+                                    }
+                                } else if (pulledToY > range) {
+                                    EdgeEffectCompat.onPull(this.mEdgeGlowBottom, deltaY2 / getHeight(), 1.0f - (ev.getX(activePointerIndex) / getWidth()));
+                                    if (!this.mEdgeGlowTop.isFinished()) {
+                                        this.mEdgeGlowTop.onRelease();
+                                    }
                                 }
-                            } else if (i2 > scrollRange) {
-                                EdgeEffectCompat.onPull(this.mEdgeGlowBottom, i / getHeight(), 1.0f - (motionEvent.getX(iFindPointerIndex) / getWidth()));
-                                if (!this.mEdgeGlowTop.isFinished()) {
-                                    this.mEdgeGlowTop.onRelease();
+                                if (this.mEdgeGlowTop != null && (!this.mEdgeGlowTop.isFinished() || !this.mEdgeGlowBottom.isFinished())) {
+                                    ViewCompat.postInvalidateOnAnimation(this);
                                 }
-                            }
-                            if (this.mEdgeGlowTop != null && (!this.mEdgeGlowTop.isFinished() || !this.mEdgeGlowBottom.isFinished())) {
-                                ViewCompat.postInvalidateOnAnimation(this);
                             }
                         }
                     }
-                } else {
-                    Log.e("NestedScrollView", "Invalid pointerId=" + this.mActivePointerId + " in onTouchEvent");
+                    if (this.mVelocityTracker != null) {
+                    }
+                    vtev.recycle();
+                    return z;
                 }
-                break;
+                z = true;
+                if (this.mVelocityTracker != null) {
+                }
+                vtev.recycle();
+                return z;
             case 3:
                 if (this.mIsBeingDragged && getChildCount() > 0 && this.mScroller.springBack(getScrollX(), getScrollY(), 0, 0, 0, getScrollRange())) {
                     ViewCompat.postInvalidateOnAnimation(this);
                 }
                 this.mActivePointerId = -1;
                 endDrag();
-                break;
+                z = true;
+                if (this.mVelocityTracker != null) {
+                }
+                vtev.recycle();
+                return z;
+            case 4:
+            default:
+                z = true;
+                if (this.mVelocityTracker != null) {
+                }
+                vtev.recycle();
+                return z;
             case 5:
-                int actionIndex = motionEvent.getActionIndex();
-                this.mLastMotionY = (int) motionEvent.getY(actionIndex);
-                this.mActivePointerId = motionEvent.getPointerId(actionIndex);
-                break;
+                int index = ev.getActionIndex();
+                this.mLastMotionY = (int) ev.getY(index);
+                this.mActivePointerId = ev.getPointerId(index);
+                z = true;
+                if (this.mVelocityTracker != null) {
+                }
+                vtev.recycle();
+                return z;
             case 6:
-                onSecondaryPointerUp(motionEvent);
-                this.mLastMotionY = (int) motionEvent.getY(motionEvent.findPointerIndex(this.mActivePointerId));
-                break;
+                onSecondaryPointerUp(ev);
+                this.mLastMotionY = (int) ev.getY(ev.findPointerIndex(this.mActivePointerId));
+                z = true;
+                if (this.mVelocityTracker != null) {
+                }
+                vtev.recycle();
+                return z;
         }
-        if (this.mVelocityTracker != null) {
-            this.mVelocityTracker.addMovement(motionEventObtain);
-        }
-        motionEventObtain.recycle();
-        return true;
     }
 
-    boolean overScrollByCompat(int i, int i2, int i3, int i4, int i5, int i6, int i7, int i8, boolean z) {
-        boolean z2;
-        boolean z3;
-        int i9;
+    private void onSecondaryPointerUp(MotionEvent ev) {
+        int pointerIndex = ev.getActionIndex();
+        int pointerId = ev.getPointerId(pointerIndex);
+        if (pointerId == this.mActivePointerId) {
+            int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+            this.mLastMotionY = (int) ev.getY(newPointerIndex);
+            this.mActivePointerId = ev.getPointerId(newPointerIndex);
+            if (this.mVelocityTracker != null) {
+                this.mVelocityTracker.clear();
+            }
+        }
+    }
+
+    @Override
+    public boolean onGenericMotionEvent(MotionEvent event) {
+        if ((event.getSource() & 2) != 0 && event.getAction() == 8 && !this.mIsBeingDragged) {
+            float vscroll = event.getAxisValue(9);
+            if (vscroll != 0.0f) {
+                int delta = (int) (getVerticalScrollFactorCompat() * vscroll);
+                int range = getScrollRange();
+                int oldScrollY = getScrollY();
+                int newScrollY = oldScrollY - delta;
+                if (newScrollY < 0) {
+                    newScrollY = 0;
+                } else if (newScrollY > range) {
+                    newScrollY = range;
+                }
+                if (newScrollY != oldScrollY) {
+                    super.scrollTo(getScrollX(), newScrollY);
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private float getVerticalScrollFactorCompat() {
+        if (this.mVerticalScrollFactor == 0.0f) {
+            TypedValue outValue = new TypedValue();
+            Context context = getContext();
+            if (!context.getTheme().resolveAttribute(R.attr.listPreferredItemHeight, outValue, true)) {
+                throw new IllegalStateException("Expected theme to define listPreferredItemHeight.");
+            }
+            this.mVerticalScrollFactor = outValue.getDimension(context.getResources().getDisplayMetrics());
+        }
+        return this.mVerticalScrollFactor;
+    }
+
+    @Override
+    protected void onOverScrolled(int scrollX, int scrollY, boolean clampedX, boolean clampedY) {
+        super.scrollTo(scrollX, scrollY);
+    }
+
+    boolean overScrollByCompat(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX, int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
+        int maxOverScrollX2;
+        int maxOverScrollY2;
         int overScrollMode = getOverScrollMode();
-        boolean z4 = computeHorizontalScrollRange() > computeHorizontalScrollExtent();
-        boolean z5 = computeVerticalScrollRange() > computeVerticalScrollExtent();
-        boolean z6 = overScrollMode == 0 || (overScrollMode == 1 && z4);
-        boolean z7 = overScrollMode == 0 || (overScrollMode == 1 && z5);
-        int i10 = i3 + i;
-        if (!z6) {
-            i7 = 0;
-        }
-        int i11 = i4 + i2;
-        if (!z7) {
-            i8 = 0;
-        }
-        int i12 = -i7;
-        int i13 = i7 + i5;
-        int i14 = -i8;
-        int i15 = i8 + i6;
-        if (i10 > i13) {
-            z2 = true;
-        } else if (i10 < i12) {
-            z2 = true;
-            i13 = i12;
+        boolean canScrollHorizontal = computeHorizontalScrollRange() > computeHorizontalScrollExtent();
+        boolean canScrollVertical = computeVerticalScrollRange() > computeVerticalScrollExtent();
+        boolean overScrollHorizontal = overScrollMode == 0 || (overScrollMode == 1 && canScrollHorizontal);
+        boolean overScrollVertical = overScrollMode == 0 || (overScrollMode == 1 && canScrollVertical);
+        int newScrollX = scrollX + deltaX;
+        if (!overScrollHorizontal) {
+            maxOverScrollX2 = 0;
         } else {
-            z2 = false;
-            i13 = i10;
+            maxOverScrollX2 = maxOverScrollX;
         }
-        if (i11 > i15) {
-            z3 = true;
-            i9 = i15;
-        } else if (i11 < i14) {
-            z3 = true;
-            i9 = i14;
+        int newScrollY = scrollY + deltaY;
+        if (!overScrollVertical) {
+            maxOverScrollY2 = 0;
         } else {
-            z3 = false;
-            i9 = i11;
+            maxOverScrollY2 = maxOverScrollY;
         }
-        if (z3 && !hasNestedScrollingParent(1)) {
-            this.mScroller.springBack(i13, i9, 0, 0, 0, getScrollRange());
+        int left = -maxOverScrollX2;
+        int right = maxOverScrollX2 + scrollRangeX;
+        int overScrollMode2 = -maxOverScrollY2;
+        int bottom = maxOverScrollY2 + scrollRangeY;
+        boolean clampedX = false;
+        if (newScrollX > right) {
+            newScrollX = right;
+            clampedX = true;
+        } else if (newScrollX < left) {
+            newScrollX = left;
+            clampedX = true;
         }
-        onOverScrolled(i13, i9, z2, z3);
-        return z2 || z3;
+        boolean clampedX2 = clampedX;
+        boolean clampedY = false;
+        if (newScrollY > bottom) {
+            newScrollY = bottom;
+            clampedY = true;
+        } else if (newScrollY < overScrollMode2) {
+            newScrollY = overScrollMode2;
+            clampedY = true;
+        }
+        int newScrollY2 = newScrollY;
+        boolean clampedY2 = clampedY;
+        if (clampedY2 && !hasNestedScrollingParent(1)) {
+            this.mScroller.springBack(newScrollX, newScrollY2, 0, 0, 0, getScrollRange());
+        }
+        onOverScrolled(newScrollX, newScrollY2, clampedX2, clampedY2);
+        return clampedX2 || clampedY2;
     }
 
-    public boolean pageScroll(int i) {
-        boolean z = i == 130;
+    int getScrollRange() {
+        if (getChildCount() <= 0) {
+            return 0;
+        }
+        View child = getChildAt(0);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        int childSize = child.getHeight() + ((ViewGroup.MarginLayoutParams) lp).topMargin + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+        int parentSpace = (getHeight() - getPaddingTop()) - getPaddingBottom();
+        int scrollRange = Math.max(0, childSize - parentSpace);
+        return scrollRange;
+    }
+
+    private View findFocusableViewInBounds(boolean topFocus, int top, int bottom) {
+        boolean viewIsFullyContained;
+        List<View> focusables = getFocusables(2);
+        int count = focusables.size();
+        boolean foundFullyContainedFocusable = false;
+        View focusCandidate = null;
+        for (int i = 0; i < count; i++) {
+            View view = focusables.get(i);
+            int viewTop = view.getTop();
+            int viewBottom = view.getBottom();
+            if (top < viewBottom && viewTop < bottom) {
+                boolean viewIsCloserToBoundary = true;
+                if (top >= viewTop || viewBottom >= bottom) {
+                    viewIsFullyContained = false;
+                } else {
+                    viewIsFullyContained = true;
+                }
+                if (focusCandidate == null) {
+                    focusCandidate = view;
+                    foundFullyContainedFocusable = viewIsFullyContained;
+                } else {
+                    if ((!topFocus || viewTop >= focusCandidate.getTop()) && (topFocus || viewBottom <= focusCandidate.getBottom())) {
+                        viewIsCloserToBoundary = false;
+                    }
+                    if (foundFullyContainedFocusable) {
+                        if (viewIsFullyContained && viewIsCloserToBoundary) {
+                            focusCandidate = view;
+                        }
+                    } else if (viewIsFullyContained) {
+                        focusCandidate = view;
+                        foundFullyContainedFocusable = true;
+                    } else if (viewIsCloserToBoundary) {
+                        focusCandidate = view;
+                    }
+                }
+            }
+        }
+        return focusCandidate;
+    }
+
+    public boolean pageScroll(int direction) {
+        boolean down = direction == 130;
         int height = getHeight();
-        if (z) {
+        if (down) {
             this.mTempRect.top = getScrollY() + height;
-            int childCount = getChildCount();
-            if (childCount > 0) {
-                View childAt = getChildAt(childCount - 1);
-                int bottom = ((FrameLayout.LayoutParams) childAt.getLayoutParams()).bottomMargin + childAt.getBottom() + getPaddingBottom();
+            int count = getChildCount();
+            if (count > 0) {
+                View view = getChildAt(count - 1);
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) view.getLayoutParams();
+                int bottom = view.getBottom() + ((ViewGroup.MarginLayoutParams) lp).bottomMargin + getPaddingBottom();
                 if (this.mTempRect.top + height > bottom) {
                     this.mTempRect.top = bottom - height;
                 }
@@ -1205,31 +801,340 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingChil
             }
         }
         this.mTempRect.bottom = this.mTempRect.top + height;
-        return scrollAndFocus(i, this.mTempRect.top, this.mTempRect.bottom);
+        return scrollAndFocus(direction, this.mTempRect.top, this.mTempRect.bottom);
     }
 
-    @Override
-    public void requestChildFocus(View view, View view2) {
-        if (this.mIsLayoutDirty) {
-            this.mChildToScrollTo = view2;
+    public boolean fullScroll(int direction) {
+        int count;
+        boolean down = direction == 130;
+        int height = getHeight();
+        this.mTempRect.top = 0;
+        this.mTempRect.bottom = height;
+        if (down && (count = getChildCount()) > 0) {
+            View view = getChildAt(count - 1);
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) view.getLayoutParams();
+            this.mTempRect.bottom = view.getBottom() + ((ViewGroup.MarginLayoutParams) lp).bottomMargin + getPaddingBottom();
+            this.mTempRect.top = this.mTempRect.bottom - height;
+        }
+        return scrollAndFocus(direction, this.mTempRect.top, this.mTempRect.bottom);
+    }
+
+    private boolean scrollAndFocus(int direction, int top, int bottom) {
+        boolean handled = true;
+        int height = getHeight();
+        int containerTop = getScrollY();
+        int containerBottom = containerTop + height;
+        boolean up = direction == 33;
+        View newFocused = findFocusableViewInBounds(up, top, bottom);
+        if (newFocused == null) {
+            newFocused = this;
+        }
+        if (top >= containerTop && bottom <= containerBottom) {
+            handled = false;
         } else {
-            scrollToChild(view2);
+            int delta = up ? top - containerTop : bottom - containerBottom;
+            doScrollY(delta);
         }
-        super.requestChildFocus(view, view2);
+        if (newFocused != findFocus()) {
+            newFocused.requestFocus(direction);
+        }
+        return handled;
+    }
+
+    public boolean arrowScroll(int direction) {
+        View currentFocused = findFocus();
+        if (currentFocused == this) {
+            currentFocused = null;
+        }
+        View nextFocused = FocusFinder.getInstance().findNextFocus(this, currentFocused, direction);
+        int maxJump = getMaxScrollAmount();
+        if (nextFocused != null && isWithinDeltaOfScreen(nextFocused, maxJump, getHeight())) {
+            nextFocused.getDrawingRect(this.mTempRect);
+            offsetDescendantRectToMyCoords(nextFocused, this.mTempRect);
+            doScrollY(computeScrollDeltaToGetChildRectOnScreen(this.mTempRect));
+            nextFocused.requestFocus(direction);
+        } else {
+            int scrollDelta = maxJump;
+            if (direction == 33 && getScrollY() < scrollDelta) {
+                scrollDelta = getScrollY();
+            } else if (direction == 130 && getChildCount() > 0) {
+                View child = getChildAt(0);
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+                int daBottom = child.getBottom() + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+                int screenBottom = (getScrollY() + getHeight()) - getPaddingBottom();
+                scrollDelta = Math.min(daBottom - screenBottom, maxJump);
+            }
+            if (scrollDelta == 0) {
+                return false;
+            }
+            doScrollY(direction == 130 ? scrollDelta : -scrollDelta);
+        }
+        if (currentFocused != null && currentFocused.isFocused() && isOffScreen(currentFocused)) {
+            int descendantFocusability = getDescendantFocusability();
+            setDescendantFocusability(131072);
+            requestFocus();
+            setDescendantFocusability(descendantFocusability);
+            return true;
+        }
+        return true;
+    }
+
+    private boolean isOffScreen(View descendant) {
+        return !isWithinDeltaOfScreen(descendant, 0, getHeight());
+    }
+
+    private boolean isWithinDeltaOfScreen(View descendant, int delta, int height) {
+        descendant.getDrawingRect(this.mTempRect);
+        offsetDescendantRectToMyCoords(descendant, this.mTempRect);
+        return this.mTempRect.bottom + delta >= getScrollY() && this.mTempRect.top - delta <= getScrollY() + height;
+    }
+
+    private void doScrollY(int delta) {
+        if (delta != 0) {
+            if (this.mSmoothScrollingEnabled) {
+                smoothScrollBy(0, delta);
+            } else {
+                scrollBy(0, delta);
+            }
+        }
+    }
+
+    public final void smoothScrollBy(int dx, int dy) {
+        if (getChildCount() == 0) {
+            return;
+        }
+        long duration = AnimationUtils.currentAnimationTimeMillis() - this.mLastScroll;
+        if (duration > 250) {
+            View child = getChildAt(0);
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+            int childSize = child.getHeight() + ((ViewGroup.MarginLayoutParams) lp).topMargin + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+            int parentSpace = (getHeight() - getPaddingTop()) - getPaddingBottom();
+            int scrollY = getScrollY();
+            int maxY = Math.max(0, childSize - parentSpace);
+            int dy2 = Math.max(0, Math.min(scrollY + dy, maxY)) - scrollY;
+            this.mLastScrollerY = getScrollY();
+            this.mScroller.startScroll(getScrollX(), scrollY, 0, dy2);
+            ViewCompat.postInvalidateOnAnimation(this);
+        } else {
+            if (!this.mScroller.isFinished()) {
+                this.mScroller.abortAnimation();
+            }
+            scrollBy(dx, dy);
+        }
+        this.mLastScroll = AnimationUtils.currentAnimationTimeMillis();
+    }
+
+    public final void smoothScrollTo(int x, int y) {
+        smoothScrollBy(x - getScrollX(), y - getScrollY());
     }
 
     @Override
-    public boolean requestChildRectangleOnScreen(View view, Rect rect, boolean z) {
-        rect.offset(view.getLeft() - view.getScrollX(), view.getTop() - view.getScrollY());
-        return scrollToChildRect(rect, z);
+    public int computeVerticalScrollRange() {
+        int count = getChildCount();
+        int parentSpace = (getHeight() - getPaddingBottom()) - getPaddingTop();
+        if (count == 0) {
+            return parentSpace;
+        }
+        View child = getChildAt(0);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        int scrollRange = child.getBottom() + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+        int scrollY = getScrollY();
+        int overscrollBottom = Math.max(0, scrollRange - parentSpace);
+        if (scrollY < 0) {
+            return scrollRange - scrollY;
+        }
+        if (scrollY > overscrollBottom) {
+            return scrollRange + (scrollY - overscrollBottom);
+        }
+        return scrollRange;
     }
 
     @Override
-    public void requestDisallowInterceptTouchEvent(boolean z) {
-        if (z) {
-            recycleVelocityTracker();
+    public int computeVerticalScrollOffset() {
+        return Math.max(0, super.computeVerticalScrollOffset());
+    }
+
+    @Override
+    public int computeVerticalScrollExtent() {
+        return super.computeVerticalScrollExtent();
+    }
+
+    @Override
+    public int computeHorizontalScrollRange() {
+        return super.computeHorizontalScrollRange();
+    }
+
+    @Override
+    public int computeHorizontalScrollOffset() {
+        return super.computeHorizontalScrollOffset();
+    }
+
+    @Override
+    public int computeHorizontalScrollExtent() {
+        return super.computeHorizontalScrollExtent();
+    }
+
+    @Override
+    protected void measureChild(View child, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
+        ViewGroup.LayoutParams lp = child.getLayoutParams();
+        int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, getPaddingLeft() + getPaddingRight(), lp.width);
+        int childHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, 0);
+        child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+    }
+
+    @Override
+    protected void measureChildWithMargins(View child, int parentWidthMeasureSpec, int widthUsed, int parentHeightMeasureSpec, int heightUsed) {
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
+        int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin + widthUsed, ((ViewGroup.LayoutParams) lp).width);
+        int childHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(lp.topMargin + lp.bottomMargin, 0);
+        child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+    }
+
+    @Override
+    public void computeScroll() {
+        int range;
+        boolean z;
+        boolean canOverscroll;
+        if (this.mScroller.computeScrollOffset()) {
+            this.mScroller.getCurrX();
+            int y = this.mScroller.getCurrY();
+            int dy = y - this.mLastScrollerY;
+            if (dispatchNestedPreScroll(0, dy, this.mScrollConsumed, null, 1)) {
+                dy -= this.mScrollConsumed[1];
+            }
+            int dy2 = dy;
+            if (dy2 != 0) {
+                int range2 = getScrollRange();
+                int oldScrollY = getScrollY();
+                overScrollByCompat(0, dy2, getScrollX(), oldScrollY, 0, range2, 0, 0, false);
+                int scrolledDeltaY = getScrollY() - oldScrollY;
+                int unconsumedY = dy2 - scrolledDeltaY;
+                if (!dispatchNestedScroll(0, scrolledDeltaY, 0, unconsumedY, null, 1)) {
+                    int mode = getOverScrollMode();
+                    if (mode != 0) {
+                        if (mode == 1) {
+                            range = range2;
+                            if (range > 0) {
+                            }
+                            canOverscroll = z;
+                            if (canOverscroll) {
+                                ensureGlows();
+                                if (y <= 0 && oldScrollY > 0) {
+                                    this.mEdgeGlowTop.onAbsorb((int) this.mScroller.getCurrVelocity());
+                                } else if (y >= range && oldScrollY < range) {
+                                    this.mEdgeGlowBottom.onAbsorb((int) this.mScroller.getCurrVelocity());
+                                }
+                            }
+                        } else {
+                            range = range2;
+                        }
+                        z = false;
+                        canOverscroll = z;
+                        if (canOverscroll) {
+                        }
+                    } else {
+                        range = range2;
+                    }
+                    z = true;
+                    canOverscroll = z;
+                    if (canOverscroll) {
+                    }
+                }
+            }
+            this.mLastScrollerY = y;
+            ViewCompat.postInvalidateOnAnimation(this);
+            return;
         }
-        super.requestDisallowInterceptTouchEvent(z);
+        if (hasNestedScrollingParent(1)) {
+            stopNestedScroll(1);
+        }
+        this.mLastScrollerY = 0;
+    }
+
+    private void scrollToChild(View child) {
+        child.getDrawingRect(this.mTempRect);
+        offsetDescendantRectToMyCoords(child, this.mTempRect);
+        int scrollDelta = computeScrollDeltaToGetChildRectOnScreen(this.mTempRect);
+        if (scrollDelta != 0) {
+            scrollBy(0, scrollDelta);
+        }
+    }
+
+    private boolean scrollToChildRect(Rect rect, boolean immediate) {
+        int delta = computeScrollDeltaToGetChildRectOnScreen(rect);
+        boolean scroll = delta != 0;
+        if (scroll) {
+            if (immediate) {
+                scrollBy(0, delta);
+            } else {
+                smoothScrollBy(0, delta);
+            }
+        }
+        return scroll;
+    }
+
+    protected int computeScrollDeltaToGetChildRectOnScreen(Rect rect) {
+        if (getChildCount() == 0) {
+            return 0;
+        }
+        int height = getHeight();
+        int screenTop = getScrollY();
+        int screenBottom = screenTop + height;
+        int fadingEdge = getVerticalFadingEdgeLength();
+        if (rect.top > 0) {
+            screenTop += fadingEdge;
+        }
+        View child = getChildAt(0);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+        if (rect.bottom < child.getHeight() + ((ViewGroup.MarginLayoutParams) lp).topMargin + ((ViewGroup.MarginLayoutParams) lp).bottomMargin) {
+            screenBottom -= fadingEdge;
+        }
+        if (rect.bottom > screenBottom && rect.top > screenTop) {
+            int scrollYDelta = rect.height() > height ? 0 + (rect.top - screenTop) : 0 + (rect.bottom - screenBottom);
+            int bottom = child.getBottom() + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+            int distanceToBottom = bottom - screenBottom;
+            return Math.min(scrollYDelta, distanceToBottom);
+        }
+        if (rect.top >= screenTop || rect.bottom >= screenBottom) {
+            return 0;
+        }
+        int scrollYDelta2 = rect.height() > height ? 0 - (screenBottom - rect.bottom) : 0 - (screenTop - rect.top);
+        return Math.max(scrollYDelta2, -getScrollY());
+    }
+
+    @Override
+    public void requestChildFocus(View child, View focused) {
+        if (!this.mIsLayoutDirty) {
+            scrollToChild(focused);
+        } else {
+            this.mChildToScrollTo = focused;
+        }
+        super.requestChildFocus(child, focused);
+    }
+
+    @Override
+    protected boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
+        View nextFocus;
+        if (direction == 2) {
+            direction = 130;
+        } else if (direction == 1) {
+            direction = 33;
+        }
+        if (previouslyFocusedRect == null) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, null, direction);
+        } else {
+            nextFocus = FocusFinder.getInstance().findNextFocusFromRect(this, previouslyFocusedRect, direction);
+        }
+        if (nextFocus == null || isOffScreen(nextFocus)) {
+            return false;
+        }
+        return nextFocus.requestFocus(direction, previouslyFocusedRect);
+    }
+
+    @Override
+    public boolean requestChildRectangleOnScreen(View child, Rect rectangle, boolean immediate) {
+        rectangle.offset(child.getLeft() - child.getScrollX(), child.getTop() - child.getScrollY());
+        return scrollToChildRect(rectangle, immediate);
     }
 
     @Override
@@ -1239,87 +1144,297 @@ public class NestedScrollView extends FrameLayout implements NestedScrollingChil
     }
 
     @Override
-    public void scrollTo(int i, int i2) {
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        this.mIsLayoutDirty = false;
+        if (this.mChildToScrollTo != null && isViewDescendantOf(this.mChildToScrollTo, this)) {
+            scrollToChild(this.mChildToScrollTo);
+        }
+        this.mChildToScrollTo = null;
+        if (!this.mIsLaidOut) {
+            if (this.mSavedState != null) {
+                scrollTo(getScrollX(), this.mSavedState.scrollPosition);
+                this.mSavedState = null;
+            }
+            int childSize = 0;
+            if (getChildCount() > 0) {
+                View child = getChildAt(0);
+                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+                childSize = child.getMeasuredHeight() + ((ViewGroup.MarginLayoutParams) lp).topMargin + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+            }
+            int parentSpace = ((b - t) - getPaddingTop()) - getPaddingBottom();
+            int currentScrollY = getScrollY();
+            int newScrollY = clamp(currentScrollY, parentSpace, childSize);
+            if (newScrollY != currentScrollY) {
+                scrollTo(getScrollX(), newScrollY);
+            }
+        }
+        int parentSpace2 = getScrollX();
+        scrollTo(parentSpace2, getScrollY());
+        this.mIsLaidOut = true;
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        this.mIsLaidOut = false;
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        View currentFocused = findFocus();
+        if (currentFocused != null && this != currentFocused && isWithinDeltaOfScreen(currentFocused, 0, oldh)) {
+            currentFocused.getDrawingRect(this.mTempRect);
+            offsetDescendantRectToMyCoords(currentFocused, this.mTempRect);
+            int scrollDelta = computeScrollDeltaToGetChildRectOnScreen(this.mTempRect);
+            doScrollY(scrollDelta);
+        }
+    }
+
+    private static boolean isViewDescendantOf(View child, View parent) {
+        if (child == parent) {
+            return true;
+        }
+        ?? parent2 = child.getParent();
+        return (parent2 instanceof ViewGroup) && isViewDescendantOf(parent2, parent);
+    }
+
+    public void fling(int velocityY) {
         if (getChildCount() > 0) {
-            View childAt = getChildAt(0);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-            int width = getWidth();
-            int paddingLeft = getPaddingLeft();
-            int paddingRight = getPaddingRight();
-            int width2 = childAt.getWidth();
-            int i3 = layoutParams.leftMargin;
-            int i4 = layoutParams.rightMargin;
-            int height = getHeight();
-            int paddingTop = getPaddingTop();
-            int paddingBottom = getPaddingBottom();
-            int height2 = childAt.getHeight();
-            int i5 = layoutParams.topMargin;
-            int i6 = layoutParams.bottomMargin;
-            int iClamp = clamp(i, (width - paddingLeft) - paddingRight, width2 + i3 + i4);
-            int iClamp2 = clamp(i2, (height - paddingTop) - paddingBottom, i6 + height2 + i5);
-            if (iClamp == getScrollX() && iClamp2 == getScrollY()) {
+            startNestedScroll(2, 1);
+            this.mScroller.fling(getScrollX(), getScrollY(), 0, velocityY, 0, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
+            this.mLastScrollerY = getScrollY();
+            ViewCompat.postInvalidateOnAnimation(this);
+        }
+    }
+
+    private void flingWithNestedDispatch(int velocityY) {
+        int scrollY = getScrollY();
+        boolean canFling = (scrollY > 0 || velocityY > 0) && (scrollY < getScrollRange() || velocityY < 0);
+        if (!dispatchNestedPreFling(0.0f, velocityY)) {
+            dispatchNestedFling(0.0f, velocityY, canFling);
+            fling(velocityY);
+        }
+    }
+
+    private void endDrag() {
+        this.mIsBeingDragged = false;
+        recycleVelocityTracker();
+        stopNestedScroll(0);
+        if (this.mEdgeGlowTop != null) {
+            this.mEdgeGlowTop.onRelease();
+            this.mEdgeGlowBottom.onRelease();
+        }
+    }
+
+    @Override
+    public void scrollTo(int x, int y) {
+        if (getChildCount() > 0) {
+            View child = getChildAt(0);
+            FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) child.getLayoutParams();
+            int parentSpaceHorizontal = (getWidth() - getPaddingLeft()) - getPaddingRight();
+            int childSizeHorizontal = child.getWidth() + ((ViewGroup.MarginLayoutParams) lp).leftMargin + ((ViewGroup.MarginLayoutParams) lp).rightMargin;
+            int parentSpaceVertical = (getHeight() - getPaddingTop()) - getPaddingBottom();
+            int childSizeVertical = child.getHeight() + ((ViewGroup.MarginLayoutParams) lp).topMargin + ((ViewGroup.MarginLayoutParams) lp).bottomMargin;
+            int x2 = clamp(x, parentSpaceHorizontal, childSizeHorizontal);
+            int y2 = clamp(y, parentSpaceVertical, childSizeVertical);
+            if (x2 != getScrollX() || y2 != getScrollY()) {
+                super.scrollTo(x2, y2);
+            }
+        }
+    }
+
+    private void ensureGlows() {
+        if (getOverScrollMode() != 2) {
+            if (this.mEdgeGlowTop == null) {
+                Context context = getContext();
+                this.mEdgeGlowTop = new EdgeEffect(context);
+                this.mEdgeGlowBottom = new EdgeEffect(context);
                 return;
             }
-            super.scrollTo(iClamp, iClamp2);
-        }
-    }
-
-    @Override
-    public void setNestedScrollingEnabled(boolean z) {
-        this.mChildHelper.setNestedScrollingEnabled(z);
-    }
-
-    @Override
-    public boolean shouldDelayChildPressedState() {
-        return true;
-    }
-
-    public final void smoothScrollBy(int i, int i2) {
-        if (getChildCount() == 0) {
             return;
         }
-        if (AnimationUtils.currentAnimationTimeMillis() - this.mLastScroll > 250) {
-            View childAt = getChildAt(0);
-            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) childAt.getLayoutParams();
-            int height = childAt.getHeight();
-            int i3 = layoutParams.topMargin;
-            int i4 = layoutParams.bottomMargin;
-            int height2 = getHeight();
-            int paddingTop = getPaddingTop();
-            int paddingBottom = getPaddingBottom();
+        this.mEdgeGlowTop = null;
+        this.mEdgeGlowBottom = null;
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+        if (this.mEdgeGlowTop != null) {
             int scrollY = getScrollY();
-            int iMax = Math.max(0, Math.min(scrollY + i2, Math.max(0, (i4 + (height + i3)) - ((height2 - paddingTop) - paddingBottom))));
-            this.mLastScrollerY = getScrollY();
-            this.mScroller.startScroll(getScrollX(), scrollY, 0, iMax - scrollY);
-            ViewCompat.postInvalidateOnAnimation(this);
-        } else {
-            if (!this.mScroller.isFinished()) {
-                this.mScroller.abortAnimation();
+            if (!this.mEdgeGlowTop.isFinished()) {
+                int restoreCount = canvas.save();
+                int width = getWidth();
+                int height = getHeight();
+                int xTranslation = 0;
+                int yTranslation = Math.min(0, scrollY);
+                if (Build.VERSION.SDK_INT < 21 || getClipToPadding()) {
+                    width -= getPaddingLeft() + getPaddingRight();
+                    xTranslation = 0 + getPaddingLeft();
+                }
+                if (Build.VERSION.SDK_INT >= 21 && getClipToPadding()) {
+                    height -= getPaddingTop() + getPaddingBottom();
+                    yTranslation += getPaddingTop();
+                }
+                canvas.translate(xTranslation, yTranslation);
+                this.mEdgeGlowTop.setSize(width, height);
+                if (this.mEdgeGlowTop.draw(canvas)) {
+                    ViewCompat.postInvalidateOnAnimation(this);
+                }
+                canvas.restoreToCount(restoreCount);
             }
-            scrollBy(i, i2);
+            if (!this.mEdgeGlowBottom.isFinished()) {
+                int restoreCount2 = canvas.save();
+                int width2 = getWidth();
+                int height2 = getHeight();
+                int xTranslation2 = 0;
+                int yTranslation2 = Math.max(getScrollRange(), scrollY) + height2;
+                if (Build.VERSION.SDK_INT < 21 || getClipToPadding()) {
+                    width2 -= getPaddingLeft() + getPaddingRight();
+                    xTranslation2 = 0 + getPaddingLeft();
+                }
+                if (Build.VERSION.SDK_INT >= 21 && getClipToPadding()) {
+                    height2 -= getPaddingTop() + getPaddingBottom();
+                    yTranslation2 -= getPaddingBottom();
+                }
+                canvas.translate(xTranslation2 - width2, yTranslation2);
+                canvas.rotate(180.0f, width2, 0.0f);
+                this.mEdgeGlowBottom.setSize(width2, height2);
+                if (this.mEdgeGlowBottom.draw(canvas)) {
+                    ViewCompat.postInvalidateOnAnimation(this);
+                }
+                canvas.restoreToCount(restoreCount2);
+            }
         }
-        this.mLastScroll = AnimationUtils.currentAnimationTimeMillis();
     }
 
-    public final void smoothScrollTo(int i, int i2) {
-        smoothScrollBy(i - getScrollX(), i2 - getScrollY());
-    }
-
-    @Override
-    public boolean startNestedScroll(int i) {
-        return startNestedScroll(i, 0);
-    }
-
-    public boolean startNestedScroll(int i, int i2) {
-        return this.mChildHelper.startNestedScroll(i, i2);
+    private static int clamp(int n, int my, int child) {
+        if (my >= child || n < 0) {
+            return 0;
+        }
+        if (my + n > child) {
+            return child - my;
+        }
+        return n;
     }
 
     @Override
-    public void stopNestedScroll() {
-        stopNestedScroll(0);
+    protected void onRestoreInstanceState(Parcelable parcelable) {
+        if (!(parcelable instanceof SavedState)) {
+            super.onRestoreInstanceState(parcelable);
+            return;
+        }
+        super.onRestoreInstanceState(parcelable.getSuperState());
+        this.mSavedState = parcelable;
+        requestLayout();
     }
 
-    public void stopNestedScroll(int i) {
-        this.mChildHelper.stopNestedScroll(i);
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        SavedState ss = new SavedState(superState);
+        ss.scrollPosition = getScrollY();
+        return ss;
+    }
+
+    static class SavedState extends View.BaseSavedState {
+        public static final Parcelable.Creator<SavedState> CREATOR = new Parcelable.Creator<SavedState>() {
+            @Override
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            @Override
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+        };
+        public int scrollPosition;
+
+        SavedState(Parcelable superState) {
+            super(superState);
+        }
+
+        SavedState(Parcel source) {
+            super(source);
+            this.scrollPosition = source.readInt();
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            super.writeToParcel(dest, flags);
+            dest.writeInt(this.scrollPosition);
+        }
+
+        public String toString() {
+            return "HorizontalScrollView.SavedState{" + Integer.toHexString(System.identityHashCode(this)) + " scrollPosition=" + this.scrollPosition + "}";
+        }
+    }
+
+    static class AccessibilityDelegate extends AccessibilityDelegateCompat {
+        AccessibilityDelegate() {
+        }
+
+        @Override
+        public boolean performAccessibilityAction(View host, int action, Bundle arguments) {
+            if (super.performAccessibilityAction(host, action, arguments)) {
+                return true;
+            }
+            NestedScrollView nsvHost = (NestedScrollView) host;
+            if (!nsvHost.isEnabled()) {
+                return false;
+            }
+            if (action == 4096) {
+                int viewportHeight = (nsvHost.getHeight() - nsvHost.getPaddingBottom()) - nsvHost.getPaddingTop();
+                int targetScrollY = Math.min(nsvHost.getScrollY() + viewportHeight, nsvHost.getScrollRange());
+                if (targetScrollY == nsvHost.getScrollY()) {
+                    return false;
+                }
+                nsvHost.smoothScrollTo(0, targetScrollY);
+                return true;
+            }
+            if (action != 8192) {
+                return false;
+            }
+            int viewportHeight2 = (nsvHost.getHeight() - nsvHost.getPaddingBottom()) - nsvHost.getPaddingTop();
+            int targetScrollY2 = Math.max(nsvHost.getScrollY() - viewportHeight2, 0);
+            if (targetScrollY2 == nsvHost.getScrollY()) {
+                return false;
+            }
+            nsvHost.smoothScrollTo(0, targetScrollY2);
+            return true;
+        }
+
+        @Override
+        public void onInitializeAccessibilityNodeInfo(View host, AccessibilityNodeInfoCompat info) {
+            int scrollRange;
+            super.onInitializeAccessibilityNodeInfo(host, info);
+            NestedScrollView nsvHost = (NestedScrollView) host;
+            info.setClassName(ScrollView.class.getName());
+            if (nsvHost.isEnabled() && (scrollRange = nsvHost.getScrollRange()) > 0) {
+                info.setScrollable(true);
+                if (nsvHost.getScrollY() > 0) {
+                    info.addAction(8192);
+                }
+                if (nsvHost.getScrollY() < scrollRange) {
+                    info.addAction(4096);
+                }
+            }
+        }
+
+        @Override
+        public void onInitializeAccessibilityEvent(View host, AccessibilityEvent event) {
+            super.onInitializeAccessibilityEvent(host, event);
+            NestedScrollView nsvHost = (NestedScrollView) host;
+            event.setClassName(ScrollView.class.getName());
+            boolean scrollable = nsvHost.getScrollRange() > 0;
+            event.setScrollable(scrollable);
+            event.setScrollX(nsvHost.getScrollX());
+            event.setScrollY(nsvHost.getScrollY());
+            AccessibilityRecordCompat.setMaxScrollX(event, nsvHost.getScrollX());
+            AccessibilityRecordCompat.setMaxScrollY(event, nsvHost.getScrollRange());
+        }
     }
 }

@@ -108,7 +108,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         int iOrdinal = this.mSimDataSwitchStateMachine.getCurrentSimConnState().ordinal();
         IQuickSettingsPlugin iQuickSettingsPluginMakeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeQuickSettings(this.mContext);
         iQuickSettingsPluginMakeQuickSettings.customizeSimDataConnectionTile(iOrdinal, this.mSimConnectionIconWrapperArray[iOrdinal]);
@@ -221,7 +221,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             this.mPhoneStateListener = new PhoneStateListener[this.mSlotCount];
         }
 
-        public void registerReceiver() {
+        private void registerReceiver() {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction("android.intent.action.AIRPLANE_MODE");
             intentFilter.addAction("com.android.mms.transaction.START");
@@ -233,11 +233,11 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             SimDataConnectionTile.this.mContext.registerReceiver(this.mSimStateIntentReceiver, intentFilter);
         }
 
-        public void unregisterReceiver() {
+        private void unregisterReceiver() {
             SimDataConnectionTile.this.mContext.unregisterReceiver(this.mSimStateIntentReceiver);
         }
 
-        public void updateSimConnTile() {
+        private void updateSimConnTile() {
             onActualStateChange(SimDataConnectionTile.this.mContext, null);
             SimDataConnectionTile.this.refreshState();
         }
@@ -428,15 +428,15 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             return TelephonyManager.getDefault().getDataState() == 2;
         }
 
-        public void setIsMmsOnging(boolean z) {
+        private void setIsMmsOnging(boolean z) {
             this.mMmsOngoing = z;
         }
 
-        public boolean isMmsOngoing() {
+        private boolean isMmsOngoing() {
             return this.mMmsOngoing;
         }
 
-        public void setAirplaneMode(boolean z) {
+        private void setAirplaneMode(boolean z) {
             this.mIsAirlineMode = z;
         }
 
@@ -452,7 +452,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             return this.mIsUserSwitching;
         }
 
-        public PhoneConstants.DataState getMobileDataState(Intent intent) {
+        private PhoneConstants.DataState getMobileDataState(Intent intent) {
             String stringExtra = intent.getStringExtra("state");
             if (stringExtra != null) {
                 return Enum.valueOf(PhoneConstants.DataState.class, stringExtra);
@@ -460,7 +460,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             return PhoneConstants.DataState.DISCONNECTED;
         }
 
-        public void registerPhoneStateListener() {
+        private void registerPhoneStateListener() {
             for (int i = 0; i < this.mSlotCount; i++) {
                 int firstSubInSlot = SIMHelper.getFirstSubInSlot(i);
                 if (firstSubInSlot >= 0) {
@@ -482,7 +482,7 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
             };
         }
 
-        public void unRegisterPhoneStateListener() {
+        private void unRegisterPhoneStateListener() {
             for (int i = 0; i < this.mSlotCount; i++) {
                 if (this.mPhoneStateListener[i] != null) {
                     this.mTelephonyManager.listen(this.mPhoneStateListener[i], 0);
@@ -491,13 +491,13 @@ public class SimDataConnectionTile extends QSTileImpl<QSTile.BooleanState> {
         }
     }
 
-    public boolean isWifiOnlyDevice() {
+    private boolean isWifiOnlyDevice() {
         Context context = this.mContext;
         Context context2 = this.mContext;
         return !((ConnectivityManager) context.getSystemService("connectivity")).isNetworkSupported(0);
     }
 
-    public boolean isSimInsertedBySlot(List<SubscriptionInfo> list, int i) {
+    private boolean isSimInsertedBySlot(List<SubscriptionInfo> list, int i) {
         if (i >= SIMHelper.getSlotCount()) {
             return false;
         }

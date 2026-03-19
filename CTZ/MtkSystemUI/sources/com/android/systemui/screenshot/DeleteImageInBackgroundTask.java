@@ -12,7 +12,7 @@ class DeleteImageInBackgroundTask extends AsyncTask<Uri, Void, Void> {
     }
 
     @Override
-    public Void doInBackground(Uri... uriArr) {
+    protected Void doInBackground(Uri... uriArr) {
         if (uriArr.length != 1) {
             return null;
         }

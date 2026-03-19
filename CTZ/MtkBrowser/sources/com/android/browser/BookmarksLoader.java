@@ -16,12 +16,12 @@ public class BookmarksLoader extends CursorLoader {
         this.mAccountName = str2;
     }
 
-    static Uri addAccount(Uri uri, String str, String str2) {
-        return uri.buildUpon().appendQueryParameter("acct_type", str).appendQueryParameter("acct_name", str2).build();
-    }
-
     @Override
     public void setUri(Uri uri) {
         super.setUri(addAccount(uri, this.mAccountType, this.mAccountName));
+    }
+
+    static Uri addAccount(Uri uri, String str, String str2) {
+        return uri.buildUpon().appendQueryParameter("acct_type", str).appendQueryParameter("acct_name", str2).build();
     }
 }

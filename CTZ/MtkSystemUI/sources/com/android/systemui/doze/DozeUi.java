@@ -54,7 +54,7 @@ public class DozeUi implements DozeMachine.Part {
         keyguardUpdateMonitor.registerCallback(this.mKeyguardVisibilityCallback);
     }
 
-    public void updateAnimateScreenOff() {
+    private void updateAnimateScreenOff() {
         if (this.mCanAnimateTransition) {
             boolean z = this.mDozeParameters.getAlwaysOn() && this.mKeyguardShowing;
             this.mDozeParameters.setControlScreenOffAnimation(z);
@@ -177,7 +177,7 @@ public class DozeUi implements DozeMachine.Part {
         return gregorianCalendar.getTimeInMillis();
     }
 
-    public void onTimeTick() {
+    private void onTimeTick() {
         verifyLastTimeTick();
         this.mHost.dozeTimeTick();
         this.mHandler.post(this.mWakeLock.wrap(new Runnable() {

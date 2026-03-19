@@ -323,7 +323,7 @@ public class DeviceAdminAdd extends Activity {
         }
     }
 
-    public void showPolicyTransparencyDialogIfRequired() {
+    private void showPolicyTransparencyDialogIfRequired() {
         RestrictedLockUtils.EnforcedAdmin adminEnforcingCantRemoveProfile;
         if (isManagedProfile(this.mDeviceAdmin) && this.mDeviceAdmin.getComponent().equals(this.mDPM.getProfileOwner()) && !hasBaseCantRemoveProfileRestriction() && (adminEnforcingCantRemoveProfile = getAdminEnforcingCantRemoveProfile()) != null) {
             RestrictedLockUtils.sendShowAdminSupportDetailsIntent(this, adminEnforcingCantRemoveProfile);
@@ -559,7 +559,7 @@ public class DeviceAdminAdd extends Activity {
         return defaultDisplay.getHeight() > defaultDisplay.getWidth() ? 5 : 2;
     }
 
-    public boolean isManagedProfile(DeviceAdminInfo deviceAdminInfo) {
+    private boolean isManagedProfile(DeviceAdminInfo deviceAdminInfo) {
         UserInfo userInfo = UserManager.get(this).getUserInfo(UserHandle.getUserId(deviceAdminInfo.getActivityInfo().applicationInfo.uid));
         if (userInfo != null) {
             return userInfo.isManagedProfile();

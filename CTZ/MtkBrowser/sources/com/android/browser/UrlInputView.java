@@ -50,20 +50,20 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
     }
 
     private class UrlInsertActionMode implements ActionMode.Callback {
-        final UrlInputView this$0;
+        public UrlInsertActionMode() {
+        }
 
-        public UrlInsertActionMode(UrlInputView urlInputView) {
-            this.this$0 = urlInputView;
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            if (UrlInputView.this.mState != 0) {
+                return true;
+            }
+            return false;
         }
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             return false;
-        }
-
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            return this.this$0.mState != 0;
         }
 
         @Override
@@ -76,17 +76,109 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         }
     }
 
-    public UrlInputView(Context context) {
-        this(context, null);
+    public UrlInputView(Context context, AttributeSet attributeSet, int i) {
+        super(context, attributeSet, i);
+        init(context);
     }
 
     public UrlInputView(Context context, AttributeSet attributeSet) {
         this(context, attributeSet, android.R.attr.autoCompleteTextViewStyle);
     }
 
-    public UrlInputView(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
-        init(context);
+    public UrlInputView(Context context) {
+        this(context, null);
+    }
+
+    private void init(Context context) {
+        this.mInputManager = (InputMethodManager) context.getSystemService("input_method");
+        setOnEditorActionListener(this);
+        this.mAdapter = new SuggestionsAdapter(context, this);
+        setAdapter(this.mAdapter);
+        setSelectAllOnFocus(true);
+        onConfigurationChanged(context.getResources().getConfiguration());
+        setThreshold(1);
+        setOnItemClickListener(this);
+        this.mNeedsUpdate = false;
+        addTextChangedListener(this);
+        setDropDownAnchor(R.id.taburlbar);
+        this.mState = 0;
+        this.mIgnore = false;
+    }
+
+    @Override
+    protected void onFocusChanged(boolean z, int i, Rect rect) {
+        final int i2;
+        if (DEBUG) {
+            Log.d("browser", "UrlInputView.onFocusChanged()--->focused = " + z + ", direction = " + i + ", prevRect = " + rect + " mIgnore = " + this.mIgnore);
+        }
+        super.onFocusChanged(z, i, rect);
+        if (z) {
+            if (hasSelection()) {
+                i2 = 1;
+            } else {
+                i2 = 2;
+            }
+            showIME();
+        } else {
+            i2 = 0;
+            hideIME();
+        }
+        post(new Runnable() {
+            @Override
+            public void run() {
+                UrlInputView.this.changeState(i2);
+            }
+        });
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+        boolean zHasSelection = hasSelection();
+        boolean zHasFocus = hasFocus();
+        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
+        if (motionEvent.getActionMasked() == 0 && zHasSelection) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    UrlInputView.this.changeState(2);
+                }
+            }, 100L);
+        }
+        if (!zHasFocus && hasFocus()) {
+            selectAll();
+        }
+        return zOnTouchEvent;
+    }
+
+    boolean needsUpdate() {
+        return this.mNeedsUpdate;
+    }
+
+    void clearNeedsUpdate() {
+        this.mNeedsUpdate = false;
+    }
+
+    void ignoreIME(boolean z) {
+        this.mIgnore = z;
+    }
+
+    void setController(UiController uiController) {
+        this.mUiController = uiController;
+        setCustomSelectionActionModeCallback(new UrlSelectionActionMode(uiController));
+        setCustomInsertionActionModeCallback(new UrlInsertActionMode());
+    }
+
+    void setContainer(View view) {
+        this.mContainer = view;
+    }
+
+    public void setUrlInputListener(UrlInputListener urlInputListener) {
+        this.mListener = urlInputListener;
+    }
+
+    public void setStateListener(StateListener stateListener) {
+        this.mStateListener = stateListener;
+        changeState(this.mState);
     }
 
     private void changeState(int i) {
@@ -97,6 +189,54 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         if (this.mStateListener != null) {
             this.mStateListener.onStateChanged(this.mState);
         }
+    }
+
+    int getState() {
+        return this.mState;
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        this.mLandscape = (configuration.orientation & 2) != 0;
+        this.mAdapter.setLandscapeMode(this.mLandscape);
+        if (isPopupShowing() && getVisibility() == 0) {
+            dismissDropDown();
+            showDropDown();
+            performFiltering(getText(), 0);
+        }
+    }
+
+    @Override
+    public void showDropDown() {
+        if (getVisibility() == 8) {
+            return;
+        }
+        super.showDropDown();
+    }
+
+    @Override
+    public void dismissDropDown() {
+        super.dismissDropDown();
+        this.mAdapter.clearCache();
+    }
+
+    @Override
+    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        finishInput(getText().toString(), null, "browser-type");
+        return true;
+    }
+
+    void hideIME() {
+        this.mInputManager.hideSoftInputFromWindow(getWindowToken(), 0);
+    }
+
+    void showIME() {
+        if ((this.mUiController != null && !this.mUiController.getUi().isWebShowing()) || this.mIgnore) {
+            return;
+        }
+        this.mInputManager.restartInput(this);
+        this.mInputManager.showSoftInput(this, 0);
     }
 
     private void finishInput(String str, String str2, String str3) {
@@ -113,7 +253,7 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         }
         if (this.mIncognitoMode && isSearch(str)) {
             com.android.browser.search.SearchEngine searchEngine = BrowserSettings.getInstance().getSearchEngine();
-            if (searchEngine == null || (searchEngineInfo = SearchEngines.getSearchEngineInfo(this.mContext, searchEngine.getName())) == null) {
+            if (searchEngine == null || (searchEngineInfo = SearchEngines.getSearchEngineInfo(((View) this).mContext, searchEngine.getName())) == null) {
                 return;
             } else {
                 str = searchEngineInfo.getSearchUriForQuery(str);
@@ -122,127 +262,9 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
         this.mListener.onAction(str, str2, str3);
     }
 
-    private void init(Context context) {
-        this.mInputManager = (InputMethodManager) context.getSystemService("input_method");
-        setOnEditorActionListener(this);
-        this.mAdapter = new SuggestionsAdapter(context, this);
-        setAdapter(this.mAdapter);
-        setSelectAllOnFocus(true);
-        onConfigurationChanged(context.getResources().getConfiguration());
-        setThreshold(1);
-        setOnItemClickListener(this);
-        this.mNeedsUpdate = false;
-        addTextChangedListener(this);
-        setDropDownAnchor(2131558528);
-        this.mState = 0;
-        this.mIgnore = false;
-    }
-
-    @Override
-    public void afterTextChanged(Editable editable) {
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-    }
-
-    void clearNeedsUpdate() {
-        this.mNeedsUpdate = false;
-    }
-
-    @Override
-    public void dismissDropDown() {
-        super.dismissDropDown();
-        this.mAdapter.clearCache();
-    }
-
-    @Override
-    public SuggestionsAdapter getAdapter() {
-        return this.mAdapter;
-    }
-
-    int getState() {
-        return this.mState;
-    }
-
-    void hideIME() {
-        this.mInputManager.hideSoftInputFromWindow(getWindowToken(), 0);
-    }
-
-    void ignoreIME(boolean z) {
-        this.mIgnore = z;
-    }
-
     boolean isSearch(String str) {
         String strTrim = UrlUtils.fixUrl(str).trim();
         return (TextUtils.isEmpty(strTrim) || Patterns.WEB_URL.matcher(strTrim).matches() || UrlUtils.ACCEPTED_URI_SCHEMA.matcher(strTrim).matches()) ? false : true;
-    }
-
-    boolean needsUpdate() {
-        return this.mNeedsUpdate;
-    }
-
-    @Override
-    protected void onConfigurationChanged(Configuration configuration) {
-        super.onConfigurationChanged(configuration);
-        this.mLandscape = (configuration.orientation & 2) != 0;
-        this.mAdapter.setLandscapeMode(this.mLandscape);
-        if (isPopupShowing() && getVisibility() == 0) {
-            dismissDropDown();
-            showDropDown();
-            performFiltering(getText(), 0);
-        }
-    }
-
-    @Override
-    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-        finishInput(getText().toString(), null, "browser-type");
-        return true;
-    }
-
-    @Override
-    protected void onFocusChanged(boolean z, int i, Rect rect) {
-        int i2;
-        if (DEBUG) {
-            Log.d("browser", "UrlInputView.onFocusChanged()--->focused = " + z + ", direction = " + i + ", prevRect = " + rect + " mIgnore = " + this.mIgnore);
-        }
-        super.onFocusChanged(z, i, rect);
-        if (z) {
-            i2 = hasSelection() ? 1 : 2;
-            showIME();
-        } else {
-            i2 = 0;
-            hideIME();
-        }
-        post(new Runnable(this, i2) {
-            final UrlInputView this$0;
-            final int val$s;
-
-            {
-                this.this$0 = this;
-                this.val$s = i2;
-            }
-
-            @Override
-            public void run() {
-                this.this$0.changeState(this.val$s);
-            }
-        });
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long j) {
-        SuggestionsAdapter.SuggestItem item = this.mAdapter.getItem(i);
-        onSelect(SuggestionsAdapter.getSuggestionUrl(item), item.type, item.extra);
-    }
-
-    @Override
-    public boolean onKeyDown(int i, KeyEvent keyEvent) {
-        if (i != 111 || isInTouchMode()) {
-            return super.onKeyDown(i, keyEvent);
-        }
-        finishInput(null, null, null);
-        return true;
     }
 
     @Override
@@ -259,6 +281,40 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
     }
 
     @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long j) {
+        SuggestionsAdapter.SuggestItem item = this.mAdapter.getItem(i);
+        onSelect(SuggestionsAdapter.getSuggestionUrl(item), item.type, item.extra);
+    }
+
+    public void setIncognitoMode(boolean z) {
+        this.mIncognitoMode = z;
+        this.mAdapter.setIncognitoMode(this.mIncognitoMode);
+    }
+
+    @Override
+    public boolean onKeyDown(int i, KeyEvent keyEvent) {
+        if (i == 111 && !isInTouchMode()) {
+            finishInput(null, null, null);
+            return true;
+        }
+        return super.onKeyDown(i, keyEvent);
+    }
+
+    @Override
+    public SuggestionsAdapter getAdapter() {
+        return this.mAdapter;
+    }
+
+    @Override
+    public boolean requestRectangleOnScreen(Rect rect, boolean z) {
+        return false;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+    }
+
+    @Override
     public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
         if (DEBUG) {
             Log.d("browser", "UrlInputView.onTextChanged()--->new string : " + ((Object) charSequence));
@@ -269,71 +325,6 @@ public class UrlInputView extends AutoCompleteTextView implements TextWatcher, A
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent motionEvent) {
-        boolean zHasSelection = hasSelection();
-        boolean zHasFocus = hasFocus();
-        boolean zOnTouchEvent = super.onTouchEvent(motionEvent);
-        if (motionEvent.getActionMasked() == 0 && zHasSelection) {
-            postDelayed(new Runnable(this) {
-                final UrlInputView this$0;
-
-                {
-                    this.this$0 = this;
-                }
-
-                @Override
-                public void run() {
-                    this.this$0.changeState(2);
-                }
-            }, 100L);
-        }
-        if (!zHasFocus && hasFocus()) {
-            selectAll();
-        }
-        return zOnTouchEvent;
-    }
-
-    @Override
-    public boolean requestRectangleOnScreen(Rect rect, boolean z) {
-        return false;
-    }
-
-    void setContainer(View view) {
-        this.mContainer = view;
-    }
-
-    void setController(UiController uiController) {
-        this.mUiController = uiController;
-        setCustomSelectionActionModeCallback(new UrlSelectionActionMode(uiController));
-        setCustomInsertionActionModeCallback(new UrlInsertActionMode(this));
-    }
-
-    public void setIncognitoMode(boolean z) {
-        this.mIncognitoMode = z;
-        this.mAdapter.setIncognitoMode(this.mIncognitoMode);
-    }
-
-    public void setStateListener(StateListener stateListener) {
-        this.mStateListener = stateListener;
-        changeState(this.mState);
-    }
-
-    public void setUrlInputListener(UrlInputListener urlInputListener) {
-        this.mListener = urlInputListener;
-    }
-
-    @Override
-    public void showDropDown() {
-        if (getVisibility() == 8) {
-            return;
-        }
-        super.showDropDown();
-    }
-
-    void showIME() {
-        if ((this.mUiController == null || this.mUiController.getUi().isWebShowing()) && !this.mIgnore) {
-            this.mInputManager.restartInput(this);
-            this.mInputManager.showSoftInput(this, 0);
-        }
+    public void afterTextChanged(Editable editable) {
     }
 }

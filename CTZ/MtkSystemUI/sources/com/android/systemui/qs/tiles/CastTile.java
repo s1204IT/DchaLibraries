@@ -143,7 +143,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         booleanState.label = this.mContext.getString(R.string.quick_settings_cast_title);
         booleanState.contentDescription = booleanState.label;
         booleanState.value = false;
@@ -186,7 +186,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
         return null;
     }
 
-    public String getDeviceName(CastController.CastDevice castDevice) {
+    private String getDeviceName(CastController.CastDevice castDevice) {
         return castDevice.name != null ? castDevice.name : this.mContext.getString(R.string.quick_settings_cast_device_default_name);
     }
 
@@ -269,7 +269,7 @@ public class CastTile extends QSTileImpl<QSTile.BooleanState> {
             return this.mItems;
         }
 
-        public void updateItems(Set<CastController.CastDevice> set) {
+        private void updateItems(Set<CastController.CastDevice> set) {
             int i;
             if (this.mItems == null) {
                 return;

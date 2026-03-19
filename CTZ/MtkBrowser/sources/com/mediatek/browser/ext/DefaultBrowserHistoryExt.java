@@ -13,13 +13,13 @@ public class DefaultBrowserHistoryExt implements IBrowserHistoryExt {
     }
 
     @Override
-    public boolean historyPageOptionsMenuItemSelected(MenuItem menuItem, Activity activity) {
-        Log.i("@M_DefaultBrowserHistoryExt", "Enter: historyPageOptionsMenuItemSelected --default implement");
-        return false;
+    public void prepareHistoryPageOptionsMenuItem(Menu menu, boolean z, boolean z2) {
+        Log.i("@M_DefaultBrowserHistoryExt", "Enter: prepareHistoryPageOptionsMenuItem --default implement");
     }
 
     @Override
-    public void prepareHistoryPageOptionsMenuItem(Menu menu, boolean z, boolean z2) {
-        Log.i("@M_DefaultBrowserHistoryExt", "Enter: prepareHistoryPageOptionsMenuItem --default implement");
+    public boolean historyPageOptionsMenuItemSelected(MenuItem menuItem, Activity activity) {
+        Log.i("@M_DefaultBrowserHistoryExt", "Enter: historyPageOptionsMenuItemSelected --default implement");
+        return false;
     }
 }

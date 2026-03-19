@@ -33,38 +33,6 @@ public class DeviceAccountLogin implements AccountManagerCallback<Bundle> {
         this.mAccountManager = AccountManager.get(activity);
     }
 
-    private void displayLoginUi() {
-        this.mTab.setDeviceAccountLogin(this);
-        if (this.mTab.inForeground()) {
-            this.mWebViewController.showAutoLogin(this.mTab);
-        }
-    }
-
-    private void loginFailed() {
-        this.mState = 1;
-        if (this.mTab.getDeviceAccountLogin() == null) {
-            displayLoginUi();
-        } else if (this.mCallback != null) {
-            this.mCallback.loginFailed();
-        }
-    }
-
-    public void cancel() {
-        this.mTab.setDeviceAccountLogin(null);
-    }
-
-    public String[] getAccountNames() {
-        String[] strArr = new String[this.mAccounts.length];
-        for (int i = 0; i < this.mAccounts.length; i++) {
-            strArr[i] = this.mAccounts[i].name;
-        }
-        return strArr;
-    }
-
-    public int getState() {
-        return this.mState;
-    }
-
     public void handleLogin(String str, String str2, String str3) {
         this.mAccounts = this.mAccountManager.getAccountsByType(str);
         this.mAuthToken = "weblogin:" + str3;
@@ -78,12 +46,6 @@ public class DeviceAccountLogin implements AccountManagerCallback<Bundle> {
             }
         }
         displayLoginUi();
-    }
-
-    public void login(int i, AutoLoginCallback autoLoginCallback) {
-        this.mState = 2;
-        this.mCallback = autoLoginCallback;
-        this.mAccountManager.getAuthToken(this.mAccounts[i], this.mAuthToken, (Bundle) null, this.mActivity, this, (Handler) null);
     }
 
     @Override
@@ -104,5 +66,43 @@ public class DeviceAccountLogin implements AccountManagerCallback<Bundle> {
         } catch (Exception e) {
             loginFailed();
         }
+    }
+
+    public int getState() {
+        return this.mState;
+    }
+
+    private void loginFailed() {
+        this.mState = 1;
+        if (this.mTab.getDeviceAccountLogin() == null) {
+            displayLoginUi();
+        } else if (this.mCallback != null) {
+            this.mCallback.loginFailed();
+        }
+    }
+
+    private void displayLoginUi() {
+        this.mTab.setDeviceAccountLogin(this);
+        if (this.mTab.inForeground()) {
+            this.mWebViewController.showAutoLogin(this.mTab);
+        }
+    }
+
+    public void cancel() {
+        this.mTab.setDeviceAccountLogin(null);
+    }
+
+    public void login(int i, AutoLoginCallback autoLoginCallback) {
+        this.mState = 2;
+        this.mCallback = autoLoginCallback;
+        this.mAccountManager.getAuthToken(this.mAccounts[i], this.mAuthToken, (Bundle) null, this.mActivity, this, (Handler) null);
+    }
+
+    public String[] getAccountNames() {
+        String[] strArr = new String[this.mAccounts.length];
+        for (int i = 0; i < this.mAccounts.length; i++) {
+            strArr[i] = this.mAccounts[i].name;
+        }
+        return strArr;
     }
 }

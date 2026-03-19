@@ -513,7 +513,7 @@ public class GridLayout extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams();
     }
 
@@ -523,7 +523,7 @@ public class GridLayout extends ViewGroup {
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
         if (lp instanceof LayoutParams) {
             return new LayoutParams((LayoutParams) lp);
         }

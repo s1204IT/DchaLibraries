@@ -19,7 +19,103 @@ public class NullController implements ActivityController {
     }
 
     @Override
-    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
+    public void start(Intent intent) {
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle bundle) {
+    }
+
+    @Override
+    public void handleNewIntent(Intent intent) {
+    }
+
+    @Override
+    public void onResume() {
+    }
+
+    @Override
+    public boolean onMenuOpened(int i, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+    }
+
+    @Override
+    public void onContextMenuClosed(Menu menu) {
+    }
+
+    @Override
+    public void onPause() {
+    }
+
+    @Override
+    public void onDestroy() {
+    }
+
+    @Override
+    public void onConfgurationChanged(Configuration configuration) {
+    }
+
+    @Override
+    public void onLowMemory() {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        return false;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem menuItem) {
+        return false;
+    }
+
+    @Override
+    public boolean onKeyDown(int i, KeyEvent keyEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onKeyLongPress(int i, KeyEvent keyEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onKeyUp(int i, KeyEvent keyEvent) {
+        return false;
+    }
+
+    @Override
+    public void onActionModeStarted(ActionMode actionMode) {
+    }
+
+    @Override
+    public void onActionModeFinished(ActionMode actionMode) {
+    }
+
+    @Override
+    public void onActivityResult(int i, int i2, Intent intent) {
+    }
+
+    @Override
+    public boolean onSearchRequested() {
         return false;
     }
 
@@ -44,103 +140,7 @@ public class NullController implements ActivityController {
     }
 
     @Override
-    public void handleNewIntent(Intent intent) {
-    }
-
-    @Override
-    public void onActionModeFinished(ActionMode actionMode) {
-    }
-
-    @Override
-    public void onActionModeStarted(ActionMode actionMode) {
-    }
-
-    @Override
-    public void onActivityResult(int i, int i2, Intent intent) {
-    }
-
-    @Override
-    public void onConfgurationChanged(Configuration configuration) {
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem menuItem) {
+    public boolean dispatchGenericMotionEvent(MotionEvent motionEvent) {
         return false;
-    }
-
-    @Override
-    public void onContextMenuClosed(Menu menu) {
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo) {
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
-    }
-
-    @Override
-    public void onDestroy() {
-    }
-
-    @Override
-    public boolean onKeyDown(int i, KeyEvent keyEvent) {
-        return false;
-    }
-
-    @Override
-    public boolean onKeyLongPress(int i, KeyEvent keyEvent) {
-        return false;
-    }
-
-    @Override
-    public boolean onKeyUp(int i, KeyEvent keyEvent) {
-        return false;
-    }
-
-    @Override
-    public void onLowMemory() {
-    }
-
-    @Override
-    public boolean onMenuOpened(int i, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        return false;
-    }
-
-    @Override
-    public void onOptionsMenuClosed(Menu menu) {
-    }
-
-    @Override
-    public void onPause() {
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return false;
-    }
-
-    @Override
-    public void onResume() {
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle bundle) {
-    }
-
-    @Override
-    public boolean onSearchRequested() {
-        return false;
-    }
-
-    @Override
-    public void start(Intent intent) {
     }
 }

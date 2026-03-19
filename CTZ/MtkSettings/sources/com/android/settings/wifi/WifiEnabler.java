@@ -107,7 +107,7 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
         }
     }
 
-    public void handleWifiStateChanged(int i) {
+    private void handleWifiStateChanged(int i) {
         Log.d("WifiEnabler", "handleWifiStateChanged, state = " + i);
         this.mSwitchWidget.setDisabledByAdmin(null);
         switch (i) {
@@ -141,7 +141,7 @@ public class WifiEnabler implements SwitchWidgetController.OnSwitchChangeListene
         this.mStateMachineEvent = false;
     }
 
-    public void handleStateChanged(NetworkInfo.DetailedState detailedState) {
+    private void handleStateChanged(NetworkInfo.DetailedState detailedState) {
     }
 
     @Override

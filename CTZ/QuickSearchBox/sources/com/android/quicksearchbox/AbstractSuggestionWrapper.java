@@ -6,11 +6,6 @@ public abstract class AbstractSuggestionWrapper implements Suggestion {
     protected abstract Suggestion current();
 
     @Override
-    public SuggestionExtras getExtras() {
-        return current().getExtras();
-    }
-
-    @Override
     public String getShortcutId() {
         return current().getShortcutId();
     }
@@ -81,11 +76,6 @@ public abstract class AbstractSuggestionWrapper implements Suggestion {
     }
 
     @Override
-    public boolean isHistorySuggestion() {
-        return current().isHistorySuggestion();
-    }
-
-    @Override
     public boolean isSpinnerWhileRefreshing() {
         return current().isSpinnerWhileRefreshing();
     }
@@ -98,5 +88,15 @@ public abstract class AbstractSuggestionWrapper implements Suggestion {
     @Override
     public boolean isWebSearchSuggestion() {
         return current().isWebSearchSuggestion();
+    }
+
+    @Override
+    public boolean isHistorySuggestion() {
+        return current().isHistorySuggestion();
+    }
+
+    @Override
+    public SuggestionExtras getExtras() {
+        return current().getExtras();
     }
 }

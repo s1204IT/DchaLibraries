@@ -67,7 +67,7 @@ public class ScreenLockSettings extends DashboardFragment implements OwnerInfoPr
         ((OwnerInfoPreferenceController) use(OwnerInfoPreferenceController.class)).updateSummary();
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, Lifecycle lifecycle, LockPatternUtils lockPatternUtils) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Fragment fragment, Lifecycle lifecycle, LockPatternUtils lockPatternUtils) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new PatternVisiblePreferenceController(context, MY_USER_ID, lockPatternUtils));
         arrayList.add(new PowerButtonInstantLockPreferenceController(context, MY_USER_ID, lockPatternUtils));

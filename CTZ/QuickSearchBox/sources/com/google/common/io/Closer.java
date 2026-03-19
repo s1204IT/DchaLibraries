@@ -15,6 +15,45 @@ public final class Closer implements Closeable {
     final Suppressor suppressor;
     private Throwable thrown;
 
+    interface Suppressor {
+        void suppress(Closeable closeable, Throwable th, Throwable th2);
+    }
+
+    static {
+        Suppressor suppressor;
+        if (SuppressingSuppressor.isAvailable()) {
+            suppressor = SuppressingSuppressor.INSTANCE;
+        } else {
+            suppressor = LoggingSuppressor.INSTANCE;
+        }
+        SUPPRESSOR = suppressor;
+    }
+
+    Closer(Suppressor suppressor) {
+        this.suppressor = (Suppressor) Preconditions.checkNotNull(suppressor);
+    }
+
+    @Override
+    public void close() throws Throwable {
+        Throwable th = this.thrown;
+        while (!this.stack.isEmpty()) {
+            Closeable closeableRemoveFirst = this.stack.removeFirst();
+            try {
+                closeableRemoveFirst.close();
+            } catch (Throwable th2) {
+                if (th != null) {
+                    this.suppressor.suppress(closeableRemoveFirst, th, th2);
+                } else {
+                    th = th2;
+                }
+            }
+        }
+        if (this.thrown == null && th != null) {
+            Throwables.propagateIfPossible(th, IOException.class);
+            throw new AssertionError(th);
+        }
+    }
+
     static final class LoggingSuppressor implements Suppressor {
         static final LoggingSuppressor INSTANCE = new LoggingSuppressor();
 
@@ -34,16 +73,16 @@ public final class Closer implements Closeable {
         SuppressingSuppressor() {
         }
 
+        static boolean isAvailable() {
+            return addSuppressed != null;
+        }
+
         private static Method getAddSuppressed() {
             try {
                 return Throwable.class.getMethod("addSuppressed", Throwable.class);
             } catch (Throwable th) {
                 return null;
             }
-        }
-
-        static boolean isAvailable() {
-            return addSuppressed != null;
         }
 
         @Override
@@ -57,43 +96,5 @@ public final class Closer implements Closeable {
                 LoggingSuppressor.INSTANCE.suppress(closeable, th, th2);
             }
         }
-    }
-
-    interface Suppressor {
-        void suppress(Closeable closeable, Throwable th, Throwable th2);
-    }
-
-    static {
-        SUPPRESSOR = SuppressingSuppressor.isAvailable() ? SuppressingSuppressor.INSTANCE : LoggingSuppressor.INSTANCE;
-    }
-
-    Closer(Suppressor suppressor) {
-        this.suppressor = (Suppressor) Preconditions.checkNotNull(suppressor);
-    }
-
-    @Override
-    public void close() throws Throwable {
-        Throwable th;
-        Throwable th2 = this.thrown;
-        while (!this.stack.isEmpty()) {
-            Closeable closeableRemoveFirst = this.stack.removeFirst();
-            try {
-                closeableRemoveFirst.close();
-                th = th2;
-            } catch (Throwable th3) {
-                if (th2 == null) {
-                    th = th3;
-                } else {
-                    this.suppressor.suppress(closeableRemoveFirst, th2, th3);
-                    th = th2;
-                }
-            }
-            th2 = th;
-        }
-        if (this.thrown != null || th2 == null) {
-            return;
-        }
-        Throwables.propagateIfPossible(th2, IOException.class);
-        throw new AssertionError(th2);
     }
 }

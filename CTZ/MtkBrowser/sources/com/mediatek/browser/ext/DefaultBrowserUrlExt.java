@@ -6,15 +6,15 @@ import android.util.Log;
 
 public class DefaultBrowserUrlExt implements IBrowserUrlExt {
     @Override
-    public String checkAndTrimUrl(String str) {
-        Log.i("@M_DefaultBrowserUrlExt", "Enter: checkAndTrimUrl --default implement");
-        return str;
-    }
-
-    @Override
     public InputFilter[] checkUrlLengthLimit(Context context) {
         Log.i("@M_DefaultBrowserUrlExt", "Enter: checkUrlLengthLimit --default implement");
         return null;
+    }
+
+    @Override
+    public String checkAndTrimUrl(String str) {
+        Log.i("@M_DefaultBrowserUrlExt", "Enter: checkAndTrimUrl --default implement");
+        return str;
     }
 
     @Override
@@ -26,10 +26,10 @@ public class DefaultBrowserUrlExt implements IBrowserUrlExt {
     @Override
     public String getOverrideFocusContent(boolean z, String str, String str2, String str3) {
         Log.i("@M_DefaultBrowserUrlExt", "Enter: getOverrideFocusContent --default implement");
-        if (!z || str.equals(str2)) {
-            return null;
+        if (z && !str.equals(str2)) {
+            return str2;
         }
-        return str2;
+        return null;
     }
 
     @Override

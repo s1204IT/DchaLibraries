@@ -13,6 +13,12 @@ public class SuggestionsView extends ListView implements SuggestionsListView<Lis
     }
 
     @Override
+    public void setSuggestionsAdapter(SuggestionsAdapter<ListAdapter> suggestionsAdapter) {
+        super.setAdapter(suggestionsAdapter == null ? null : suggestionsAdapter.getListAdapter());
+        this.mSuggestionsAdapter = suggestionsAdapter;
+    }
+
+    @Override
     public SuggestionsAdapter<ListAdapter> getSuggestionsAdapter() {
         return this.mSuggestionsAdapter;
     }
@@ -21,11 +27,5 @@ public class SuggestionsView extends ListView implements SuggestionsListView<Lis
     public void onFinishInflate() {
         super.onFinishInflate();
         setItemsCanFocus(true);
-    }
-
-    @Override
-    public void setSuggestionsAdapter(SuggestionsAdapter<ListAdapter> suggestionsAdapter) {
-        super.setAdapter(suggestionsAdapter == null ? null : suggestionsAdapter.getListAdapter());
-        this.mSuggestionsAdapter = suggestionsAdapter;
     }
 }

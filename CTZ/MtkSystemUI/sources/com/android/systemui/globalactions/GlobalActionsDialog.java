@@ -161,7 +161,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
     };
     private final IDreamManager mDreamManager = IDreamManager.Stub.asInterface(ServiceManager.getService("dreams"));
 
-    interface Action {
+    private interface Action {
         View create(Context context, View view, ViewGroup viewGroup, LayoutInflater layoutInflater);
 
         boolean isEnabled();
@@ -173,7 +173,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         boolean showDuringKeyguard();
     }
 
-    interface LongPressAction extends Action {
+    private interface LongPressAction extends Action {
         boolean onLongPress();
     }
 
@@ -231,7 +231,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         }
     }
 
-    public void handleShow() {
+    private void handleShow() {
         awakenIfNecessary();
         this.mDialog = createDialog();
         prepareDialog();
@@ -511,7 +511,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         }
     }
 
-    final class LogoutAction extends SinglePressAction {
+    private final class LogoutAction extends SinglePressAction {
         private LogoutAction() {
             super(android.R.drawable.ic_audio_ring_notif_vibrate, android.R.string.config_defaultProfcollectReportUploaderAction);
         }
@@ -668,7 +668,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         return new AnonymousClass6(android.R.drawable.ic_ab_back_holo_light, android.R.string.config_defaultOnDeviceSpeechRecognitionService);
     }
 
-    public void lockProfiles() {
+    private void lockProfiles() {
         UserManager userManager = (UserManager) this.mContext.getSystemService("user");
         TrustManager trustManager = (TrustManager) this.mContext.getSystemService("trust");
         int i = getCurrentUser().id;
@@ -679,7 +679,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         }
     }
 
-    public UserInfo getCurrentUser() {
+    private UserInfo getCurrentUser() {
         try {
             return ActivityManager.getService().getCurrentUser();
         } catch (RemoteException e) {
@@ -742,7 +742,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         }
     }
 
-    public void refreshSilentMode() {
+    private void refreshSilentMode() {
         if (!this.mHasVibrator) {
             ((ToggleAction) this.mSilentModeAction).updateState(this.mAudioManager.getRingerMode() != 2 ? ToggleAction.State.On : ToggleAction.State.Off);
         }
@@ -769,7 +769,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         item.onPress();
     }
 
-    class MyAdapter extends BaseAdapter {
+    private class MyAdapter extends BaseAdapter {
         private MyAdapter() {
         }
 
@@ -1066,7 +1066,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         }
     }
 
-    public void onAirplaneModeChanged() {
+    private void onAirplaneModeChanged() {
         if (this.mHasTelephony) {
             return;
         }
@@ -1074,7 +1074,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         this.mAirplaneModeOn.updateState(this.mAirplaneState);
     }
 
-    public void changeAirplaneModeSystemSetting(boolean z) {
+    private void changeAirplaneModeSystemSetting(boolean z) {
         Settings.Global.putInt(this.mContext.getContentResolver(), "airplane_mode_on", z ? 1 : 0);
         Intent intent = new Intent("android.intent.action.AIRPLANE_MODE");
         intent.addFlags(536870912);
@@ -1085,7 +1085,7 @@ class GlobalActionsDialog implements DialogInterface.OnClickListener, DialogInte
         }
     }
 
-    static final class ActionsDialog extends Dialog implements DialogInterface, ColorExtractor.OnColorsChangedListener {
+    private static final class ActionsDialog extends Dialog implements DialogInterface, ColorExtractor.OnColorsChangedListener {
         private final MyAdapter mAdapter;
         private final DialogInterface.OnClickListener mClickListener;
         private final ColorExtractor mColorExtractor;

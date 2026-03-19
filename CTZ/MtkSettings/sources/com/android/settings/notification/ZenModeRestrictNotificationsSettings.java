@@ -48,7 +48,7 @@ public class ZenModeRestrictNotificationsSettings extends ZenModeSettingsBase im
         return R.string.help_uri_interruptions;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeVisEffectsNonePreferenceController(context, lifecycle, "zen_mute_notifications"));
         arrayList.add(new ZenModeVisEffectsAllPreferenceController(context, lifecycle, "zen_hide_notifications"));

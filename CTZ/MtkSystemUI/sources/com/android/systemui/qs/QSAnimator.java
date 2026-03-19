@@ -139,7 +139,7 @@ public class QSAnimator implements View.OnAttachStateChangeListener, View.OnLayo
         this.mOnFirstPage = z;
     }
 
-    public void updateAnimators() {
+    private void updateAnimators() {
         Object obj;
         Iterator<QSTile> it;
         Collection<QSTile> collection;

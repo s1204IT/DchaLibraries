@@ -81,7 +81,7 @@ public class ForcedResizableInfoActivityController {
         showPending();
     }
 
-    public void activityForcedResizable(String str, int i, int i2) {
+    private void activityForcedResizable(String str, int i, int i2) {
         if (debounce(str)) {
             return;
         }
@@ -89,15 +89,15 @@ public class ForcedResizableInfoActivityController {
         postTimeout();
     }
 
-    public void activityDismissingDockedStack() {
+    private void activityDismissingDockedStack() {
         EventBus.getDefault().send(new ShowUserToastEvent(R.string.dock_non_resizeble_failed_to_dock_text, 0));
     }
 
-    public void activityLaunchOnSecondaryDisplayFailed() {
+    private void activityLaunchOnSecondaryDisplayFailed() {
         EventBus.getDefault().send(new ShowUserToastEvent(R.string.activity_launch_on_secondary_display_failed_text, 0));
     }
 
-    public void showPending() {
+    private void showPending() {
         this.mHandler.removeCallbacks(this.mTimeoutRunnable);
         for (int size = this.mPendingTasks.size() - 1; size >= 0; size--) {
             PendingTaskRecord pendingTaskRecordValueAt = this.mPendingTasks.valueAt(size);

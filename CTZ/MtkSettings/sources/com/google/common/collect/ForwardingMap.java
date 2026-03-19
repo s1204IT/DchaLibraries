@@ -6,7 +6,7 @@ import java.util.Set;
 
 public abstract class ForwardingMap<K, V> extends ForwardingObject implements Map<K, V> {
     @Override
-    public abstract Map<K, V> delegate();
+    protected abstract Map<K, V> delegate();
 
     protected ForwardingMap() {
     }

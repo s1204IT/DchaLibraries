@@ -84,7 +84,7 @@ public class BatterySaverController extends BasePreferenceController implements 
         return this.mContext.getString(R.string.battery_saver_off_summary);
     }
 
-    public void updateSummary() {
+    private void updateSummary() {
         this.mBatterySaverPref.setSummary(getSummary());
     }
 

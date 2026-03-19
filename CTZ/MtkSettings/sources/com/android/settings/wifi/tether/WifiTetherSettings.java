@@ -144,12 +144,12 @@ public class WifiTetherSettings extends RestrictedDashboardFragment implements W
         return wifiConfiguration;
     }
 
-    public void startTether() {
+    private void startTether() {
         this.mRestartWifiApAfterConfigChange = false;
         this.mSwitchBarController.startTether();
     }
 
-    public void updateDisplayWithNewConfig() {
+    private void updateDisplayWithNewConfig() {
         ((WifiTetherSSIDPreferenceController) use(WifiTetherSSIDPreferenceController.class)).updateDisplay();
         ((WifiTetherSecurityPreferenceController) use(WifiTetherSecurityPreferenceController.class)).updateDisplay();
         ((WifiTetherPasswordPreferenceController) use(WifiTetherPasswordPreferenceController.class)).updateDisplay();

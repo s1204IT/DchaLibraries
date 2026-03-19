@@ -198,7 +198,7 @@ public class PipManager implements BasePipManager {
         void onMediaControllerChanged();
     }
 
-    class PinnedStackListener extends IPinnedStackListener.Stub {
+    private class PinnedStackListener extends IPinnedStackListener.Stub {
         private PinnedStackListener() {
         }
 
@@ -332,7 +332,7 @@ public class PipManager implements BasePipManager {
         closePipInternal(true);
     }
 
-    public void closePipInternal(boolean z) {
+    private void closePipInternal(boolean z) {
         this.mState = 0;
         this.mPipTaskId = -1;
         this.mPipMediaController = null;
@@ -428,14 +428,14 @@ public class PipManager implements BasePipManager {
         }
     }
 
-    public int getState() {
+    private int getState() {
         if (this.mSuspendPipResizingReason != 0) {
             return this.mResumeResizePinnedStackRunnableState;
         }
         return this.mState;
     }
 
-    public void showPipMenu() {
+    private void showPipMenu() {
         if (DEBUG) {
             Log.d("PipManager", "showPipMenu()");
         }
@@ -469,7 +469,7 @@ public class PipManager implements BasePipManager {
         return this.mState != 0;
     }
 
-    public ActivityManager.StackInfo getPinnedStackInfo() {
+    private ActivityManager.StackInfo getPinnedStackInfo() {
         try {
             return this.mActivityManager.getStackInfo(2, 0);
         } catch (RemoteException e) {
@@ -478,7 +478,7 @@ public class PipManager implements BasePipManager {
         }
     }
 
-    public void handleMediaResourceGranted(String[] strArr) {
+    private void handleMediaResourceGranted(String[] strArr) {
         if (getState() == 0) {
             this.mLastPackagesResourceGranted = strArr;
             return;
@@ -508,7 +508,7 @@ public class PipManager implements BasePipManager {
         }
     }
 
-    public void updateMediaController(List<MediaController> list) {
+    private void updateMediaController(List<MediaController> list) {
         MediaController mediaController;
         if (list != null && getState() != 0 && this.mPipComponentName != null) {
             for (int size = list.size() - 1; size >= 0; size--) {
@@ -551,7 +551,7 @@ public class PipManager implements BasePipManager {
         return 1;
     }
 
-    public boolean isSettingsShown() {
+    private boolean isSettingsShown() {
         String str;
         try {
             List tasks = this.mActivityManager.getTasks(1);
@@ -578,7 +578,7 @@ public class PipManager implements BasePipManager {
         return sPipManager;
     }
 
-    public void updatePipVisibility(boolean z) {
+    private void updatePipVisibility(boolean z) {
         SystemServicesProxy.getInstance(this.mContext).setPipVisibility(z);
     }
 

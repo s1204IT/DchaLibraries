@@ -1,0 +1,81 @@
+package com.android.bluetooth.opp;
+
+import android.net.Uri;
+import android.provider.BaseColumns;
+
+public final class BluetoothShare implements BaseColumns {
+    public static final String CARRIER_NAME = "carrier_name";
+    public static final Uri CONTENT_URI = Uri.parse("content://com.android.bluetooth.opp/btopp");
+    public static final String CURRENT_BYTES = "current_bytes";
+    public static final String DESTINATION = "destination";
+    public static final String DIRECTION = "direction";
+    public static final int DIRECTION_INBOUND = 1;
+    public static final int DIRECTION_OUTBOUND = 0;
+    public static final String FILENAME_HINT = "hint";
+    public static final String MIMETYPE = "mimetype";
+    public static final String PERMISSION_ACCESS = "android.permission.ACCESS_BLUETOOTH_SHARE";
+    public static final String STATUS = "status";
+    public static final int STATUS_BAD_REQUEST = 400;
+    public static final int STATUS_CANCELED = 490;
+    public static final int STATUS_CONNECTION_ERROR = 497;
+    public static final int STATUS_ERROR_NO_SDCARD = 493;
+    public static final int STATUS_ERROR_SDCARD_FULL = 494;
+    public static final int STATUS_FILE_ERROR = 492;
+    public static final int STATUS_FORBIDDEN = 403;
+    public static final int STATUS_LENGTH_REQUIRED = 411;
+    public static final int STATUS_NOT_ACCEPTABLE = 406;
+    public static final int STATUS_OBEX_DATA_ERROR = 496;
+    public static final int STATUS_PENDING = 190;
+    public static final int STATUS_PRECONDITION_FAILED = 412;
+    public static final int STATUS_RUNNING = 192;
+    public static final int STATUS_SUCCESS = 200;
+    public static final int STATUS_UNHANDLED_OBEX_CODE = 495;
+    public static final int STATUS_UNKNOWN_ERROR = 491;
+    public static final String TIMESTAMP = "timestamp";
+    public static final String TOTAL_BYTES = "total_bytes";
+    public static final String TRANSFER_COMPLETED_ACTION = "android.btopp.intent.action.TRANSFER_COMPLETE";
+    public static final String URI = "uri";
+    public static final String USER_CONFIRMATION = "confirm";
+    public static final int USER_CONFIRMATION_AUTO_CONFIRMED = 2;
+    public static final int USER_CONFIRMATION_CONFIRMED = 1;
+    public static final int USER_CONFIRMATION_DENIED = 3;
+    public static final int USER_CONFIRMATION_HANDOVER_CONFIRMED = 5;
+    public static final int USER_CONFIRMATION_PENDING = 0;
+    public static final int USER_CONFIRMATION_TIMEOUT = 4;
+    public static final String USER_CONFIRMATION_TIMEOUT_ACTION = "android.btopp.intent.action.USER_CONFIRMATION_TIMEOUT";
+    public static final String VISIBILITY = "visibility";
+    public static final int VISIBILITY_HIDDEN = 1;
+    public static final int VISIBILITY_VISIBLE = 0;
+    public static final String _DATA = "_data";
+
+    private BluetoothShare() {
+    }
+
+    public static boolean isStatusInformational(int i) {
+        return i >= 100 && i < 200;
+    }
+
+    public static boolean isStatusSuspended(int i) {
+        return i == 190;
+    }
+
+    public static boolean isStatusSuccess(int i) {
+        return i >= 200 && i < 300;
+    }
+
+    public static boolean isStatusError(int i) {
+        return i >= 400 && i < 600;
+    }
+
+    public static boolean isStatusClientError(int i) {
+        return i >= 400 && i < 500;
+    }
+
+    public static boolean isStatusServerError(int i) {
+        return i >= 500 && i < 600;
+    }
+
+    public static boolean isStatusCompleted(int i) {
+        return (i >= 200 && i < 300) || (i >= 400 && i < 600);
+    }
+}

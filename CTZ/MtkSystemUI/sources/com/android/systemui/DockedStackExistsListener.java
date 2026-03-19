@@ -37,7 +37,7 @@ public class DockedStackExistsListener {
         }
     }
 
-    public static void onDockedStackExistsChanged(final boolean z) {
+    private static void onDockedStackExistsChanged(final boolean z) {
         mLastExists = z;
         synchronized (sCallbacks) {
             sCallbacks.removeIf(new Predicate() {

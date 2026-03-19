@@ -22,7 +22,7 @@ import java.util.Objects;
 public class RestrictedLockUtils {
     static Proxy sProxy = new Proxy();
 
-    interface LockSettingCheck {
+    private interface LockSettingCheck {
         boolean isEnforcing(DevicePolicyManager devicePolicyManager, ComponentName componentName, int i);
     }
 

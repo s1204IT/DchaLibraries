@@ -37,7 +37,7 @@ public class ZenModeSoundVibrationSettings extends ZenModeSettingsBase implement
         return buildPreferenceControllers(context, getLifecycle());
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModeAlarmsPreferenceController(context, lifecycle));
         arrayList.add(new ZenModeMediaPreferenceController(context, lifecycle));

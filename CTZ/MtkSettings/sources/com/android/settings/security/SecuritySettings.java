@@ -97,7 +97,7 @@ public class SecuritySettings extends DashboardFragment {
         ((LockUnificationPreferenceController) use(LockUnificationPreferenceController.class)).updateState(null);
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, SecuritySettings securitySettings) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle, SecuritySettings securitySettings) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new LocationPreferenceController(context, lifecycle));
         arrayList.add(new ManageDeviceAdminPreferenceController(context));

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:drawable="@drawable/ic_reject_drop_badge"
+        app:state_reject_drop="true"/>
+    <item
+        android:drawable="@drawable/ic_drop_copy_badge"
+        app:state_copy="true"
+        app:state_reject_drop="false"/>
+    <item
+        android:drawable="@android:color/transparent"
+        app:state_copy="false"
+        app:state_reject_drop="false"/>
+</selector>

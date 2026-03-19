@@ -169,7 +169,7 @@ public class PrintSettingsFragment extends ProfileSettingsPreferenceFragment imp
         }
     }
 
-    public Preference newAddServicePreferenceOrNull() {
+    private Preference newAddServicePreferenceOrNull() {
         Intent intentCreateAddNewServiceIntentOrNull = createAddNewServiceIntentOrNull();
         if (intentCreateAddNewServiceIntentOrNull == null) {
             return null;

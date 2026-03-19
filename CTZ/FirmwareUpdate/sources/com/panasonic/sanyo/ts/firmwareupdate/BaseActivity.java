@@ -47,91 +47,94 @@ public class BaseActivity extends Activity implements Runnable {
     protected String UPDATE_FILE = "update.zip";
     protected String CachePath = "/cache/update.zip";
     StorageVolume mount_vol = null;
-    private Handler handler = new AnonymousClass3(this);
-
-    class AnonymousClass3 extends Handler {
-        final BaseActivity this$0;
-
-        AnonymousClass3(BaseActivity baseActivity) {
-            this.this$0 = baseActivity;
-        }
-
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message message) {
-            this.this$0.CancelAction(true);
-            this.this$0.dlg.setCancelable(false);
+            BaseActivity.this.CancelAction(true);
+            BaseActivity.this.dlg.setCancelable(false);
             switch (message.what) {
                 case 0:
                 case 1:
-                    this.this$0.dlg.setTitle("アップデートデータの読込みに失敗しました");
-                    this.this$0.dlg.setMessage("SDカードが正常に読み込めません。\nSDカードが挿入されているか確認してください。");
+                    BaseActivity.this.dlg.setTitle("アップデートデータの読込みに失敗しました");
+                    BaseActivity.this.dlg.setMessage("SDカードが正常に読み込めません。\nSDカードが挿入されているか確認してください。");
                     break;
                 case 2:
                 case 3:
                 case 4:
-                    this.this$0.dlg.setTitle("アップデート処理に失敗しました");
+                    BaseActivity.this.dlg.setTitle("アップデート処理に失敗しました");
                     break;
                 case 5:
-                    this.this$0.dlg.setTitle("充電してください");
-                    this.this$0.dlg.setMessage("ローバッテリーになるとシステムアップデートが失敗する場合があります。\n電源を挿してからもう一度やり直してください。");
+                    BaseActivity.this.dlg.setTitle("充電してください");
+                    BaseActivity.this.dlg.setMessage("ローバッテリーになるとシステムアップデートが失敗する場合があります。\n電源を挿してからもう一度やり直してください。");
                     break;
             }
-            this.this$0.dlg.setPositiveButton("OK", new DialogInterface.OnClickListener(this) {
-                final AnonymousClass3 this$1;
-
-                {
-                    this.this$1 = this;
-                }
-
+            BaseActivity.this.dlg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    this.this$1.this$0.finish();
+                    BaseActivity.this.finish();
                 }
             });
-            this.this$0.dlg.show();
+            BaseActivity.this.dlg.show();
+        }
+    };
+
+    @Override
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        getWindow().addFlags(128);
+        this.dlg = new AlertDialog.Builder(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.BatteryBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("android.intent.action.BATTERY_CHANGED")) {
+                    BaseActivity.this.status = intent.getIntExtra("status", 0);
+                    BaseActivity.this.level = intent.getIntExtra("level", 0);
+                    Log.v("status", "status:" + BaseActivity.this.status);
+                    Log.v("level", "level:" + BaseActivity.this.level);
+                }
+            }
+        };
+        this.MediaBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("android.intent.action.MEDIA_EJECT")) {
+                    Log.v("MediaBroadcastReceiver", "SDカードが抜かれました\n");
+                    if (BaseActivity.thread != null) {
+                        BaseActivity.this.UpdateMediaEject = true;
+                    }
+                }
+            }
+        };
+        if (!this.ReceverRegistered) {
+            this.ReceverRegistered = true;
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction("android.intent.action.BATTERY_CHANGED");
+            registerReceiver(this.BatteryBroadcastReceiver, intentFilter);
+            new IntentFilter().addAction("android.intent.action.MEDIA_EJECT");
         }
     }
 
-    private void CacheDirFileCheck() {
-        File[] fileArrListFiles = Environment.getDownloadCacheDirectory().listFiles();
-        if (fileArrListFiles == null) {
-            return;
-        }
-        HashSet hashSet = new HashSet();
-        for (int i = 0; i < fileArrListFiles.length; i++) {
-            if (!fileArrListFiles[i].getName().equals("lost+found") && !fileArrListFiles[i].getName().equalsIgnoreCase("recovery")) {
-                hashSet.add(fileArrListFiles[i].getPath());
+    @Override
+    protected void onPause() {
+        Log.v("onPause", "onPause");
+        super.onPause();
+        if (this.Updatewait) {
+            this.UpdateCancel = true;
+            if (this.ReceverRegistered) {
+                this.ReceverRegistered = false;
+                unregisterReceiver(this.BatteryBroadcastReceiver);
+                unregisterReceiver(this.MediaBroadcastReceiver);
             }
-        }
-        Cursor cursorQuery = getContentResolver().query(Downloads.Impl.ALL_DOWNLOADS_CONTENT_URI, new String[]{"_data"}, null, null, null);
-        if (cursorQuery != null) {
-            if (cursorQuery.moveToFirst()) {
-                do {
-                    hashSet.remove(cursorQuery.getString(0));
-                } while (cursorQuery.moveToNext());
+            if (this.ProgressDialogActive) {
+                Log.v("onPause", "progressDialog.dismiss");
+                this.ProgressDialogActive = false;
+                this.progressDialog.dismiss();
             }
-            cursorQuery.close();
-        }
-        Iterator it = hashSet.iterator();
-        while (it.hasNext()) {
-            delete(new File((String) it.next()));
-        }
-    }
-
-    public void CancelAction(boolean z) {
-        Log.v("CancelAction", "start");
-        File file = new File("/cache/update.zip");
-        if (file.exists()) {
-            file.delete();
-        }
-        File file2 = new File("/cache/recovery/command");
-        if (file2.exists()) {
-            file2.delete();
-        }
-        if (z && this.ProgressDialogActive) {
-            Log.v("CancelAction", "progressDialog.dismiss");
-            this.ProgressDialogActive = false;
-            this.progressDialog.dismiss();
         }
     }
 
@@ -161,6 +164,162 @@ public class BaseActivity extends Activity implements Runnable {
         this.handler.sendEmptyMessage(1);
     }
 
+    @Override
+    public void onActivityResult(int i, int i2, Intent intent) {
+        super.onActivityResult(i, i2, intent);
+        Log.i("onActivityResult", "nActivityResultCall.");
+        if (i != 2317 || i2 != -1) {
+            this.handler.sendEmptyMessage(1);
+            return;
+        }
+        if (intent != null) {
+            Uri data = intent.getData();
+            Log.i("onActivityResult", "URI = " + data.getEncodedPath());
+            Log.i("onActivityResult", "URI = " + data.getPath());
+            getContentResolver().takePersistableUriPermission(data, 3);
+            DocumentFile documentFileFromTreeUri = DocumentFile.fromTreeUri(this, data);
+            Log.i("onActivityResult", "outUri1 = " + documentFileFromTreeUri.getUri().getPath());
+            DocumentFile documentFileFindFile = documentFileFromTreeUri.findFile(this.UPDATE_FILE);
+            if (documentFileFindFile == null) {
+                this.handler.sendEmptyMessage(1);
+                return;
+            }
+            Log.v("UpDatefile", "file exists\n");
+            long length = documentFileFindFile.length();
+            Log.v("CacheCheck", "UpdateSize : " + length);
+            StatFs statFs = new StatFs("/cache");
+            int availableBlocks = statFs.getAvailableBlocks() * statFs.getBlockSize();
+            Log.v("CacheCheck", "AvailableCache : " + availableBlocks);
+            if (length > availableBlocks) {
+                CacheDirFileCheck();
+            }
+            Log.v("UpdateStart", "ファイルチェック\n");
+            if (this.UpdateCancel) {
+                CancelAction(true);
+                return;
+            }
+            CancelAction(false);
+            try {
+                try {
+                    InputStream inputStreamOpenInputStream = getContentResolver().openInputStream(documentFileFindFile.getUri());
+                    FileOutputStream fileOutputStream = new FileOutputStream(this.CachePath);
+                    try {
+                        byte[] bArr = new byte[4096];
+                        int i3 = 0;
+                        while (true) {
+                            int i4 = inputStreamOpenInputStream.read(bArr);
+                            if (-1 == i4) {
+                                break;
+                            }
+                            fileOutputStream.write(bArr, 0, i4);
+                            i3 += i4;
+                        }
+                        Log.v("UpdateStart", "read-write OK:" + i3);
+                        inputStreamOpenInputStream.close();
+                        fileOutputStream.flush();
+                        fileOutputStream.close();
+                        Log.v("UpdateStart", "/recoveryディレクトリチェック\n");
+                        if (this.UpdateCancel) {
+                            CancelAction(true);
+                            return;
+                        }
+                        File file = new File("/cache/recovery");
+                        if (!file.exists() && !file.mkdir()) {
+                            this.handler.sendEmptyMessage(3);
+                            return;
+                        }
+                        Log.v("UpdateStart", "commandファイルチェック\n");
+                        if (this.UpdateCancel) {
+                            CancelAction(true);
+                            return;
+                        }
+                        File file2 = new File("/cache/recovery/command");
+                        if (!file2.exists()) {
+                            try {
+                                if (!file2.createNewFile()) {
+                                    this.handler.sendEmptyMessage(4);
+                                    return;
+                                }
+                                FileWriter fileWriter = new FileWriter(file2);
+                                fileWriter.write("boot-recovery\n");
+                                fileWriter.write("--update_package=/cache/update.zip\n");
+                                fileWriter.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                this.handler.sendEmptyMessage(2);
+                                return;
+                            }
+                        }
+                        Log.v("UpdateStart", "リブートチェック\n");
+                        if (this.UpdateCancel) {
+                            CancelAction(true);
+                            return;
+                        }
+                        if (this.UpdateMediaEject) {
+                            this.UpdateMediaEject = false;
+                            this.handler.sendEmptyMessage(2);
+                            return;
+                        }
+                        this.Updatewait = true;
+                        ((PowerManager) getSystemService("power")).reboot("recovery-update");
+                        if (this.ProgressDialogActive) {
+                            Log.v("UpdateStart", "progressDialog.dismiss");
+                            this.ProgressDialogActive = false;
+                            this.progressDialog.dismiss();
+                            return;
+                        }
+                        return;
+                    } catch (IOException e2) {
+                        inputStreamOpenInputStream.close();
+                        fileOutputStream.close();
+                        Log.v("UpdateStart", "IOException-transfer\n");
+                        e2.printStackTrace();
+                        this.handler.sendEmptyMessage(2);
+                        return;
+                    }
+                } catch (FileNotFoundException e3) {
+                    Log.v("UpdateStart", "FileNotFoundException\n");
+                    e3.printStackTrace();
+                    this.handler.sendEmptyMessage(1);
+                    return;
+                }
+            } catch (IOException e4) {
+                Log.v("UpdateStart", "IOException\n");
+                e4.printStackTrace();
+                this.handler.sendEmptyMessage(2);
+                return;
+            }
+        }
+        Log.i("onActivityResult", "resultData is null");
+        this.handler.sendEmptyMessage(1);
+    }
+
+    private void CacheDirFileCheck() {
+        File[] fileArrListFiles = Environment.getDownloadCacheDirectory().listFiles();
+        if (fileArrListFiles == null) {
+            return;
+        }
+        HashSet hashSet = new HashSet();
+        for (int i = 0; i < fileArrListFiles.length; i++) {
+            if (!fileArrListFiles[i].getName().equals("lost+found") && !fileArrListFiles[i].getName().equalsIgnoreCase("recovery")) {
+                hashSet.add(fileArrListFiles[i].getPath());
+            }
+        }
+        Cursor cursorQuery = getContentResolver().query(Downloads.Impl.ALL_DOWNLOADS_CONTENT_URI, new String[]{"_data"}, null, null, null);
+        if (cursorQuery != null) {
+            if (cursorQuery.moveToFirst()) {
+                do {
+                    hashSet.remove(cursorQuery.getString(0));
+                } while (cursorQuery.moveToNext());
+            }
+            cursorQuery.close();
+        }
+        Iterator it = hashSet.iterator();
+        while (it.hasNext()) {
+            delete(new File((String) it.next()));
+        }
+    }
+
     private static void delete(File file) {
         File[] fileArrListFiles;
         if (file.isFile()) {
@@ -175,215 +334,21 @@ public class BaseActivity extends Activity implements Runnable {
         file.delete();
     }
 
-    @Override
-    public void onActivityResult(int i, int i2, Intent intent) {
-        super.onActivityResult(i, i2, intent);
-        Log.i("onActivityResult", "nActivityResultCall.");
-        if (i != 2317 || i2 != -1) {
-            this.handler.sendEmptyMessage(1);
-            return;
+    private void CancelAction(boolean z) {
+        Log.v("CancelAction", "start");
+        File file = new File("/cache/update.zip");
+        if (file.exists()) {
+            file.delete();
         }
-        if (intent == null) {
-            Log.i("onActivityResult", "resultData is null");
-            this.handler.sendEmptyMessage(1);
-            return;
+        File file2 = new File("/cache/recovery/command");
+        if (file2.exists()) {
+            file2.delete();
         }
-        Uri data = intent.getData();
-        Log.i("onActivityResult", "URI = " + data.getEncodedPath());
-        Log.i("onActivityResult", "URI = " + data.getPath());
-        getContentResolver().takePersistableUriPermission(data, 3);
-        DocumentFile documentFileFromTreeUri = DocumentFile.fromTreeUri(this, data);
-        Log.i("onActivityResult", "outUri1 = " + documentFileFromTreeUri.getUri().getPath());
-        DocumentFile documentFileFindFile = documentFileFromTreeUri.findFile(this.UPDATE_FILE);
-        if (documentFileFindFile == null) {
-            this.handler.sendEmptyMessage(1);
-            return;
+        if (z && this.ProgressDialogActive) {
+            Log.v("CancelAction", "progressDialog.dismiss");
+            this.ProgressDialogActive = false;
+            this.progressDialog.dismiss();
         }
-        Log.v("UpDatefile", "file exists\n");
-        long length = documentFileFindFile.length();
-        Log.v("CacheCheck", "UpdateSize : " + length);
-        StatFs statFs = new StatFs("/cache");
-        int blockSize = statFs.getBlockSize() * statFs.getAvailableBlocks();
-        Log.v("CacheCheck", "AvailableCache : " + blockSize);
-        if (length > blockSize) {
-            CacheDirFileCheck();
-        }
-        Log.v("UpdateStart", "ファイルチェック\n");
-        if (this.UpdateCancel) {
-            CancelAction(true);
-            return;
-        }
-        CancelAction(false);
-        try {
-            try {
-                InputStream inputStreamOpenInputStream = getContentResolver().openInputStream(documentFileFindFile.getUri());
-                FileOutputStream fileOutputStream = new FileOutputStream(this.CachePath);
-                try {
-                    byte[] bArr = new byte[4096];
-                    int i3 = 0;
-                    while (true) {
-                        int i4 = inputStreamOpenInputStream.read(bArr);
-                        if (-1 == i4) {
-                            break;
-                        }
-                        fileOutputStream.write(bArr, 0, i4);
-                        i3 += i4;
-                    }
-                    Log.v("UpdateStart", "read-write OK:" + i3);
-                    inputStreamOpenInputStream.close();
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
-                    Log.v("UpdateStart", "/recoveryディレクトリチェック\n");
-                    if (this.UpdateCancel) {
-                        CancelAction(true);
-                        return;
-                    }
-                    File file = new File("/cache/recovery");
-                    if (!file.exists() && !file.mkdir()) {
-                        this.handler.sendEmptyMessage(3);
-                        return;
-                    }
-                    Log.v("UpdateStart", "commandファイルチェック\n");
-                    if (this.UpdateCancel) {
-                        CancelAction(true);
-                        return;
-                    }
-                    File file2 = new File("/cache/recovery/command");
-                    if (!file2.exists()) {
-                        try {
-                            if (!file2.createNewFile()) {
-                                this.handler.sendEmptyMessage(4);
-                                return;
-                            }
-                            FileWriter fileWriter = new FileWriter(file2);
-                            fileWriter.write("boot-recovery\n");
-                            fileWriter.write("--update_package=/cache/update.zip\n");
-                            fileWriter.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            this.handler.sendEmptyMessage(2);
-                            return;
-                        }
-                    }
-                    Log.v("UpdateStart", "リブートチェック\n");
-                    if (this.UpdateCancel) {
-                        CancelAction(true);
-                        return;
-                    }
-                    if (this.UpdateMediaEject) {
-                        this.UpdateMediaEject = false;
-                        this.handler.sendEmptyMessage(2);
-                        return;
-                    }
-                    this.Updatewait = true;
-                    ((PowerManager) getSystemService("power")).reboot("recovery-update");
-                    if (this.ProgressDialogActive) {
-                        Log.v("UpdateStart", "progressDialog.dismiss");
-                        this.ProgressDialogActive = false;
-                        this.progressDialog.dismiss();
-                    }
-                } catch (IOException e2) {
-                    inputStreamOpenInputStream.close();
-                    fileOutputStream.close();
-                    Log.v("UpdateStart", "IOException-transfer\n");
-                    e2.printStackTrace();
-                    this.handler.sendEmptyMessage(2);
-                }
-            } catch (IOException e3) {
-                Log.v("UpdateStart", "IOException\n");
-                e3.printStackTrace();
-                this.handler.sendEmptyMessage(2);
-            }
-        } catch (FileNotFoundException e4) {
-            Log.v("UpdateStart", "FileNotFoundException\n");
-            e4.printStackTrace();
-            this.handler.sendEmptyMessage(1);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        getWindow().addFlags(128);
-        this.dlg = new AlertDialog.Builder(this);
-    }
-
-    @Override
-    protected void onPause() {
-        Log.v("onPause", "onPause");
-        super.onPause();
-        if (this.Updatewait) {
-            this.UpdateCancel = true;
-            if (this.ReceverRegistered) {
-                this.ReceverRegistered = false;
-                unregisterReceiver(this.BatteryBroadcastReceiver);
-                unregisterReceiver(this.MediaBroadcastReceiver);
-            }
-            if (this.ProgressDialogActive) {
-                Log.v("onPause", "progressDialog.dismiss");
-                this.ProgressDialogActive = false;
-                this.progressDialog.dismiss();
-            }
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        this.BatteryBroadcastReceiver = new BroadcastReceiver(this) {
-            final BaseActivity this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("android.intent.action.BATTERY_CHANGED")) {
-                    this.this$0.status = intent.getIntExtra("status", 0);
-                    this.this$0.level = intent.getIntExtra("level", 0);
-                    Log.v("status", "status:" + this.this$0.status);
-                    Log.v("level", "level:" + this.this$0.level);
-                }
-            }
-        };
-        this.MediaBroadcastReceiver = new BroadcastReceiver(this) {
-            final BaseActivity this$0;
-
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("android.intent.action.MEDIA_EJECT")) {
-                    Log.v("MediaBroadcastReceiver", "SDカードが抜かれました\n");
-                    if (BaseActivity.thread != null) {
-                        this.this$0.UpdateMediaEject = true;
-                    }
-                }
-            }
-        };
-        if (this.ReceverRegistered) {
-            return;
-        }
-        this.ReceverRegistered = true;
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.BATTERY_CHANGED");
-        registerReceiver(this.BatteryBroadcastReceiver, intentFilter);
-        new IntentFilter().addAction("android.intent.action.MEDIA_EJECT");
-    }
-
-    @Override
-    public void run() {
-        Log.d("runProcess", "run");
-        try {
-            Thread.sleep(500L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        UpdateStart();
-        thread = null;
     }
 
     protected void startprogress() {
@@ -397,5 +362,17 @@ public class BaseActivity extends Activity implements Runnable {
         Log.v("thread", "thread" + thread);
         thread = new Thread(this);
         thread.start();
+    }
+
+    @Override
+    public void run() {
+        Log.d("runProcess", "run");
+        try {
+            Thread.sleep(500L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        UpdateStart();
+        thread = null;
     }
 }

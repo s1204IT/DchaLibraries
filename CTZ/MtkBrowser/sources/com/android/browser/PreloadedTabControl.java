@@ -14,19 +14,15 @@ public class PreloadedTabControl {
         this.mTab = tab;
     }
 
-    public void destroy() {
-        Log.d("PreloadedTabControl", "PreloadedTabControl.destroy");
-        this.mDestroyed = true;
-        this.mTab.destroy();
+    public void setQuery(String str) {
+        Log.d("PreloadedTabControl", "Cannot set query: no searchbox interface");
     }
 
-    public Tab getTab() {
-        return this.mTab;
+    public boolean searchBoxSubmit(String str, String str2, Map<String, String> map) {
+        return false;
     }
 
-    public void loadUrl(String str, Map<String, String> map) {
-        Log.d("PreloadedTabControl", "Preloading " + str);
-        this.mTab.loadUrl(str, map);
+    public void searchBoxCancel() {
     }
 
     public void loadUrlIfChanged(String str, Map<String, String> map) {
@@ -38,20 +34,23 @@ public class PreloadedTabControl {
             }
         }
         Log.d("PreloadedTabControl", "loadUrlIfChanged\nnew: " + str + "\nold: " + url);
-        if (TextUtils.equals(str, url)) {
-            return;
+        if (!TextUtils.equals(str, url)) {
+            loadUrl(str, map);
         }
-        loadUrl(str, map);
     }
 
-    public void searchBoxCancel() {
+    public void loadUrl(String str, Map<String, String> map) {
+        Log.d("PreloadedTabControl", "Preloading " + str);
+        this.mTab.loadUrl(str, map);
     }
 
-    public boolean searchBoxSubmit(String str, String str2, Map<String, String> map) {
-        return false;
+    public void destroy() {
+        Log.d("PreloadedTabControl", "PreloadedTabControl.destroy");
+        this.mDestroyed = true;
+        this.mTab.destroy();
     }
 
-    public void setQuery(String str) {
-        Log.d("PreloadedTabControl", "Cannot set query: no searchbox interface");
+    public Tab getTab() {
+        return this.mTab;
     }
 }

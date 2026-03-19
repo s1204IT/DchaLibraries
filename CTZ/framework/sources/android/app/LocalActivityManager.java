@@ -1,0 +1,377 @@
+package android.app;
+
+import android.app.Activity;
+import android.app.ActivityThread;
+import android.app.servertransaction.PendingTransactionActions;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Binder;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.Window;
+import com.android.internal.content.ReferrerIntent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+@Deprecated
+public class LocalActivityManager {
+    static final int CREATED = 2;
+    static final int DESTROYED = 5;
+    static final int INITIALIZING = 1;
+    static final int RESTORED = 0;
+    static final int RESUMED = 4;
+    static final int STARTED = 3;
+    private static final String TAG = "LocalActivityManager";
+    private static final boolean localLOGV = false;
+    private boolean mFinishing;
+    private final Activity mParent;
+    private LocalActivityRecord mResumed;
+    private boolean mSingleMode;
+    private final Map<String, LocalActivityRecord> mActivities = new HashMap();
+    private final ArrayList<LocalActivityRecord> mActivityArray = new ArrayList<>();
+    private int mCurState = 1;
+    private final ActivityThread mActivityThread = ActivityThread.currentActivityThread();
+
+    private static class LocalActivityRecord extends Binder {
+        Activity activity;
+        ActivityInfo activityInfo;
+        int curState = 0;
+        final String id;
+        Bundle instanceState;
+        Intent intent;
+        Window window;
+
+        LocalActivityRecord(String str, Intent intent) {
+            this.id = str;
+            this.intent = intent;
+        }
+    }
+
+    public LocalActivityManager(Activity activity, boolean z) {
+        this.mParent = activity;
+        this.mSingleMode = z;
+    }
+
+    private void moveToState(LocalActivityRecord localActivityRecord, int i) {
+        Object obj;
+        Activity.NonConfigurationInstances nonConfigurationInstances;
+        if (localActivityRecord.curState == 0 || localActivityRecord.curState == 5) {
+            return;
+        }
+        PendingTransactionActions pendingTransactionActions = null;
+        if (localActivityRecord.curState == 1) {
+            HashMap<String, Object> lastNonConfigurationChildInstances = this.mParent.getLastNonConfigurationChildInstances();
+            if (lastNonConfigurationChildInstances != null) {
+                obj = lastNonConfigurationChildInstances.get(localActivityRecord.id);
+            } else {
+                obj = null;
+            }
+            if (obj != null) {
+                Activity.NonConfigurationInstances nonConfigurationInstances2 = new Activity.NonConfigurationInstances();
+                nonConfigurationInstances2.activity = obj;
+                nonConfigurationInstances = nonConfigurationInstances2;
+            } else {
+                nonConfigurationInstances = null;
+            }
+            if (localActivityRecord.activityInfo == null) {
+                localActivityRecord.activityInfo = this.mActivityThread.resolveActivityInfo(localActivityRecord.intent);
+            }
+            localActivityRecord.activity = this.mActivityThread.startActivityNow(this.mParent, localActivityRecord.id, localActivityRecord.intent, localActivityRecord.activityInfo, localActivityRecord, localActivityRecord.instanceState, nonConfigurationInstances);
+            if (localActivityRecord.activity == null) {
+            }
+            localActivityRecord.window = localActivityRecord.activity.getWindow();
+            localActivityRecord.instanceState = null;
+            ActivityThread.ActivityClientRecord activityClient = this.mActivityThread.getActivityClient(localActivityRecord);
+            if (!localActivityRecord.activity.mFinished) {
+                pendingTransactionActions = new PendingTransactionActions();
+                pendingTransactionActions.setOldState(activityClient.state);
+                pendingTransactionActions.setRestoreInstanceState(true);
+                pendingTransactionActions.setCallOnPostCreate(true);
+            }
+            this.mActivityThread.handleStartActivity(activityClient, pendingTransactionActions);
+            localActivityRecord.curState = 3;
+            if (i == 4) {
+                this.mActivityThread.performResumeActivity(localActivityRecord, true, "moveToState-INITIALIZING");
+                localActivityRecord.curState = 4;
+                return;
+            }
+            return;
+        }
+        switch (localActivityRecord.curState) {
+            case 2:
+                if (i == 3) {
+                    this.mActivityThread.performRestartActivity(localActivityRecord, true);
+                    localActivityRecord.curState = 3;
+                }
+                if (i == 4) {
+                    this.mActivityThread.performRestartActivity(localActivityRecord, true);
+                    this.mActivityThread.performResumeActivity(localActivityRecord, true, "moveToState-CREATED");
+                    localActivityRecord.curState = 4;
+                }
+                break;
+            case 3:
+                if (i == 4) {
+                    this.mActivityThread.performResumeActivity(localActivityRecord, true, "moveToState-STARTED");
+                    localActivityRecord.instanceState = null;
+                    localActivityRecord.curState = 4;
+                }
+                if (i == 2) {
+                    this.mActivityThread.performStopActivity(localActivityRecord, false, "moveToState-STARTED");
+                    localActivityRecord.curState = 2;
+                }
+                break;
+            case 4:
+                if (i == 3) {
+                    performPause(localActivityRecord, this.mFinishing);
+                    localActivityRecord.curState = 3;
+                }
+                if (i == 2) {
+                    performPause(localActivityRecord, this.mFinishing);
+                    this.mActivityThread.performStopActivity(localActivityRecord, false, "moveToState-RESUMED");
+                    localActivityRecord.curState = 2;
+                }
+                break;
+        }
+    }
+
+    private void performPause(LocalActivityRecord localActivityRecord, boolean z) {
+        boolean z2 = localActivityRecord.instanceState == null;
+        Bundle bundlePerformPauseActivity = this.mActivityThread.performPauseActivity(localActivityRecord, z, "performPause", (PendingTransactionActions) null);
+        if (z2) {
+            localActivityRecord.instanceState = bundlePerformPauseActivity;
+        }
+    }
+
+    public Window startActivity(String str, Intent intent) {
+        boolean z;
+        boolean z2;
+        LocalActivityRecord localActivityRecord;
+        if (this.mCurState == 1) {
+            throw new IllegalStateException("Activities can't be added until the containing group has been created.");
+        }
+        ActivityInfo activityInfoResolveActivityInfo = null;
+        LocalActivityRecord localActivityRecord2 = this.mActivities.get(str);
+        if (localActivityRecord2 == null) {
+            localActivityRecord2 = new LocalActivityRecord(str, intent);
+            z = true;
+            z2 = false;
+        } else if (localActivityRecord2.intent == null) {
+            z = false;
+            z2 = false;
+        } else {
+            boolean zFilterEquals = localActivityRecord2.intent.filterEquals(intent);
+            if (zFilterEquals) {
+                activityInfoResolveActivityInfo = localActivityRecord2.activityInfo;
+            }
+            z2 = zFilterEquals;
+            z = false;
+        }
+        if (activityInfoResolveActivityInfo == null) {
+            activityInfoResolveActivityInfo = this.mActivityThread.resolveActivityInfo(intent);
+        }
+        if (this.mSingleMode && (localActivityRecord = this.mResumed) != null && localActivityRecord != localActivityRecord2 && this.mCurState == 4) {
+            moveToState(localActivityRecord, 3);
+        }
+        if (z) {
+            this.mActivities.put(str, localActivityRecord2);
+            this.mActivityArray.add(localActivityRecord2);
+        } else if (localActivityRecord2.activityInfo != null) {
+            if (activityInfoResolveActivityInfo == localActivityRecord2.activityInfo || (activityInfoResolveActivityInfo.name.equals(localActivityRecord2.activityInfo.name) && activityInfoResolveActivityInfo.packageName.equals(localActivityRecord2.activityInfo.packageName))) {
+                if (activityInfoResolveActivityInfo.launchMode != 0 || (intent.getFlags() & 536870912) != 0) {
+                    ArrayList arrayList = new ArrayList(1);
+                    arrayList.add(new ReferrerIntent(intent, this.mParent.getPackageName()));
+                    this.mActivityThread.performNewIntents(localActivityRecord2, arrayList, false);
+                    localActivityRecord2.intent = intent;
+                    moveToState(localActivityRecord2, this.mCurState);
+                    if (this.mSingleMode) {
+                        this.mResumed = localActivityRecord2;
+                    }
+                    return localActivityRecord2.window;
+                }
+                if (z2 && (intent.getFlags() & 67108864) == 0) {
+                    localActivityRecord2.intent = intent;
+                    moveToState(localActivityRecord2, this.mCurState);
+                    if (this.mSingleMode) {
+                        this.mResumed = localActivityRecord2;
+                    }
+                    return localActivityRecord2.window;
+                }
+            }
+            performDestroy(localActivityRecord2, true);
+        }
+        localActivityRecord2.intent = intent;
+        localActivityRecord2.curState = 1;
+        localActivityRecord2.activityInfo = activityInfoResolveActivityInfo;
+        moveToState(localActivityRecord2, this.mCurState);
+        if (this.mSingleMode) {
+            this.mResumed = localActivityRecord2;
+        }
+        return localActivityRecord2.window;
+    }
+
+    private Window performDestroy(LocalActivityRecord localActivityRecord, boolean z) {
+        Window window = localActivityRecord.window;
+        if (localActivityRecord.curState == 4 && !z) {
+            performPause(localActivityRecord, z);
+        }
+        this.mActivityThread.performDestroyActivity(localActivityRecord, z, 0, false, "LocalActivityManager::performDestroy");
+        localActivityRecord.activity = null;
+        localActivityRecord.window = null;
+        if (z) {
+            localActivityRecord.instanceState = null;
+        }
+        localActivityRecord.curState = 5;
+        return window;
+    }
+
+    public Window destroyActivity(String str, boolean z) {
+        LocalActivityRecord localActivityRecord = this.mActivities.get(str);
+        if (localActivityRecord != null) {
+            Window windowPerformDestroy = performDestroy(localActivityRecord, z);
+            if (!z) {
+                return windowPerformDestroy;
+            }
+            this.mActivities.remove(str);
+            this.mActivityArray.remove(localActivityRecord);
+            return windowPerformDestroy;
+        }
+        return null;
+    }
+
+    public Activity getCurrentActivity() {
+        if (this.mResumed != null) {
+            return this.mResumed.activity;
+        }
+        return null;
+    }
+
+    public String getCurrentId() {
+        if (this.mResumed != null) {
+            return this.mResumed.id;
+        }
+        return null;
+    }
+
+    public Activity getActivity(String str) {
+        LocalActivityRecord localActivityRecord = this.mActivities.get(str);
+        if (localActivityRecord != null) {
+            return localActivityRecord.activity;
+        }
+        return null;
+    }
+
+    public void dispatchCreate(Bundle bundle) {
+        if (bundle != null) {
+            for (String str : bundle.keySet()) {
+                try {
+                    Bundle bundle2 = bundle.getBundle(str);
+                    LocalActivityRecord localActivityRecord = this.mActivities.get(str);
+                    if (localActivityRecord != null) {
+                        localActivityRecord.instanceState = bundle2;
+                    } else {
+                        LocalActivityRecord localActivityRecord2 = new LocalActivityRecord(str, null);
+                        localActivityRecord2.instanceState = bundle2;
+                        this.mActivities.put(str, localActivityRecord2);
+                        this.mActivityArray.add(localActivityRecord2);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception thrown when restoring LocalActivityManager state", e);
+                }
+            }
+        }
+        this.mCurState = 2;
+    }
+
+    public Bundle saveInstanceState() {
+        int size = this.mActivityArray.size();
+        Bundle bundle = null;
+        for (int i = 0; i < size; i++) {
+            LocalActivityRecord localActivityRecord = this.mActivityArray.get(i);
+            if (bundle == null) {
+                bundle = new Bundle();
+            }
+            if ((localActivityRecord.instanceState != null || localActivityRecord.curState == 4) && localActivityRecord.activity != null) {
+                Bundle bundle2 = new Bundle();
+                localActivityRecord.activity.performSaveInstanceState(bundle2);
+                localActivityRecord.instanceState = bundle2;
+            }
+            if (localActivityRecord.instanceState != null) {
+                bundle.putBundle(localActivityRecord.id, localActivityRecord.instanceState);
+            }
+        }
+        return bundle;
+    }
+
+    public void dispatchResume() {
+        this.mCurState = 4;
+        if (this.mSingleMode) {
+            if (this.mResumed != null) {
+                moveToState(this.mResumed, 4);
+            }
+        } else {
+            int size = this.mActivityArray.size();
+            for (int i = 0; i < size; i++) {
+                moveToState(this.mActivityArray.get(i), 4);
+            }
+        }
+    }
+
+    public void dispatchPause(boolean z) {
+        if (z) {
+            this.mFinishing = true;
+        }
+        this.mCurState = 3;
+        if (this.mSingleMode) {
+            if (this.mResumed != null) {
+                moveToState(this.mResumed, 3);
+                return;
+            }
+            return;
+        }
+        int size = this.mActivityArray.size();
+        for (int i = 0; i < size; i++) {
+            LocalActivityRecord localActivityRecord = this.mActivityArray.get(i);
+            if (localActivityRecord.curState == 4) {
+                moveToState(localActivityRecord, 3);
+            }
+        }
+    }
+
+    public void dispatchStop() {
+        this.mCurState = 2;
+        int size = this.mActivityArray.size();
+        for (int i = 0; i < size; i++) {
+            moveToState(this.mActivityArray.get(i), 2);
+        }
+    }
+
+    public HashMap<String, Object> dispatchRetainNonConfigurationInstance() {
+        Object objOnRetainNonConfigurationInstance;
+        int size = this.mActivityArray.size();
+        HashMap<String, Object> map = null;
+        for (int i = 0; i < size; i++) {
+            LocalActivityRecord localActivityRecord = this.mActivityArray.get(i);
+            if (localActivityRecord != null && localActivityRecord.activity != null && (objOnRetainNonConfigurationInstance = localActivityRecord.activity.onRetainNonConfigurationInstance()) != null) {
+                if (map == null) {
+                    map = new HashMap<>();
+                }
+                map.put(localActivityRecord.id, objOnRetainNonConfigurationInstance);
+            }
+        }
+        return map;
+    }
+
+    public void removeAllActivities() {
+        dispatchDestroy(true);
+    }
+
+    public void dispatchDestroy(boolean z) {
+        int size = this.mActivityArray.size();
+        for (int i = 0; i < size; i++) {
+            this.mActivityThread.performDestroyActivity(this.mActivityArray.get(i), z, 0, false, "LocalActivityManager::dispatchDestroy");
+        }
+        this.mActivities.clear();
+        this.mActivityArray.clear();
+    }
+}

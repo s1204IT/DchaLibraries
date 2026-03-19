@@ -288,7 +288,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         this.mConnectivityManager.unregisterNetworkCallback(this.mNetworkCallback);
     }
 
-    public void updateInfo() {
+    private void updateInfo() {
         this.mNetworkInfo = this.mConnectivityManager.getNetworkInfo(this.mNetwork);
         this.mWifiInfo = this.mWifiManager.getConnectionInfo();
         if (this.mNetwork == null || this.mNetworkInfo == null || this.mWifiInfo == null) {
@@ -314,14 +314,14 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         updateIpLayerInfo();
     }
 
-    public void exitActivity() {
+    private void exitActivity() {
         if (DEBUG) {
             Log.d("WifiDetailsPrefCtrl", "Exiting the WifiNetworkDetailsPage");
         }
         this.mFragment.getActivity().finish();
     }
 
-    public void refreshNetworkState() {
+    private void refreshNetworkState() {
         this.mAccessPoint.update(this.mWifiConfig, this.mWifiInfo, this.mNetworkInfo);
         this.mEntityHeaderController.setSummary(this.mAccessPoint.getSettingsSummary()).done(this.mFragment.getActivity(), true);
     }
@@ -350,7 +350,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         }
     }
 
-    public void updateIpLayerInfo() {
+    private void updateIpLayerInfo() {
         this.mButtonsPref.setButton2Visible(canSignIntoNetwork());
         this.mButtonsPref.setVisible(canSignIntoNetwork() || canForgetNetwork());
         if (this.mNetwork == null || this.mLinkProperties == null) {
@@ -422,7 +422,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         return WifiUtils.canSignIntoNetwork(this.mNetworkCapabilities);
     }
 
-    public void forgetNetwork() {
+    private void forgetNetwork() {
         if (this.mWifiInfo != null && this.mWifiInfo.isEphemeral()) {
             this.mWifiManager.disableEphemeralNetwork(this.mWifiInfo.getSSID());
         } else if (this.mWifiConfig != null) {
@@ -436,7 +436,7 @@ public class WifiDetailPreferenceController extends AbstractPreferenceController
         this.mFragment.getActivity().finish();
     }
 
-    public void signIntoNetwork() {
+    private void signIntoNetwork() {
         this.mMetricsFeatureProvider.action(this.mFragment.getActivity(), 1008, new Pair[0]);
         this.mConnectivityManager.startCaptivePortalApp(this.mNetwork);
     }

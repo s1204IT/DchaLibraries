@@ -12,115 +12,115 @@ import android.view.View;
 public class FragmentController {
     private final FragmentHostCallback<?> mHost;
 
-    private FragmentController(FragmentHostCallback<?> fragmentHostCallback) {
-        this.mHost = fragmentHostCallback;
+    public static FragmentController createController(FragmentHostCallback<?> callbacks) {
+        return new FragmentController(callbacks);
     }
 
-    public static FragmentController createController(FragmentHostCallback<?> fragmentHostCallback) {
-        return new FragmentController(fragmentHostCallback);
-    }
-
-    public void attachHost(Fragment fragment) {
-        this.mHost.mFragmentManager.attachController(this.mHost, this.mHost, fragment);
-    }
-
-    public void dispatchActivityCreated() {
-        this.mHost.mFragmentManager.dispatchActivityCreated();
-    }
-
-    public void dispatchConfigurationChanged(Configuration configuration) {
-        this.mHost.mFragmentManager.dispatchConfigurationChanged(configuration);
-    }
-
-    public boolean dispatchContextItemSelected(MenuItem menuItem) {
-        return this.mHost.mFragmentManager.dispatchContextItemSelected(menuItem);
-    }
-
-    public void dispatchCreate() {
-        this.mHost.mFragmentManager.dispatchCreate();
-    }
-
-    public boolean dispatchCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        return this.mHost.mFragmentManager.dispatchCreateOptionsMenu(menu, menuInflater);
-    }
-
-    public void dispatchDestroy() {
-        this.mHost.mFragmentManager.dispatchDestroy();
-    }
-
-    public void dispatchLowMemory() {
-        this.mHost.mFragmentManager.dispatchLowMemory();
-    }
-
-    public void dispatchMultiWindowModeChanged(boolean z) {
-        this.mHost.mFragmentManager.dispatchMultiWindowModeChanged(z);
-    }
-
-    public boolean dispatchOptionsItemSelected(MenuItem menuItem) {
-        return this.mHost.mFragmentManager.dispatchOptionsItemSelected(menuItem);
-    }
-
-    public void dispatchOptionsMenuClosed(Menu menu) {
-        this.mHost.mFragmentManager.dispatchOptionsMenuClosed(menu);
-    }
-
-    public void dispatchPause() {
-        this.mHost.mFragmentManager.dispatchPause();
-    }
-
-    public void dispatchPictureInPictureModeChanged(boolean z) {
-        this.mHost.mFragmentManager.dispatchPictureInPictureModeChanged(z);
-    }
-
-    public boolean dispatchPrepareOptionsMenu(Menu menu) {
-        return this.mHost.mFragmentManager.dispatchPrepareOptionsMenu(menu);
-    }
-
-    public void dispatchReallyStop() {
-        this.mHost.mFragmentManager.dispatchReallyStop();
-    }
-
-    public void dispatchResume() {
-        this.mHost.mFragmentManager.dispatchResume();
-    }
-
-    public void dispatchStart() {
-        this.mHost.mFragmentManager.dispatchStart();
-    }
-
-    public void dispatchStop() {
-        this.mHost.mFragmentManager.dispatchStop();
-    }
-
-    public boolean execPendingActions() {
-        return this.mHost.mFragmentManager.execPendingActions();
-    }
-
-    public Fragment findFragmentByWho(String str) {
-        return this.mHost.mFragmentManager.findFragmentByWho(str);
+    private FragmentController(FragmentHostCallback<?> callbacks) {
+        this.mHost = callbacks;
     }
 
     public FragmentManager getSupportFragmentManager() {
         return this.mHost.getFragmentManagerImpl();
     }
 
+    public Fragment findFragmentByWho(String who) {
+        return this.mHost.mFragmentManager.findFragmentByWho(who);
+    }
+
+    public void attachHost(Fragment parent) {
+        this.mHost.mFragmentManager.attachController(this.mHost, this.mHost, parent);
+    }
+
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return this.mHost.mFragmentManager.onCreateView(parent, name, context, attrs);
+    }
+
     public void noteStateNotSaved() {
         this.mHost.mFragmentManager.noteStateNotSaved();
     }
 
-    public View onCreateView(View view, String str, Context context, AttributeSet attributeSet) {
-        return this.mHost.mFragmentManager.onCreateView(view, str, context, attributeSet);
+    public Parcelable saveAllState() {
+        return this.mHost.mFragmentManager.saveAllState();
     }
 
-    public void restoreAllState(Parcelable parcelable, FragmentManagerNonConfig fragmentManagerNonConfig) {
-        this.mHost.mFragmentManager.restoreAllState(parcelable, fragmentManagerNonConfig);
+    public void restoreAllState(Parcelable state, FragmentManagerNonConfig nonConfig) {
+        this.mHost.mFragmentManager.restoreAllState(state, nonConfig);
     }
 
     public FragmentManagerNonConfig retainNestedNonConfig() {
         return this.mHost.mFragmentManager.retainNonConfig();
     }
 
-    public Parcelable saveAllState() {
-        return this.mHost.mFragmentManager.saveAllState();
+    public void dispatchCreate() {
+        this.mHost.mFragmentManager.dispatchCreate();
+    }
+
+    public void dispatchActivityCreated() {
+        this.mHost.mFragmentManager.dispatchActivityCreated();
+    }
+
+    public void dispatchStart() {
+        this.mHost.mFragmentManager.dispatchStart();
+    }
+
+    public void dispatchResume() {
+        this.mHost.mFragmentManager.dispatchResume();
+    }
+
+    public void dispatchPause() {
+        this.mHost.mFragmentManager.dispatchPause();
+    }
+
+    public void dispatchStop() {
+        this.mHost.mFragmentManager.dispatchStop();
+    }
+
+    public void dispatchReallyStop() {
+        this.mHost.mFragmentManager.dispatchReallyStop();
+    }
+
+    public void dispatchDestroy() {
+        this.mHost.mFragmentManager.dispatchDestroy();
+    }
+
+    public void dispatchMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        this.mHost.mFragmentManager.dispatchMultiWindowModeChanged(isInMultiWindowMode);
+    }
+
+    public void dispatchPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        this.mHost.mFragmentManager.dispatchPictureInPictureModeChanged(isInPictureInPictureMode);
+    }
+
+    public void dispatchConfigurationChanged(Configuration newConfig) {
+        this.mHost.mFragmentManager.dispatchConfigurationChanged(newConfig);
+    }
+
+    public void dispatchLowMemory() {
+        this.mHost.mFragmentManager.dispatchLowMemory();
+    }
+
+    public boolean dispatchCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        return this.mHost.mFragmentManager.dispatchCreateOptionsMenu(menu, inflater);
+    }
+
+    public boolean dispatchPrepareOptionsMenu(Menu menu) {
+        return this.mHost.mFragmentManager.dispatchPrepareOptionsMenu(menu);
+    }
+
+    public boolean dispatchOptionsItemSelected(MenuItem item) {
+        return this.mHost.mFragmentManager.dispatchOptionsItemSelected(item);
+    }
+
+    public boolean dispatchContextItemSelected(MenuItem item) {
+        return this.mHost.mFragmentManager.dispatchContextItemSelected(item);
+    }
+
+    public void dispatchOptionsMenuClosed(Menu menu) {
+        this.mHost.mFragmentManager.dispatchOptionsMenuClosed(menu);
+    }
+
+    public boolean execPendingActions() {
+        return this.mHost.mFragmentManager.execPendingActions();
     }
 }

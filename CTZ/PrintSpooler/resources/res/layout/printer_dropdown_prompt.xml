@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:textAppearance="?android:attr/textAppearanceMedium"
+    android:textColor="?android:attr/textColorPrimary"
+    android:gravity="start|center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeightSmall"
+    android:text="@string/destination_default_text"
+    android:paddingStart="20dp"
+    style="?android:attr/spinnerItemStyle"/>

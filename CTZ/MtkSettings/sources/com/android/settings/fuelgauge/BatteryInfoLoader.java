@@ -18,7 +18,7 @@ public class BatteryInfoLoader extends AsyncLoader<BatteryInfo> {
     }
 
     @Override
-    public void onDiscardResult(BatteryInfo batteryInfo) {
+    protected void onDiscardResult(BatteryInfo batteryInfo) {
     }
 
     @Override

@@ -12,6 +12,12 @@ public abstract class Lifecycle {
         ON_ANY
     }
 
+    public abstract void addObserver(LifecycleObserver lifecycleObserver);
+
+    public abstract State getCurrentState();
+
+    public abstract void removeObserver(LifecycleObserver lifecycleObserver);
+
     public enum State {
         DESTROYED,
         INITIALIZED,
@@ -23,10 +29,4 @@ public abstract class Lifecycle {
             return compareTo(state) >= 0;
         }
     }
-
-    public abstract void addObserver(LifecycleObserver lifecycleObserver);
-
-    public abstract State getCurrentState();
-
-    public abstract void removeObserver(LifecycleObserver lifecycleObserver);
 }

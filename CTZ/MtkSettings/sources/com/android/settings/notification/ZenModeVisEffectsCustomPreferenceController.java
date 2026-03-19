@@ -55,7 +55,7 @@ public class ZenModeVisEffectsCustomPreferenceController extends AbstractZenMode
         this.mMetricsFeatureProvider.action(this.mContext, 1399, true);
     }
 
-    public void launchCustomSettings() {
+    private void launchCustomSettings() {
         select();
         new SubSettingLauncher(this.mContext).setDestination(ZenModeBlockedEffectsSettings.class.getName()).setTitle(R.string.zen_mode_what_to_block_title).setSourceMetricsCategory(1400).launch();
     }

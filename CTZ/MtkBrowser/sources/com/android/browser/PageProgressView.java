@@ -16,8 +16,8 @@ public class PageProgressView extends ImageView {
     private int mIncrement;
     private int mTargetProgress;
 
-    public PageProgressView(Context context) {
-        super(context);
+    public PageProgressView(Context context, AttributeSet attributeSet, int i) {
+        super(context, attributeSet, i);
         init(context);
     }
 
@@ -26,8 +26,8 @@ public class PageProgressView extends ImageView {
         init(context);
     }
 
-    public PageProgressView(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
+    public PageProgressView(Context context) {
+        super(context);
         init(context);
     }
 
@@ -35,32 +35,19 @@ public class PageProgressView extends ImageView {
         this.mBounds = new Rect(0, 0, 0, 0);
         this.mCurrentProgress = 0;
         this.mTargetProgress = 0;
-        this.mHandler = new Handler(this) {
-            final PageProgressView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mHandler = new Handler() {
             @Override
             public void handleMessage(Message message) {
                 if (message.what == 42) {
-                    this.this$0.mCurrentProgress = Math.min(this.this$0.mTargetProgress, this.this$0.mCurrentProgress + this.this$0.mIncrement);
-                    this.this$0.mBounds.right = (this.this$0.getWidth() * this.this$0.mCurrentProgress) / 10000;
-                    this.this$0.invalidate();
-                    if (this.this$0.mCurrentProgress < this.this$0.mTargetProgress) {
-                        sendMessageDelayed(this.this$0.mHandler.obtainMessage(42), 40L);
+                    PageProgressView.this.mCurrentProgress = Math.min(PageProgressView.this.mTargetProgress, PageProgressView.this.mCurrentProgress + PageProgressView.this.mIncrement);
+                    PageProgressView.this.mBounds.right = (PageProgressView.this.getWidth() * PageProgressView.this.mCurrentProgress) / 10000;
+                    PageProgressView.this.invalidate();
+                    if (PageProgressView.this.mCurrentProgress < PageProgressView.this.mTargetProgress) {
+                        sendMessageDelayed(PageProgressView.this.mHandler.obtainMessage(42), 40L);
                     }
                 }
             }
         };
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        Drawable drawable = getDrawable();
-        drawable.setBounds(this.mBounds);
-        drawable.draw(canvas);
     }
 
     @Override
@@ -77,5 +64,12 @@ public class PageProgressView extends ImageView {
         this.mIncrement = (this.mTargetProgress - this.mCurrentProgress) / 10;
         this.mHandler.removeMessages(42);
         this.mHandler.sendEmptyMessage(42);
+    }
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        Drawable drawable = getDrawable();
+        drawable.setBounds(this.mBounds);
+        drawable.draw(canvas);
     }
 }

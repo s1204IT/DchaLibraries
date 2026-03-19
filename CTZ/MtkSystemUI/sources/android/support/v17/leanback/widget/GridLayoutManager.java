@@ -678,7 +678,7 @@ final class GridLayoutManager extends RecyclerView.LayoutManager {
         }
     }
 
-    public void dispatchChildSelectedAndPositioned() {
+    private void dispatchChildSelectedAndPositioned() {
         if (!hasOnChildViewHolderSelectedListener()) {
             return;
         }

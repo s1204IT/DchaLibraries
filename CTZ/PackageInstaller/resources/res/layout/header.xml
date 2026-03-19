@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center_vertical"
+    android:background="?android:attr/colorPrimary"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize">
+    <ImageView
+        android:gravity="end"
+        android:id="@+id/icon"
+        android:layout_width="@dimen/header_subsettings_margin_start"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"/>
+    <TextView
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?android:attr/textColorPrimaryInverse"
+        android:ellipsize="end"
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:layout_centerVertical="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:textAlignment="viewStart"
+        android:layout_marginStart="@dimen/header_subsettings_margin_start"/>
+    <ImageView
+        android:id="@+id/info"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_info_outline"
+        android:scaleType="center"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/header_subsettings_margin_end"
+        android:layout_alignParentEnd="true"
+        style="?android:attr/borderlessButtonStyle"/>
+</RelativeLayout>

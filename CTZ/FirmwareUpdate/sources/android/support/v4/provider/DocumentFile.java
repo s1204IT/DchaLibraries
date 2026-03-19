@@ -8,26 +8,6 @@ import android.provider.DocumentsContract;
 public abstract class DocumentFile {
     private final DocumentFile mParent;
 
-    DocumentFile(DocumentFile documentFile) {
-        this.mParent = documentFile;
-    }
-
-    public static DocumentFile fromTreeUri(Context context, Uri uri) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            return new TreeDocumentFile(null, context, DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri)));
-        }
-        return null;
-    }
-
-    public DocumentFile findFile(String str) {
-        for (DocumentFile documentFile : listFiles()) {
-            if (str.equals(documentFile.getName())) {
-                return documentFile;
-            }
-        }
-        return null;
-    }
-
     public abstract String getName();
 
     public abstract Uri getUri();
@@ -35,4 +15,24 @@ public abstract class DocumentFile {
     public abstract long length();
 
     public abstract DocumentFile[] listFiles();
+
+    DocumentFile(DocumentFile parent) {
+        this.mParent = parent;
+    }
+
+    public static DocumentFile fromTreeUri(Context context, Uri treeUri) {
+        if (Build.VERSION.SDK_INT >= 21) {
+            return new TreeDocumentFile(null, context, DocumentsContract.buildDocumentUriUsingTree(treeUri, DocumentsContract.getTreeDocumentId(treeUri)));
+        }
+        return null;
+    }
+
+    public DocumentFile findFile(String displayName) {
+        for (DocumentFile doc : listFiles()) {
+            if (displayName.equals(doc.getName())) {
+                return doc;
+            }
+        }
+        return null;
+    }
 }

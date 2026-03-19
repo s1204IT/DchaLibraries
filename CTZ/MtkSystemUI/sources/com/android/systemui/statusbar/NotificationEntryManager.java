@@ -113,7 +113,7 @@ public class NotificationEntryManager implements Dumpable, ExpandableNotificatio
         boolean shouldPeek(NotificationData.Entry entry, StatusBarNotification statusBarNotification);
     }
 
-    final class NotificationClicker implements View.OnClickListener {
+    private final class NotificationClicker implements View.OnClickListener {
         private NotificationClicker() {
         }
 

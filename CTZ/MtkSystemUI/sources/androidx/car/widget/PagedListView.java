@@ -591,7 +591,7 @@ public class PagedListView extends FrameLayout {
         this.mScrollBarView.setVisibility(4);
     }
 
-    public void updatePaginationButtons(boolean animate) {
+    private void updatePaginationButtons(boolean animate) {
         if (!this.mScrollBarEnabled) {
             return;
         }
@@ -704,7 +704,7 @@ public class PagedListView extends FrameLayout {
         this.mScrollBarView.setShowAlphaJump(supportsAlphaJump);
     }
 
-    public void showAlphaJump() {
+    private void showAlphaJump() {
         if (this.mAlphaJumpView == null && (this.mAdapter instanceof IAlphaJumpAdapter)) {
             this.mAlphaJumpView = new AlphaJumpOverlayView(getContext());
             this.mAlphaJumpView.init(this, (IAlphaJumpAdapter) this.mAdapter);

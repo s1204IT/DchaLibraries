@@ -31,7 +31,7 @@ public abstract class MigrateEstimateTask extends AsyncTask<Void, Void, Long> {
     }
 
     @Override
-    public Long doInBackground(Void... voidArr) {
+    protected Long doInBackground(Void... voidArr) {
         if (this.mSizeBytes != -1) {
             return Long.valueOf(this.mSizeBytes);
         }
@@ -62,7 +62,7 @@ public abstract class MigrateEstimateTask extends AsyncTask<Void, Void, Long> {
     }
 
     @Override
-    public void onPostExecute(Long l) {
+    protected void onPostExecute(Long l) {
         this.mSizeBytes = l.longValue();
         onPostExecute(Formatter.formatFileSize(this.mContext, this.mSizeBytes), DateUtils.formatDuration(Math.max((this.mSizeBytes * 1000) / 10485760, 1000L)).toString());
     }

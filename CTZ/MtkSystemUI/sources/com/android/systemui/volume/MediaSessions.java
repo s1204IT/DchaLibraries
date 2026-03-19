@@ -105,7 +105,7 @@ public class MediaSessions {
         mediaControllerRecord.controller.setVolumeTo(i, 0);
     }
 
-    public void onRemoteVolumeChangedH(ISessionController iSessionController, int i) {
+    private void onRemoteVolumeChangedH(ISessionController iSessionController, int i) {
         MediaController mediaController = new MediaController(this.mContext, iSessionController);
         if (D.BUG) {
             Log.d(TAG, "remoteVolumeChangedH " + mediaController.getPackageName() + " " + Util.audioManagerFlagsToString(i));
@@ -113,7 +113,7 @@ public class MediaSessions {
         this.mCallbacks.onRemoteVolumeChanged(mediaController.getSessionToken(), i);
     }
 
-    public void onUpdateRemoteControllerH(ISessionController iSessionController) {
+    private void onUpdateRemoteControllerH(ISessionController iSessionController) {
         MediaController mediaController = iSessionController != null ? new MediaController(this.mContext, iSessionController) : null;
         String packageName = mediaController != null ? mediaController.getPackageName() : null;
         if (D.BUG) {
@@ -157,7 +157,7 @@ public class MediaSessions {
         }
     }
 
-    public static boolean isRemote(MediaController.PlaybackInfo playbackInfo) {
+    private static boolean isRemote(MediaController.PlaybackInfo playbackInfo) {
         return playbackInfo != null && playbackInfo.getPlaybackType() == 2;
     }
 
@@ -175,7 +175,7 @@ public class MediaSessions {
         return packageName;
     }
 
-    public void updateRemoteH(MediaSession.Token token, String str, MediaController.PlaybackInfo playbackInfo) {
+    private void updateRemoteH(MediaSession.Token token, String str, MediaController.PlaybackInfo playbackInfo) {
         if (this.mCallbacks != null) {
             this.mCallbacks.onRemoteUpdate(token, str, playbackInfo);
         }

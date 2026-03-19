@@ -4,7 +4,18 @@ import com.google.common.base.Objects;
 import java.util.Map;
 
 abstract class AbstractMapEntry<K, V> implements Map.Entry<K, V> {
+    @Override
+    public abstract K getKey();
+
+    @Override
+    public abstract V getValue();
+
     AbstractMapEntry() {
+    }
+
+    @Override
+    public V setValue(V v) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -17,21 +28,10 @@ abstract class AbstractMapEntry<K, V> implements Map.Entry<K, V> {
     }
 
     @Override
-    public abstract K getKey();
-
-    @Override
-    public abstract V getValue();
-
-    @Override
     public int hashCode() {
         K key = getKey();
         V value = getValue();
-        return (value != null ? value.hashCode() : 0) ^ (key == null ? 0 : key.hashCode());
-    }
-
-    @Override
-    public V setValue(V v) {
-        throw new UnsupportedOperationException();
+        return (key == null ? 0 : key.hashCode()) ^ (value != null ? value.hashCode() : 0);
     }
 
     public String toString() {

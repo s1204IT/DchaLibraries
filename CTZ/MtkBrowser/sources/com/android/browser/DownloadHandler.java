@@ -23,6 +23,10 @@ public class DownloadHandler {
     private static final boolean DEBUG = Browser.DEBUG;
     private static IBrowserDownloadExt sBrowserDownloadExt = null;
 
+    public static void onDownloadStart(Activity activity, String str, String str2, String str3, String str4, String str5, boolean z, long j) {
+        onDownloadStartNoStream(activity, str, str2, str3, str4, str5, z, j);
+    }
+
     private static String encodePath(String str) {
         boolean z;
         char[] charArray = str.toCharArray();
@@ -48,13 +52,10 @@ public class DownloadHandler {
         return sb.toString();
     }
 
-    public static void onDownloadStart(Activity activity, String str, String str2, String str3, String str4, String str5, boolean z, long j) {
-        onDownloadStartNoStream(activity, str, str2, str3, str4, str5, z, j);
-    }
-
     public static void onDownloadStartNoStream(Activity activity, String str, String str2, String str3, String str4, String str5, boolean z, long j) {
         int iIndexOf;
         String string;
+        String strSubstring = str4;
         String[] strArr = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
         for (int i = 0; i < strArr.length; i++) {
             if (activity.checkSelfPermission(strArr[i]) != 0) {
@@ -65,41 +66,42 @@ public class DownloadHandler {
                 return;
             }
         }
-        if (str4 != null && str4.startsWith("\"") && str4.endsWith("\"") && str4.length() > 2) {
-            str4 = str4.substring(1, str4.length() - 1);
+        if (strSubstring != null && strSubstring.startsWith("\"") && strSubstring.endsWith("\"") && str4.length() > 2) {
+            strSubstring = strSubstring.substring(1, str4.length() - 1);
         }
-        String strGuessFileName = URLUtil.guessFileName(str, str3, str4);
+        String strGuessFileName = URLUtil.guessFileName(str, str3, strSubstring);
         if (DEBUG) {
-            Log.d("browser/DLHandler", "Guess file name is: " + strGuessFileName + " mimetype is: " + str4);
+            Log.d("browser/DLHandler", "Guess file name is: " + strGuessFileName + " mimetype is: " + strSubstring);
         }
         String externalStorageState = Environment.getExternalStorageState();
-        int i2 = 2131493220;
-        if (!externalStorageState.equals("mounted")) {
+        boolean zEquals = externalStorageState.equals("mounted");
+        int i2 = R.string.download_sdcard_busy_dlg_title;
+        if (!zEquals) {
             if (externalStorageState.equals("shared")) {
-                string = activity.getString(2131493221);
+                string = activity.getString(R.string.download_sdcard_busy_dlg_msg);
             } else {
-                string = activity.getString(2131493219, new Object[]{strGuessFileName});
-                i2 = 2131493218;
+                string = activity.getString(R.string.download_no_sdcard_dlg_msg, strGuessFileName);
+                i2 = R.string.download_no_sdcard_dlg_title;
             }
-            new AlertDialog.Builder(activity).setTitle(i2).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(string).setPositiveButton(2131492964, (DialogInterface.OnClickListener) null).show();
+            new AlertDialog.Builder(activity).setTitle(i2).setIconAttribute(android.R.attr.alertDialogIcon).setMessage(string).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
             return;
         }
         String downloadPath = BrowserSettings.getInstance().getDownloadPath();
         if (downloadPath.startsWith("/storage/") && (iIndexOf = downloadPath.indexOf("/", "/storage/".length())) > 0) {
-            String strSubstring = downloadPath.substring(0, iIndexOf);
+            String strSubstring2 = downloadPath.substring(0, iIndexOf);
             if (DEBUG) {
-                Log.d("browser/DLHandler", "rootPath = " + strSubstring);
+                Log.d("browser/DLHandler", "rootPath = " + strSubstring2);
             }
-            StorageVolume storageVolume = ((StorageManager) activity.getSystemService("storage")).getStorageVolume(new File(strSubstring));
+            StorageVolume storageVolume = ((StorageManager) activity.getSystemService("storage")).getStorageVolume(new File(strSubstring2));
             if (storageVolume == null) {
                 if (DEBUG) {
                     Log.d("browser/DLHandler", "volume is null: " + downloadPath);
                 }
-            } else if (storageVolume.isRemovable() && !new File(strSubstring).canWrite()) {
+            } else if (storageVolume.isRemovable() && !new File(strSubstring2).canWrite()) {
                 if (DEBUG) {
                     Log.d("browser/DLHandler", "  DownloadPath " + downloadPath + " can't write!");
                 }
-                new AlertDialog.Builder(activity).setTitle(2131492868).setIcon(android.R.drawable.ic_dialog_alert).setMessage(activity.getString(2131492869)).setPositiveButton(2131492964, (DialogInterface.OnClickListener) null).show();
+                new AlertDialog.Builder(activity).setTitle(R.string.download_path_unavailable_dlg_title).setIcon(android.R.drawable.ic_dialog_alert).setMessage(activity.getString(R.string.download_path_unavailable_dlg_msg)).setPositiveButton(R.string.ok, (DialogInterface.OnClickListener) null).show();
                 return;
             }
         }
@@ -112,10 +114,10 @@ public class DownloadHandler {
             webAddress.setPath(encodePath(webAddress.getPath()));
             String string2 = webAddress.toString();
             try {
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(string2));
-                request.setMimeType(str4);
+                final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(string2));
+                request.setMimeType(strSubstring);
                 try {
-                    sBrowserDownloadExt.setRequestDestinationDir(BrowserSettings.getInstance().getDownloadPath(), request, strGuessFileName, str4);
+                    sBrowserDownloadExt.setRequestDestinationDir(BrowserSettings.getInstance().getDownloadPath(), request, strGuessFileName, strSubstring);
                     request.allowScanningByMediaScanner();
                     request.setDescription(webAddress.getHost());
                     String cookie = CookieManager.getInstance().getCookie(str, z);
@@ -123,22 +125,7 @@ public class DownloadHandler {
                     request.addRequestHeader("User-Agent", str2);
                     request.addRequestHeader("Referer", str5);
                     request.setNotificationVisibility(1);
-                    if (str4 != null) {
-                        new Thread("Browser download", (DownloadManager) activity.getSystemService("download"), request) {
-                            final DownloadManager val$manager;
-                            final DownloadManager.Request val$request;
-
-                            {
-                                this.val$manager = downloadManager;
-                                this.val$request = request;
-                            }
-
-                            @Override
-                            public void run() {
-                                this.val$manager.enqueue(this.val$request);
-                            }
-                        }.start();
-                    } else {
+                    if (strSubstring == null) {
                         if (TextUtils.isEmpty(string2)) {
                             return;
                         }
@@ -146,20 +133,28 @@ public class DownloadHandler {
                             URI.create(string2);
                             new FetchUrlMimeType(activity, request, string2, cookie, str2).start();
                         } catch (IllegalArgumentException e) {
-                            Toast.makeText(activity, 2131493222, 0).show();
+                            Toast.makeText(activity, R.string.cannot_download, 0).show();
                             return;
                         }
+                    } else {
+                        final DownloadManager downloadManager = (DownloadManager) activity.getSystemService("download");
+                        new Thread("Browser download") {
+                            @Override
+                            public void run() {
+                                downloadManager.enqueue(request);
+                            }
+                        }.start();
                     }
-                    sBrowserDownloadExt.showToastWithFileSize(activity, j, activity.getResources().getString(2131493223));
+                    sBrowserDownloadExt.showToastWithFileSize(activity, j, activity.getResources().getString(R.string.download_pending));
                     Intent intent = new Intent("android.intent.action.VIEW_DOWNLOADS");
                     intent.setFlags(268468224);
                     activity.startActivity(intent);
                 } catch (IllegalStateException e2) {
                     Log.w("DLHandler", "Exception trying to create Download dir:", e2);
-                    Toast.makeText(activity, 2131493220, 0).show();
+                    Toast.makeText(activity, R.string.download_sdcard_busy_dlg_title, 0).show();
                 }
             } catch (IllegalArgumentException e3) {
-                Toast.makeText(activity, 2131493222, 0).show();
+                Toast.makeText(activity, R.string.cannot_download, 0).show();
             }
         } catch (Exception e4) {
             if (DEBUG) {

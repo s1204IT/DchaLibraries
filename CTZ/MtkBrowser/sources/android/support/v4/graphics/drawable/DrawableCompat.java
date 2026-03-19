@@ -16,9 +16,9 @@ public final class DrawableCompat {
         return false;
     }
 
-    public static boolean setLayoutDirection(Drawable drawable, int i) {
+    public static boolean setLayoutDirection(Drawable drawable, int layoutDirection) {
         if (Build.VERSION.SDK_INT >= 23) {
-            return drawable.setLayoutDirection(i);
+            return drawable.setLayoutDirection(layoutDirection);
         }
         if (Build.VERSION.SDK_INT < 17) {
             return false;
@@ -34,7 +34,7 @@ public final class DrawableCompat {
         }
         if (sSetLayoutDirectionMethod != null) {
             try {
-                sSetLayoutDirectionMethod.invoke(drawable, Integer.valueOf(i));
+                sSetLayoutDirectionMethod.invoke(drawable, Integer.valueOf(layoutDirection));
                 return true;
             } catch (Exception e2) {
                 Log.i("DrawableCompat", "Failed to invoke setLayoutDirection(int) via reflection", e2);

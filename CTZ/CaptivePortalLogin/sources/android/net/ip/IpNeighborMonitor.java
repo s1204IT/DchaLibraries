@@ -119,23 +119,23 @@ public class IpNeighborMonitor extends PacketReader {
     private void parseNetlinkMessageBuffer(ByteBuffer byteBuffer, long j) {
         while (byteBuffer.remaining() > 0) {
             int iPosition = byteBuffer.position();
-            NetlinkMessage netlinkMessage = NetlinkMessage.parse(byteBuffer);
-            if (netlinkMessage == null || netlinkMessage.getHeader() == null) {
+            ?? r1 = NetlinkMessage.parse(byteBuffer);
+            if (r1 == 0 || r1.getHeader() == null) {
                 byteBuffer.position(iPosition);
                 this.mLog.e("unparsable netlink msg: " + NetlinkConstants.hexify(byteBuffer));
                 return;
             }
-            int i = netlinkMessage.getHeader().nlmsg_pid;
+            int i = r1.getHeader().nlmsg_pid;
             if (i != 0) {
                 this.mLog.e("non-kernel source portId: " + BitUtils.uint32(i));
                 return;
             }
-            if (netlinkMessage instanceof NetlinkErrorMessage) {
-                this.mLog.e("netlink error: " + netlinkMessage);
-            } else if (!(netlinkMessage instanceof RtNetlinkNeighborMessage)) {
-                this.mLog.i("non-rtnetlink neighbor msg: " + netlinkMessage);
+            if (r1 instanceof NetlinkErrorMessage) {
+                this.mLog.e("netlink error: " + ((Object) r1));
+            } else if (r1 instanceof RtNetlinkNeighborMessage) {
+                evaluateRtNetlinkNeighborMessage(r1, j);
             } else {
-                evaluateRtNetlinkNeighborMessage((RtNetlinkNeighborMessage) netlinkMessage, j);
+                this.mLog.i("non-rtnetlink neighbor msg: " + ((Object) r1));
             }
         }
     }

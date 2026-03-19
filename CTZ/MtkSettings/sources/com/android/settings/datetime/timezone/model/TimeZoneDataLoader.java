@@ -22,7 +22,7 @@ public class TimeZoneDataLoader extends AsyncLoader<TimeZoneData> {
     }
 
     @Override
-    public void onDiscardResult(TimeZoneData timeZoneData) {
+    protected void onDiscardResult(TimeZoneData timeZoneData) {
     }
 
     public static class LoaderCreator implements LoaderManager.LoaderCallbacks<TimeZoneData> {

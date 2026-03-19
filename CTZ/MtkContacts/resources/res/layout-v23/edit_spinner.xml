@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Spinner xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="start|bottom"
+    android:id="@+id/spinner"
+    android:paddingTop="0dp"
+    android:paddingBottom="0dp"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/editor_min_line_item_height"
+    android:paddingEnd="@dimen/editor_spinner_right_padding_workaround"
+    style="@android:style/Widget.Material.Spinner.Underlined"/>

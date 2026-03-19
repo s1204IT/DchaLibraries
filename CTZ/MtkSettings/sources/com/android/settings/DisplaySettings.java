@@ -80,7 +80,7 @@ public class DisplaySettings extends DashboardFragment {
         return R.string.help_uri_display;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new CameraGesturePreferenceController(context));
         arrayList.add(new LiftToWakePreferenceController(context));

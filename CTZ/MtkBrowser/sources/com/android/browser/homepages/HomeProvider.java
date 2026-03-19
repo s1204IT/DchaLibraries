@@ -16,28 +16,6 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
 public class HomeProvider extends ContentProvider {
-    private static boolean interceptFile(String str) {
-        return str.startsWith("file:///") && new File(str.substring(7)).isDirectory();
-    }
-
-    public static WebResourceResponse shouldInterceptRequest(Context context, String str) {
-        WebResourceResponse webResourceResponse;
-        try {
-        } catch (IOException e) {
-            Log.e("HomeProvider", "Failed to create WebResourceResponse: " + e.getMessage());
-        }
-        if (str.equals("content://com.android.browser.site_navigation/websites") || str.equals("content://com.android.browser.home/")) {
-            webResourceResponse = new WebResourceResponse("text/html", "utf-8", context.getContentResolver().openInputStream(Uri.parse(str)));
-        } else if (BrowserSettings.getInstance().isDebugEnabled() && interceptFile(str)) {
-            PipedInputStream pipedInputStream = new PipedInputStream();
-            new RequestHandler(context, Uri.parse(str), new PipedOutputStream(pipedInputStream)).start();
-            webResourceResponse = new WebResourceResponse("text/html", "utf-8", pipedInputStream);
-        } else {
-            webResourceResponse = null;
-        }
-        return webResourceResponse;
-    }
-
     @Override
     public int delete(Uri uri, String str, String[] strArr) {
         return 0;
@@ -59,6 +37,16 @@ public class HomeProvider extends ContentProvider {
     }
 
     @Override
+    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
+        return null;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
+        return 0;
+    }
+
+    @Override
     public ParcelFileDescriptor openFile(Uri uri, String str) {
         try {
             ParcelFileDescriptor[] parcelFileDescriptorArrCreatePipe = ParcelFileDescriptor.createPipe();
@@ -70,13 +58,24 @@ public class HomeProvider extends ContentProvider {
         }
     }
 
-    @Override
-    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
-        return null;
+    public static WebResourceResponse shouldInterceptRequest(Context context, String str) {
+        try {
+            if (!str.equals("content://com.android.browser.site_navigation/websites") && !str.equals("content://com.android.browser.home/")) {
+                if (BrowserSettings.getInstance().isDebugEnabled() && interceptFile(str)) {
+                    PipedInputStream pipedInputStream = new PipedInputStream();
+                    new RequestHandler(context, Uri.parse(str), new PipedOutputStream(pipedInputStream)).start();
+                    return new WebResourceResponse("text/html", "utf-8", pipedInputStream);
+                }
+                return null;
+            }
+            return new WebResourceResponse("text/html", "utf-8", context.getContentResolver().openInputStream(Uri.parse(str)));
+        } catch (IOException e) {
+            Log.e("HomeProvider", "Failed to create WebResourceResponse: " + e.getMessage());
+            return null;
+        }
     }
 
-    @Override
-    public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
-        return 0;
+    private static boolean interceptFile(String str) {
+        return str.startsWith("file:///") && new File(str.substring(7)).isDirectory();
     }
 }

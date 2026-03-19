@@ -175,7 +175,7 @@ public interface StatusBarIconController {
             return this.mShouldLog;
         }
 
-        public void onIconAdded(int i, String str, boolean z, StatusBarIconHolder statusBarIconHolder) {
+        protected void onIconAdded(int i, String str, boolean z, StatusBarIconHolder statusBarIconHolder) {
             addHolder(i, str, z, statusBarIconHolder);
         }
 
@@ -239,7 +239,7 @@ public interface StatusBarIconController {
             this.mGroup.removeAllViews();
         }
 
-        public void onIconExternal(int i, int i2) {
+        protected void onIconExternal(int i, int i2) {
             ImageView imageView = (ImageView) this.mGroup.getChildAt(i);
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             imageView.setAdjustViewBounds(true);
@@ -255,7 +255,7 @@ public interface StatusBarIconController {
             imageView.setLayoutParams(layoutParams);
         }
 
-        public void onRemoveIcon(int i) {
+        protected void onRemoveIcon(int i) {
             if (this.mIsInDemoMode) {
                 this.mDemoStatusIcons.onRemoveIcon((StatusIconDisplayable) this.mGroup.getChildAt(i));
             }

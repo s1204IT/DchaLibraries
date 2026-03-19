@@ -7,13 +7,6 @@ final class NaturalOrdering extends Ordering<Comparable> implements Serializable
     static final NaturalOrdering INSTANCE = new NaturalOrdering();
     private static final long serialVersionUID = 0;
 
-    private NaturalOrdering() {
-    }
-
-    private Object readResolve() {
-        return INSTANCE;
-    }
-
     @Override
     public int compare(Comparable comparable, Comparable comparable2) {
         Preconditions.checkNotNull(comparable);
@@ -26,7 +19,14 @@ final class NaturalOrdering extends Ordering<Comparable> implements Serializable
         return ReverseNaturalOrdering.INSTANCE;
     }
 
+    private Object readResolve() {
+        return INSTANCE;
+    }
+
     public String toString() {
         return "Ordering.natural()";
+    }
+
+    private NaturalOrdering() {
     }
 }

@@ -9,6 +9,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import com.android.browser.BrowserSettings;
+import com.android.browser.R;
 import com.mediatek.common.search.SearchEngine;
 import com.mediatek.search.SearchEngineManager;
 import java.util.ArrayList;
@@ -23,23 +24,6 @@ public class SearchEngineSettings extends PreferenceFragment implements Preferen
     private SharedPreferences mPrefs;
     private List<RadioPreference> mRadioPrefs;
 
-    private PreferenceScreen createPreferenceHierarchy() {
-        PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(this.mActivity);
-        PreferenceCategory preferenceCategory = new PreferenceCategory(this.mActivity);
-        preferenceCategory.setTitle(2131493065);
-        preferenceScreenCreatePreferenceScreen.addPreference(preferenceCategory);
-        for (int i = 0; i < this.mEntries.length; i++) {
-            RadioPreference radioPreference = new RadioPreference(this.mActivity);
-            radioPreference.setWidgetLayoutResource(2130968619);
-            radioPreference.setTitle(this.mEntries[i]);
-            radioPreference.setOrder(i);
-            radioPreference.setOnPreferenceClickListener(this);
-            preferenceCategory.addPreference(radioPreference);
-            this.mRadioPrefs.add(radioPreference);
-        }
-        return preferenceScreenCreatePreferenceScreen;
-    }
-
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -53,18 +37,17 @@ public class SearchEngineSettings extends PreferenceFragment implements Preferen
             this.mEntryValues = new String[size];
             this.mEntries = new String[size];
             this.mEntryFavicon = new String[size];
-            int i = 0;
-            int i2 = -1;
-            while (i < size) {
-                this.mEntryValues[i] = ((SearchEngine) availables.get(i)).getName();
-                this.mEntries[i] = ((SearchEngine) availables.get(i)).getLabel();
-                this.mEntryFavicon[i] = ((SearchEngine) availables.get(i)).getFaviconUri();
-                int i3 = this.mEntryValues[i].equals(searchEngineName) ? i : i2;
-                i++;
-                i2 = i3;
+            int i = -1;
+            for (int i2 = 0; i2 < size; i2++) {
+                this.mEntryValues[i2] = ((SearchEngine) availables.get(i2)).getName();
+                this.mEntries[i2] = ((SearchEngine) availables.get(i2)).getLabel();
+                this.mEntryFavicon[i2] = ((SearchEngine) availables.get(i2)).getFaviconUri();
+                if (this.mEntryValues[i2].equals(searchEngineName)) {
+                    i = i2;
+                }
             }
             setPreferenceScreen(createPreferenceHierarchy());
-            this.mRadioPrefs.get(i2).setChecked(true);
+            this.mRadioPrefs.get(i).setChecked(true);
         }
     }
 
@@ -74,6 +57,23 @@ public class SearchEngineSettings extends PreferenceFragment implements Preferen
         SharedPreferences.Editor editorEdit = this.mPrefs.edit();
         editorEdit.putBoolean("syc_search_engine", false);
         editorEdit.commit();
+    }
+
+    private PreferenceScreen createPreferenceHierarchy() {
+        PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(this.mActivity);
+        PreferenceCategory preferenceCategory = new PreferenceCategory(this.mActivity);
+        preferenceCategory.setTitle(R.string.pref_content_search_engine);
+        preferenceScreenCreatePreferenceScreen.addPreference(preferenceCategory);
+        for (int i = 0; i < this.mEntries.length; i++) {
+            RadioPreference radioPreference = new RadioPreference(this.mActivity);
+            radioPreference.setWidgetLayoutResource(R.layout.radio_preference);
+            radioPreference.setTitle(this.mEntries[i]);
+            radioPreference.setOrder(i);
+            radioPreference.setOnPreferenceClickListener(this);
+            preferenceCategory.addPreference(radioPreference);
+            this.mRadioPrefs.add(radioPreference);
+        }
+        return preferenceScreenCreatePreferenceScreen;
     }
 
     @Override

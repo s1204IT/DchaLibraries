@@ -19,10 +19,10 @@ public class CheckMemoryTask extends AsyncTask<Object, Void, Void> {
             Log.d("browser", "Incorrect parameters to CheckMemoryTask doInBackground(): " + String.valueOf(objArr.length));
             return null;
         }
-        if (!Performance.checkShouldReleaseTabs(((Integer) objArr[0]).intValue(), (ArrayList) objArr[1], ((Boolean) objArr[2]).booleanValue(), (String) objArr[3], (CopyOnWriteArrayList) objArr[4], ((Boolean) objArr[5]).booleanValue()) || this.mHandler == null || this.mHandler.hasMessages(1100)) {
+        if (Performance.checkShouldReleaseTabs(((Integer) objArr[0]).intValue(), (ArrayList) objArr[1], ((Boolean) objArr[2]).booleanValue(), (String) objArr[3], (CopyOnWriteArrayList) objArr[4], ((Boolean) objArr[5]).booleanValue()) && this.mHandler != null && !this.mHandler.hasMessages(1100)) {
+            this.mHandler.sendEmptyMessage(1100);
             return null;
         }
-        this.mHandler.sendEmptyMessage(1100);
         return null;
     }
 }

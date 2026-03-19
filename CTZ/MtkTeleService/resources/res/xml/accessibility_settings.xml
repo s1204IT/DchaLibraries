@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" xmlns:phone="http://schemas.android.com/apk/res/com.android.phone" android:title="@string/accessibility_settings_activity_title">
+    <com.android.phone.settings.TtyModeListPreference
+        android:persistent="false"
+        android:entries="@array/tty_mode_entries"
+        android:title="@string/tty_mode_option_title"
+        android:key="@string/tty_mode_key"
+        android:summary="@string/tty_mode_option_summary"
+        android:entryValues="@array/tty_mode_values"/>
+    <SwitchPreference
+        android:persistent="true"
+        android:title="@string/hac_mode_title"
+        android:key="button_hac_key"
+        android:summary="@string/hac_mode_summary"/>
+    <SwitchPreference
+        android:persistent="true"
+        android:title="@string/rtt_mode_title"
+        android:key="button_rtt_key"
+        android:summary="@string/rtt_mode_summary"/>
+    <com.android.phone.settings.TextViewPreference
+        android:title="@string/rtt_mode_more_information"
+        android:key="button_rtt_more_information_key"/>
+    <SwitchPreference
+        android:title="@string/dual_mic_title"
+        android:key="button_dual_mic_key"
+        android:summary="@string/dual_mic_summary"
+        android:defaultValue="true"/>
+</PreferenceScreen>

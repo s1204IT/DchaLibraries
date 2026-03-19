@@ -365,7 +365,7 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         this.mMenuListener.onMenuClicked(this.mParent, (this.mIconLocation[0] - this.mParentLocation[0]) + i, (this.mIconLocation[1] - this.mParentLocation[1]) + height, this.mMenuItems.get(this.mMenuContainer.indexOfChild(view)));
     }
 
-    public boolean isMenuLocationChange() {
+    private boolean isMenuLocationChange() {
         return (this.mOnLeft && ((this.mTranslation > ((float) (-this.mIconPadding)) ? 1 : (this.mTranslation == ((float) (-this.mIconPadding)) ? 0 : -1)) < 0)) || (!this.mOnLeft && ((this.mTranslation > ((float) this.mIconPadding) ? 1 : (this.mTranslation == ((float) this.mIconPadding) ? 0 : -1)) > 0));
     }
 
@@ -390,7 +390,7 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         this.mIconsPlaced = true;
     }
 
-    public void setMenuAlpha(float f) {
+    private void setMenuAlpha(float f) {
         this.mAlpha = f;
         if (this.mMenuContainer == null) {
             return;
@@ -407,7 +407,7 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         }
     }
 
-    public float getSpaceForMenu() {
+    private float getSpaceForMenu() {
         return this.mHorizSpaceForIcon * this.mMenuContainer.getChildCount();
     }
 
@@ -426,7 +426,7 @@ public class NotificationMenuRow implements View.OnClickListener, NotificationMe
         }
     }
 
-    public void fadeInMenu(final float f) {
+    private void fadeInMenu(final float f) {
         if (this.mDismissing || this.mAnimating) {
             return;
         }

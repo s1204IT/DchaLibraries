@@ -27,11 +27,6 @@ public class DefaultSuggestionViewFactory implements SuggestionViewFactory {
     }
 
     @Override
-    public boolean canCreateView(Suggestion suggestion) {
-        return true;
-    }
-
-    @Override
     public Collection<String> getSuggestionViewTypes() {
         if (this.mViewTypes == null) {
             this.mViewTypes = new HashSet<>();
@@ -62,5 +57,10 @@ public class DefaultSuggestionViewFactory implements SuggestionViewFactory {
             }
         }
         return this.mDefaultFactory.getViewType(suggestion);
+    }
+
+    @Override
+    public boolean canCreateView(Suggestion suggestion) {
+        return true;
     }
 }

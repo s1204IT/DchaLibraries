@@ -16,7 +16,7 @@ public class VibrateOnTouchPreferenceController extends SettingPrefController {
         };
     }
 
-    public static boolean hasHaptic(Context context) {
+    private static boolean hasHaptic(Context context) {
         Vibrator vibrator = (Vibrator) context.getSystemService("vibrator");
         return vibrator != null && vibrator.hasVibrator();
     }

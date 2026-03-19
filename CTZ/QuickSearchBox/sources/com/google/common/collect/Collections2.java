@@ -7,15 +7,6 @@ import java.util.Collection;
 public final class Collections2 {
     static final Joiner STANDARD_JOINER = Joiner.on(", ").useForNull("null");
 
-    static <T> Collection<T> cast(Iterable<T> iterable) {
-        return (Collection) iterable;
-    }
-
-    static StringBuilder newStringBuilderForCollection(int i) {
-        CollectPreconditions.checkNonnegative(i, "size");
-        return new StringBuilder((int) Math.min(((long) i) * 8, 1073741824L));
-    }
-
     static boolean safeContains(Collection<?> collection, Object obj) {
         Preconditions.checkNotNull(collection);
         try {
@@ -25,5 +16,14 @@ public final class Collections2 {
         } catch (NullPointerException e2) {
             return false;
         }
+    }
+
+    static StringBuilder newStringBuilderForCollection(int i) {
+        CollectPreconditions.checkNonnegative(i, "size");
+        return new StringBuilder((int) Math.min(((long) i) * 8, 1073741824L));
+    }
+
+    static <T> Collection<T> cast(Iterable<T> iterable) {
+        return (Collection) iterable;
     }
 }

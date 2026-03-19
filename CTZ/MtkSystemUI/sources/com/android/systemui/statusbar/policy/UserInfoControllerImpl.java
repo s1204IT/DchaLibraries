@@ -98,7 +98,7 @@ public class UserInfoControllerImpl implements UserInfoController {
             final int iMax = Math.max(resources.getDimensionPixelSize(R.dimen.multi_user_avatar_expanded_size), resources.getDimensionPixelSize(R.dimen.multi_user_avatar_keyguard_size));
             this.mUserInfoTask = new AsyncTask<Void, Void, UserInfoQueryResult>() {
                 @Override
-                public UserInfoQueryResult doInBackground(Void... voidArr) {
+                protected UserInfoQueryResult doInBackground(Void... voidArr) {
                     Drawable defaultUserIcon;
                     Cursor cursorQuery;
                     UserManager userManager = UserManager.get(UserInfoControllerImpl.this.mContext);
@@ -122,7 +122,7 @@ public class UserInfoControllerImpl implements UserInfoController {
                 }
 
                 @Override
-                public void onPostExecute(UserInfoQueryResult userInfoQueryResult) {
+                protected void onPostExecute(UserInfoQueryResult userInfoQueryResult) {
                     UserInfoControllerImpl.this.mUserName = userInfoQueryResult.getName();
                     UserInfoControllerImpl.this.mUserDrawable = userInfoQueryResult.getAvatar();
                     UserInfoControllerImpl.this.mUserAccount = userInfoQueryResult.getUserAccount();
@@ -140,7 +140,7 @@ public class UserInfoControllerImpl implements UserInfoController {
         }
     }
 
-    public void notifyChanged() {
+    private void notifyChanged() {
         Iterator<UserInfoController.OnUserInfoChangedListener> it = this.mCallbacks.iterator();
         while (it.hasNext()) {
             it.next().onUserInfoChanged(this.mUserName, this.mUserDrawable, this.mUserAccount);

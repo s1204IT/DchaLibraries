@@ -211,7 +211,7 @@ public class SoundSettings extends DashboardFragment {
         }
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SoundSettings soundSettings, Lifecycle lifecycle) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context, SoundSettings soundSettings, Lifecycle lifecycle) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new ZenModePreferenceController(context, lifecycle, "zen_mode"));
         arrayList.add(new PhoneRingtonePreferenceController(context));
@@ -247,7 +247,7 @@ public class SoundSettings extends DashboardFragment {
         }
     }
 
-    public void onPreferenceDataChanged(ListPreference listPreference) {
+    private void onPreferenceDataChanged(ListPreference listPreference) {
         if (this.mDialogFragment != null) {
             this.mDialogFragment.onListPreferenceUpdated(listPreference);
         }

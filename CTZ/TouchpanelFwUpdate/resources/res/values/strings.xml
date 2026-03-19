@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="UpdateMessege">ボタンを押してファイルを選択するとアップデートを開始します</string>
+    <string name="app_name">タッチパネルアップデート</string>
+    <string name="UpdateStart">ファイル選択</string>
+</resources>

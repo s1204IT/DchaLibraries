@@ -42,7 +42,7 @@ public class NotificationSoundPreference extends RingtonePreference {
     private void updateRingtoneName(final Uri uri) {
         new AsyncTask<Object, Void, CharSequence>() {
             @Override
-            public CharSequence doInBackground(Object... objArr) {
+            protected CharSequence doInBackground(Object... objArr) {
                 if (uri == null) {
                     return NotificationSoundPreference.this.getContext().getString(R.string.launch_warning_title);
                 }
@@ -56,7 +56,7 @@ public class NotificationSoundPreference extends RingtonePreference {
             }
 
             @Override
-            public void onPostExecute(CharSequence charSequence) {
+            protected void onPostExecute(CharSequence charSequence) {
                 NotificationSoundPreference.this.setSummary(charSequence);
             }
         }.execute(new Object[0]);

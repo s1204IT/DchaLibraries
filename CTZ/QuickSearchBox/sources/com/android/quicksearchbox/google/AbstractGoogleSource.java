@@ -6,16 +6,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import com.android.quicksearchbox.AbstractInternalSource;
 import com.android.quicksearchbox.CursorBackedSourceResult;
+import com.android.quicksearchbox.R;
 import com.android.quicksearchbox.SourceResult;
 import com.android.quicksearchbox.util.NamedTaskExecutor;
 
 public abstract class AbstractGoogleSource extends AbstractInternalSource implements GoogleSource {
+    public abstract SourceResult queryInternal(String str);
+
     public AbstractGoogleSource(Context context, Handler handler, NamedTaskExecutor namedTaskExecutor) {
         super(context, handler, namedTaskExecutor);
-    }
-
-    private SourceResult emptyIfNull(SourceResult sourceResult, String str) {
-        return sourceResult == null ? new CursorBackedSourceResult(this, str) : sourceResult;
     }
 
     @Override
@@ -35,7 +34,7 @@ public abstract class AbstractGoogleSource extends AbstractInternalSource implem
 
     @Override
     protected int getSourceIconResource() {
-        return 2130903040;
+        return R.mipmap.google_icon;
     }
 
     @Override
@@ -43,5 +42,7 @@ public abstract class AbstractGoogleSource extends AbstractInternalSource implem
         return emptyIfNull(queryInternal(str), str);
     }
 
-    public abstract SourceResult queryInternal(String str);
+    private SourceResult emptyIfNull(SourceResult sourceResult, String str) {
+        return sourceResult == null ? new CursorBackedSourceResult(this, str) : sourceResult;
+    }
 }

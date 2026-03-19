@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:id="@+id/message_container"
+    android:paddingLeft="@dimen/header_message_horizontal_padding"
+    android:paddingRight="@dimen/header_message_horizontal_padding"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:animateLayoutChanges="true">
+    <FrameLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size">
+        <ImageView
+            android:id="@+id/message_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:contentDescription="@null"/>
+    </FrameLayout>
+    <TextView
+        android:layout_gravity="center_vertical"
+        android:id="@+id/message_textview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:selectAllOnFocus="true"
+        android:layout_weight="1"/>
+    <Button
+        android:layout_gravity="end"
+        android:id="@+id/button_dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_dismiss"
+        style="?android:attr/buttonBarPositiveButtonStyle"/>
+</LinearLayout>

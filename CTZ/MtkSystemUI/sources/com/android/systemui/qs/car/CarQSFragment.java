@@ -170,12 +170,12 @@ public class CarQSFragment extends Fragment implements QS {
         }
     }
 
-    public void updateUserSwitcherHeight(int i) {
+    private void updateUserSwitcherHeight(int i) {
         this.mUserSwitcherContainer.getLayoutParams().height = i;
         this.mUserSwitcherContainer.requestLayout();
     }
 
-    public void animateHeightChange(boolean z) {
+    private void animateHeightChange(boolean z) {
         if (this.mAnimatorSet != null) {
             this.mAnimatorSet.cancel();
         }

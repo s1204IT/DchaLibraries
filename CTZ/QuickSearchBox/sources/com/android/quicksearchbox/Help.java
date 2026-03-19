@@ -17,27 +17,32 @@ public class Help {
         this.mConfig = config;
     }
 
+    public void addHelpMenuItem(Menu menu, String str) {
+        addHelpMenuItem(menu, str, false);
+    }
+
+    public void addHelpMenuItem(Menu menu, String str, boolean z) {
+        Intent helpIntent;
+        if (Settings.System.getInt(this.mContext.getContentResolver(), "dcha_state", 0) == 0) {
+            helpIntent = getHelpIntent(str);
+        } else {
+            helpIntent = null;
+        }
+        if (helpIntent != null) {
+            new MenuInflater(this.mContext).inflate(R.menu.help, menu);
+            MenuItem menuItemFindItem = menu.findItem(R.id.menu_help);
+            menuItemFindItem.setIntent(helpIntent);
+            if (z) {
+                menuItemFindItem.setShowAsAction(2);
+            }
+        }
+    }
+
     private Intent getHelpIntent(String str) {
         Uri helpUrl = this.mConfig.getHelpUrl(str);
         if (helpUrl == null) {
             return null;
         }
         return new Intent("android.intent.action.VIEW", helpUrl);
-    }
-
-    public void addHelpMenuItem(Menu menu, String str) {
-        addHelpMenuItem(menu, str, false);
-    }
-
-    public void addHelpMenuItem(Menu menu, String str, boolean z) {
-        Intent helpIntent = Settings.System.getInt(this.mContext.getContentResolver(), "dcha_state", 0) == 0 ? getHelpIntent(str) : null;
-        if (helpIntent != null) {
-            new MenuInflater(this.mContext).inflate(2131623936, menu);
-            MenuItem menuItemFindItem = menu.findItem(2131689503);
-            menuItemFindItem.setIntent(helpIntent);
-            if (z) {
-                menuItemFindItem.setShowAsAction(2);
-            }
-        }
     }
 }

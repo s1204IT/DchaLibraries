@@ -51,7 +51,7 @@ public class DataCollector implements SensorEventListener {
         return sInstance;
     }
 
-    public void updateConfiguration() {
+    private void updateConfiguration() {
         this.mEnableCollector = Build.IS_DEBUGGABLE && Settings.Secure.getInt(this.mContext.getContentResolver(), "data_collector_enable", 0) != 0;
         this.mCollectBadTouches = this.mEnableCollector && Settings.Secure.getInt(this.mContext.getContentResolver(), "data_collector_collect_bad_touches", 0) != 0;
         this.mAllowReportRejectedTouch = Build.IS_DEBUGGABLE && Settings.Secure.getInt(this.mContext.getContentResolver(), "data_collector_allow_rejected_touch_reports", 0) != 0;

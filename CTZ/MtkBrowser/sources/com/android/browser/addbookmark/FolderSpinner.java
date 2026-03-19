@@ -20,6 +20,29 @@ public class FolderSpinner extends Spinner implements AdapterView.OnItemSelected
     }
 
     @Override
+    public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener onItemSelectedListener) {
+        throw new RuntimeException("Cannot set an OnItemSelectedListener on a FolderSpinner");
+    }
+
+    public void setOnSetSelectionListener(OnSetSelectionListener onSetSelectionListener) {
+        this.mOnSetSelectionListener = onSetSelectionListener;
+    }
+
+    public void setSelectionIgnoringSelectionChange(int i) {
+        super.setSelection(i);
+    }
+
+    @Override
+    public void setSelection(int i) {
+        this.mFireSetSelection = true;
+        int selectedItemPosition = getSelectedItemPosition();
+        super.setSelection(i);
+        if (this.mOnSetSelectionListener != null && selectedItemPosition == i) {
+            onItemSelected(this, null, i, getAdapter().getItemId(i));
+        }
+    }
+
+    @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long j) {
         if (this.mFireSetSelection) {
             this.mOnSetSelectionListener.onSetSelection(j);
@@ -29,29 +52,5 @@ public class FolderSpinner extends Spinner implements AdapterView.OnItemSelected
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-    }
-
-    @Override
-    public void setOnItemSelectedListener(AdapterView.OnItemSelectedListener onItemSelectedListener) {
-        throw new RuntimeException("Cannot set an OnItemSelectedListener on a FolderSpinner");
-    }
-
-    public void setOnSetSelectionListener(OnSetSelectionListener onSetSelectionListener) {
-        this.mOnSetSelectionListener = onSetSelectionListener;
-    }
-
-    @Override
-    public void setSelection(int i) {
-        this.mFireSetSelection = true;
-        int selectedItemPosition = getSelectedItemPosition();
-        super.setSelection(i);
-        if (this.mOnSetSelectionListener == null || selectedItemPosition != i) {
-            return;
-        }
-        onItemSelected(this, null, i, getAdapter().getItemId(i));
-    }
-
-    public void setSelectionIgnoringSelectionChange(int i) {
-        super.setSelection(i);
     }
 }

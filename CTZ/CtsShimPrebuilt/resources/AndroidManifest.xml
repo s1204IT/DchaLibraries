@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="27"
+    android:versionName="8.1.0-4396705"
+    package="com.android.cts.ctsshim"
+    platformBuildVersionCode="27"
+    platformBuildVersionName="8.1.0">
+    <uses-sdk
+        android:minSdkVersion="24"
+        android:targetSdkVersion="24"/>
+    <restrict-update android:hash="__CAN_NOT_BE_UPDATED__"/>
+    <application android:hasCode="false">
+        <activity android:name=".InstallPriority">
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.SEARCH"/>
+                <category android:name="android.intent.category.INFO"/>
+            </intent-filter>
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+            </intent-filter>
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.SEND"/>
+            </intent-filter>
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+            </intent-filter>
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.SENDTO"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

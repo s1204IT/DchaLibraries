@@ -336,7 +336,7 @@ public class PluginManagerImpl extends BroadcastReceiver implements PluginManage
         }
     }
 
-    class CrashWhilePluginActiveException extends RuntimeException {
+    private class CrashWhilePluginActiveException extends RuntimeException {
         public CrashWhilePluginActiveException(Throwable th) {
             super(th);
         }

@@ -87,7 +87,7 @@ public class DualSimSettingsTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         Boolean bool = (Boolean) obj;
         Log.d("DualSimSettingsTile", "handleUpdateState,  simInserted=" + bool);
         IQuickSettingsPlugin iQuickSettingsPluginMakeQuickSettings = OpSystemUICustomizationFactoryBase.getOpFactory(this.mContext).makeQuickSettings(this.mContext);

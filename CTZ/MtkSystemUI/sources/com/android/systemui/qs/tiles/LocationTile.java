@@ -72,7 +72,7 @@ public class LocationTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (booleanState.slash == null) {
             booleanState.slash = new QSTile.SlashState();
         }

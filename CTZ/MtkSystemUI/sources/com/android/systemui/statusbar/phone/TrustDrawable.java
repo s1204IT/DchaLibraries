@@ -122,7 +122,7 @@ public class TrustDrawable extends Drawable {
         }
     }
 
-    public void updateState(boolean z) {
+    private void updateState(boolean z) {
         ?? r0;
         if (!this.mAnimating) {
             return;

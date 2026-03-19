@@ -152,7 +152,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         }
     }
 
-    public void updateNetworkProvider(ServiceState serviceState) {
+    private void updateNetworkProvider(ServiceState serviceState) {
         this.mDialog.setText(R.id.operator_name_value, serviceState.getOperatorAlphaLong());
     }
 
@@ -160,7 +160,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mDialog.setText(R.id.number_value, BidiFormatter.getInstance().unicodeWrap(getPhoneNumber(), TextDirectionHeuristics.LTR));
     }
 
-    public void updateDataState(int i) {
+    private void updateDataState(int i) {
         String string;
         switch (i) {
             case 0:
@@ -190,7 +190,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         }
     }
 
-    public void updateServiceState(ServiceState serviceState) {
+    private void updateServiceState(ServiceState serviceState) {
         String string;
         Log.d("SimStatusDialogCtrl", "updateServiceState, serviceState=" + serviceState);
         int state = serviceState.getState();
@@ -217,7 +217,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mCdmaSimStatus.setServiceState(serviceState);
     }
 
-    public void updateSignalStrength(SignalStrength signalStrength) {
+    private void updateSignalStrength(SignalStrength signalStrength) {
         boolean z;
         PersistableBundle configForSubId = this.mCarrierConfigManager.getConfigForSubId(this.mSubscriptionInfo.getSubscriptionId());
         if (configForSubId != null) {
@@ -250,7 +250,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mDialog.setText(R.id.signal_strength_value, "0");
     }
 
-    public void updateNetworkType() {
+    private void updateNetworkType() {
         String networkTypeName;
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         int dataNetworkType = this.mTelephonyManager.getDataNetworkType(subscriptionId);
@@ -287,7 +287,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         this.mDialog.setText(R.id.data_network_type_value, networktypeString);
     }
 
-    public void updateRoamingStatus(ServiceState serviceState) {
+    private void updateRoamingStatus(ServiceState serviceState) {
         if (serviceState.getRoaming()) {
             this.mDialog.setText(R.id.roaming_state_value, this.mRes.getString(R.string.radioInfo_roaming_in));
         } else {
@@ -295,7 +295,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         }
     }
 
-    public void updateIccidNumber() {
+    private void updateIccidNumber() {
         boolean z;
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         PersistableBundle configForSubId = this.mCarrierConfigManager.getConfigForSubId(subscriptionId);
@@ -422,7 +422,7 @@ public class SimStatusDialogController implements LifecycleObserver, OnPause, On
         return this.mTelephonyManager.getSimSerialNumber(i);
     }
 
-    public void updateCdmaStatus(ServiceState serviceState) {
+    private void updateCdmaStatus(ServiceState serviceState) {
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         int currentPhoneType = this.mTelephonyManager.getCurrentPhoneType(subscriptionId);
         Log.d("SimStatusDialogCtrl", "updateCdmaStatus, subId=" + subscriptionId + ", phoneType=" + currentPhoneType);

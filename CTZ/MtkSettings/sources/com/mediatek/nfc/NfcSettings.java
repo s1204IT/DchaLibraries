@@ -171,7 +171,7 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
         getPreferenceScreen().addPreference(this.mNfcServiceStatusPref);
     }
 
-    public void updatePreferenceEnabledStatus(int i) {
+    private void updatePreferenceEnabledStatus(int i) {
         Log.d("@M_NfcSettings", "updatePreferenceEnabledStatus nfc state :" + i);
         if (i == 3) {
             this.mNfcP2pModePref.setEnabled(true);
@@ -297,7 +297,7 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
         }
 
         @Override
-        public Integer doInBackground(Void... voidArr) {
+        protected Integer doInBackground(Void... voidArr) {
             NfcSettings.this.mNfcState = NfcSettings.this.mNfcAdapter.getAdapterState();
             NfcSettings.this.mNfcBeamOpen = NfcSettings.this.mNfcAdapter.isNdefPushEnabled();
             Log.d("@M_NfcSettings", "doInBackground  mNfcState: " + NfcSettings.this.mNfcState);
@@ -306,7 +306,7 @@ public class NfcSettings extends SettingsPreferenceFragment implements Indexable
         }
 
         @Override
-        public void onPostExecute(Integer num) {
+        protected void onPostExecute(Integer num) {
             Log.d("@M_NfcSettings", "onPostExecute");
             NfcSettings.this.updatePreferenceEnabledStatus(num.intValue());
         }

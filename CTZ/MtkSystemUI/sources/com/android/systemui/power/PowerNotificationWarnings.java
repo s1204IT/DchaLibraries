@@ -219,7 +219,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         dismissHighTemperatureWarningInternal();
     }
 
-    public void dismissHighTemperatureWarningInternal() {
+    private void dismissHighTemperatureWarningInternal() {
         this.mNoMan.cancelAsUser("high_temp", 4, UserHandle.ALL);
     }
 
@@ -234,7 +234,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         this.mNoMan.notifyAsUser("high_temp", 4, color.build(), UserHandle.ALL);
     }
 
-    public void showHighTemperatureDialog() {
+    private void showHighTemperatureDialog() {
         if (this.mHighTempDialog != null) {
             return;
         }
@@ -258,7 +258,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         this.mNoMan.cancelAsUser("high_temp", 39, UserHandle.ALL);
     }
 
-    public void showThermalShutdownDialog() {
+    private void showThermalShutdownDialog() {
         if (this.mThermalShutdownDialog != null) {
             return;
         }
@@ -298,7 +298,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         dismissLowBatteryNotification();
     }
 
-    public void dismissLowBatteryNotification() {
+    private void dismissLowBatteryNotification() {
         if (this.mWarning) {
             Slog.i("PowerUI.Notification", "dismissing low battery notification");
         }
@@ -337,12 +337,12 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         updateNotification();
     }
 
-    public void showAutoSaverSuggestion() {
+    private void showAutoSaverSuggestion() {
         this.mShowAutoSaverSuggestion = true;
         updateNotification();
     }
 
-    public void dismissAutoSaverSuggestion() {
+    private void dismissAutoSaverSuggestion() {
         this.mShowAutoSaverSuggestion = false;
         updateNotification();
     }
@@ -352,7 +352,7 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         updateNotification();
     }
 
-    public void showStartSaverConfirmation() {
+    private void showStartSaverConfirmation() {
         if (this.mSaverConfirmation != null) {
             return;
         }
@@ -463,15 +463,15 @@ public class PowerNotificationWarnings implements PowerUI.WarningsUI {
         powerNotificationWarnings.onAutoSaverEnabledConfirmationClosed();
     }
 
-    public void onAutoSaverEnabledConfirmationClosed() {
+    private void onAutoSaverEnabledConfirmationClosed() {
         this.mSaverEnabledConfirmation = null;
     }
 
-    public void setSaverMode(boolean z, boolean z2) {
+    private void setSaverMode(boolean z, boolean z2) {
         BatterySaverUtils.setPowerSaveMode(this.mContext, z, z2);
     }
 
-    public void scheduleAutoBatterySaver() {
+    private void scheduleAutoBatterySaver() {
         int integer = this.mContext.getResources().getInteger(R.integer.config_defaultBinderHeavyHitterWatcherBatchSize);
         if (integer == 0) {
             integer = 15;

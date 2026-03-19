@@ -18,6 +18,7 @@ import android.os.ParcelFileDescriptor;
 import android.text.TextUtils;
 import android.util.Log;
 import com.android.browser.Extensions;
+import com.android.browser.R;
 import com.android.browser.provider.BrowserProvider2;
 import com.mediatek.browser.ext.IBrowserSiteNavigationExt;
 import java.io.ByteArrayOutputStream;
@@ -27,97 +28,6 @@ public class SiteNavigationProvider extends ContentProvider {
     private static final Uri NOTIFICATION_URI;
     private static final UriMatcher S_URI_MATCHER = new UriMatcher(-1);
     private SiteNavigationDatabaseHelper mOpenHelper;
-
-    private class SiteNavigationDatabaseHelper extends SQLiteOpenHelper {
-        private IBrowserSiteNavigationExt mBrowserSiteNavigationExt;
-        private Context mContext;
-        final SiteNavigationProvider this$0;
-
-        public SiteNavigationDatabaseHelper(SiteNavigationProvider siteNavigationProvider, Context context) {
-            super(context, "websites.db", (SQLiteDatabase.CursorFactory) null, 1);
-            this.this$0 = siteNavigationProvider;
-            this.mBrowserSiteNavigationExt = null;
-            this.mContext = context;
-        }
-
-        private void createTable(SQLiteDatabase sQLiteDatabase) {
-            sQLiteDatabase.execSQL("CREATE TABLE websites (_id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT,title TEXT,created LONG,website INTEGER,thumbnail BLOB DEFAULT NULL,favicon BLOB DEFAULT NULL,default_thumb TEXT);");
-        }
-
-        private void initTable(SQLiteDatabase sQLiteDatabase) {
-            int i;
-            this.mBrowserSiteNavigationExt = Extensions.getSiteNavigationPlugin(this.mContext);
-            CharSequence[] predefinedWebsites = this.mBrowserSiteNavigationExt.getPredefinedWebsites();
-            CharSequence[] textArray = predefinedWebsites == null ? this.mContext.getResources().getTextArray(2131230815) : predefinedWebsites;
-            if (textArray == null) {
-                return;
-            }
-            int length = textArray.length;
-            if (this.mContext.getResources().getBoolean(2131296256)) {
-                i = 8;
-            } else {
-                int siteNavigationCount = this.mBrowserSiteNavigationExt.getSiteNavigationCount();
-                i = siteNavigationCount == 0 ? 9 : siteNavigationCount;
-            }
-            int i2 = i * 3;
-            if (length <= i2) {
-                i2 = length;
-            }
-            Bitmap bitmapDecodeResource = null;
-            for (int i3 = 0; i3 < i2; i3 += 3) {
-                try {
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    String string = textArray[i3 + 2].toString();
-                    if (string != null) {
-                        try {
-                            bitmapDecodeResource = string.length() != 0 ? BitmapFactory.decodeResource(this.mContext.getResources(), this.mContext.getResources().getIdentifier(string, "raw", this.mContext.getPackageName())) : BitmapFactory.decodeResource(this.mContext.getResources(), 2131165227);
-                        } finally {
-                            if (bitmapDecodeResource == null) {
-                                BitmapFactory.decodeResource(this.mContext.getResources(), 2131165227);
-                            }
-                        }
-                    }
-                    bitmapDecodeResource.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put("url", BrowserProvider2.replaceSystemPropertyInString(this.mContext, textArray[i3 + 1]).toString());
-                    contentValues.put("title", textArray[i3].toString());
-                    contentValues.put("created", "0");
-                    contentValues.put("website", "1");
-                    contentValues.put("thumbnail", byteArrayOutputStream.toByteArray());
-                    sQLiteDatabase.insertOrThrow("websites", "url", contentValues);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    Log.e("@M_browser/SiteNavigationProvider", "initTable: ArrayIndexOutOfBoundsException: " + e);
-                    return;
-                }
-            }
-            int i4 = i2 / 3;
-            while (i4 < i) {
-                ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
-                BitmapFactory.decodeResource(this.mContext.getResources(), 2131165227).compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream2);
-                ContentValues contentValues2 = new ContentValues();
-                StringBuilder sb = new StringBuilder();
-                sb.append("about:blank");
-                i4++;
-                sb.append(i4);
-                contentValues2.put("url", sb.toString());
-                contentValues2.put("title", "about:blank");
-                contentValues2.put("created", "0");
-                contentValues2.put("website", "1");
-                contentValues2.put("thumbnail", byteArrayOutputStream2.toByteArray());
-                sQLiteDatabase.insertOrThrow("websites", "url", contentValues2);
-            }
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase sQLiteDatabase) {
-            createTable(sQLiteDatabase);
-            initTable(sQLiteDatabase);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
-        }
-    }
 
     static {
         S_URI_MATCHER.addURI("com.android.browser.site_navigation", "websites", 0);
@@ -142,8 +52,60 @@ public class SiteNavigationProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        this.mOpenHelper = new SiteNavigationDatabaseHelper(this, getContext());
+        this.mOpenHelper = new SiteNavigationDatabaseHelper(getContext());
         return true;
+    }
+
+    @Override
+    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
+        SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
+        sQLiteQueryBuilder.setTables("websites");
+        switch (S_URI_MATCHER.match(uri)) {
+            case 0:
+                break;
+            case 1:
+                sQLiteQueryBuilder.appendWhere("_id=" + uri.getPathSegments().get(0));
+                break;
+            default:
+                Log.e("@M_browser/SiteNavigationProvider", "SiteNavigationProvider query Unknown URI: " + uri);
+                return null;
+        }
+        Cursor cursorQuery = sQLiteQueryBuilder.query(this.mOpenHelper.getReadableDatabase(), strArr, str, strArr2, null, null, TextUtils.isEmpty(str2) ? null : str2);
+        if (cursorQuery != null) {
+            cursorQuery.setNotificationUri(getContext().getContentResolver(), NOTIFICATION_URI);
+        }
+        return cursorQuery;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
+        SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
+        int iUpdate = 0;
+        switch (S_URI_MATCHER.match(uri)) {
+            case 0:
+                iUpdate = writableDatabase.update("websites", contentValues, str, strArr);
+                break;
+            case 1:
+                StringBuilder sb = new StringBuilder();
+                sb.append("_id=");
+                sb.append(uri.getLastPathSegment());
+                sb.append(TextUtils.isEmpty(str) ? "" : " AND (" + str + ')');
+                try {
+                    iUpdate = writableDatabase.update("websites", contentValues, sb.toString(), strArr);
+                } catch (SQLiteDiskIOException e) {
+                    Log.e("browser/SiteNavigationProvider", "Here happened SQLiteDiskIOException");
+                } catch (SQLiteFullException e2) {
+                    Log.e("browser/SiteNavigationProvider", "Here happened SQLiteFullException");
+                }
+                break;
+            default:
+                Log.e("@M_browser/SiteNavigationProvider", "SiteNavigationProvider update Unknown URI: " + uri);
+                return 0;
+        }
+        if (iUpdate > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return iUpdate;
     }
 
     @Override
@@ -158,57 +120,106 @@ public class SiteNavigationProvider extends ContentProvider {
         }
     }
 
-    @Override
-    public Cursor query(Uri uri, String[] strArr, String str, String[] strArr2, String str2) {
-        Cursor cursorQuery = null;
-        SQLiteQueryBuilder sQLiteQueryBuilder = new SQLiteQueryBuilder();
-        sQLiteQueryBuilder.setTables("websites");
-        switch (S_URI_MATCHER.match(uri)) {
-            case 1:
-                sQLiteQueryBuilder.appendWhere("_id=" + uri.getPathSegments().get(0));
-            case 0:
-                cursorQuery = sQLiteQueryBuilder.query(this.mOpenHelper.getReadableDatabase(), strArr, str, strArr2, null, null, TextUtils.isEmpty(str2) ? null : str2);
-                if (cursorQuery != null) {
-                    cursorQuery.setNotificationUri(getContext().getContentResolver(), NOTIFICATION_URI);
-                }
-                return cursorQuery;
-            default:
-                Log.e("@M_browser/SiteNavigationProvider", "SiteNavigationProvider query Unknown URI: " + uri);
-                return cursorQuery;
-        }
-    }
+    private class SiteNavigationDatabaseHelper extends SQLiteOpenHelper {
+        private IBrowserSiteNavigationExt mBrowserSiteNavigationExt;
+        private Context mContext;
 
-    @Override
-    public int update(Uri uri, ContentValues contentValues, String str, String[] strArr) {
-        int iUpdate;
-        SQLiteDatabase writableDatabase = this.mOpenHelper.getWritableDatabase();
-        switch (S_URI_MATCHER.match(uri)) {
-            case 0:
-                iUpdate = writableDatabase.update("websites", contentValues, str, strArr);
-                break;
-            case 1:
-                StringBuilder sb = new StringBuilder();
-                sb.append("_id=");
-                sb.append(uri.getLastPathSegment());
-                sb.append(TextUtils.isEmpty(str) ? "" : " AND (" + str + ')');
-                try {
-                    iUpdate = writableDatabase.update("websites", contentValues, sb.toString(), strArr);
-                } catch (SQLiteDiskIOException e) {
-                    Log.e("browser/SiteNavigationProvider", "Here happened SQLiteDiskIOException");
-                    iUpdate = 0;
-                } catch (SQLiteFullException e2) {
-                    Log.e("browser/SiteNavigationProvider", "Here happened SQLiteFullException");
-                    iUpdate = 0;
+        public SiteNavigationDatabaseHelper(Context context) {
+            super(context, "websites.db", (SQLiteDatabase.CursorFactory) null, 1);
+            this.mBrowserSiteNavigationExt = null;
+            this.mContext = context;
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase sQLiteDatabase) {
+            createTable(sQLiteDatabase);
+            initTable(sQLiteDatabase);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase sQLiteDatabase, int i, int i2) {
+        }
+
+        private void createTable(SQLiteDatabase sQLiteDatabase) {
+            sQLiteDatabase.execSQL("CREATE TABLE websites (_id INTEGER PRIMARY KEY AUTOINCREMENT,url TEXT,title TEXT,created LONG,website INTEGER,thumbnail BLOB DEFAULT NULL,favicon BLOB DEFAULT NULL,default_thumb TEXT);");
+        }
+
+        private void initTable(SQLiteDatabase sQLiteDatabase) {
+            int siteNavigationCount;
+            Bitmap bitmapDecodeResource;
+            this.mBrowserSiteNavigationExt = Extensions.getSiteNavigationPlugin(this.mContext);
+            CharSequence[] predefinedWebsites = this.mBrowserSiteNavigationExt.getPredefinedWebsites();
+            if (predefinedWebsites == null) {
+                predefinedWebsites = this.mContext.getResources().getTextArray(R.array.predefined_websites_default_optr);
+            }
+            if (predefinedWebsites == null) {
+                return;
+            }
+            int length = predefinedWebsites.length;
+            if (!this.mContext.getResources().getBoolean(R.bool.isTablet)) {
+                siteNavigationCount = this.mBrowserSiteNavigationExt.getSiteNavigationCount();
+                if (siteNavigationCount == 0) {
+                    siteNavigationCount = 9;
                 }
-                break;
-            default:
-                Log.e("@M_browser/SiteNavigationProvider", "SiteNavigationProvider update Unknown URI: " + uri);
-                return 0;
+            } else {
+                siteNavigationCount = 8;
+            }
+            int i = siteNavigationCount * 3;
+            if (length > i) {
+                length = i;
+            }
+            Bitmap bitmapDecodeResource2 = null;
+            for (int i2 = 0; i2 < length; i2 += 3) {
+                try {
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    String string = predefinedWebsites[i2 + 2].toString();
+                    if (string != null) {
+                        try {
+                            if (string.length() != 0) {
+                                bitmapDecodeResource = BitmapFactory.decodeResource(this.mContext.getResources(), this.mContext.getResources().getIdentifier(string, "raw", this.mContext.getPackageName()));
+                            } else {
+                                bitmapDecodeResource = BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
+                            }
+                        } finally {
+                            if (bitmapDecodeResource2 == null) {
+                                BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
+                            }
+                        }
+                    }
+                    if (bitmapDecodeResource == null) {
+                        bitmapDecodeResource2 = BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default);
+                    } else {
+                        bitmapDecodeResource2 = bitmapDecodeResource;
+                    }
+                    bitmapDecodeResource2.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("url", BrowserProvider2.replaceSystemPropertyInString(this.mContext, predefinedWebsites[i2 + 1]).toString());
+                    contentValues.put("title", predefinedWebsites[i2].toString());
+                    contentValues.put("created", "0");
+                    contentValues.put("website", "1");
+                    contentValues.put("thumbnail", byteArrayOutputStream.toByteArray());
+                    sQLiteDatabase.insertOrThrow("websites", "url", contentValues);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    Log.e("@M_browser/SiteNavigationProvider", "initTable: ArrayIndexOutOfBoundsException: " + e);
+                    return;
+                }
+            }
+            int i3 = length / 3;
+            while (i3 < siteNavigationCount) {
+                ByteArrayOutputStream byteArrayOutputStream2 = new ByteArrayOutputStream();
+                BitmapFactory.decodeResource(this.mContext.getResources(), R.raw.sitenavigation_thumbnail_default).compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream2);
+                ContentValues contentValues2 = new ContentValues();
+                StringBuilder sb = new StringBuilder();
+                sb.append("about:blank");
+                i3++;
+                sb.append(i3);
+                contentValues2.put("url", sb.toString());
+                contentValues2.put("title", "about:blank");
+                contentValues2.put("created", "0");
+                contentValues2.put("website", "1");
+                contentValues2.put("thumbnail", byteArrayOutputStream2.toByteArray());
+                sQLiteDatabase.insertOrThrow("websites", "url", contentValues2);
+            }
         }
-        if (iUpdate <= 0) {
-            return iUpdate;
-        }
-        getContext().getContentResolver().notifyChange(uri, null);
-        return iUpdate;
     }
 }

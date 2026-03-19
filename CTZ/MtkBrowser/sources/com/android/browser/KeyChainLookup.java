@@ -21,11 +21,13 @@ final class KeyChainLookup extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voidArr) {
         try {
             this.mHandler.proceed(KeyChain.getPrivateKey(this.mContext, this.mAlias), KeyChain.getCertificateChain(this.mContext, this.mAlias));
+            return null;
         } catch (KeyChainException e) {
             this.mHandler.ignore();
+            return null;
         } catch (InterruptedException e2) {
             this.mHandler.ignore();
+            return null;
         }
-        return null;
     }
 }

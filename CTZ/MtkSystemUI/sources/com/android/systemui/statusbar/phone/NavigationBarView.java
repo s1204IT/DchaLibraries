@@ -164,7 +164,7 @@ public class NavigationBarView extends FrameLayout implements PluginListener<Nav
         }
     }
 
-    class H extends Handler {
+    private class H extends Handler {
         private H() {
         }
 

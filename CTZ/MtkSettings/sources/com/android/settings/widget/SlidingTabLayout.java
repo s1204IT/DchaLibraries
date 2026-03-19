@@ -75,7 +75,7 @@ public final class SlidingTabLayout extends FrameLayout implements View.OnClickL
         }
     }
 
-    public void onViewPagerPageChanged(int i, float f) {
+    private void onViewPagerPageChanged(int i, float f) {
         this.mSelectedPosition = i;
         this.mSelectionOffset = f;
         this.mIndicatorView.setTranslationX(isRtlMode() ? -getIndicatorLeft() : getIndicatorLeft());

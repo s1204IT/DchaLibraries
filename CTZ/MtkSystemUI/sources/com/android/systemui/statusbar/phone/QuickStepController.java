@@ -369,7 +369,7 @@ public class QuickStepController implements NavGesture.GestureHelper {
         this.mTrackAnimator.start();
     }
 
-    public void resetQuickScrub() {
+    private void resetQuickScrub() {
         this.mQuickScrubActive = false;
         this.mAllowGestureDetection = false;
         this.mCurrentNavigationBarView = null;

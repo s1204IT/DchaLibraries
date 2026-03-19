@@ -822,7 +822,7 @@ public class TabLayout extends HorizontalScrollView {
             TabLayout.this.invalidate();
         }
 
-        public void drawBackground(Canvas canvas) {
+        private void drawBackground(Canvas canvas) {
             if (this.baseBackgroundDrawable != null) {
                 this.baseBackgroundDrawable.setBounds(getLeft(), getTop(), getRight(), getBottom());
                 this.baseBackgroundDrawable.draw(canvas);
@@ -1050,7 +1050,7 @@ public class TabLayout extends HorizontalScrollView {
             TooltipCompat.setTooltipText(this, hasText ? null : contentDesc);
         }
 
-        public int getContentWidth() {
+        private int getContentWidth() {
             boolean initialized = false;
             int left = 0;
             int right = 0;

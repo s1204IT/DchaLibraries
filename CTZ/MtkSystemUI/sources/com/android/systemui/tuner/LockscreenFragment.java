@@ -140,7 +140,7 @@ public class LockscreenFragment extends PreferenceFragment {
         }
     }
 
-    static class App extends Item {
+    private static class App extends Item {
         private final ArrayList<Item> mChildren;
         private final Context mContext;
         private boolean mExpanded;
@@ -185,7 +185,7 @@ public class LockscreenFragment extends PreferenceFragment {
         }
     }
 
-    static abstract class Item {
+    private static abstract class Item {
         public abstract Drawable getDrawable();
 
         public abstract Boolean getExpando();

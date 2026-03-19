@@ -29,22 +29,6 @@ public class WallpaperHandler extends Thread implements DialogInterface.OnCancel
         this.mUrl = str;
     }
 
-    private InputStream openStream() throws IOException {
-        if (DataUri.isDataUri(this.mUrl)) {
-            return new ByteArrayInputStream(new DataUri(this.mUrl).getData());
-        }
-        URLConnection uRLConnectionOpenConnection = new URL(this.mUrl).openConnection();
-        uRLConnectionOpenConnection.setRequestProperty("Connection", "close");
-        return uRLConnectionOpenConnection.getInputStream();
-    }
-
-    public void destroyDialog() {
-        if (this.mWallpaperProgress == null || !this.mWallpaperProgress.isShowing()) {
-            return;
-        }
-        this.mWallpaperProgress.dismiss();
-    }
-
     @Override
     public void onCancel(DialogInterface dialogInterface) {
         this.mCanceled = true;
@@ -55,7 +39,7 @@ public class WallpaperHandler extends Thread implements DialogInterface.OnCancel
         if (this.mUrl != null && getState() == Thread.State.NEW) {
             this.mWallpaperProgress = new ProgressDialog(this.mContext);
             this.mWallpaperProgress.setIndeterminate(true);
-            this.mWallpaperProgress.setMessage(this.mContext.getResources().getText(2131493259));
+            this.mWallpaperProgress.setMessage(this.mContext.getResources().getText(R.string.progress_dialog_setting_wallpaper));
             this.mWallpaperProgress.setCancelable(true);
             this.mWallpaperProgress.setOnCancelListener(this);
             this.mWallpaperProgress.show();
@@ -66,88 +50,84 @@ public class WallpaperHandler extends Thread implements DialogInterface.OnCancel
 
     @Override
     public void run() throws Throwable {
-        InputStream inputStream;
         InputStream inputStreamOpenStream;
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(this.mContext);
         Drawable drawable = wallpaperManager.getDrawable();
+        InputStream inputStream = null;
+        try {
+        } catch (Throwable th) {
+            th = th;
+        }
         try {
             try {
-                try {
-                    inputStreamOpenStream = openStream();
-                    if (inputStreamOpenStream != null) {
-                        try {
-                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                            byte[] bArr = new byte[8192];
-                            while (true) {
-                                int i = inputStreamOpenStream.read(bArr);
-                                if (i == -1) {
-                                    break;
-                                } else {
-                                    byteArrayOutputStream.write(bArr, 0, i);
-                                }
-                            }
-                            byte[] byteArray = byteArrayOutputStream.toByteArray();
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inJustDecodeBounds = true;
-                            BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, options);
-                            int desiredMinimumWidth = (int) (((double) wallpaperManager.getDesiredMinimumWidth()) * 1.25d);
-                            int desiredMinimumHeight = (int) (((double) wallpaperManager.getDesiredMinimumHeight()) * 1.25d);
-                            int i2 = options.outWidth;
-                            int i3 = options.outHeight;
-                            int i4 = 1;
-                            while (true) {
-                                if (i2 <= desiredMinimumWidth && i3 <= desiredMinimumHeight) {
-                                    break;
-                                }
-                                i4 <<= 1;
-                                i2 >>= 1;
-                                i3 >>= 1;
-                            }
-                            options.inJustDecodeBounds = false;
-                            options.inSampleSize = i4;
-                            Bitmap bitmapDecodeByteArray = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, options);
-                            if (bitmapDecodeByteArray != null) {
-                                wallpaperManager.setBitmap(bitmapDecodeByteArray);
+                inputStreamOpenStream = openStream();
+                if (inputStreamOpenStream != null) {
+                    try {
+                        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                        byte[] bArr = new byte[8192];
+                        while (true) {
+                            int i = inputStreamOpenStream.read(bArr);
+                            if (i == -1) {
+                                break;
                             } else {
-                                Log.e("WallpaperHandler", "Unable to set new wallpaper, decodeStream returned null.");
+                                byteArrayOutputStream.write(bArr, 0, i);
                             }
-                        } catch (IOException e) {
-                            e = e;
-                            e.printStackTrace();
-                            Log.e("WallpaperHandler", "Unable to set new wallpaper");
-                            this.mCanceled = true;
-                            if (inputStreamOpenStream != null) {
-                                inputStreamOpenStream.close();
-                            }
-                            if (this.mCanceled) {
-                            }
-                            destroyDialog();
                         }
-                    }
-                } catch (Throwable th) {
-                    th = th;
-                    if (0 != 0) {
-                        try {
-                            inputStream.close();
-                        } catch (IOException e2) {
+                        byte[] byteArray = byteArrayOutputStream.toByteArray();
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, options);
+                        int desiredMinimumWidth = (int) (((double) wallpaperManager.getDesiredMinimumWidth()) * 1.25d);
+                        int desiredMinimumHeight = (int) (((double) wallpaperManager.getDesiredMinimumHeight()) * 1.25d);
+                        int i2 = options.outWidth;
+                        int i3 = options.outHeight;
+                        int i4 = 1;
+                        while (true) {
+                            if (i2 <= desiredMinimumWidth && i3 <= desiredMinimumHeight) {
+                                break;
+                            }
+                            i4 <<= 1;
+                            i2 >>= 1;
+                            i3 >>= 1;
                         }
+                        options.inJustDecodeBounds = false;
+                        options.inSampleSize = i4;
+                        Bitmap bitmapDecodeByteArray = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length, options);
+                        if (bitmapDecodeByteArray != null) {
+                            wallpaperManager.setBitmap(bitmapDecodeByteArray);
+                        } else {
+                            Log.e("WallpaperHandler", "Unable to set new wallpaper, decodeStream returned null.");
+                        }
+                    } catch (IOException e) {
+                        e = e;
+                        e.printStackTrace();
+                        Log.e("WallpaperHandler", "Unable to set new wallpaper");
+                        this.mCanceled = true;
+                        if (inputStreamOpenStream != null) {
+                            inputStreamOpenStream.close();
+                        }
+                        if (this.mCanceled) {
+                        }
+                        destroyDialog();
                     }
-                    throw th;
                 }
-            } catch (IOException e3) {
-                e = e3;
-                inputStreamOpenStream = null;
-            } catch (Throwable th2) {
-                th = th2;
-                inputStream = null;
-                if (0 != 0) {
+            } catch (IOException e2) {
+            }
+        } catch (IOException e3) {
+            e = e3;
+            inputStreamOpenStream = null;
+        } catch (Throwable th2) {
+            th = th2;
+            if (0 != 0) {
+                try {
+                    inputStream.close();
+                } catch (IOException e4) {
                 }
-                throw th;
             }
-            if (inputStreamOpenStream != null) {
-                inputStreamOpenStream.close();
-            }
-        } catch (IOException e4) {
+            throw th;
+        }
+        if (inputStreamOpenStream != null) {
+            inputStreamOpenStream.close();
         }
         if (this.mCanceled) {
             int intrinsicWidth = drawable.getIntrinsicWidth();
@@ -165,5 +145,20 @@ public class WallpaperHandler extends Thread implements DialogInterface.OnCancel
             this.mCanceled = false;
         }
         destroyDialog();
+    }
+
+    private InputStream openStream() throws IOException {
+        if (DataUri.isDataUri(this.mUrl)) {
+            return new ByteArrayInputStream(new DataUri(this.mUrl).getData());
+        }
+        URLConnection uRLConnectionOpenConnection = new URL(this.mUrl).openConnection();
+        uRLConnectionOpenConnection.setRequestProperty("Connection", "close");
+        return uRLConnectionOpenConnection.getInputStream();
+    }
+
+    public void destroyDialog() {
+        if (this.mWallpaperProgress != null && this.mWallpaperProgress.isShowing()) {
+            this.mWallpaperProgress.dismiss();
+        }
     }
 }

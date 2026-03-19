@@ -8,18 +8,13 @@ final class ImmutableSortedAsList<E> extends RegularImmutableAsList<E> implement
     }
 
     @Override
+    ImmutableSortedSet<E> delegateCollection() {
+        return (ImmutableSortedSet) super.delegateCollection();
+    }
+
+    @Override
     public Comparator<? super E> comparator() {
         return delegateCollection().comparator();
-    }
-
-    @Override
-    public boolean contains(Object obj) {
-        return indexOf(obj) >= 0;
-    }
-
-    @Override
-    public ImmutableSortedSet<E> delegateCollection() {
-        return (ImmutableSortedSet) super.delegateCollection();
     }
 
     @Override
@@ -34,6 +29,11 @@ final class ImmutableSortedAsList<E> extends RegularImmutableAsList<E> implement
     @Override
     public int lastIndexOf(Object obj) {
         return indexOf(obj);
+    }
+
+    @Override
+    public boolean contains(Object obj) {
+        return indexOf(obj) >= 0;
     }
 
     @Override

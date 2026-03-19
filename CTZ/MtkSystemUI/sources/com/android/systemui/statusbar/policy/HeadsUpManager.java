@@ -114,7 +114,7 @@ public class HeadsUpManager {
         }
     }
 
-    public void removeHeadsUpEntry(NotificationData.Entry entry) {
+    protected void removeHeadsUpEntry(NotificationData.Entry entry) {
         onHeadsUpEntryRemoved(this.mHeadsUpEntries.remove(entry.key));
     }
 
@@ -326,7 +326,7 @@ public class HeadsUpManager {
     public void onDensityOrFontScaleChanged() {
     }
 
-    public class HeadsUpEntry implements Comparable<HeadsUpEntry> {
+    protected class HeadsUpEntry implements Comparable<HeadsUpEntry> {
         public long earliestRemovaltime;
         public NotificationData.Entry entry;
         public boolean expanded;

@@ -14,22 +14,14 @@ public class Consumers {
         }
     }
 
-    public static <A extends QuietlyCloseable> void consumeCloseableAsync(Handler handler, Consumer<A> consumer, A a) {
+    public static <A extends QuietlyCloseable> void consumeCloseableAsync(Handler handler, final Consumer<A> consumer, final A a) {
         if (handler == null) {
             consumeCloseable(consumer, a);
         } else {
-            handler.post(new Runnable(consumer, a) {
-                final Consumer val$consumer;
-                final QuietlyCloseable val$value;
-
-                {
-                    this.val$consumer = consumer;
-                    this.val$value = a;
-                }
-
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    Consumers.consumeCloseable(this.val$consumer, this.val$value);
+                    Consumers.consumeCloseable(consumer, a);
                 }
             });
         }

@@ -16,11 +16,6 @@ public class DefaultTaskExecutor extends TaskExecutor {
     }
 
     @Override
-    public boolean isMainThread() {
-        return Looper.getMainLooper().getThread() == Thread.currentThread();
-    }
-
-    @Override
     public void postToMainThread(Runnable runnable) {
         if (this.mMainHandler == null) {
             synchronized (this.mLock) {
@@ -30,5 +25,10 @@ public class DefaultTaskExecutor extends TaskExecutor {
             }
         }
         this.mMainHandler.post(runnable);
+    }
+
+    @Override
+    public boolean isMainThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 }

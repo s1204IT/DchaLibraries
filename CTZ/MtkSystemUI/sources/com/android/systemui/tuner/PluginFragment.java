@@ -58,7 +58,7 @@ public class PluginFragment extends PreferenceFragment {
         loadPrefs();
     }
 
-    public void loadPrefs() {
+    private void loadPrefs() {
         final PreferenceScreen preferenceScreenCreatePreferenceScreen = getPreferenceManager().createPreferenceScreen(getContext());
         preferenceScreenCreatePreferenceScreen.setOrderingAsAdded(false);
         final Context context = getPreferenceManager().getContext();
@@ -118,7 +118,7 @@ public class PluginFragment extends PreferenceFragment {
         return sb.toString();
     }
 
-    static class PluginPreference extends SwitchPreference {
+    private static class PluginPreference extends SwitchPreference {
         private final boolean mHasSettings;
         private final PackageInfo mInfo;
         private final PackageManager mPm;

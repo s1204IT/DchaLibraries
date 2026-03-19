@@ -113,12 +113,12 @@ public class LockscreenWallpaper extends IWallpaperManagerCallback.Stub implemen
         final UserHandle userHandle = this.mSelectedUser;
         this.mLoader = new AsyncTask<Void, Void, LoaderResult>() {
             @Override
-            public LoaderResult doInBackground(Void... voidArr) {
+            protected LoaderResult doInBackground(Void... voidArr) {
                 return LockscreenWallpaper.this.loadBitmap(i, userHandle);
             }
 
             @Override
-            public void onPostExecute(LoaderResult loaderResult) {
+            protected void onPostExecute(LoaderResult loaderResult) {
                 super.onPostExecute(loaderResult);
                 if (isCancelled()) {
                     return;

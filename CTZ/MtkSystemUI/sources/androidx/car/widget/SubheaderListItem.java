@@ -37,7 +37,7 @@ public class SubheaderListItem extends ListItem<ViewHolder> {
     }
 
     @Override
-    public void onBind(ViewHolder viewHolder) {
+    protected void onBind(ViewHolder viewHolder) {
         Iterator<ListItem.ViewBinder<ViewHolder>> it = this.mBinders.iterator();
         while (it.hasNext()) {
             it.next().bind(viewHolder);

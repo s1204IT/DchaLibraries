@@ -187,13 +187,13 @@ public class DatabaseIndexingManager {
         }
 
         @Override
-        public Void doInBackground(Void... voidArr) {
+        protected Void doInBackground(Void... voidArr) {
             DatabaseIndexingManager.this.performIndexing();
             return null;
         }
 
         @Override
-        public void onPostExecute(Void r5) {
+        protected void onPostExecute(Void r5) {
             FeatureFactory.get(DatabaseIndexingManager.this.mContext).metricsFeatureProvider(DatabaseIndexingManager.this.mContext).logEvent(9, (int) (System.currentTimeMillis() - this.mIndexStartTime));
             DatabaseIndexingManager.this.mIsIndexingComplete.set(true);
             if (this.mCallback != null) {

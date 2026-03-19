@@ -15,10 +15,10 @@ class OneShotPreDrawListener implements View.OnAttachStateChangeListener, ViewTr
     }
 
     public static OneShotPreDrawListener add(View view, Runnable runnable) {
-        OneShotPreDrawListener oneShotPreDrawListener = new OneShotPreDrawListener(view, runnable);
-        view.getViewTreeObserver().addOnPreDrawListener(oneShotPreDrawListener);
-        view.addOnAttachStateChangeListener(oneShotPreDrawListener);
-        return oneShotPreDrawListener;
+        OneShotPreDrawListener listener = new OneShotPreDrawListener(view, runnable);
+        view.getViewTreeObserver().addOnPreDrawListener(listener);
+        view.addOnAttachStateChangeListener(listener);
+        return listener;
     }
 
     @Override
@@ -28,16 +28,6 @@ class OneShotPreDrawListener implements View.OnAttachStateChangeListener, ViewTr
         return true;
     }
 
-    @Override
-    public void onViewAttachedToWindow(View view) {
-        this.mViewTreeObserver = view.getViewTreeObserver();
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(View view) {
-        removeListener();
-    }
-
     public void removeListener() {
         if (this.mViewTreeObserver.isAlive()) {
             this.mViewTreeObserver.removeOnPreDrawListener(this);
@@ -45,5 +35,15 @@ class OneShotPreDrawListener implements View.OnAttachStateChangeListener, ViewTr
             this.mView.getViewTreeObserver().removeOnPreDrawListener(this);
         }
         this.mView.removeOnAttachStateChangeListener(this);
+    }
+
+    @Override
+    public void onViewAttachedToWindow(View v) {
+        this.mViewTreeObserver = v.getViewTreeObserver();
+    }
+
+    @Override
+    public void onViewDetachedFromWindow(View v) {
+        removeListener();
     }
 }

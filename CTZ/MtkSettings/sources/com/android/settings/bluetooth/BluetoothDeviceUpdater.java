@@ -149,7 +149,7 @@ public abstract class BluetoothDeviceUpdater implements BluetoothCallback, Local
         }
     }
 
-    public void launchDeviceDetails(Preference preference) {
+    protected void launchDeviceDetails(Preference preference) {
         CachedBluetoothDevice bluetoothDevice = ((BluetoothDevicePreference) preference).getBluetoothDevice();
         if (bluetoothDevice == null) {
             return;

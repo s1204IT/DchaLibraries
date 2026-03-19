@@ -10,9 +10,6 @@ public class WebViewTimersControl {
     private boolean mPrerenderActive;
     private Controller mRequestController = null;
 
-    private WebViewTimersControl() {
-    }
-
     public static WebViewTimersControl getInstance() {
         if (Looper.myLooper() != Looper.getMainLooper()) {
             throw new IllegalStateException("WebViewTimersControl.get() called on wrong thread");
@@ -23,12 +20,7 @@ public class WebViewTimersControl {
         return sInstance;
     }
 
-    private void maybePauseTimers(WebView webView) {
-        if (this.mBrowserActive || this.mPrerenderActive || webView == null) {
-            return;
-        }
-        Log.d("WebViewTimersControl", "Pausing webview timers, view=" + webView);
-        webView.pauseTimers();
+    private WebViewTimersControl() {
     }
 
     private void resumeTimers(WebView webView) {
@@ -38,14 +30,10 @@ public class WebViewTimersControl {
         }
     }
 
-    public void onBrowserActivityPause(WebView webView, Controller controller) {
-        Log.d("WebViewTimersControl", "onBrowserActivityPause");
-        if (controller == null || controller.equals(this.mRequestController)) {
-            this.mBrowserActive = false;
-            this.mRequestController = null;
-            maybePauseTimers(webView);
-        } else {
-            Log.d("WebViewTimersControl", "onBrowserActivityPause, controller =" + controller + " is not request resume timer or request pasue again.");
+    private void maybePauseTimers(WebView webView) {
+        if (!this.mBrowserActive && !this.mPrerenderActive && webView != null) {
+            Log.d("WebViewTimersControl", "Pausing webview timers, view=" + webView);
+            webView.pauseTimers();
         }
     }
 
@@ -56,9 +44,14 @@ public class WebViewTimersControl {
         resumeTimers(webView);
     }
 
-    public void onPrerenderDone(WebView webView) {
-        Log.d("WebViewTimersControl", "onPrerenderDone");
-        this.mPrerenderActive = false;
+    public void onBrowserActivityPause(WebView webView, Controller controller) {
+        Log.d("WebViewTimersControl", "onBrowserActivityPause");
+        if (controller != null && !controller.equals(this.mRequestController)) {
+            Log.d("WebViewTimersControl", "onBrowserActivityPause, controller =" + controller + " is not request resume timer or request pasue again.");
+            return;
+        }
+        this.mBrowserActive = false;
+        this.mRequestController = null;
         maybePauseTimers(webView);
     }
 
@@ -66,5 +59,11 @@ public class WebViewTimersControl {
         Log.d("WebViewTimersControl", "onPrerenderStart");
         this.mPrerenderActive = true;
         resumeTimers(webView);
+    }
+
+    public void onPrerenderDone(WebView webView) {
+        Log.d("WebViewTimersControl", "onPrerenderDone");
+        this.mPrerenderActive = false;
+        maybePauseTimers(webView);
     }
 }

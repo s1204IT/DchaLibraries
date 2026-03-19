@@ -17,23 +17,17 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
     private DateSorter mDateSorter;
     private int[] mItemMap;
     private int mNumberOfBins;
-    DataSetObserver mDataSetObserver = new DataSetObserver(this) {
-        final DateSortedExpandableListAdapter this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    DataSetObserver mDataSetObserver = new DataSetObserver() {
         @Override
         public void onChanged() {
-            this.this$0.mDataValid = true;
-            this.this$0.notifyDataSetChanged();
+            DateSortedExpandableListAdapter.this.mDataValid = true;
+            DateSortedExpandableListAdapter.this.notifyDataSetChanged();
         }
 
         @Override
         public void onInvalidated() {
-            this.this$0.mDataValid = false;
-            this.this$0.notifyDataSetInvalidated();
+            DateSortedExpandableListAdapter.this.mDataValid = false;
+            DateSortedExpandableListAdapter.this.notifyDataSetInvalidated();
         }
     };
     boolean mDataValid = false;
@@ -73,6 +67,17 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
         this.mItemMap = iArr;
     }
 
+    Context getContext() {
+        return this.mContext;
+    }
+
+    long getLong(int i) {
+        if (this.mDataValid) {
+            return this.mCursor.getLong(i);
+        }
+        return 0L;
+    }
+
     private int groupPositionToBin(int i) {
         if (!this.mDataValid) {
             return -1;
@@ -93,9 +98,15 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
         return i2;
     }
 
-    @Override
-    public boolean areAllItemsEnabled() {
-        return true;
+    boolean moveCursorToChildPosition(int i, int i2) {
+        if (!this.mDataValid || this.mCursor.isClosed()) {
+            return false;
+        }
+        int iGroupPositionToBin = groupPositionToBin(i);
+        for (int i3 = 0; i3 < iGroupPositionToBin; i3++) {
+            i2 += this.mItemMap[i3];
+        }
+        return this.mCursor.moveToPosition(i2);
     }
 
     public void changeCursor(Cursor cursor) {
@@ -107,22 +118,86 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
             this.mCursor.close();
         }
         this.mCursor = cursor;
-        if (cursor == null) {
-            this.mIdIndex = -1;
-            this.mDataValid = false;
-            notifyDataSetInvalidated();
-        } else {
+        if (cursor != null) {
             cursor.registerDataSetObserver(this.mDataSetObserver);
             this.mIdIndex = cursor.getColumnIndexOrThrow("_id");
             this.mDataValid = true;
             buildMap();
             notifyDataSetChanged();
+            return;
         }
+        this.mIdIndex = -1;
+        this.mDataValid = false;
+        notifyDataSetInvalidated();
+    }
+
+    @Override
+    public View getGroupView(int i, boolean z, View view, ViewGroup viewGroup) {
+        ?? r3;
+        if (!this.mDataValid) {
+            throw new IllegalStateException("Data is not valid");
+        }
+        if (view != null) {
+            boolean z2 = view instanceof TextView;
+            r3 = view;
+            if (!z2) {
+                r3 = (TextView) LayoutInflater.from(this.mContext).inflate(R.layout.history_header, (ViewGroup) null);
+            }
+        }
+        r3.setText(this.mDateSorter.getLabel(groupPositionToBin(i)));
+        return r3;
+    }
+
+    @Override
+    public View getChildView(int i, int i2, boolean z, View view, ViewGroup viewGroup) {
+        if (!this.mDataValid) {
+            throw new IllegalStateException("Data is not valid");
+        }
+        return null;
+    }
+
+    @Override
+    public boolean areAllItemsEnabled() {
+        return true;
+    }
+
+    @Override
+    public boolean isChildSelectable(int i, int i2) {
+        return true;
+    }
+
+    @Override
+    public int getGroupCount() {
+        if (this.mDataValid) {
+            return this.mNumberOfBins;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getChildrenCount(int i) {
+        if (this.mDataValid) {
+            return this.mItemMap[groupPositionToBin(i)];
+        }
+        return 0;
+    }
+
+    @Override
+    public Object getGroup(int i) {
+        return null;
     }
 
     @Override
     public Object getChild(int i, int i2) {
         return null;
+    }
+
+    @Override
+    public long getGroupId(int i) {
+        if (this.mDataValid) {
+            return i;
+        }
+        return 0L;
     }
 
     @Override
@@ -134,19 +209,16 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int i, int i2, boolean z, View view, ViewGroup viewGroup) {
-        if (this.mDataValid) {
-            return null;
-        }
-        throw new IllegalStateException("Data is not valid");
+    public boolean hasStableIds() {
+        return true;
     }
 
     @Override
-    public int getChildrenCount(int i) {
-        if (this.mDataValid) {
-            return this.mItemMap[groupPositionToBin(i)];
-        }
-        return 0;
+    public void onGroupExpanded(int i) {
+    }
+
+    @Override
+    public void onGroupCollapsed(int i) {
     }
 
     @Override
@@ -165,79 +237,8 @@ public class DateSortedExpandableListAdapter extends BaseExpandableListAdapter {
         return 0L;
     }
 
-    Context getContext() {
-        return this.mContext;
-    }
-
-    @Override
-    public Object getGroup(int i) {
-        return null;
-    }
-
-    @Override
-    public int getGroupCount() {
-        if (this.mDataValid) {
-            return this.mNumberOfBins;
-        }
-        return 0;
-    }
-
-    @Override
-    public long getGroupId(int i) {
-        if (this.mDataValid) {
-            return i;
-        }
-        return 0L;
-    }
-
-    @Override
-    public View getGroupView(int i, boolean z, View view, ViewGroup viewGroup) {
-        if (!this.mDataValid) {
-            throw new IllegalStateException("Data is not valid");
-        }
-        TextView textView = (view == null || !(view instanceof TextView)) ? (TextView) LayoutInflater.from(this.mContext).inflate(2130968604, (ViewGroup) null) : (TextView) view;
-        textView.setText(this.mDateSorter.getLabel(groupPositionToBin(i)));
-        return textView;
-    }
-
-    long getLong(int i) {
-        if (this.mDataValid) {
-            return this.mCursor.getLong(i);
-        }
-        return 0L;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return true;
-    }
-
-    @Override
-    public boolean isChildSelectable(int i, int i2) {
-        return true;
-    }
-
     @Override
     public boolean isEmpty() {
         return !this.mDataValid || this.mCursor == null || this.mCursor.isClosed() || this.mCursor.getCount() == 0;
-    }
-
-    boolean moveCursorToChildPosition(int i, int i2) {
-        if (!this.mDataValid || this.mCursor.isClosed()) {
-            return false;
-        }
-        int iGroupPositionToBin = groupPositionToBin(i);
-        for (int i3 = 0; i3 < iGroupPositionToBin; i3++) {
-            i2 += this.mItemMap[i3];
-        }
-        return this.mCursor.moveToPosition(i2);
-    }
-
-    @Override
-    public void onGroupCollapsed(int i) {
-    }
-
-    @Override
-    public void onGroupExpanded(int i) {
     }
 }

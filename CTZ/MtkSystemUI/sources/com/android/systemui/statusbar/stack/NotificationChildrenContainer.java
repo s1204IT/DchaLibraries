@@ -779,7 +779,7 @@ public class NotificationChildrenContainer extends ViewGroup {
         updateGroupOverflow();
     }
 
-    public void updateHeaderVisibility(boolean z) {
+    private void updateHeaderVisibility(boolean z) {
         ViewGroup viewGroup = this.mCurrentHeader;
         ViewGroup viewGroupCalculateDesiredHeader = calculateDesiredHeader();
         if (viewGroup == viewGroupCalculateDesiredHeader) {

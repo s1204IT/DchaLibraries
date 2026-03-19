@@ -255,7 +255,7 @@ public class AccessPointPreference extends Preference {
             this.mPm = packageManager;
         }
 
-        public Drawable getUserBadge(int i) {
+        private Drawable getUserBadge(int i) {
             int iIndexOfKey = this.mBadges.indexOfKey(i);
             if (iIndexOfKey < 0) {
                 Drawable userBadgeForDensity = this.mPm.getUserBadgeForDensity(new UserHandle(i), 0);

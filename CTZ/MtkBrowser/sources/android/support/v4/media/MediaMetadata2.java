@@ -54,25 +54,25 @@ public final class MediaMetadata2 {
         this.mBundle.setClassLoader(MediaMetadata2.class.getClassLoader());
     }
 
+    public String getMediaId() {
+        return getString("android.media.metadata.MEDIA_ID");
+    }
+
+    public String getString(String key) {
+        if (key == null) {
+            throw new IllegalArgumentException("key shouldn't be null");
+        }
+        CharSequence text = this.mBundle.getCharSequence(key);
+        if (text != null) {
+            return text.toString();
+        }
+        return null;
+    }
+
     public static MediaMetadata2 fromBundle(Bundle bundle) {
         if (bundle == null) {
             return null;
         }
         return new MediaMetadata2(bundle);
-    }
-
-    public String getMediaId() {
-        return getString("android.media.metadata.MEDIA_ID");
-    }
-
-    public String getString(String str) {
-        if (str == null) {
-            throw new IllegalArgumentException("key shouldn't be null");
-        }
-        CharSequence charSequence = this.mBundle.getCharSequence(str);
-        if (charSequence != null) {
-            return charSequence.toString();
-        }
-        return null;
     }
 }

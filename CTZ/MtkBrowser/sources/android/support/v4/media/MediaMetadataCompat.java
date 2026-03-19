@@ -52,33 +52,20 @@ public final class MediaMetadataCompat implements Parcelable {
         PREFERRED_URI_ORDER = new String[]{"android.media.metadata.DISPLAY_ICON_URI", "android.media.metadata.ART_URI", "android.media.metadata.ALBUM_ART_URI"};
         CREATOR = new Parcelable.Creator<MediaMetadataCompat>() {
             @Override
-            public MediaMetadataCompat createFromParcel(Parcel parcel) {
-                return new MediaMetadataCompat(parcel);
+            public MediaMetadataCompat createFromParcel(Parcel in) {
+                return new MediaMetadataCompat(in);
             }
 
             @Override
-            public MediaMetadataCompat[] newArray(int i) {
-                return new MediaMetadataCompat[i];
+            public MediaMetadataCompat[] newArray(int size) {
+                return new MediaMetadataCompat[size];
             }
         };
     }
 
-    MediaMetadataCompat(Parcel parcel) {
-        this.mBundle = parcel.readBundle();
+    MediaMetadataCompat(Parcel in) {
+        this.mBundle = in.readBundle();
         this.mBundle.setClassLoader(MediaMetadataCompat.class.getClassLoader());
-    }
-
-    public static MediaMetadataCompat fromMediaMetadata(Object obj) {
-        if (obj == null || Build.VERSION.SDK_INT < 21) {
-            return null;
-        }
-        Parcel parcelObtain = Parcel.obtain();
-        MediaMetadataCompatApi21.writeToParcel(obj, parcelObtain, 0);
-        parcelObtain.setDataPosition(0);
-        MediaMetadataCompat mediaMetadataCompatCreateFromParcel = CREATOR.createFromParcel(parcelObtain);
-        parcelObtain.recycle();
-        mediaMetadataCompatCreateFromParcel.mMetadataObj = obj;
-        return mediaMetadataCompatCreateFromParcel;
     }
 
     @Override
@@ -87,7 +74,20 @@ public final class MediaMetadataCompat implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeBundle(this.mBundle);
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeBundle(this.mBundle);
+    }
+
+    public static MediaMetadataCompat fromMediaMetadata(Object metadataObj) {
+        if (metadataObj != null && Build.VERSION.SDK_INT >= 21) {
+            Parcel p = Parcel.obtain();
+            MediaMetadataCompatApi21.writeToParcel(metadataObj, p, 0);
+            p.setDataPosition(0);
+            MediaMetadataCompat metadata = CREATOR.createFromParcel(p);
+            p.recycle();
+            metadata.mMetadataObj = metadataObj;
+            return metadata;
+        }
+        return null;
     }
 }

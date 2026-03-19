@@ -8,18 +8,18 @@ public class FragmentManagerNonConfig {
     private final List<Fragment> mFragments;
     private final List<ViewModelStore> mViewModelStores;
 
-    FragmentManagerNonConfig(List<Fragment> list, List<FragmentManagerNonConfig> list2, List<ViewModelStore> list3) {
-        this.mFragments = list;
-        this.mChildNonConfigs = list2;
-        this.mViewModelStores = list3;
-    }
-
-    List<FragmentManagerNonConfig> getChildNonConfigs() {
-        return this.mChildNonConfigs;
+    FragmentManagerNonConfig(List<Fragment> fragments, List<FragmentManagerNonConfig> childNonConfigs, List<ViewModelStore> viewModelStores) {
+        this.mFragments = fragments;
+        this.mChildNonConfigs = childNonConfigs;
+        this.mViewModelStores = viewModelStores;
     }
 
     List<Fragment> getFragments() {
         return this.mFragments;
+    }
+
+    List<FragmentManagerNonConfig> getChildNonConfigs() {
+        return this.mChildNonConfigs;
     }
 
     List<ViewModelStore> getViewModelStores() {

@@ -134,7 +134,7 @@ public abstract class PanelView extends FrameLayout {
     protected void onExpandingStarted() {
     }
 
-    public void notifyExpandingStarted() {
+    private void notifyExpandingStarted() {
         if (!this.mExpanding) {
             this.mExpanding = true;
             onExpandingStarted();
@@ -948,7 +948,7 @@ public abstract class PanelView extends FrameLayout {
         }
     }
 
-    public void setAnimator(ValueAnimator valueAnimator) {
+    private void setAnimator(ValueAnimator valueAnimator) {
         this.mHeightAnimator = valueAnimator;
         if (valueAnimator == null && this.mPanelUpdateWhenAnimatorEnds) {
             this.mPanelUpdateWhenAnimatorEnds = false;
@@ -956,7 +956,7 @@ public abstract class PanelView extends FrameLayout {
         }
     }
 
-    public void startUnlockHintAnimationPhase2(final Runnable runnable) {
+    private void startUnlockHintAnimationPhase2(final Runnable runnable) {
         ValueAnimator valueAnimatorCreateHeightAnimator = createHeightAnimator(getMaxPanelHeight());
         valueAnimatorCreateHeightAnimator.setDuration(450L);
         valueAnimatorCreateHeightAnimator.setInterpolator(this.mBounceInterpolator);

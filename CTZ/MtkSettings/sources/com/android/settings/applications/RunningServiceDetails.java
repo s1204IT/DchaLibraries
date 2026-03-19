@@ -474,7 +474,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         }
     }
 
-    public void finish() {
+    private void finish() {
         ThreadUtils.postOnMainThread(new Runnable() {
             @Override
             public final void run() {
@@ -543,7 +543,7 @@ public class RunningServiceDetails extends InstrumentedFragment implements Runni
         return null;
     }
 
-    public void showConfirmStopDialog(ComponentName componentName) {
+    private void showConfirmStopDialog(ComponentName componentName) {
         MyAlertDialogFragment myAlertDialogFragmentNewConfirmStop = MyAlertDialogFragment.newConfirmStop(1, componentName);
         myAlertDialogFragmentNewConfirmStop.setTargetFragment(this, 0);
         myAlertDialogFragmentNewConfirmStop.show(getFragmentManager(), "confirmstop");

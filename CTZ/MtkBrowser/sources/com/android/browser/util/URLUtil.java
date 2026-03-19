@@ -13,15 +13,17 @@ public final class URLUtil {
     private static final Pattern CONTENT_DISPOSITION_EXTRA_PATTERN = Pattern.compile("attachment;\\s*filename\\s*=\\s*(\"?)([^\"]*)\\1.*$", 2);
     private static final Pattern CONTENT_DISPOSITION_EXTRA_INLINE_PATTERN = Pattern.compile("inline;\\s*filename\\s*=\\s*(\"?)([^\"]*)\\1.*$", 2);
 
-    static String parseContentDisposition(String str) {
+    static String parseContentDisposition(String str) throws UnsupportedEncodingException {
         String strGroup = null;
         try {
             Matcher matcher = BASE64_CONTENT_DISPOSITION_PATTERN.matcher(str);
             if (matcher.find()) {
                 try {
-                    strGroup = URLDecoder.decode(new String(Base64.decode(matcher.group(3), 0), matcher.group(2)), matcher.group(2));
-                } catch (UnsupportedEncodingException e) {
-                    Log.d("webkit", "UnsupportedEncodingException: " + str);
+                    try {
+                        strGroup = URLDecoder.decode(new String(Base64.decode(matcher.group(3), 0), matcher.group(2)), matcher.group(2));
+                    } catch (UnsupportedEncodingException e) {
+                        Log.d("webkit", "UnsupportedEncodingException: " + str);
+                    }
                 } catch (IllegalArgumentException e2) {
                     Log.d("webkit", "IllegalArgumentException: " + str);
                 }
@@ -49,15 +51,18 @@ public final class URLUtil {
                 Log.d("webkit", "Extra IllegalStateException: ex: " + str);
             }
         }
-        if (strGroup != null) {
-            return strGroup;
+        if (strGroup == null) {
+            try {
+                Matcher matcher4 = CONTENT_DISPOSITION_EXTRA_INLINE_PATTERN.matcher(str);
+                if (matcher4.find()) {
+                    return matcher4.group(2);
+                }
+                return strGroup;
+            } catch (IllegalStateException e6) {
+                Log.d("webkit", "Extra inline IllegalStateException: ex: " + str);
+                return strGroup;
+            }
         }
-        try {
-            Matcher matcher4 = CONTENT_DISPOSITION_EXTRA_INLINE_PATTERN.matcher(str);
-            return matcher4.find() ? matcher4.group(2) : strGroup;
-        } catch (IllegalStateException e6) {
-            Log.d("webkit", "Extra inline IllegalStateException: ex: " + str);
-            return strGroup;
-        }
+        return strGroup;
     }
 }

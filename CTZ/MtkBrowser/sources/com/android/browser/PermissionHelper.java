@@ -19,10 +19,6 @@ public class PermissionHelper {
         void onPermissionsResult(int i, String[] strArr, int[] iArr);
     }
 
-    private PermissionHelper(Activity activity) {
-        this.mActivity = activity;
-    }
-
     public static PermissionHelper getInstance() {
         return sInstance;
     }
@@ -31,15 +27,29 @@ public class PermissionHelper {
         sInstance = new PermissionHelper(activity);
     }
 
-    public void addListener(PermissionCallback permissionCallback) {
-        if (this.mListeners.contains(permissionCallback)) {
-            return;
-        }
-        this.mListeners.add(permissionCallback);
+    private PermissionHelper(Activity activity) {
+        this.mActivity = activity;
     }
 
-    public boolean checkPermission(String str) {
-        return this.mActivity.checkSelfPermission(str) == 0;
+    public void addListener(PermissionCallback permissionCallback) {
+        if (!this.mListeners.contains(permissionCallback)) {
+            this.mListeners.add(permissionCallback);
+        }
+    }
+
+    public void requestPermissions(List<String> list, PermissionCallback permissionCallback) {
+        if (DEBUG) {
+            Log.d("browser/PermissionHelper", "requestBrowserPermission start...! " + list.toString());
+        }
+        if (list.size() > 0) {
+            addListener(permissionCallback);
+            synchronized (this.requestingPermissions) {
+                if (this.requestingPermissions.size() == 0) {
+                    this.mActivity.requestPermissions((String[]) list.toArray(new String[list.size()]), 1000);
+                }
+                this.requestingPermissions.addAll(list);
+            }
+        }
     }
 
     public List<String> getAllUngrantedPermissions() {
@@ -62,6 +72,13 @@ public class PermissionHelper {
         return arrayList;
     }
 
+    public boolean checkPermission(String str) {
+        if (this.mActivity.checkSelfPermission(str) == 0) {
+            return true;
+        }
+        return false;
+    }
+
     public void onPermissionsResult(int i, String[] strArr, int[] iArr) {
         if (DEBUG) {
             Log.d("browser/PermissionHelper", " onPermissionsResult .. " + i);
@@ -81,21 +98,6 @@ public class PermissionHelper {
             } else {
                 Log.d("browser/PermissionHelper", " onPermissionsResult re-request ");
                 this.mActivity.requestPermissions((String[]) this.requestingPermissions.toArray(new String[this.requestingPermissions.size()]), 1000);
-            }
-        }
-    }
-
-    public void requestPermissions(List<String> list, PermissionCallback permissionCallback) {
-        if (DEBUG) {
-            Log.d("browser/PermissionHelper", "requestBrowserPermission start...! " + list.toString());
-        }
-        if (list.size() > 0) {
-            addListener(permissionCallback);
-            synchronized (this.requestingPermissions) {
-                if (this.requestingPermissions.size() == 0) {
-                    this.mActivity.requestPermissions((String[]) list.toArray(new String[list.size()]), 1000);
-                }
-                this.requestingPermissions.addAll(list);
             }
         }
     }

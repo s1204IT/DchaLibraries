@@ -114,7 +114,7 @@ public class AutomaticStorageManagerSettings extends DashboardFragment implement
         return strArr.length - 1;
     }
 
-    public static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
+    private static List<AbstractPreferenceController> buildPreferenceControllers(Context context) {
         ArrayList arrayList = new ArrayList();
         arrayList.add(new AutomaticStorageManagerDescriptionPreferenceController(context));
         return arrayList;

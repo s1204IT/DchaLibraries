@@ -1,6 +1,7 @@
 package com.android.quicksearchbox.google;
 
 import android.content.ComponentName;
+import com.android.quicksearchbox.R;
 import com.android.quicksearchbox.Source;
 import com.android.quicksearchbox.SourceResult;
 import com.android.quicksearchbox.SuggestionExtras;
@@ -11,6 +12,9 @@ public abstract class AbstractGoogleSourceResult implements SourceResult {
     private final Source mSource;
     private final String mUserQuery;
 
+    @Override
+    public abstract String getSuggestionQuery();
+
     public AbstractGoogleSourceResult(Source source, String str) {
         this.mSource = source;
         this.mUserQuery = str;
@@ -20,18 +24,33 @@ public abstract class AbstractGoogleSourceResult implements SourceResult {
     public void close() {
     }
 
-    @Override
-    public Collection<String> getExtraColumns() {
-        return null;
-    }
-
-    @Override
-    public SuggestionExtras getExtras() {
-        return null;
-    }
-
     public int getPosition() {
         return this.mPos;
+    }
+
+    @Override
+    public String getUserQuery() {
+        return this.mUserQuery;
+    }
+
+    @Override
+    public void moveTo(int i) {
+        this.mPos = i;
+    }
+
+    @Override
+    public String getSuggestionText1() {
+        return getSuggestionQuery();
+    }
+
+    @Override
+    public Source getSuggestionSource() {
+        return this.mSource;
+    }
+
+    @Override
+    public boolean isSuggestionShortcut() {
+        return false;
     }
 
     @Override
@@ -46,7 +65,7 @@ public abstract class AbstractGoogleSourceResult implements SourceResult {
 
     @Override
     public String getSuggestionIcon1() {
-        return String.valueOf(2130837566);
+        return String.valueOf(R.drawable.magnifying_glass);
     }
 
     @Override
@@ -80,19 +99,6 @@ public abstract class AbstractGoogleSourceResult implements SourceResult {
     }
 
     @Override
-    public abstract String getSuggestionQuery();
-
-    @Override
-    public Source getSuggestionSource() {
-        return this.mSource;
-    }
-
-    @Override
-    public String getSuggestionText1() {
-        return getSuggestionQuery();
-    }
-
-    @Override
     public String getSuggestionText2() {
         return null;
     }
@@ -103,22 +109,7 @@ public abstract class AbstractGoogleSourceResult implements SourceResult {
     }
 
     @Override
-    public String getUserQuery() {
-        return this.mUserQuery;
-    }
-
-    @Override
-    public boolean isHistorySuggestion() {
-        return false;
-    }
-
-    @Override
     public boolean isSpinnerWhileRefreshing() {
-        return false;
-    }
-
-    @Override
-    public boolean isSuggestionShortcut() {
         return false;
     }
 
@@ -128,7 +119,17 @@ public abstract class AbstractGoogleSourceResult implements SourceResult {
     }
 
     @Override
-    public void moveTo(int i) {
-        this.mPos = i;
+    public boolean isHistorySuggestion() {
+        return false;
+    }
+
+    @Override
+    public SuggestionExtras getExtras() {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getExtraColumns() {
+        return null;
     }
 }

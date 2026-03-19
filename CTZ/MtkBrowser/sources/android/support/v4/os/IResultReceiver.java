@@ -8,50 +8,22 @@ import android.os.Parcel;
 import android.os.RemoteException;
 
 public interface IResultReceiver extends IInterface {
+    void send(int i, Bundle bundle) throws RemoteException;
 
     public static abstract class Stub extends Binder implements IResultReceiver {
-
-        private static class Proxy implements IResultReceiver {
-            private IBinder mRemote;
-
-            Proxy(IBinder iBinder) {
-                this.mRemote = iBinder;
-            }
-
-            @Override
-            public IBinder asBinder() {
-                return this.mRemote;
-            }
-
-            @Override
-            public void send(int i, Bundle bundle) throws RemoteException {
-                Parcel parcelObtain = Parcel.obtain();
-                try {
-                    parcelObtain.writeInterfaceToken("android.support.v4.os.IResultReceiver");
-                    parcelObtain.writeInt(i);
-                    if (bundle != null) {
-                        parcelObtain.writeInt(1);
-                        bundle.writeToParcel(parcelObtain, 0);
-                    } else {
-                        parcelObtain.writeInt(0);
-                    }
-                    this.mRemote.transact(1, parcelObtain, null, 1);
-                } finally {
-                    parcelObtain.recycle();
-                }
-            }
-        }
-
         public Stub() {
             attachInterface(this, "android.support.v4.os.IResultReceiver");
         }
 
-        public static IResultReceiver asInterface(IBinder iBinder) {
-            if (iBinder == null) {
+        public static IResultReceiver asInterface(IBinder obj) {
+            if (obj == null) {
                 return null;
             }
-            IInterface iInterfaceQueryLocalInterface = iBinder.queryLocalInterface("android.support.v4.os.IResultReceiver");
-            return (iInterfaceQueryLocalInterface == null || !(iInterfaceQueryLocalInterface instanceof IResultReceiver)) ? new Proxy(iBinder) : (IResultReceiver) iInterfaceQueryLocalInterface;
+            IInterface iin = obj.queryLocalInterface("android.support.v4.os.IResultReceiver");
+            if (iin != null && (iin instanceof IResultReceiver)) {
+                return (IResultReceiver) iin;
+            }
+            return new Proxy(obj);
         }
 
         @Override
@@ -60,19 +32,55 @@ public interface IResultReceiver extends IInterface {
         }
 
         @Override
-        public boolean onTransact(int i, Parcel parcel, Parcel parcel2, int i2) throws RemoteException {
-            if (i == 1) {
-                parcel.enforceInterface("android.support.v4.os.IResultReceiver");
-                send(parcel.readInt(), parcel.readInt() != 0 ? (Bundle) Bundle.CREATOR.createFromParcel(parcel) : null);
-                return true;
+        public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+            Bundle _arg1;
+            if (code != 1) {
+                if (code == 1598968902) {
+                    reply.writeString("android.support.v4.os.IResultReceiver");
+                    return true;
+                }
+                return super.onTransact(code, data, reply, flags);
             }
-            if (i != 1598968902) {
-                return super.onTransact(i, parcel, parcel2, i2);
+            data.enforceInterface("android.support.v4.os.IResultReceiver");
+            int _arg0 = data.readInt();
+            if (data.readInt() != 0) {
+                _arg1 = (Bundle) Bundle.CREATOR.createFromParcel(data);
+            } else {
+                _arg1 = null;
             }
-            parcel2.writeString("android.support.v4.os.IResultReceiver");
+            send(_arg0, _arg1);
             return true;
         }
-    }
 
-    void send(int i, Bundle bundle) throws RemoteException;
+        private static class Proxy implements IResultReceiver {
+            private IBinder mRemote;
+
+            Proxy(IBinder remote) {
+                this.mRemote = remote;
+            }
+
+            @Override
+            public IBinder asBinder() {
+                return this.mRemote;
+            }
+
+            @Override
+            public void send(int resultCode, Bundle resultData) throws RemoteException {
+                Parcel _data = Parcel.obtain();
+                try {
+                    _data.writeInterfaceToken("android.support.v4.os.IResultReceiver");
+                    _data.writeInt(resultCode);
+                    if (resultData != null) {
+                        _data.writeInt(1);
+                        resultData.writeToParcel(_data, 0);
+                    } else {
+                        _data.writeInt(0);
+                    }
+                    this.mRemote.transact(1, _data, null, 1);
+                } finally {
+                    _data.recycle();
+                }
+            }
+        }
+    }
 }

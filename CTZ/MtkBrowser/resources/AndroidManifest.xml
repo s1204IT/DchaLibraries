@@ -68,13 +68,13 @@
         android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config">
         <provider
-            android:name=".provider.BrowserProvider2"
+            android:name="com.android.browser.provider.BrowserProvider2"
             android:exported="false"
             android:multiprocess="false"
             android:authorities="com.android.browser.provider;MtkBrowserProvider"/>
         <activity
             android:label="Site Navigation"
-            android:name=".sitenavigation.SiteNavigationAddDialog"
+            android:name="com.android.browser.sitenavigation.SiteNavigationAddDialog"
             android:configChanges="orientation|keyboardHidden"/>
         <activity
             android:theme="@style/BrowserTheme"
@@ -192,7 +192,7 @@
             android:configChanges="screenSize|screenLayout|orientation|keyboardHidden"/>
         <receiver
             android:label="@string/bookmarks"
-            android:name=".widget.BookmarkThumbnailWidgetProvider">
+            android:name="com.android.browser.widget.BookmarkThumbnailWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="com.android.browser.BOOKMARK_APPWIDGET_UPDATE"/>
@@ -202,15 +202,15 @@
                 android:resource="@xml/bookmarkthumbnailwidget_info"/>
         </receiver>
         <service
-            android:name=".widget.BookmarkThumbnailWidgetService"
+            android:name="com.android.browser.widget.BookmarkThumbnailWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS"
             android:exported="false"/>
         <receiver
-            android:name=".widget.BookmarkWidgetProxy"
+            android:name="com.android.browser.widget.BookmarkWidgetProxy"
             android:exported="false"/>
         <activity
             android:theme="@android:style/Theme.Material.DialogWhenLarge"
-            android:name=".widget.BookmarkWidgetConfigure">
+            android:name="com.android.browser.widget.BookmarkWidgetConfigure">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
@@ -222,16 +222,16 @@
             android:name="com.google.android.partnersetup.RLZ_ACCESS_POINT"
             android:value="@string/rlz_access_point"/>
         <provider
-            android:name=".homepages.HomeProvider"
+            android:name="com.android.browser.homepages.HomeProvider"
             android:exported="false"
             android:authorities="com.android.browser.home"/>
-        <receiver android:name=".AccountsChangedReceiver">
+        <receiver android:name="com.android.browser.AccountsChangedReceiver">
             <intent-filter>
                 <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED"/>
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".PreloadRequestReceiver"
+            android:name="com.android.browser.PreloadRequestReceiver"
             android:permission="com.android.browser.permission.PRELOAD">
             <intent-filter>
                 <action android:name="com.android.browser.intent.action.PRELOAD"/>
@@ -239,7 +239,7 @@
             </intent-filter>
         </receiver>
         <provider
-            android:name=".provider.SnapshotProvider"
+            android:name="com.android.browser.provider.SnapshotProvider"
             android:exported="false"
             android:authorities="com.android.browser.snapshots"/>
         <provider
@@ -252,15 +252,15 @@
                 android:resource="@xml/file_paths"/>
         </provider>
         <provider
-            android:name=".sitenavigation.SiteNavigationProvider"
+            android:name="com.android.browser.sitenavigation.SiteNavigationProvider"
             android:exported="false"
             android:authorities="com.android.browser.site_navigation"/>
-        <receiver android:name=".ChangeSearchEngineReceiver">
+        <receiver android:name="com.android.browser.ChangeSearchEngineReceiver">
             <intent-filter>
                 <action android:name="com.android.browser.SEARCH_ENGINE_CHANGED"/>
             </intent-filter>
         </receiver>
-        <receiver android:name=".OmacpSettingReceiver">
+        <receiver android:name="com.android.browser.OmacpSettingReceiver">
             <intent-filter>
                 <action android:name="com.mediatek.omacp.settings"/>
                 <data android:mimeType="application/com.mediatek.omacp-w2"/>

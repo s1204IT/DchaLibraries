@@ -175,7 +175,7 @@ public class RequestPermissionActivity extends Activity implements DialogInterfa
         }
     }
 
-    public void proceedAndFinish() {
+    private void proceedAndFinish() {
         int i;
         if (this.mRequest == 1 || this.mRequest == 3) {
             i = -1;
@@ -199,7 +199,7 @@ public class RequestPermissionActivity extends Activity implements DialogInterfa
         finish();
     }
 
-    public void cancelAndFinish() {
+    private void cancelAndFinish() {
         setResult(0);
         finish();
     }
@@ -263,7 +263,7 @@ public class RequestPermissionActivity extends Activity implements DialogInterfa
         super.onBackPressed();
     }
 
-    final class StateChangeReceiver extends BroadcastReceiver {
+    private final class StateChangeReceiver extends BroadcastReceiver {
         public StateChangeReceiver() {
             RequestPermissionActivity.this.getWindow().getDecorView().postDelayed(new Runnable() {
                 @Override

@@ -71,39 +71,21 @@ public abstract class BaseUi implements UI {
     protected static final FrameLayout.LayoutParams COVER_SCREEN_GRAVITY_CENTER = new FrameLayout.LayoutParams(-1, -1, 17);
     private boolean mInputUrlFlag = false;
     private IBrowserUrlExt mBrowserUrlExt = null;
-    protected Handler mHandler = new Handler(this) {
-        final BaseUi this$0;
-
-        {
-            this.this$0 = this;
-        }
-
+    protected Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message message) {
             if (message.what == 1) {
-                this.this$0.suggestHideTitleBar();
+                BaseUi.this.suggestHideTitleBar();
             }
-            if (message.what == 2 && this.this$0.mUiController != null && this.this$0.mUiController.getCurrentTab() != null && !this.this$0.mUiController.getCurrentTab().inPageLoad()) {
-                this.this$0.hideBottomBar();
+            if (message.what == 2 && BaseUi.this.mUiController != null && BaseUi.this.mUiController.getCurrentTab() != null && !BaseUi.this.mUiController.getCurrentTab().inPageLoad()) {
+                BaseUi.this.hideBottomBar();
             }
-            if (message.what == 3 && this.this$0.mUiController != null) {
-                this.this$0.mUiController.closeTab((Tab) message.obj);
+            if (message.what == 3 && BaseUi.this.mUiController != null) {
+                BaseUi.this.mUiController.closeTab((Tab) message.obj);
             }
-            this.this$0.handleMessage(message);
+            BaseUi.this.handleMessage(message);
         }
     };
-
-    static class FullscreenHolder extends FrameLayout {
-        public FullscreenHolder(Context context) {
-            super(context);
-            setBackgroundColor(context.getResources().getColor(2131361793));
-        }
-
-        @Override
-        public boolean onTouchEvent(MotionEvent motionEvent) {
-            return true;
-        }
-    }
 
     public BaseUi(Activity activity, UiController uiController) {
         this.mErrorConsoleContainer = null;
@@ -112,15 +94,15 @@ public abstract class BaseUi implements UI {
         this.mTabControl = uiController.getTabControl();
         Resources resources = this.mActivity.getResources();
         this.mInputManager = (InputMethodManager) activity.getSystemService("input_method");
-        this.mLockIconSecure = resources.getDrawable(2130837585);
-        this.mLockIconMixed = resources.getDrawable(2130837586);
+        this.mLockIconSecure = resources.getDrawable(R.drawable.ic_secure_holo_dark);
+        this.mLockIconMixed = resources.getDrawable(R.drawable.ic_secure_partial_holo_dark);
         this.mFrameLayout = (FrameLayout) this.mActivity.getWindow().getDecorView().findViewById(android.R.id.content);
-        LayoutInflater.from(this.mActivity).inflate(2130968597, this.mFrameLayout);
-        this.mFixedTitlebarContainer = (FrameLayout) this.mFrameLayout.findViewById(2131558470);
-        this.mContentView = (FrameLayout) this.mFrameLayout.findViewById(2131558471);
-        this.mCustomViewContainer = (FrameLayout) this.mFrameLayout.findViewById(2131558467);
-        this.mErrorConsoleContainer = (LinearLayout) this.mFrameLayout.findViewById(2131558469);
-        this.mGenericFavicon = resources.getDrawable(2130837505);
+        LayoutInflater.from(this.mActivity).inflate(R.layout.custom_screen, this.mFrameLayout);
+        this.mFixedTitlebarContainer = (FrameLayout) this.mFrameLayout.findViewById(R.id.fixed_titlebar_container);
+        this.mContentView = (FrameLayout) this.mFrameLayout.findViewById(R.id.main_content);
+        this.mCustomViewContainer = (FrameLayout) this.mFrameLayout.findViewById(R.id.fullscreen_custom_content);
+        this.mErrorConsoleContainer = (LinearLayout) this.mFrameLayout.findViewById(R.id.error_console);
+        this.mGenericFavicon = resources.getDrawable(R.drawable.app_web_browser_sm);
         this.mTitleBar = new TitleBar(this.mActivity, this.mUiController, this, this.mContentView);
         this.mNeedBottomBar = !BrowserActivity.isTablet(this.mActivity);
         if (this.mNeedBottomBar) {
@@ -139,352 +121,6 @@ public abstract class BaseUi implements UI {
         }
     }
 
-    private void removeTabFromContentView(Tab tab) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.removeTabFromContentView()--->tab = " + tab);
-        }
-        hideTitleBar();
-        if (tab == null) {
-            return;
-        }
-        WebView webView = tab.getWebView();
-        View viewContainer = tab.getViewContainer();
-        if (webView != null) {
-            ((FrameLayout) viewContainer.findViewById(2131558521)).removeView(webView);
-            this.mContentView.removeView(viewContainer);
-            this.mUiController.endActionMode();
-            this.mUiController.removeSubWindow(tab);
-            ErrorConsoleView errorConsole = tab.getErrorConsole(false);
-            if (errorConsole != null) {
-                this.mErrorConsoleContainer.removeView(errorConsole);
-            }
-        }
-    }
-
-    private void updateLockIconImage(Tab.SecurityState securityState) {
-        this.mNavigationBar.setLock(securityState == Tab.SecurityState.SECURITY_STATE_SECURE ? this.mLockIconSecure : (securityState == Tab.SecurityState.SECURITY_STATE_MIXED || securityState == Tab.SecurityState.SECURITY_STATE_BAD_CERTIFICATE) ? this.mLockIconMixed : null);
-    }
-
-    public void addFixedTitleBar(View view) {
-        if (DEBUG && view != null) {
-            Log.d("browser", "BaseUi.addFixedTitleBar()--->width = " + view.getWidth() + ", height = " + view.getHeight());
-        }
-        this.mFixedTitlebarContainer.addView(view);
-    }
-
-    @Override
-    public void addTab(Tab tab) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.addTab()--->empty implemetion " + tab);
-        }
-    }
-
-    @Override
-    public void attachSubWindow(View view) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.attachSubWindow()--->");
-        }
-        if (view.getParent() != null) {
-            ((ViewGroup) view.getParent()).removeView(view);
-        }
-        this.mContentView.addView(view, COVER_SCREEN_PARAMS);
-    }
-
-    @Override
-    public void attachTab(Tab tab) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.attachTab()--->tab = " + tab);
-        }
-        attachTabToContentView(tab);
-    }
-
-    protected void attachTabToContentView(Tab tab) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.attachTabToContentView()--->tab = " + tab);
-        }
-        if (tab == null || tab.getWebView() == null) {
-            return;
-        }
-        View viewContainer = tab.getViewContainer();
-        WebView webView = tab.getWebView();
-        FrameLayout frameLayout = (FrameLayout) viewContainer.findViewById(2131558521);
-        ViewGroup viewGroup = (ViewGroup) webView.getParent();
-        if (viewGroup != frameLayout) {
-            if (viewGroup != null) {
-                viewGroup.removeView(webView);
-            }
-            frameLayout.addView(webView);
-        }
-        ViewGroup viewGroup2 = (ViewGroup) viewContainer.getParent();
-        if (viewGroup2 != this.mContentView) {
-            if (viewGroup2 != null) {
-                viewGroup2.removeView(viewContainer);
-            }
-            this.mContentView.addView(viewContainer, COVER_SCREEN_PARAMS);
-        }
-        this.mUiController.attachSubWindow(tab);
-    }
-
-    public boolean blockFocusAnimations() {
-        return this.mBlockFocusAnimations;
-    }
-
-    @Override
-    public void bookmarkedStatusHasChanged(Tab tab) {
-        if (tab.inForeground()) {
-            this.mNavigationBar.setCurrentUrlIsBookmark(tab.isBookmarkedSite());
-        }
-    }
-
-    boolean canShowTitleBar() {
-        return (isTitleBarShowing() || isActivityPaused() || getActiveTab() == null || getWebView() == null || this.mUiController.isInCustomActionMode()) ? false : true;
-    }
-
-    @Override
-    public void closeTableDelay(Tab tab) {
-        tab.clearTabData();
-        this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 3, tab), 2000L);
-    }
-
-    @Override
-    public void createSubWindow(Tab tab, WebView webView) {
-        if (DEBUG && webView != null) {
-            Log.d("browser", "BaseUi.createSubWindow()--->subView()--->width = " + webView.getWidth() + ", view.height = " + webView.getHeight());
-        }
-        View viewInflate = this.mActivity.getLayoutInflater().inflate(2130968596, (ViewGroup) null);
-        ((ViewGroup) viewInflate.findViewById(2131558466)).addView(webView, new ViewGroup.LayoutParams(-1, -1));
-        ((ImageButton) viewInflate.findViewById(2131558465)).setOnClickListener(new View.OnClickListener(this, webView) {
-            final BaseUi this$0;
-            final WebView val$cancelSubView;
-
-            {
-                this.this$0 = this;
-                this.val$cancelSubView = webView;
-            }
-
-            @Override
-            public void onClick(View view) {
-                ((BrowserWebView) this.val$cancelSubView).getWebChromeClient().onCloseWindow(this.val$cancelSubView);
-            }
-        });
-        tab.setSubWebView(webView);
-        tab.setSubViewContainer(viewInflate);
-    }
-
-    @Override
-    public void detachTab(Tab tab) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.detachTab()--->tab = " + tab);
-        }
-        removeTabFromContentView(tab);
-    }
-
-    @Override
-    public void editUrl(boolean z, boolean z2) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.editUrl()--->editUrl = " + z + ", forceIME = " + z2);
-        }
-        if (this.mUiController.isInCustomActionMode()) {
-            this.mUiController.endActionMode();
-        }
-        showTitleBar();
-        if (getActiveTab() == null || getActiveTab().isSnapshot()) {
-            return;
-        }
-        this.mNavigationBar.startEditingUrl(z, z2);
-    }
-
-    Tab getActiveTab() {
-        return this.mActiveTab;
-    }
-
-    public Activity getActivity() {
-        return this.mActivity;
-    }
-
-    @Override
-    public Bitmap getDefaultVideoPoster() {
-        if (this.mDefaultVideoPoster == null) {
-            this.mDefaultVideoPoster = BitmapFactory.decodeResource(this.mActivity.getResources(), 2130837527);
-        }
-        return this.mDefaultVideoPoster;
-    }
-
-    public Drawable getFaviconDrawable(Bitmap bitmap) {
-        Drawable[] drawableArr = new Drawable[3];
-        drawableArr[0] = new PaintDrawable(-16777216);
-        drawableArr[1] = new PaintDrawable(-1);
-        if (bitmap == null) {
-            drawableArr[2] = this.mGenericFavicon;
-        } else {
-            drawableArr[2] = new BitmapDrawable(bitmap);
-        }
-        LayerDrawable layerDrawable = new LayerDrawable(drawableArr);
-        layerDrawable.setLayerInset(1, 1, 1, 1, 1);
-        layerDrawable.setLayerInset(2, 2, 2, 2, 2);
-        return layerDrawable;
-    }
-
-    public TitleBar getTitleBar() {
-        return this.mTitleBar;
-    }
-
-    @Override
-    public View getVideoLoadingProgressView() {
-        if (this.mVideoProgressView == null) {
-            this.mVideoProgressView = LayoutInflater.from(this.mActivity).inflate(2130968634, (ViewGroup) null);
-        }
-        return this.mVideoProgressView;
-    }
-
-    protected WebView getWebView() {
-        if (this.mActiveTab != null) {
-            return this.mActiveTab.getWebView();
-        }
-        return null;
-    }
-
-    protected void handleMessage(Message message) {
-    }
-
-    @Override
-    public void hideAutoLogin(Tab tab) {
-        updateAutoLogin(tab, true);
-    }
-
-    protected void hideBottomBar() {
-        if (this.mNeedBottomBar && this.mBottomBar != null && this.mBottomBar.isShowing()) {
-            this.mBottomBar.hide();
-        }
-    }
-
-    protected void hideTitleBar() {
-        if (this.mTitleBar.isShowing()) {
-            this.mTitleBar.hide();
-        }
-        hideBottomBar();
-    }
-
-    protected void hideTitleBarOnly() {
-        if (this.mTitleBar.isShowing()) {
-            this.mTitleBar.hide();
-        }
-    }
-
-    protected boolean isActivityPaused() {
-        return this.mActivityPaused;
-    }
-
-    @Override
-    public boolean isCustomViewShowing() {
-        return this.mCustomView != null;
-    }
-
-    public boolean isEditingUrl() {
-        return this.mTitleBar.isEditingUrl();
-    }
-
-    public boolean isLoading() {
-        if (this.mActiveTab != null) {
-            return this.mActiveTab.inPageLoad();
-        }
-        return false;
-    }
-
-    protected boolean isTitleBarShowing() {
-        return this.mTitleBar.getVisibility() == 0;
-    }
-
-    @Override
-    public boolean isWebShowing() {
-        return this.mCustomView == null;
-    }
-
-    @Override
-    public boolean needsRestoreAllTabs() {
-        return true;
-    }
-
-    @Override
-    public void onActionModeFinished(boolean z) {
-    }
-
-    @Override
-    public boolean onBackKey() {
-        if (this.mCustomView == null) {
-            return false;
-        }
-        this.mUiController.hideCustomView();
-        return true;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration configuration) {
-    }
-
-    @Override
-    public void onContextMenuClosed(Menu menu, boolean z) {
-    }
-
-    @Override
-    public void onContextMenuCreated(Menu menu) {
-    }
-
-    @Override
-    public void onExtendedMenuClosed(boolean z) {
-    }
-
-    @Override
-    public void onExtendedMenuOpened() {
-    }
-
-    @Override
-    public void onHideCustomView() {
-        BrowserWebView browserWebView = (BrowserWebView) getWebView();
-        if (browserWebView != null && browserWebView.getVisibility() == 4) {
-            browserWebView.setVisibility(0);
-        }
-        this.mFixedTitlebarContainer.setVisibility(0);
-        this.mTitleBar.getNavigationBar().getUrlInputView().setVisibility(0);
-        if (this.mCustomView == null) {
-            return;
-        }
-        setFullscreen(BrowserSettings.getInstance().useFullscreen());
-        this.mFrameLayout.removeView(this.mFullscreenContainer);
-        this.mFullscreenContainer = null;
-        this.mCustomView = null;
-        this.mCustomViewCallback.onCustomViewHidden();
-        this.mActivity.setRequestedOrientation(this.mOriginalOrientation);
-        browserWebView.requestFocus();
-    }
-
-    @Override
-    public boolean onMenuKey() {
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        return false;
-    }
-
-    @Override
-    public void onOptionsMenuClosed(boolean z) {
-    }
-
-    @Override
-    public void onOptionsMenuOpened() {
-    }
-
-    @Override
-    public void onPageStopped(Tab tab) {
-        cancelStopToast();
-        if (tab.inForeground()) {
-            this.mStopToast = Toast.makeText(this.mActivity, 2131492981, 0);
-            this.mStopToast.show();
-        }
-    }
-
     @Override
     public void onPause() {
         if (isCustomViewShowing()) {
@@ -492,19 +128,6 @@ public abstract class BaseUi implements UI {
         }
         cancelStopToast();
         this.mActivityPaused = true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return true;
-    }
-
-    @Override
-    public void onProgressChanged(Tab tab) {
-        int loadProgress = tab.getLoadProgress();
-        if (tab.inForeground()) {
-            this.mTitleBar.setProgress(loadProgress);
-        }
     }
 
     @Override
@@ -517,19 +140,45 @@ public abstract class BaseUi implements UI {
         this.mTitleBar.onResume();
     }
 
+    protected boolean isActivityPaused() {
+        return this.mActivityPaused;
+    }
+
     @Override
-    public void onSetWebView(Tab tab, WebView webView) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.onSetWebView()--->tab = " + tab + ", webView = " + webView);
+    public void onConfigurationChanged(Configuration configuration) {
+    }
+
+    public Activity getActivity() {
+        return this.mActivity;
+    }
+
+    @Override
+    public boolean onBackKey() {
+        if (this.mCustomView != null) {
+            this.mUiController.hideCustomView();
+            return true;
         }
-        View viewContainer = tab.getViewContainer();
-        if (viewContainer == null) {
-            viewContainer = this.mActivity.getLayoutInflater().inflate(2130968627, (ViewGroup) this.mContentView, false);
-            tab.setViewContainer(viewContainer);
+        return false;
+    }
+
+    @Override
+    public boolean onMenuKey() {
+        return false;
+    }
+
+    @Override
+    public void setUseQuickControls(boolean z) {
+        this.mUseQuickControls = z;
+        if (this.mNeedBottomBar) {
+            this.mBottomBar.setUseQuickControls(this.mUseQuickControls);
         }
-        if (tab.getWebView() != webView) {
-            ((FrameLayout) viewContainer.findViewById(2131558521)).removeView(tab.getWebView());
+        if (z) {
+            this.mPieControl = new PieControl(this.mActivity, this.mUiController, this);
+            this.mPieControl.attachToContainer(this.mContentView);
+        } else if (this.mPieControl != null) {
+            this.mPieControl.removeFromContainer(this.mContentView);
         }
+        updateUrlBarAutoShowManagerTarget();
     }
 
     @Override
@@ -547,34 +196,38 @@ public abstract class BaseUi implements UI {
     }
 
     @Override
-    public void onVoiceResult(String str) {
-        this.mNavigationBar.onVoiceResult(str);
-    }
-
-    protected void refreshWebView() {
-        WebView webView = getWebView();
-        if (webView != null) {
-            webView.invalidate();
+    public void onProgressChanged(Tab tab) {
+        int loadProgress = tab.getLoadProgress();
+        if (tab.inForeground()) {
+            this.mTitleBar.setProgress(loadProgress);
         }
     }
 
     @Override
-    public void removeSubWindow(View view) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.removeSubWindow()--->");
+    public void bookmarkedStatusHasChanged(Tab tab) {
+        if (tab.inForeground()) {
+            this.mNavigationBar.setCurrentUrlIsBookmark(tab.isBookmarkedSite());
         }
-        this.mContentView.removeView(view);
-        this.mUiController.endActionMode();
     }
 
     @Override
-    public void removeTab(Tab tab) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.removeTab()--->tab = " + tab);
+    public void onPageStopped(Tab tab) {
+        cancelStopToast();
+        if (tab.inForeground()) {
+            this.mStopToast = Toast.makeText(this.mActivity, R.string.stopping, 0);
+            this.mStopToast.show();
         }
-        if (this.mActiveTab == tab) {
-            removeTabFromContentView(tab);
-            this.mActiveTab = null;
+    }
+
+    @Override
+    public boolean needsRestoreAllTabs() {
+        return true;
+    }
+
+    @Override
+    public void addTab(Tab tab) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.addTab()--->empty implemetion " + tab);
         }
     }
 
@@ -624,126 +277,223 @@ public abstract class BaseUi implements UI {
         this.mBlockFocusAnimations = false;
     }
 
-    public void setContentViewMarginBottom(int i) {
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.mContentView.getLayoutParams();
-        if (layoutParams.bottomMargin != i) {
-            layoutParams.bottomMargin = i;
-            this.mContentView.setLayoutParams(layoutParams);
-        }
-    }
-
-    public void setContentViewMarginTop(int i) {
-        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.mContentView.getLayoutParams();
-        if (layoutParams.topMargin != i) {
-            layoutParams.topMargin = i;
-            this.mContentView.setLayoutParams(layoutParams);
-        }
-    }
-
-    protected void setFavicon(Tab tab) {
-        if (tab.inForeground()) {
-            this.mNavigationBar.setFavicon(tab.getFavicon());
-        }
-    }
-
-    @Override
-    public void setFullscreen(boolean z) {
-        if (DEBUG) {
-            Log.d("browser", "BaseUi.setFullscreen()--->" + z);
-        }
-        Window window = this.mActivity.getWindow();
-        WindowManager.LayoutParams attributes = window.getAttributes();
-        if (z) {
-            attributes.flags |= 1024;
+    protected void updateUrlBarAutoShowManagerTarget() {
+        BrowserWebView webView = this.mActiveTab != null ? this.mActiveTab.getWebView() : 0;
+        if (!this.mUseQuickControls && (webView instanceof BrowserWebView)) {
+            this.mUrlBarAutoShowManager.setTarget(webView);
         } else {
-            attributes.flags &= -1025;
-            if (this.mCustomView != null) {
-                this.mCustomView.setSystemUiVisibility(0);
-            } else {
-                this.mContentView.setSystemUiVisibility(0);
-            }
+            this.mUrlBarAutoShowManager.setTarget(null);
         }
-        if (this.mNeedBottomBar) {
-            this.mBottomBar.setFullScreen(z);
-        }
-        window.setAttributes(attributes);
     }
 
-    void setInputUrlFlag(boolean z) {
-        this.mInputUrlFlag = z;
+    Tab getActiveTab() {
+        return this.mActiveTab;
     }
 
     @Override
-    public void setShouldShowErrorConsole(Tab tab, boolean z) {
+    public void updateTabs(List<Tab> list) {
+    }
+
+    @Override
+    public void removeTab(Tab tab) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.removeTab()--->tab = " + tab);
+        }
+        if (this.mActiveTab == tab) {
+            removeTabFromContentView(tab);
+            this.mActiveTab = null;
+        }
+    }
+
+    @Override
+    public void detachTab(Tab tab) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.detachTab()--->tab = " + tab);
+        }
+        removeTabFromContentView(tab);
+    }
+
+    @Override
+    public void attachTab(Tab tab) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.attachTab()--->tab = " + tab);
+        }
+        attachTabToContentView(tab);
+    }
+
+    protected void attachTabToContentView(Tab tab) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.attachTabToContentView()--->tab = " + tab);
+        }
+        if (tab == null || tab.getWebView() == null) {
+            return;
+        }
+        View viewContainer = tab.getViewContainer();
+        WebView webView = tab.getWebView();
+        FrameLayout frameLayout = (FrameLayout) viewContainer.findViewById(R.id.webview_wrapper);
+        ViewGroup viewGroup = (ViewGroup) webView.getParent();
+        if (viewGroup != frameLayout) {
+            if (viewGroup != null) {
+                viewGroup.removeView(webView);
+            }
+            frameLayout.addView(webView);
+        }
+        ViewGroup viewGroup2 = (ViewGroup) viewContainer.getParent();
+        if (viewGroup2 != this.mContentView) {
+            if (viewGroup2 != null) {
+                viewGroup2.removeView(viewContainer);
+            }
+            this.mContentView.addView(viewContainer, COVER_SCREEN_PARAMS);
+        }
+        this.mUiController.attachSubWindow(tab);
+    }
+
+    private void removeTabFromContentView(Tab tab) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.removeTabFromContentView()--->tab = " + tab);
+        }
+        hideTitleBar();
         if (tab == null) {
             return;
         }
-        ErrorConsoleView errorConsole = tab.getErrorConsole(true);
-        if (!z) {
-            this.mErrorConsoleContainer.removeView(errorConsole);
+        WebView webView = tab.getWebView();
+        View viewContainer = tab.getViewContainer();
+        if (webView == null) {
             return;
         }
-        if (errorConsole.numberOfErrors() > 0) {
-            errorConsole.showConsole(0);
-        } else {
-            errorConsole.showConsole(2);
-        }
-        if (errorConsole.getParent() != null) {
+        ((FrameLayout) viewContainer.findViewById(R.id.webview_wrapper)).removeView(webView);
+        this.mContentView.removeView(viewContainer);
+        this.mUiController.endActionMode();
+        this.mUiController.removeSubWindow(tab);
+        ErrorConsoleView errorConsole = tab.getErrorConsole(false);
+        if (errorConsole != null) {
             this.mErrorConsoleContainer.removeView(errorConsole);
         }
-        this.mErrorConsoleContainer.addView(errorConsole, new LinearLayout.LayoutParams(-1, -2));
     }
 
-    protected void setUrlTitle(Tab tab) {
-        String url = tab.getUrl();
-        String title = tab.getTitle();
-        Log.i("BaseUi", "Load Progress: " + tab.getLoadProgress() + "inPageLoad: " + tab.inPageLoad());
-        if (TextUtils.isEmpty(title) || (!tab.inPageLoad() && title.equals(this.mActivity.getString(2131492965)))) {
-            title = url;
+    @Override
+    public void onSetWebView(Tab tab, WebView webView) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.onSetWebView()--->tab = " + tab + ", webView = " + webView);
         }
-        if (tab.inForeground()) {
-            if (url.startsWith("file://")) {
-                this.mNavigationBar.setDisplayTitle(title);
-            } else {
-                this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mActivity);
-                this.mNavigationBar.setDisplayTitle(this.mBrowserUrlExt.getNavigationBarTitle(title, url));
+        View viewContainer = tab.getViewContainer();
+        if (viewContainer == null) {
+            viewContainer = this.mActivity.getLayoutInflater().inflate(R.layout.tab, (ViewGroup) this.mContentView, false);
+            tab.setViewContainer(viewContainer);
+        }
+        if (tab.getWebView() != webView) {
+            ((FrameLayout) viewContainer.findViewById(R.id.webview_wrapper)).removeView(tab.getWebView());
+        }
+    }
+
+    @Override
+    public void createSubWindow(Tab tab, final WebView webView) {
+        if (DEBUG && webView != null) {
+            Log.d("browser", "BaseUi.createSubWindow()--->subView()--->width = " + webView.getWidth() + ", view.height = " + webView.getHeight());
+        }
+        View viewInflate = this.mActivity.getLayoutInflater().inflate(R.layout.browser_subwindow, (ViewGroup) null);
+        ((ViewGroup) viewInflate.findViewById(R.id.inner_container)).addView(webView, new ViewGroup.LayoutParams(-1, -1));
+        ((ImageButton) viewInflate.findViewById(R.id.subwindow_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((BrowserWebView) webView).getWebChromeClient().onCloseWindow(webView);
             }
+        });
+        tab.setSubWebView(webView);
+        tab.setSubViewContainer(viewInflate);
+    }
+
+    @Override
+    public void removeSubWindow(View view) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.removeSubWindow()--->");
+        }
+        this.mContentView.removeView(view);
+        this.mUiController.endActionMode();
+    }
+
+    @Override
+    public void attachSubWindow(View view) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.attachSubWindow()--->");
+        }
+        if (view.getParent() != null) {
+            ((ViewGroup) view.getParent()).removeView(view);
+        }
+        this.mContentView.addView(view, COVER_SCREEN_PARAMS);
+    }
+
+    protected void refreshWebView() {
+        WebView webView = getWebView();
+        if (webView != null) {
+            webView.invalidate();
         }
     }
 
     @Override
-    public void setUseQuickControls(boolean z) {
-        this.mUseQuickControls = z;
-        if (this.mNeedBottomBar) {
-            this.mBottomBar.setUseQuickControls(this.mUseQuickControls);
+    public void editUrl(boolean z, boolean z2) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.editUrl()--->editUrl = " + z + ", forceIME = " + z2);
         }
-        if (z) {
-            this.mPieControl = new PieControl(this.mActivity, this.mUiController, this);
-            this.mPieControl.attachToContainer(this.mContentView);
-        } else if (this.mPieControl != null) {
-            this.mPieControl.removeFromContainer(this.mContentView);
+        if (this.mUiController.isInCustomActionMode()) {
+            this.mUiController.endActionMode();
         }
-        updateUrlBarAutoShowManagerTarget();
+        showTitleBar();
+        if (getActiveTab() != null && !getActiveTab().isSnapshot()) {
+            this.mNavigationBar.startEditingUrl(z, z2);
+        }
     }
 
-    @Override
-    public void showAutoLogin(Tab tab) {
-        updateAutoLogin(tab, true);
+    boolean canShowTitleBar() {
+        return (isTitleBarShowing() || isActivityPaused() || getActiveTab() == null || getWebView() == null || this.mUiController.isInCustomActionMode()) ? false : true;
     }
 
-    protected final void showBottomBarForDuration(long j) {
-        if (getWebView() != null) {
-            this.mHandler.removeMessages(2);
-            showBottomBarMust();
-            this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 2), j);
+    protected void showTitleBar() {
+        this.mHandler.removeMessages(1);
+        if (canShowTitleBar()) {
+            this.mTitleBar.show();
         }
+    }
+
+    protected void hideTitleBarOnly() {
+        if (this.mTitleBar.isShowing()) {
+            this.mTitleBar.hide();
+        }
+    }
+
+    protected void hideTitleBar() {
+        if (this.mTitleBar.isShowing()) {
+            this.mTitleBar.hide();
+        }
+        hideBottomBar();
     }
 
     protected void showBottomBarMust() {
-        if (!this.mNeedBottomBar || this.mBottomBar == null || this.mBottomBar.isShowing()) {
-            return;
+        if (this.mNeedBottomBar && this.mBottomBar != null && !this.mBottomBar.isShowing()) {
+            this.mBottomBar.show();
         }
-        this.mBottomBar.show();
+    }
+
+    protected void hideBottomBar() {
+        if (this.mNeedBottomBar && this.mBottomBar != null && this.mBottomBar.isShowing()) {
+            this.mBottomBar.hide();
+        }
+    }
+
+    protected boolean isTitleBarShowing() {
+        return this.mTitleBar.getVisibility() == 0;
+    }
+
+    public boolean isEditingUrl() {
+        return this.mTitleBar.isEditingUrl();
+    }
+
+    public void stopEditingUrl() {
+        this.mTitleBar.getNavigationBar().stopEditingUrl();
+    }
+
+    public TitleBar getTitleBar() {
+        return this.mTitleBar;
     }
 
     @Override
@@ -780,14 +530,232 @@ public abstract class BaseUi implements UI {
     }
 
     @Override
-    public void showMaxTabsWarning() {
-        Toast.makeText(this.mActivity, this.mActivity.getString(2131493282), 0).show();
+    public void onHideCustomView() {
+        BrowserWebView browserWebView = (BrowserWebView) getWebView();
+        if (browserWebView != null && browserWebView.getVisibility() == 4) {
+            browserWebView.setVisibility(0);
+        }
+        this.mFixedTitlebarContainer.setVisibility(0);
+        this.mTitleBar.getNavigationBar().getUrlInputView().setVisibility(0);
+        if (this.mCustomView == null) {
+            return;
+        }
+        setFullscreen(BrowserSettings.getInstance().useFullscreen());
+        this.mFrameLayout.removeView(this.mFullscreenContainer);
+        this.mFullscreenContainer = null;
+        this.mCustomView = null;
+        this.mCustomViewCallback.onCustomViewHidden();
+        this.mActivity.setRequestedOrientation(this.mOriginalOrientation);
+        browserWebView.requestFocus();
     }
 
-    protected void showTitleBar() {
-        this.mHandler.removeMessages(1);
-        if (canShowTitleBar()) {
-            this.mTitleBar.show();
+    @Override
+    public boolean isCustomViewShowing() {
+        return this.mCustomView != null;
+    }
+
+    @Override
+    public boolean isWebShowing() {
+        return this.mCustomView == null;
+    }
+
+    @Override
+    public void showAutoLogin(Tab tab) {
+        updateAutoLogin(tab, true);
+    }
+
+    @Override
+    public void hideAutoLogin(Tab tab) {
+        updateAutoLogin(tab, true);
+    }
+
+    protected void updateNavigationState(Tab tab) {
+    }
+
+    protected void updateAutoLogin(Tab tab, boolean z) {
+        this.mTitleBar.updateAutoLogin(tab, z);
+    }
+
+    protected void updateLockIconToLatest(Tab tab) {
+        if (tab != null && tab.inForeground()) {
+            updateLockIconImage(tab.getSecurityState());
+        }
+    }
+
+    private void updateLockIconImage(Tab.SecurityState securityState) {
+        Drawable drawable;
+        if (securityState == Tab.SecurityState.SECURITY_STATE_SECURE) {
+            drawable = this.mLockIconSecure;
+        } else if (securityState == Tab.SecurityState.SECURITY_STATE_MIXED || securityState == Tab.SecurityState.SECURITY_STATE_BAD_CERTIFICATE) {
+            drawable = this.mLockIconMixed;
+        } else {
+            drawable = null;
+        }
+        this.mNavigationBar.setLock(drawable);
+    }
+
+    protected void setUrlTitle(Tab tab) {
+        String url = tab.getUrl();
+        String title = tab.getTitle();
+        Log.i("BaseUi", "Load Progress: " + tab.getLoadProgress() + "inPageLoad: " + tab.inPageLoad());
+        if (TextUtils.isEmpty(title) || (!tab.inPageLoad() && title.equals(this.mActivity.getString(R.string.title_bar_loading)))) {
+            title = url;
+        }
+        if (tab.inForeground()) {
+            if (url.startsWith("file://")) {
+                this.mNavigationBar.setDisplayTitle(title);
+            } else {
+                this.mBrowserUrlExt = Extensions.getUrlPlugin(this.mActivity);
+                this.mNavigationBar.setDisplayTitle(this.mBrowserUrlExt.getNavigationBarTitle(title, url));
+            }
+        }
+    }
+
+    protected void setFavicon(Tab tab) {
+        if (tab.inForeground()) {
+            this.mNavigationBar.setFavicon(tab.getFavicon());
+        }
+    }
+
+    @Override
+    public void onActionModeFinished(boolean z) {
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public void updateMenuState(Tab tab, Menu menu) {
+    }
+
+    @Override
+    public void onOptionsMenuOpened() {
+    }
+
+    @Override
+    public void onExtendedMenuOpened() {
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        return false;
+    }
+
+    @Override
+    public void onOptionsMenuClosed(boolean z) {
+    }
+
+    @Override
+    public void onExtendedMenuClosed(boolean z) {
+    }
+
+    @Override
+    public void onContextMenuCreated(Menu menu) {
+    }
+
+    @Override
+    public void onContextMenuClosed(Menu menu, boolean z) {
+    }
+
+    @Override
+    public void setShouldShowErrorConsole(Tab tab, boolean z) {
+        if (tab == null) {
+            return;
+        }
+        ErrorConsoleView errorConsole = tab.getErrorConsole(true);
+        if (z) {
+            if (errorConsole.numberOfErrors() > 0) {
+                errorConsole.showConsole(0);
+            } else {
+                errorConsole.showConsole(2);
+            }
+            if (errorConsole.getParent() != null) {
+                this.mErrorConsoleContainer.removeView(errorConsole);
+            }
+            this.mErrorConsoleContainer.addView(errorConsole, new LinearLayout.LayoutParams(-1, -2));
+            return;
+        }
+        this.mErrorConsoleContainer.removeView(errorConsole);
+    }
+
+    @Override
+    public Bitmap getDefaultVideoPoster() {
+        if (this.mDefaultVideoPoster == null) {
+            this.mDefaultVideoPoster = BitmapFactory.decodeResource(this.mActivity.getResources(), R.drawable.default_video_poster);
+        }
+        return this.mDefaultVideoPoster;
+    }
+
+    @Override
+    public View getVideoLoadingProgressView() {
+        if (this.mVideoProgressView == null) {
+            this.mVideoProgressView = LayoutInflater.from(this.mActivity).inflate(R.layout.video_loading_progress, (ViewGroup) null);
+        }
+        return this.mVideoProgressView;
+    }
+
+    @Override
+    public void showMaxTabsWarning() {
+        Toast.makeText(this.mActivity, this.mActivity.getString(R.string.max_tabs_warning), 0).show();
+    }
+
+    protected WebView getWebView() {
+        if (this.mActiveTab != null) {
+            return this.mActiveTab.getWebView();
+        }
+        return null;
+    }
+
+    @Override
+    public void setFullscreen(boolean z) {
+        if (DEBUG) {
+            Log.d("browser", "BaseUi.setFullscreen()--->" + z);
+        }
+        Window window = this.mActivity.getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        if (z) {
+            attributes.flags |= 1024;
+        } else {
+            attributes.flags &= -1025;
+            if (this.mCustomView != null) {
+                this.mCustomView.setSystemUiVisibility(0);
+            } else {
+                this.mContentView.setSystemUiVisibility(0);
+            }
+        }
+        if (this.mNeedBottomBar) {
+            this.mBottomBar.setFullScreen(z);
+        }
+        window.setAttributes(attributes);
+    }
+
+    public Drawable getFaviconDrawable(Bitmap bitmap) {
+        Drawable[] drawableArr = new Drawable[3];
+        drawableArr[0] = new PaintDrawable(-16777216);
+        drawableArr[1] = new PaintDrawable(-1);
+        if (bitmap == null) {
+            drawableArr[2] = this.mGenericFavicon;
+        } else {
+            drawableArr[2] = new BitmapDrawable(bitmap);
+        }
+        LayerDrawable layerDrawable = new LayerDrawable(drawableArr);
+        layerDrawable.setLayerInset(1, 1, 1, 1, 1);
+        layerDrawable.setLayerInset(2, 2, 2, 2, 2);
+        return layerDrawable;
+    }
+
+    public boolean isLoading() {
+        if (this.mActiveTab != null) {
+            return this.mActiveTab.inPageLoad();
+        }
+        return false;
+    }
+
+    public void suggestHideTitleBar() {
+        if (!isLoading() && !isEditingUrl() && !this.mTitleBar.wantsToBeVisible() && !this.mNavigationBar.isMenuShowing()) {
+            hideTitleBarOnly();
         }
     }
 
@@ -800,54 +768,77 @@ public abstract class BaseUi implements UI {
         this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 1), j);
     }
 
+    protected final void showBottomBarForDuration(long j) {
+        if (getWebView() != null) {
+            this.mHandler.removeMessages(2);
+            showBottomBarMust();
+            this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 2), j);
+        }
+    }
+
+    @Override
+    public void closeTableDelay(Tab tab) {
+        tab.clearTabData();
+        this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 3, tab), 2000L);
+    }
+
+    protected void handleMessage(Message message) {
+    }
+
     @Override
     public void showWeb(boolean z) {
         this.mUiController.hideCustomView();
     }
 
-    public void stopEditingUrl() {
-        this.mTitleBar.getNavigationBar().stopEditingUrl();
-    }
-
-    public void suggestHideTitleBar() {
-        if (isLoading() || isEditingUrl() || this.mTitleBar.wantsToBeVisible() || this.mNavigationBar.isMenuShowing()) {
-            return;
+    static class FullscreenHolder extends FrameLayout {
+        public FullscreenHolder(Context context) {
+            super(context);
+            setBackgroundColor(context.getResources().getColor(R.color.black));
         }
-        hideTitleBarOnly();
+
+        @Override
+        public boolean onTouchEvent(MotionEvent motionEvent) {
+            return true;
+        }
     }
 
-    protected void updateAutoLogin(Tab tab, boolean z) {
-        this.mTitleBar.updateAutoLogin(tab, z);
+    void setInputUrlFlag(boolean z) {
+        this.mInputUrlFlag = z;
+    }
+
+    public void addFixedTitleBar(View view) {
+        if (DEBUG && view != null) {
+            Log.d("browser", "BaseUi.addFixedTitleBar()--->width = " + view.getWidth() + ", height = " + view.getHeight());
+        }
+        this.mFixedTitlebarContainer.addView(view);
+    }
+
+    public void setContentViewMarginTop(int i) {
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.mContentView.getLayoutParams();
+        if (((ViewGroup.MarginLayoutParams) layoutParams).topMargin != i) {
+            ((ViewGroup.MarginLayoutParams) layoutParams).topMargin = i;
+            this.mContentView.setLayoutParams(layoutParams);
+        }
+    }
+
+    public void setContentViewMarginBottom(int i) {
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) this.mContentView.getLayoutParams();
+        if (((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin != i) {
+            ((ViewGroup.MarginLayoutParams) layoutParams).bottomMargin = i;
+            this.mContentView.setLayoutParams(layoutParams);
+        }
+    }
+
+    public boolean blockFocusAnimations() {
+        return this.mBlockFocusAnimations;
+    }
+
+    @Override
+    public void onVoiceResult(String str) {
+        this.mNavigationBar.onVoiceResult(str);
     }
 
     @Override
     public void updateBottomBarState(boolean z, boolean z2, boolean z3) {
-    }
-
-    protected void updateLockIconToLatest(Tab tab) {
-        if (tab == null || !tab.inForeground()) {
-            return;
-        }
-        updateLockIconImage(tab.getSecurityState());
-    }
-
-    @Override
-    public void updateMenuState(Tab tab, Menu menu) {
-    }
-
-    protected void updateNavigationState(Tab tab) {
-    }
-
-    @Override
-    public void updateTabs(List<Tab> list) {
-    }
-
-    protected void updateUrlBarAutoShowManagerTarget() {
-        WebView webView = this.mActiveTab != null ? this.mActiveTab.getWebView() : null;
-        if (this.mUseQuickControls || !(webView instanceof BrowserWebView)) {
-            this.mUrlBarAutoShowManager.setTarget(null);
-        } else {
-            this.mUrlBarAutoShowManager.setTarget((BrowserWebView) webView);
-        }
     }
 }

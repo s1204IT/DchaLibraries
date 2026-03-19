@@ -17,23 +17,23 @@ public final class Iterators {
         }
 
         @Override
+        public Object next() {
+            throw new NoSuchElementException();
+        }
+
+        @Override
         public boolean hasPrevious() {
             return false;
         }
 
         @Override
-        public Object next() {
+        public Object previous() {
             throw new NoSuchElementException();
         }
 
         @Override
         public int nextIndex() {
             return 0;
-        }
-
-        @Override
-        public Object previous() {
-            throw new NoSuchElementException();
         }
 
         @Override
@@ -57,6 +57,186 @@ public final class Iterators {
             CollectPreconditions.checkRemove(false);
         }
     };
+
+    @Deprecated
+    public static <T> UnmodifiableIterator<T> emptyIterator() {
+        return emptyListIterator();
+    }
+
+    static <T> UnmodifiableListIterator<T> emptyListIterator() {
+        return (UnmodifiableListIterator<T>) EMPTY_LIST_ITERATOR;
+    }
+
+    static <T> Iterator<T> emptyModifiableIterator() {
+        return (Iterator<T>) EMPTY_MODIFIABLE_ITERATOR;
+    }
+
+    public static <T> UnmodifiableIterator<T> unmodifiableIterator(final Iterator<T> it) {
+        Preconditions.checkNotNull(it);
+        return it instanceof UnmodifiableIterator ? it : new UnmodifiableIterator<T>() {
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
+
+            @Override
+            public T next() {
+                return (T) it.next();
+            }
+        };
+    }
+
+    public static int size(Iterator<?> it) {
+        int i = 0;
+        while (it.hasNext()) {
+            it.next();
+            i++;
+        }
+        return i;
+    }
+
+    public static boolean contains(Iterator<?> it, Object obj) {
+        return any(it, Predicates.equalTo(obj));
+    }
+
+    public static boolean removeAll(Iterator<?> it, Collection<?> collection) {
+        return removeIf(it, Predicates.in(collection));
+    }
+
+    public static <T> boolean removeIf(Iterator<T> it, Predicate<? super T> predicate) {
+        Preconditions.checkNotNull(predicate);
+        boolean z = false;
+        while (it.hasNext()) {
+            if (predicate.apply(it.next())) {
+                it.remove();
+                z = true;
+            }
+        }
+        return z;
+    }
+
+    public static boolean elementsEqual(Iterator<?> it, Iterator<?> it2) {
+        while (it.hasNext()) {
+            if (!it2.hasNext() || !Objects.equal(it.next(), it2.next())) {
+                return false;
+            }
+        }
+        return !it2.hasNext();
+    }
+
+    public static <T> T getOnlyElement(Iterator<T> it) {
+        T next = it.next();
+        if (!it.hasNext()) {
+            return next;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("expected one element but was: <" + next);
+        for (int i = 0; i < 4 && it.hasNext(); i++) {
+            sb.append(", " + it.next());
+        }
+        if (it.hasNext()) {
+            sb.append(", ...");
+        }
+        sb.append('>');
+        throw new IllegalArgumentException(sb.toString());
+    }
+
+    public static <T> boolean addAll(Collection<T> collection, Iterator<? extends T> it) {
+        Preconditions.checkNotNull(collection);
+        Preconditions.checkNotNull(it);
+        boolean zAdd = false;
+        while (it.hasNext()) {
+            zAdd |= collection.add(it.next());
+        }
+        return zAdd;
+    }
+
+    public static <T> boolean any(Iterator<T> it, Predicate<? super T> predicate) {
+        return indexOf(it, predicate) != -1;
+    }
+
+    public static <T> int indexOf(Iterator<T> it, Predicate<? super T> predicate) {
+        Preconditions.checkNotNull(predicate, "predicate");
+        int i = 0;
+        while (it.hasNext()) {
+            if (!predicate.apply(it.next())) {
+                i++;
+            } else {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static <F, T> Iterator<T> transform(Iterator<F> it, final Function<? super F, ? extends T> function) {
+        Preconditions.checkNotNull(function);
+        return new TransformedIterator<F, T>(it) {
+            @Override
+            T transform(F f) {
+                return (T) function.apply(f);
+            }
+        };
+    }
+
+    public static <T> T getNext(Iterator<? extends T> it, T t) {
+        return it.hasNext() ? it.next() : t;
+    }
+
+    static <T> T pollNext(Iterator<T> it) {
+        if (it.hasNext()) {
+            T next = it.next();
+            it.remove();
+            return next;
+        }
+        return null;
+    }
+
+    static void clear(Iterator<?> it) {
+        Preconditions.checkNotNull(it);
+        while (it.hasNext()) {
+            it.next();
+            it.remove();
+        }
+    }
+
+    public static <T> UnmodifiableIterator<T> forArray(T... tArr) {
+        return forArray(tArr, 0, tArr.length, 0);
+    }
+
+    static <T> UnmodifiableListIterator<T> forArray(final T[] tArr, final int i, int i2, int i3) {
+        Preconditions.checkArgument(i2 >= 0);
+        Preconditions.checkPositionIndexes(i, i + i2, tArr.length);
+        Preconditions.checkPositionIndex(i3, i2);
+        if (i2 == 0) {
+            return emptyListIterator();
+        }
+        return new AbstractIndexedListIterator<T>(i2, i3) {
+            @Override
+            protected T get(int i4) {
+                return (T) tArr[i + i4];
+            }
+        };
+    }
+
+    public static <T> UnmodifiableIterator<T> singletonIterator(final T t) {
+        return new UnmodifiableIterator<T>() {
+            boolean done;
+
+            @Override
+            public boolean hasNext() {
+                return !this.done;
+            }
+
+            @Override
+            public T next() {
+                if (this.done) {
+                    throw new NoSuchElementException();
+                }
+                this.done = true;
+                return (T) t;
+            }
+        };
+    }
 
     private static class PeekingImpl<E> implements PeekingIterator<E> {
         private boolean hasPeeked;
@@ -84,6 +264,12 @@ public final class Iterators {
         }
 
         @Override
+        public void remove() {
+            Preconditions.checkState(!this.hasPeeked, "Can't remove after you've peeked at next");
+            this.iterator.remove();
+        }
+
+        @Override
         public E peek() {
             if (!this.hasPeeked) {
                 this.peekedElement = this.iterator.next();
@@ -91,216 +277,12 @@ public final class Iterators {
             }
             return this.peekedElement;
         }
-
-        @Override
-        public void remove() {
-            Preconditions.checkState(!this.hasPeeked, "Can't remove after you've peeked at next");
-            this.iterator.remove();
-        }
-    }
-
-    public static <T> boolean addAll(Collection<T> collection, Iterator<? extends T> it) {
-        Preconditions.checkNotNull(collection);
-        Preconditions.checkNotNull(it);
-        boolean zAdd = false;
-        while (it.hasNext()) {
-            zAdd |= collection.add(it.next());
-        }
-        return zAdd;
-    }
-
-    public static <T> boolean any(Iterator<T> it, Predicate<? super T> predicate) {
-        return indexOf(it, predicate) != -1;
-    }
-
-    static void clear(Iterator<?> it) {
-        Preconditions.checkNotNull(it);
-        while (it.hasNext()) {
-            it.next();
-            it.remove();
-        }
-    }
-
-    public static boolean contains(Iterator<?> it, Object obj) {
-        return any(it, Predicates.equalTo(obj));
-    }
-
-    public static boolean elementsEqual(Iterator<?> it, Iterator<?> it2) {
-        while (it.hasNext()) {
-            if (!it2.hasNext() || !Objects.equal(it.next(), it2.next())) {
-                return false;
-            }
-        }
-        return !it2.hasNext();
-    }
-
-    @Deprecated
-    public static <T> UnmodifiableIterator<T> emptyIterator() {
-        return emptyListIterator();
-    }
-
-    static <T> UnmodifiableListIterator<T> emptyListIterator() {
-        return (UnmodifiableListIterator<T>) EMPTY_LIST_ITERATOR;
-    }
-
-    static <T> Iterator<T> emptyModifiableIterator() {
-        return (Iterator<T>) EMPTY_MODIFIABLE_ITERATOR;
-    }
-
-    public static <T> UnmodifiableIterator<T> forArray(T... tArr) {
-        return forArray(tArr, 0, tArr.length, 0);
-    }
-
-    static <T> UnmodifiableListIterator<T> forArray(T[] tArr, int i, int i2, int i3) {
-        Preconditions.checkArgument(i2 >= 0);
-        Preconditions.checkPositionIndexes(i, i + i2, tArr.length);
-        Preconditions.checkPositionIndex(i3, i2);
-        return i2 == 0 ? emptyListIterator() : new AbstractIndexedListIterator<T>(i2, i3, tArr, i) {
-            final Object[] val$array;
-            final int val$offset;
-
-            {
-                this.val$array = tArr;
-                this.val$offset = i;
-            }
-
-            @Override
-            protected T get(int i4) {
-                return (T) this.val$array[this.val$offset + i4];
-            }
-        };
-    }
-
-    public static <T> T getNext(Iterator<? extends T> it, T t) {
-        return it.hasNext() ? it.next() : t;
-    }
-
-    public static <T> T getOnlyElement(Iterator<T> it) {
-        T next = it.next();
-        if (!it.hasNext()) {
-            return next;
-        }
-        StringBuilder sb = new StringBuilder();
-        sb.append("expected one element but was: <" + next);
-        for (int i = 0; i < 4 && it.hasNext(); i++) {
-            sb.append(", " + it.next());
-        }
-        if (it.hasNext()) {
-            sb.append(", ...");
-        }
-        sb.append('>');
-        throw new IllegalArgumentException(sb.toString());
-    }
-
-    public static <T> int indexOf(Iterator<T> it, Predicate<? super T> predicate) {
-        Preconditions.checkNotNull(predicate, "predicate");
-        int i = 0;
-        while (it.hasNext()) {
-            if (predicate.apply(it.next())) {
-                return i;
-            }
-            i++;
-        }
-        return -1;
     }
 
     public static <T> PeekingIterator<T> peekingIterator(Iterator<? extends T> it) {
-        return it instanceof PeekingImpl ? (PeekingImpl) it : new PeekingImpl(it);
-    }
-
-    static <T> T pollNext(Iterator<T> it) {
-        if (!it.hasNext()) {
-            return null;
+        if (it instanceof PeekingImpl) {
+            return it;
         }
-        T next = it.next();
-        it.remove();
-        return next;
-    }
-
-    public static boolean removeAll(Iterator<?> it, Collection<?> collection) {
-        return removeIf(it, Predicates.in(collection));
-    }
-
-    public static <T> boolean removeIf(Iterator<T> it, Predicate<? super T> predicate) {
-        Preconditions.checkNotNull(predicate);
-        boolean z = false;
-        while (it.hasNext()) {
-            if (predicate.apply(it.next())) {
-                it.remove();
-                z = true;
-            }
-        }
-        return z;
-    }
-
-    public static <T> UnmodifiableIterator<T> singletonIterator(T t) {
-        return new UnmodifiableIterator<T>(t) {
-            boolean done;
-            final Object val$value;
-
-            {
-                this.val$value = t;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return !this.done;
-            }
-
-            @Override
-            public T next() {
-                if (this.done) {
-                    throw new NoSuchElementException();
-                }
-                this.done = true;
-                return (T) this.val$value;
-            }
-        };
-    }
-
-    public static int size(Iterator<?> it) {
-        int i = 0;
-        while (it.hasNext()) {
-            it.next();
-            i++;
-        }
-        return i;
-    }
-
-    public static <F, T> Iterator<T> transform(Iterator<F> it, Function<? super F, ? extends T> function) {
-        Preconditions.checkNotNull(function);
-        return new TransformedIterator<F, T>(it, function) {
-            final Function val$function;
-
-            {
-                this.val$function = function;
-            }
-
-            @Override
-            T transform(F f) {
-                return (T) this.val$function.apply(f);
-            }
-        };
-    }
-
-    public static <T> UnmodifiableIterator<T> unmodifiableIterator(Iterator<T> it) {
-        Preconditions.checkNotNull(it);
-        return it instanceof UnmodifiableIterator ? (UnmodifiableIterator) it : new UnmodifiableIterator<T>(it) {
-            final Iterator val$iterator;
-
-            {
-                this.val$iterator = it;
-            }
-
-            @Override
-            public boolean hasNext() {
-                return this.val$iterator.hasNext();
-            }
-
-            @Override
-            public T next() {
-                return (T) this.val$iterator.next();
-            }
-        };
+        return new PeekingImpl(it);
     }
 }

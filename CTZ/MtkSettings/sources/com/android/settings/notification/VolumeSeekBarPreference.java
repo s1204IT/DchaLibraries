@@ -133,7 +133,7 @@ public class VolumeSeekBarPreference extends SeekBarPreference {
         }
     }
 
-    public void updateIconView() {
+    private void updateIconView() {
         if (this.mIconView == null) {
             return;
         }

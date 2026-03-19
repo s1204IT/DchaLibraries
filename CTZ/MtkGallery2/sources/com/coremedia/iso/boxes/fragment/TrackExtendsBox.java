@@ -1,0 +1,59 @@
+package com.coremedia.iso.boxes.fragment;
+
+import com.coremedia.iso.IsoTypeReader;
+import com.coremedia.iso.IsoTypeWriter;
+import com.googlecode.mp4parser.AbstractFullBox;
+import java.nio.ByteBuffer;
+
+public class TrackExtendsBox extends AbstractFullBox {
+    private long defaultSampleDescriptionIndex;
+    private long defaultSampleDuration;
+    private SampleFlags defaultSampleFlags;
+    private long defaultSampleSize;
+    private long trackId;
+
+    public TrackExtendsBox() {
+        super("trex");
+    }
+
+    @Override
+    protected long getContentSize() {
+        return 24L;
+    }
+
+    @Override
+    protected void getContent(ByteBuffer byteBuffer) {
+        writeVersionAndFlags(byteBuffer);
+        IsoTypeWriter.writeUInt32(byteBuffer, this.trackId);
+        IsoTypeWriter.writeUInt32(byteBuffer, this.defaultSampleDescriptionIndex);
+        IsoTypeWriter.writeUInt32(byteBuffer, this.defaultSampleDuration);
+        IsoTypeWriter.writeUInt32(byteBuffer, this.defaultSampleSize);
+        this.defaultSampleFlags.getContent(byteBuffer);
+    }
+
+    @Override
+    public void _parseDetails(ByteBuffer byteBuffer) {
+        parseVersionAndFlags(byteBuffer);
+        this.trackId = IsoTypeReader.readUInt32(byteBuffer);
+        this.defaultSampleDescriptionIndex = IsoTypeReader.readUInt32(byteBuffer);
+        this.defaultSampleDuration = IsoTypeReader.readUInt32(byteBuffer);
+        this.defaultSampleSize = IsoTypeReader.readUInt32(byteBuffer);
+        this.defaultSampleFlags = new SampleFlags(byteBuffer);
+    }
+
+    public long getTrackId() {
+        return this.trackId;
+    }
+
+    public long getDefaultSampleDuration() {
+        return this.defaultSampleDuration;
+    }
+
+    public long getDefaultSampleSize() {
+        return this.defaultSampleSize;
+    }
+
+    public SampleFlags getDefaultSampleFlags() {
+        return this.defaultSampleFlags;
+    }
+}

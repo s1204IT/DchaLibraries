@@ -190,7 +190,7 @@ public class StackStateAnimator {
         return jPow + ((long) (((float) Math.pow(f, 0.699999988079071d)) * 48.0f));
     }
 
-    public AnimatorListenerAdapter getGlobalAnimationFinishedListener() {
+    private AnimatorListenerAdapter getGlobalAnimationFinishedListener() {
         if (!this.mAnimationListenerPool.empty()) {
             return this.mAnimationListenerPool.pop();
         }
@@ -219,7 +219,7 @@ public class StackStateAnimator {
         };
     }
 
-    public void onAnimationFinished() {
+    private void onAnimationFinished() {
         this.mHostLayout.onChildAnimationFinished();
         for (ExpandableView expandableView : this.mTransientViewsToRemove) {
             expandableView.getTransientContainer().removeTransientView(expandableView);

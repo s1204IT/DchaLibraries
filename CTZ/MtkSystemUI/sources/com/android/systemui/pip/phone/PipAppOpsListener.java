@@ -63,7 +63,7 @@ public class PipAppOpsListener {
         this.mAppOpsManager.startWatchingMode(67, str, this.mAppOpsChangedListener);
     }
 
-    public void unregisterAppOpsListener() {
+    private void unregisterAppOpsListener() {
         this.mAppOpsManager.stopWatchingMode(this.mAppOpsChangedListener);
     }
 }

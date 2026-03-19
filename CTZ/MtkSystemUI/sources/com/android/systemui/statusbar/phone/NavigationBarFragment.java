@@ -606,7 +606,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return (this.mStatusBar.isDeviceProvisioned() && (this.mDisabledFlags1 & 33554432) == 0) ? false : true;
     }
 
-    public void repositionNavigationBar() {
+    private void repositionNavigationBar() {
         if (this.mNavigationBarView == null || !this.mNavigationBarView.isAttachedToWindow()) {
             return;
         }
@@ -614,7 +614,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mWindowManager.updateViewLayout((View) this.mNavigationBarView.getParent(), ((View) this.mNavigationBarView.getParent()).getLayoutParams());
     }
 
-    public void updateScreenPinningGestures() {
+    private void updateScreenPinningGestures() {
         if (this.mNavigationBarView == null) {
             return;
         }
@@ -632,7 +632,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         }
     }
 
-    public void notifyNavigationBarScreenOn() {
+    private void notifyNavigationBarScreenOn() {
         this.mNavigationBarView.updateNavButtonIcons();
     }
 
@@ -697,7 +697,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         updateScreenPinningGestures();
     }
 
-    public boolean onHomeTouch(View view, MotionEvent motionEvent) {
+    private boolean onHomeTouch(View view, MotionEvent motionEvent) {
         if (this.mHomeBlockedThisTouch && motionEvent.getActionMasked() != 0) {
             return true;
         }
@@ -721,11 +721,11 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return false;
     }
 
-    public void onVerticalChanged(boolean z) {
+    private void onVerticalChanged(boolean z) {
         this.mStatusBar.setQsScrimEnabled(!z);
     }
 
-    public boolean onNavigationTouch(View view, MotionEvent motionEvent) {
+    private boolean onNavigationTouch(View view, MotionEvent motionEvent) {
         this.mStatusBar.checkUserAutohide(motionEvent);
         return false;
     }
@@ -748,7 +748,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return true;
     }
 
-    public boolean onRecentsTouch(View view, MotionEvent motionEvent) {
+    private boolean onRecentsTouch(View view, MotionEvent motionEvent) {
         int action = motionEvent.getAction() & 255;
         if (action == 0) {
             this.mCommandQueue.preloadRecentApps();
@@ -765,7 +765,7 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return false;
     }
 
-    public void onRecentsClick(View view) {
+    private void onRecentsClick(View view) {
         if (LatencyTracker.isEnabled(getContext())) {
             LatencyTracker.getInstance(getContext()).onActionStart(1);
         }
@@ -773,12 +773,12 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mCommandQueue.toggleRecentApps();
     }
 
-    public boolean onLongPressBackHome(View view) {
+    private boolean onLongPressBackHome(View view) {
         this.mNavigationBarView.onNavigationButtonLongPress(view);
         return onLongPressNavigationButtons(view, R.id.back, R.id.home);
     }
 
-    public boolean onLongPressBackRecents(View view) {
+    private boolean onLongPressBackRecents(View view) {
         this.mNavigationBarView.onNavigationButtonLongPress(view);
         return onLongPressNavigationButtons(view, R.id.back, R.id.recent_apps);
     }
@@ -851,18 +851,18 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         return this.mStatusBar.toggleSplitScreenMode(271, 286);
     }
 
-    public void onAccessibilityClick(View view) {
+    private void onAccessibilityClick(View view) {
         this.mAccessibilityManager.notifyAccessibilityButtonClicked();
     }
 
-    public boolean onAccessibilityLongClick(View view) {
+    private boolean onAccessibilityLongClick(View view) {
         Intent intent = new Intent("com.android.internal.intent.action.CHOOSE_ACCESSIBILITY_BUTTON");
         intent.addFlags(268468224);
         view.getContext().startActivityAsUser(intent, UserHandle.CURRENT);
         return true;
     }
 
-    public void updateAccessibilityServicesState(AccessibilityManager accessibilityManager) {
+    private void updateAccessibilityServicesState(AccessibilityManager accessibilityManager) {
         int i;
         boolean z = false;
         try {
@@ -894,13 +894,13 @@ public class NavigationBarFragment extends Fragment implements CommandQueue.Call
         this.mNavigationBarView.setAccessibilityButtonState(z3, z);
     }
 
-    public void onRotateSuggestionClick(View view) {
+    private void onRotateSuggestionClick(View view) {
         this.mMetricsLogger.action(1287);
         incrementNumAcceptedRotationSuggestionsIfNeeded();
         this.mRotationLockController.setRotationLockedAtAngle(true, this.mLastRotationSuggestion);
     }
 
-    public boolean onRotateSuggestionHover(View view, MotionEvent motionEvent) {
+    private boolean onRotateSuggestionHover(View view, MotionEvent motionEvent) {
         int actionMasked = motionEvent.getActionMasked();
         this.mHoveringRotationSuggestion = actionMasked == 9 || actionMasked == 7;
         rescheduleRotationTimeout(true);

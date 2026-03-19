@@ -81,14 +81,14 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         if (!this.mShowLegacyChannelConfig) {
             new AsyncTask<Void, Void, Void>() {
                 @Override
-                public Void doInBackground(Void... voidArr) {
+                protected Void doInBackground(Void... voidArr) {
                     AppNotificationSettings.this.mChannelGroupList = AppNotificationSettings.this.mBackend.getGroups(AppNotificationSettings.this.mPkg, AppNotificationSettings.this.mUid).getList();
                     Collections.sort(AppNotificationSettings.this.mChannelGroupList, AppNotificationSettings.this.mChannelGroupComparator);
                     return null;
                 }
 
                 @Override
-                public void onPostExecute(Void r1) {
+                protected void onPostExecute(Void r1) {
                     if (AppNotificationSettings.this.getHost() != null) {
                         AppNotificationSettings.this.populateList();
                     }
@@ -141,7 +141,7 @@ public class AppNotificationSettings extends NotificationSettingsBase {
         return new ArrayList(this.mControllers);
     }
 
-    public void populateList() {
+    private void populateList() {
         if (!this.mDynamicPreferences.isEmpty()) {
             Iterator<Preference> it = this.mDynamicPreferences.iterator();
             while (it.hasNext()) {

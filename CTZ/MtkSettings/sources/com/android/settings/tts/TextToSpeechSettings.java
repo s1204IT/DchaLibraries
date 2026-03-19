@@ -423,7 +423,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         }
     }
 
-    public void speakSampleText() {
+    private void speakSampleText() {
         boolean zIsNetworkRequiredForSynthesis = isNetworkRequiredForSynthesis();
         if (!zIsNetworkRequiredForSynthesis || (zIsNetworkRequiredForSynthesis && this.mTts.isLanguageAvailable(this.mCurrentDefaultLocale) >= 0)) {
             HashMap<String, String> map = new HashMap<>();
@@ -485,7 +485,7 @@ public class TextToSpeechSettings extends SettingsPreferenceFragment implements 
         textToSpeech.setLanguage(locale);
     }
 
-    public void resetTts() {
+    private void resetTts() {
         int seekBarProgressFromValue = getSeekBarProgressFromValue("tts_default_rate", 100);
         this.mDefaultRatePref.setProgress(seekBarProgressFromValue);
         updateSpeechRate(seekBarProgressFromValue);

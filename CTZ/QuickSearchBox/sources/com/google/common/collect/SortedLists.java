@@ -41,29 +41,27 @@ final class SortedLists {
             @Override
             <E> int resultIndex(Comparator<? super E> comparator, E e, List<? extends E> list, int i) {
                 int size = list.size() - 1;
-                int i2 = i;
-                while (i2 < size) {
-                    int i3 = ((i2 + size) + 1) >>> 1;
-                    if (comparator.compare(list.get(i3), e) > 0) {
-                        size = i3 - 1;
+                while (i < size) {
+                    int i2 = ((i + size) + 1) >>> 1;
+                    if (comparator.compare(list.get(i2), e) > 0) {
+                        size = i2 - 1;
                     } else {
-                        i2 = i3;
+                        i = i2;
                     }
                 }
-                return i2;
+                return i;
             }
         },
         FIRST_PRESENT {
             @Override
             <E> int resultIndex(Comparator<? super E> comparator, E e, List<? extends E> list, int i) {
                 int i2 = 0;
-                int i3 = i;
-                while (i2 < i3) {
-                    int i4 = (i2 + i3) >>> 1;
-                    if (comparator.compare(list.get(i4), e) < 0) {
-                        i2 = i4 + 1;
+                while (i2 < i) {
+                    int i3 = (i2 + i) >>> 1;
+                    if (comparator.compare(list.get(i3), e) < 0) {
+                        i2 = i3 + 1;
                     } else {
-                        i3 = i4;
+                        i = i3;
                     }
                 }
                 return i2;
@@ -100,11 +98,10 @@ final class SortedLists {
             int iCompare = comparator.compare(e, list.get(i2));
             if (iCompare < 0) {
                 size = i2 - 1;
-            } else {
-                if (iCompare <= 0) {
-                    return keyPresentBehavior.resultIndex(comparator, e, list.subList(i, size + 1), i2 - i) + i;
-                }
+            } else if (iCompare > 0) {
                 i = i2 + 1;
+            } else {
+                return i + keyPresentBehavior.resultIndex(comparator, e, list.subList(i, size + 1), i2 - i);
             }
         }
         return keyAbsentBehavior.resultIndex(i);

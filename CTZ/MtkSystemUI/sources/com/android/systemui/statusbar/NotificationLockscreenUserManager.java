@@ -162,7 +162,7 @@ public class NotificationLockscreenUserManager implements Dumpable {
         this.mSettingsObserver.onChange(false);
     }
 
-    public void showForegroundManagedProfileActivityToast() {
+    private void showForegroundManagedProfileActivityToast() {
         Toast toastMakeText = Toast.makeText(this.mContext, R.string.managed_profile_foreground_toast, 0);
         TextView textView = (TextView) toastMakeText.getView().findViewById(android.R.id.message);
         textView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.stat_sys_managed_profile_status, 0, 0, 0);
@@ -289,7 +289,7 @@ public class NotificationLockscreenUserManager implements Dumpable {
         return true;
     }
 
-    public void updateCurrentProfilesCache() {
+    private void updateCurrentProfilesCache() {
         synchronized (this.mCurrentProfiles) {
             this.mCurrentProfiles.clear();
             if (this.mUserManager != null) {

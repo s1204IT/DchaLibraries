@@ -10,8 +10,8 @@ public class SingleGeneratedAdapterObserver implements GenericLifecycleObserver 
     }
 
     @Override
-    public void onStateChanged(LifecycleOwner lifecycleOwner, Lifecycle.Event event) {
-        this.mGeneratedAdapter.callMethods(lifecycleOwner, event, false, null);
-        this.mGeneratedAdapter.callMethods(lifecycleOwner, event, true, null);
+    public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
+        this.mGeneratedAdapter.callMethods(source, event, false, null);
+        this.mGeneratedAdapter.callMethods(source, event, true, null);
     }
 }

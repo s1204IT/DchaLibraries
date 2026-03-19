@@ -17,10 +17,38 @@ public abstract class AbstractSource implements Source {
     private final NamedTaskExecutor mIconLoaderExecutor;
     private final Handler mUiThread;
 
+    protected abstract String getIconPackage();
+
     public AbstractSource(Context context, Handler handler, NamedTaskExecutor namedTaskExecutor) {
         this.mContext = context;
         this.mUiThread = handler;
         this.mIconLoaderExecutor = namedTaskExecutor;
+    }
+
+    protected Context getContext() {
+        return this.mContext;
+    }
+
+    protected IconLoader getIconLoader() {
+        if (this.mIconLoader == null) {
+            this.mIconLoader = new CachingIconLoader(new PackageIconLoader(this.mContext, getIconPackage(), this.mUiThread, this.mIconLoaderExecutor));
+        }
+        return this.mIconLoader;
+    }
+
+    @Override
+    public NowOrLater<Drawable> getIcon(String str) {
+        return getIconLoader().getIcon(str);
+    }
+
+    @Override
+    public Uri getIconUri(String str) {
+        return getIconLoader().getIconUri(str);
+    }
+
+    @Override
+    public Intent createSearchIntent(String str, Bundle bundle) {
+        return createSourceSearchIntent(getIntentComponent(), str, bundle);
     }
 
     public static Intent createSourceSearchIntent(ComponentName componentName, String str, Bundle bundle) {
@@ -34,20 +62,19 @@ public abstract class AbstractSource implements Source {
         intent.addFlags(67108864);
         intent.putExtra("user_query", str);
         intent.putExtra("query", str);
-        if (bundle == null) {
-            return intent;
+        if (bundle != null) {
+            intent.putExtra("app_data", bundle);
         }
-        intent.putExtra("app_data", bundle);
         return intent;
-    }
-
-    @Override
-    public Intent createSearchIntent(String str, Bundle bundle) {
-        return createSourceSearchIntent(getIntentComponent(), str, bundle);
     }
 
     protected Intent createVoiceWebSearchIntent(Bundle bundle) {
         return QsbApplication.get(this.mContext).getVoiceSearch().createVoiceWebSearchIntent(bundle);
+    }
+
+    @Override
+    public Source getRoot() {
+        return this;
     }
 
     public boolean equals(Object obj) {
@@ -56,36 +83,9 @@ public abstract class AbstractSource implements Source {
             if (root.getClass().equals(getClass())) {
                 return root.getName().equals(getName());
             }
+            return false;
         }
         return false;
-    }
-
-    protected Context getContext() {
-        return this.mContext;
-    }
-
-    @Override
-    public NowOrLater<Drawable> getIcon(String str) {
-        return getIconLoader().getIcon(str);
-    }
-
-    protected IconLoader getIconLoader() {
-        if (this.mIconLoader == null) {
-            this.mIconLoader = new CachingIconLoader(new PackageIconLoader(this.mContext, getIconPackage(), this.mUiThread, this.mIconLoaderExecutor));
-        }
-        return this.mIconLoader;
-    }
-
-    protected abstract String getIconPackage();
-
-    @Override
-    public Uri getIconUri(String str) {
-        return getIconLoader().getIconUri(str);
-    }
-
-    @Override
-    public Source getRoot() {
-        return this;
     }
 
     public int hashCode() {

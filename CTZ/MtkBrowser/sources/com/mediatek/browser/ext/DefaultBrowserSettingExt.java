@@ -19,6 +19,12 @@ public class DefaultBrowserSettingExt implements IBrowserSettingExt {
     }
 
     @Override
+    public boolean updatePreferenceItem(Preference preference, Object obj) {
+        Log.i("@M_DefaultBrowserSettingsExt", "Enter: updatePreferenceItem --default implement");
+        return false;
+    }
+
+    @Override
     public String getCustomerHomepage() {
         Log.i("@M_DefaultBrowserSettingsExt", "Enter: getCustomerHomepage --default implement");
         return null;
@@ -46,7 +52,11 @@ public class DefaultBrowserSettingExt implements IBrowserSettingExt {
     public String getSearchEngine(SharedPreferences sharedPreferences, Context context) {
         Log.i("@M_DefaultBrowserSettingsExt", "Enter: getSearchEngine --default implement");
         SearchEngine searchEngine = ((SearchEngineManager) context.getSystemService("search_engine_service")).getDefault();
-        return sharedPreferences.getString("search_engine", searchEngine != null ? searchEngine.getName() : "google");
+        String name = "google";
+        if (searchEngine != null) {
+            name = searchEngine.getName();
+        }
+        return sharedPreferences.getString("search_engine", name);
     }
 
     @Override
@@ -60,11 +70,5 @@ public class DefaultBrowserSettingExt implements IBrowserSettingExt {
     @Override
     public void setStandardFontFamily(WebSettings webSettings, SharedPreferences sharedPreferences) {
         Log.i("@M_DefaultBrowserSettingsExt", "Enter: setStandardFontFamily --default implement");
-    }
-
-    @Override
-    public boolean updatePreferenceItem(Preference preference, Object obj) {
-        Log.i("@M_DefaultBrowserSettingsExt", "Enter: updatePreferenceItem --default implement");
-        return false;
     }
 }

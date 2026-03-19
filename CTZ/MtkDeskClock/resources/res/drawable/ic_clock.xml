@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="ic_clock"
+    android:height="24dp"
+    android:width="24dp">
+    <group
+        android:name="clock_frame"
+        android:scaleX="9.91"
+        android:scaleY="9.91">
+        <group android:name="clock_frame_pivot">
+            <group android:name="clock_frame_0">
+                <path android:name="clock_ouline_path_merged"/>
+            </group>
+        </group>
+    </group>
+    <group
+        android:name="hour_hand"
+        android:scaleX="0.9192"
+        android:scaleY="3.6725">
+        <group android:name="hour_hand_pivot">
+            <group android:name="hour_hand_0">
+                <path android:name="hour_hand_path"/>
+            </group>
+        </group>
+    </group>
+    <group
+        android:name="minute_hand"
+        android:scaleX="0.9192"
+        android:scaleY="3.6725"
+        android:rotation="121">
+        <group android:name="minute_hand_pivot">
+            <group android:name="minute_hand_0">
+                <path android:name="minute_hand_path"/>
+            </group>
+        </group>
+    </group>
+</vector>

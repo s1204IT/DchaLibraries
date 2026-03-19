@@ -9,21 +9,22 @@ public abstract class AbsSavedState implements Parcelable {
     };
     public static final Parcelable.Creator<AbsSavedState> CREATOR = new Parcelable.ClassLoaderCreator<AbsSavedState>() {
         @Override
-        public AbsSavedState createFromParcel(Parcel parcel) {
-            return createFromParcel(parcel, (ClassLoader) null);
-        }
-
-        @Override
-        public AbsSavedState createFromParcel(Parcel parcel, ClassLoader classLoader) {
-            if (parcel.readParcelable(classLoader) == null) {
-                return AbsSavedState.EMPTY_STATE;
+        public AbsSavedState createFromParcel(Parcel in, ClassLoader loader) {
+            Parcelable superState = in.readParcelable(loader);
+            if (superState != null) {
+                throw new IllegalStateException("superState must be null");
             }
-            throw new IllegalStateException("superState must be null");
+            return AbsSavedState.EMPTY_STATE;
         }
 
         @Override
-        public AbsSavedState[] newArray(int i) {
-            return new AbsSavedState[i];
+        public AbsSavedState createFromParcel(Parcel in) {
+            return createFromParcel(in, (ClassLoader) null);
+        }
+
+        @Override
+        public AbsSavedState[] newArray(int size) {
+            return new AbsSavedState[size];
         }
     };
 
@@ -31,21 +32,16 @@ public abstract class AbsSavedState implements Parcelable {
         this.mSuperState = null;
     }
 
-    protected AbsSavedState(Parcel parcel, ClassLoader classLoader) {
-        Parcelable parcelable = parcel.readParcelable(classLoader);
-        this.mSuperState = parcelable == null ? EMPTY_STATE : parcelable;
-    }
-
-    protected AbsSavedState(Parcelable parcelable) {
-        if (parcelable == null) {
+    protected AbsSavedState(Parcelable superState) {
+        if (superState == null) {
             throw new IllegalArgumentException("superState must not be null");
         }
-        this.mSuperState = parcelable == EMPTY_STATE ? null : parcelable;
+        this.mSuperState = superState != EMPTY_STATE ? superState : null;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    protected AbsSavedState(Parcel source, ClassLoader loader) {
+        Parcelable superState = source.readParcelable(loader);
+        this.mSuperState = superState != null ? superState : EMPTY_STATE;
     }
 
     public final Parcelable getSuperState() {
@@ -53,7 +49,12 @@ public abstract class AbsSavedState implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeParcelable(this.mSuperState, i);
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.mSuperState, flags);
     }
 }

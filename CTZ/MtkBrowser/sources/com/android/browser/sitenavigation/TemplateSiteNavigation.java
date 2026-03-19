@@ -23,33 +23,6 @@ public class TemplateSiteNavigation {
     private HashMap<String, Object> mData;
     private List<Entity> mTemplate;
 
-    public static abstract class CursorListEntityWrapper implements ListEntityIterator {
-        private Cursor mCursor;
-
-        public CursorListEntityWrapper(Cursor cursor) {
-            this.mCursor = cursor;
-        }
-
-        public Cursor getCursor() {
-            return this.mCursor;
-        }
-
-        @Override
-        public ListEntityIterator getListIterator(String str) {
-            return null;
-        }
-
-        @Override
-        public boolean moveToNext() {
-            return this.mCursor.moveToNext();
-        }
-
-        @Override
-        public void reset() {
-            this.mCursor.moveToPosition(-1);
-        }
-    }
-
     interface Entity {
         void write(OutputStream outputStream, EntityData entityData) throws IOException;
     }
@@ -60,88 +33,10 @@ public class TemplateSiteNavigation {
         void writeValue(OutputStream outputStream, String str) throws IOException;
     }
 
-    static class HashMapEntityData implements EntityData {
-        HashMap<String, Object> mData;
-
-        public HashMapEntityData(HashMap<String, Object> map) {
-            this.mData = map;
-        }
-
-        @Override
-        public ListEntityIterator getListIterator(String str) {
-            return (ListEntityIterator) this.mData.get(str);
-        }
-
-        @Override
-        public void writeValue(OutputStream outputStream, String str) throws IOException {
-            outputStream.write((byte[]) this.mData.get(str));
-        }
-    }
-
-    static class ListEntity implements Entity {
-        String mKey;
-        TemplateSiteNavigation mSubTemplate;
-
-        public ListEntity(Context context, String str, String str2) {
-            this.mKey = str;
-            this.mSubTemplate = new TemplateSiteNavigation(context, str2);
-        }
-
-        @Override
-        public void write(OutputStream outputStream, EntityData entityData) throws IOException {
-            ListEntityIterator listIterator = entityData.getListIterator(this.mKey);
-            listIterator.reset();
-            while (listIterator.moveToNext()) {
-                this.mSubTemplate.write(outputStream, listIterator);
-            }
-        }
-    }
-
     interface ListEntityIterator extends EntityData {
         boolean moveToNext();
 
         void reset();
-    }
-
-    static class SimpleEntity implements Entity {
-        String mKey;
-
-        public SimpleEntity(String str) {
-            this.mKey = str;
-        }
-
-        @Override
-        public void write(OutputStream outputStream, EntityData entityData) throws IOException {
-            entityData.writeValue(outputStream, this.mKey);
-        }
-    }
-
-    static class StringEntity implements Entity {
-        byte[] mValue;
-
-        public StringEntity(String str) {
-            this.mValue = str.getBytes();
-        }
-
-        @Override
-        public void write(OutputStream outputStream, EntityData entityData) throws IOException {
-            outputStream.write(this.mValue);
-        }
-    }
-
-    private TemplateSiteNavigation(Context context, int i) {
-        this(context, readRaw(context, i));
-    }
-
-    private TemplateSiteNavigation(Context context, String str) {
-        this.mData = new HashMap<>();
-        this.mTemplate = new ArrayList();
-        parseTemplate(context, replaceConsts(context, str));
-    }
-
-    private TemplateSiteNavigation(TemplateSiteNavigation templateSiteNavigation) {
-        this.mData = new HashMap<>();
-        this.mTemplate = templateSiteNavigation.mTemplate;
     }
 
     public static TemplateSiteNavigation getCachedTemplate(Context context, int i) {
@@ -164,51 +59,109 @@ public class TemplateSiteNavigation {
         return templateSiteNavigationCopy;
     }
 
-    private static String readRaw(Context context, int i) {
-        InputStream inputStreamOpenRawResource = context.getResources().openRawResource(i);
-        try {
-            byte[] bArr = new byte[inputStreamOpenRawResource.available()];
-            inputStreamOpenRawResource.read(bArr);
-            inputStreamOpenRawResource.close();
-            return new String(bArr, "utf-8");
-        } catch (IOException e) {
-            return "<html><body>Error</body></html>";
+    static class StringEntity implements Entity {
+        byte[] mValue;
+
+        public StringEntity(String str) {
+            this.mValue = str.getBytes();
+        }
+
+        @Override
+        public void write(OutputStream outputStream, EntityData entityData) throws IOException {
+            outputStream.write(this.mValue);
         }
     }
 
-    private static String replaceConsts(Context context, String str) {
-        String string;
-        Pattern patternCompile = Pattern.compile("<%@\\s*(\\w+/\\w+)\\s*%>");
-        Resources resources = context.getResources();
-        String name = R.class.getPackage().getName();
-        Matcher matcher = patternCompile.matcher(str);
-        StringBuffer stringBuffer = new StringBuffer();
-        while (matcher.find()) {
-            String strGroup = matcher.group(1);
-            if (strGroup.startsWith("drawable/")) {
-                matcher.appendReplacement(stringBuffer, "res/" + strGroup);
-            } else {
-                int identifier = resources.getIdentifier(strGroup, null, name);
-                if (identifier != 0) {
-                    TypedValue typedValue = new TypedValue();
-                    resources.getValue(identifier, typedValue, true);
-                    if (typedValue.type == 5) {
-                        float dimension = resources.getDimension(identifier);
-                        int i = (int) dimension;
-                        string = ((float) i) == dimension ? Integer.toString(i) : Float.toString(dimension);
-                    } else {
-                        string = typedValue.coerceToString().toString();
-                    }
-                    matcher.appendReplacement(stringBuffer, string);
-                }
+    static class SimpleEntity implements Entity {
+        String mKey;
+
+        public SimpleEntity(String str) {
+            this.mKey = str;
+        }
+
+        @Override
+        public void write(OutputStream outputStream, EntityData entityData) throws IOException {
+            entityData.writeValue(outputStream, this.mKey);
+        }
+    }
+
+    static class ListEntity implements Entity {
+        String mKey;
+        TemplateSiteNavigation mSubTemplate;
+
+        public ListEntity(Context context, String str, String str2) {
+            this.mKey = str;
+            this.mSubTemplate = new TemplateSiteNavigation(context, str2);
+        }
+
+        @Override
+        public void write(OutputStream outputStream, EntityData entityData) throws IOException {
+            ListEntityIterator listIterator = entityData.getListIterator(this.mKey);
+            listIterator.reset();
+            while (listIterator.moveToNext()) {
+                this.mSubTemplate.write(outputStream, listIterator);
             }
         }
-        matcher.appendTail(stringBuffer);
-        return stringBuffer.toString();
     }
 
-    public void assignLoop(String str, ListEntityIterator listEntityIterator) {
-        this.mData.put(str, listEntityIterator);
+    public static abstract class CursorListEntityWrapper implements ListEntityIterator {
+        private Cursor mCursor;
+
+        public CursorListEntityWrapper(Cursor cursor) {
+            this.mCursor = cursor;
+        }
+
+        @Override
+        public boolean moveToNext() {
+            return this.mCursor.moveToNext();
+        }
+
+        @Override
+        public void reset() {
+            this.mCursor.moveToPosition(-1);
+        }
+
+        @Override
+        public ListEntityIterator getListIterator(String str) {
+            return null;
+        }
+
+        public Cursor getCursor() {
+            return this.mCursor;
+        }
+    }
+
+    static class HashMapEntityData implements EntityData {
+        HashMap<String, Object> mData;
+
+        public HashMapEntityData(HashMap<String, Object> map) {
+            this.mData = map;
+        }
+
+        @Override
+        public ListEntityIterator getListIterator(String str) {
+            return (ListEntityIterator) this.mData.get(str);
+        }
+
+        @Override
+        public void writeValue(OutputStream outputStream, String str) throws IOException {
+            outputStream.write((byte[]) this.mData.get(str));
+        }
+    }
+
+    private TemplateSiteNavigation(Context context, int i) {
+        this(context, readRaw(context, i));
+    }
+
+    private TemplateSiteNavigation(Context context, String str) {
+        this.mData = new HashMap<>();
+        this.mTemplate = new ArrayList();
+        parseTemplate(context, replaceConsts(context, str));
+    }
+
+    private TemplateSiteNavigation(TemplateSiteNavigation templateSiteNavigation) {
+        this.mData = new HashMap<>();
+        this.mTemplate = templateSiteNavigation.mTemplate;
     }
 
     TemplateSiteNavigation copy() {
@@ -244,6 +197,10 @@ public class TemplateSiteNavigation {
         }
     }
 
+    public void assignLoop(String str, ListEntityIterator listEntityIterator) {
+        this.mData.put(str, listEntityIterator);
+    }
+
     public void write(OutputStream outputStream) throws IOException {
         write(outputStream, new HashMapEntityData(this.mData));
     }
@@ -252,6 +209,53 @@ public class TemplateSiteNavigation {
         Iterator<Entity> it = this.mTemplate.iterator();
         while (it.hasNext()) {
             it.next().write(outputStream, entityData);
+        }
+    }
+
+    private static String replaceConsts(Context context, String str) {
+        String string;
+        Pattern patternCompile = Pattern.compile("<%@\\s*(\\w+/\\w+)\\s*%>");
+        Resources resources = context.getResources();
+        String name = R.class.getPackage().getName();
+        Matcher matcher = patternCompile.matcher(str);
+        StringBuffer stringBuffer = new StringBuffer();
+        while (matcher.find()) {
+            String strGroup = matcher.group(1);
+            if (strGroup.startsWith("drawable/")) {
+                matcher.appendReplacement(stringBuffer, "res/" + strGroup);
+            } else {
+                int identifier = resources.getIdentifier(strGroup, null, name);
+                if (identifier != 0) {
+                    TypedValue typedValue = new TypedValue();
+                    resources.getValue(identifier, typedValue, true);
+                    if (typedValue.type == 5) {
+                        float dimension = resources.getDimension(identifier);
+                        int i = (int) dimension;
+                        if (i == dimension) {
+                            string = Integer.toString(i);
+                        } else {
+                            string = Float.toString(dimension);
+                        }
+                    } else {
+                        string = typedValue.coerceToString().toString();
+                    }
+                    matcher.appendReplacement(stringBuffer, string);
+                }
+            }
+        }
+        matcher.appendTail(stringBuffer);
+        return stringBuffer.toString();
+    }
+
+    private static String readRaw(Context context, int i) {
+        InputStream inputStreamOpenRawResource = context.getResources().openRawResource(i);
+        try {
+            byte[] bArr = new byte[inputStreamOpenRawResource.available()];
+            inputStreamOpenRawResource.read(bArr);
+            inputStreamOpenRawResource.close();
+            return new String(bArr, "utf-8");
+        } catch (IOException e) {
+            return "<html><body>Error</body></html>";
         }
     }
 }

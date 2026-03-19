@@ -15,59 +15,8 @@ public class TabScrollView extends HorizontalScrollView {
     private int mSelected;
     private int mTabOverlap;
 
-    class TabLayout extends LinearLayout {
-        final TabScrollView this$0;
-
-        public TabLayout(TabScrollView tabScrollView, Context context) {
-            super(context);
-            this.this$0 = tabScrollView;
-            setChildrenDrawingOrderEnabled(true);
-        }
-
-        @Override
-        protected int getChildDrawingOrder(int i, int i2) {
-            if (i2 == i - 1 && this.this$0.mSelected >= 0 && this.this$0.mSelected < i) {
-                return this.this$0.mSelected;
-            }
-            int i3 = (i - i2) - 1;
-            return (i3 > this.this$0.mSelected || i3 <= 0) ? i3 : i3 - 1;
-        }
-
-        @Override
-        protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-            super.onLayout(z, i, i2, i3, i4);
-            if (getChildCount() > 1) {
-                int right = getChildAt(0).getRight() - this.this$0.mTabOverlap;
-                int layoutDirection = getResources().getConfiguration().getLayoutDirection();
-                if (layoutDirection == 1) {
-                    right = getChildAt(0).getLeft() + this.this$0.mTabOverlap;
-                }
-                int i5 = right;
-                for (int i6 = 1; i6 < getChildCount(); i6++) {
-                    View childAt = getChildAt(i6);
-                    int right2 = childAt.getRight() - childAt.getLeft();
-                    if (layoutDirection == 1) {
-                        int i7 = i5 - right2;
-                        childAt.layout(i7, childAt.getTop(), i5, childAt.getBottom());
-                        i5 = i7 + this.this$0.mTabOverlap;
-                    } else {
-                        int i8 = right2 + i5;
-                        childAt.layout(i5, childAt.getTop(), i8, childAt.getBottom());
-                        i5 = i8 - this.this$0.mTabOverlap;
-                    }
-                }
-            }
-        }
-
-        @Override
-        protected void onMeasure(int i, int i2) {
-            super.onMeasure(i, i2);
-            setMeasuredDimension(getMeasuredWidth() - (Math.max(0, this.this$0.mContentView.getChildCount() - 1) * this.this$0.mTabOverlap), getMeasuredHeight());
-        }
-    }
-
-    public TabScrollView(Context context) {
-        super(context);
+    public TabScrollView(Context context, AttributeSet attributeSet, int i) {
+        super(context, attributeSet, i);
         init(context);
     }
 
@@ -76,15 +25,80 @@ public class TabScrollView extends HorizontalScrollView {
         init(context);
     }
 
-    public TabScrollView(Context context, AttributeSet attributeSet, int i) {
-        super(context, attributeSet, i);
+    public TabScrollView(Context context) {
+        super(context);
         init(context);
     }
 
-    private void animateScroll(int i) {
-        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this, "scroll", getScrollX(), i);
-        objectAnimatorOfInt.setDuration(this.mAnimationDuration);
-        objectAnimatorOfInt.start();
+    private void init(Context context) {
+        this.mAnimationDuration = context.getResources().getInteger(R.integer.tab_animation_duration);
+        this.mTabOverlap = (int) context.getResources().getDimension(R.dimen.tab_overlap);
+        setHorizontalScrollBarEnabled(false);
+        setOverScrollMode(2);
+        this.mContentView = new TabLayout(context);
+        this.mContentView.setOrientation(0);
+        this.mContentView.setLayoutParams(new FrameLayout.LayoutParams(-2, -1));
+        this.mContentView.setPadding((int) context.getResources().getDimension(R.dimen.tab_first_padding_left), 0, 0, 0);
+        addView(this.mContentView);
+        this.mSelected = -1;
+        setScroll(getScroll());
+    }
+
+    @Override
+    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
+        super.onLayout(z, i, i2, i3, i4);
+        ensureChildVisible(getSelectedTab());
+    }
+
+    protected void updateLayout() {
+        int childCount = this.mContentView.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            ((TabBar.TabView) this.mContentView.getChildAt(i)).updateLayoutParams();
+        }
+        ensureChildVisible(getSelectedTab());
+    }
+
+    void setSelectedTab(int i) {
+        View selectedTab = getSelectedTab();
+        if (selectedTab != null) {
+            selectedTab.setActivated(false);
+        }
+        this.mSelected = i;
+        View selectedTab2 = getSelectedTab();
+        if (selectedTab2 != null) {
+            selectedTab2.setActivated(true);
+        }
+        requestLayout();
+    }
+
+    int getChildIndex(View view) {
+        return this.mContentView.indexOfChild(view);
+    }
+
+    View getSelectedTab() {
+        if (this.mSelected >= 0 && this.mSelected < this.mContentView.getChildCount()) {
+            return this.mContentView.getChildAt(this.mSelected);
+        }
+        return null;
+    }
+
+    void clearTabs() {
+        this.mContentView.removeAllViews();
+    }
+
+    void addTab(View view) {
+        this.mContentView.addView(view);
+        view.setActivated(false);
+    }
+
+    void removeTab(View view) {
+        int iIndexOfChild = this.mContentView.indexOfChild(view);
+        if (iIndexOfChild == this.mSelected) {
+            this.mSelected = -1;
+        } else if (iIndexOfChild < this.mSelected) {
+            this.mSelected--;
+        }
+        this.mContentView.removeView(view);
     }
 
     private void ensureChildVisible(View view) {
@@ -101,48 +115,18 @@ public class TabScrollView extends HorizontalScrollView {
         }
     }
 
-    private void init(Context context) {
-        this.mAnimationDuration = context.getResources().getInteger(2131623939);
-        this.mTabOverlap = (int) context.getResources().getDimension(2131427330);
-        setHorizontalScrollBarEnabled(false);
-        setOverScrollMode(2);
-        this.mContentView = new TabLayout(this, context);
-        this.mContentView.setOrientation(0);
-        this.mContentView.setLayoutParams(new FrameLayout.LayoutParams(-2, -1));
-        this.mContentView.setPadding((int) context.getResources().getDimension(2131427358), 0, 0, 0);
-        addView(this.mContentView);
-        this.mSelected = -1;
-        setScroll(getScroll());
+    private void animateScroll(int i) {
+        ObjectAnimator objectAnimatorOfInt = ObjectAnimator.ofInt(this, "scroll", getScrollX(), i);
+        objectAnimatorOfInt.setDuration(this.mAnimationDuration);
+        objectAnimatorOfInt.start();
     }
 
-    void addTab(View view) {
-        this.mContentView.addView(view);
-        view.setActivated(false);
-    }
-
-    void clearTabs() {
-        this.mContentView.removeAllViews();
-    }
-
-    int getChildIndex(View view) {
-        return this.mContentView.indexOfChild(view);
+    public void setScroll(int i) {
+        scrollTo(i, getScrollY());
     }
 
     public int getScroll() {
         return getScrollX();
-    }
-
-    View getSelectedTab() {
-        if (this.mSelected < 0 || this.mSelected >= this.mContentView.getChildCount()) {
-            return null;
-        }
-        return this.mContentView.getChildAt(this.mSelected);
-    }
-
-    @Override
-    protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
-        super.onLayout(z, i, i2, i3, i4);
-        ensureChildVisible(getSelectedTab());
     }
 
     @Override
@@ -156,38 +140,55 @@ public class TabScrollView extends HorizontalScrollView {
         }
     }
 
-    void removeTab(View view) {
-        int iIndexOfChild = this.mContentView.indexOfChild(view);
-        if (iIndexOfChild == this.mSelected) {
-            this.mSelected = -1;
-        } else if (iIndexOfChild < this.mSelected) {
-            this.mSelected--;
+    class TabLayout extends LinearLayout {
+        public TabLayout(Context context) {
+            super(context);
+            setChildrenDrawingOrderEnabled(true);
         }
-        this.mContentView.removeView(view);
-    }
 
-    public void setScroll(int i) {
-        scrollTo(i, getScrollY());
-    }
+        @Override
+        protected void onMeasure(int i, int i2) {
+            super.onMeasure(i, i2);
+            setMeasuredDimension(getMeasuredWidth() - (Math.max(0, TabScrollView.this.mContentView.getChildCount() - 1) * TabScrollView.this.mTabOverlap), getMeasuredHeight());
+        }
 
-    void setSelectedTab(int i) {
-        View selectedTab = getSelectedTab();
-        if (selectedTab != null) {
-            selectedTab.setActivated(false);
+        @Override
+        protected void onLayout(boolean z, int i, int i2, int i3, int i4) {
+            int i5;
+            super.onLayout(z, i, i2, i3, i4);
+            if (getChildCount() > 1) {
+                int right = getChildAt(0).getRight() - TabScrollView.this.mTabOverlap;
+                int layoutDirection = getResources().getConfiguration().getLayoutDirection();
+                if (layoutDirection == 1) {
+                    right = TabScrollView.this.mTabOverlap + getChildAt(0).getLeft();
+                }
+                for (int i6 = 1; i6 < getChildCount(); i6++) {
+                    View childAt = getChildAt(i6);
+                    int right2 = childAt.getRight() - childAt.getLeft();
+                    if (layoutDirection == 1) {
+                        int i7 = right - right2;
+                        childAt.layout(i7, childAt.getTop(), right, childAt.getBottom());
+                        i5 = i7 + TabScrollView.this.mTabOverlap;
+                    } else {
+                        int i8 = right2 + right;
+                        childAt.layout(right, childAt.getTop(), i8, childAt.getBottom());
+                        i5 = i8 - TabScrollView.this.mTabOverlap;
+                    }
+                    right = i5;
+                }
+            }
         }
-        this.mSelected = i;
-        View selectedTab2 = getSelectedTab();
-        if (selectedTab2 != null) {
-            selectedTab2.setActivated(true);
-        }
-        requestLayout();
-    }
 
-    protected void updateLayout() {
-        int childCount = this.mContentView.getChildCount();
-        for (int i = 0; i < childCount; i++) {
-            ((TabBar.TabView) this.mContentView.getChildAt(i)).updateLayoutParams();
+        @Override
+        protected int getChildDrawingOrder(int i, int i2) {
+            if (i2 == i - 1 && TabScrollView.this.mSelected >= 0 && TabScrollView.this.mSelected < i) {
+                return TabScrollView.this.mSelected;
+            }
+            int i3 = (i - i2) - 1;
+            if (i3 <= TabScrollView.this.mSelected && i3 > 0) {
+                return i3 - 1;
+            }
+            return i3;
         }
-        ensureChildVisible(getSelectedTab());
     }
 }

@@ -16,16 +16,48 @@ public abstract class FragmentHostCallback<E> extends FragmentContainer {
     private final Handler mHandler;
     private final int mWindowAnimations;
 
-    FragmentHostCallback(Activity activity, Context context, Handler handler, int i) {
+    FragmentHostCallback(FragmentActivity activity) {
+        this(activity, activity, activity.mHandler, 0);
+    }
+
+    FragmentHostCallback(Activity activity, Context context, Handler handler, int windowAnimations) {
         this.mFragmentManager = new FragmentManagerImpl();
         this.mActivity = activity;
         this.mContext = (Context) Preconditions.checkNotNull(context, "context == null");
         this.mHandler = (Handler) Preconditions.checkNotNull(handler, "handler == null");
-        this.mWindowAnimations = i;
+        this.mWindowAnimations = windowAnimations;
     }
 
-    FragmentHostCallback(FragmentActivity fragmentActivity) {
-        this(fragmentActivity, fragmentActivity, fragmentActivity.mHandler, 0);
+    public void onDump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
+    }
+
+    public boolean onShouldSaveFragmentState(Fragment fragment) {
+        return true;
+    }
+
+    public LayoutInflater onGetLayoutInflater() {
+        return LayoutInflater.from(this.mContext);
+    }
+
+    public void onSupportInvalidateOptionsMenu() {
+    }
+
+    public boolean onHasWindowAnimations() {
+        return true;
+    }
+
+    public int onGetWindowAnimations() {
+        return this.mWindowAnimations;
+    }
+
+    @Override
+    public View onFindViewById(int id) {
+        return null;
+    }
+
+    @Override
+    public boolean onHasView() {
+        return true;
     }
 
     Activity getActivity() {
@@ -36,46 +68,14 @@ public abstract class FragmentHostCallback<E> extends FragmentContainer {
         return this.mContext;
     }
 
-    FragmentManagerImpl getFragmentManagerImpl() {
-        return this.mFragmentManager;
-    }
-
     Handler getHandler() {
         return this.mHandler;
     }
 
+    FragmentManagerImpl getFragmentManagerImpl() {
+        return this.mFragmentManager;
+    }
+
     void onAttachFragment(Fragment fragment) {
-    }
-
-    public void onDump(String str, FileDescriptor fileDescriptor, PrintWriter printWriter, String[] strArr) {
-    }
-
-    @Override
-    public View onFindViewById(int i) {
-        return null;
-    }
-
-    public LayoutInflater onGetLayoutInflater() {
-        return LayoutInflater.from(this.mContext);
-    }
-
-    public int onGetWindowAnimations() {
-        return this.mWindowAnimations;
-    }
-
-    @Override
-    public boolean onHasView() {
-        return true;
-    }
-
-    public boolean onHasWindowAnimations() {
-        return true;
-    }
-
-    public boolean onShouldSaveFragmentState(Fragment fragment) {
-        return true;
-    }
-
-    public void onSupportInvalidateOptionsMenu() {
     }
 }

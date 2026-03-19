@@ -39,7 +39,7 @@ public class VibratorHelper {
         }
     }
 
-    public void updateHapticFeedBackEnabled() {
+    private void updateHapticFeedBackEnabled() {
         this.mHapticFeedbackEnabled = Settings.System.getIntForUser(this.mContext.getContentResolver(), "haptic_feedback_enabled", 0, -2) != 0;
     }
 }

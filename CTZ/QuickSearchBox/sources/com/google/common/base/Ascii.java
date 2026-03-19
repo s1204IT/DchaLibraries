@@ -1,15 +1,13 @@
 package com.google.common.base;
 
 public final class Ascii {
-    public static boolean isUpperCase(char c) {
-        return c >= 'A' && c <= 'Z';
-    }
-
     public static String toLowerCase(String str) {
         int length = str.length();
         int i = 0;
         while (i < length) {
-            if (isUpperCase(str.charAt(i))) {
+            if (!isUpperCase(str.charAt(i))) {
+                i++;
+            } else {
                 char[] charArray = str.toCharArray();
                 while (i < length) {
                     char c = charArray[i];
@@ -20,8 +18,11 @@ public final class Ascii {
                 }
                 return String.valueOf(charArray);
             }
-            i++;
         }
         return str;
+    }
+
+    public static boolean isUpperCase(char c) {
+        return c >= 'A' && c <= 'Z';
     }
 }

@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.android.browser.BreadCrumbView;
 import com.android.browser.BrowserBookmarksAdapter;
+import com.android.browser.R;
 import com.android.browser.provider.BrowserContract;
 import com.android.internal.view.menu.MenuBuilder;
 import java.util.ArrayList;
@@ -35,234 +36,34 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
     private ExpandableListView.OnChildClickListener mOnChildClickListener;
     private View.OnCreateContextMenuListener mOnCreateContextMenuListener;
 
-    class BookmarkAccountAdapter extends BaseExpandableListAdapter {
-        ArrayList<BrowserBookmarksAdapter> mChildren;
-        ArrayList<String> mGroups;
-        LayoutInflater mInflater;
-        final BookmarkExpandableView this$0;
-        HashMap<Integer, BreadCrumbView> mBreadcrumbs = new HashMap<>();
-        int mRowCount = 1;
-        int mLastViewWidth = -1;
-        int mRowPadding = -1;
-        DataSetObserver mObserver = new DataSetObserver(this) {
-            final BookmarkAccountAdapter this$1;
-
-            {
-                this.this$1 = this;
-            }
-
-            @Override
-            public void onChanged() {
-                this.this$1.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onInvalidated() {
-                this.this$1.notifyDataSetInvalidated();
-            }
-        };
-
-        public BookmarkAccountAdapter(BookmarkExpandableView bookmarkExpandableView, Context context) {
-            this.this$0 = bookmarkExpandableView;
-            bookmarkExpandableView.mContext = context;
-            this.mInflater = LayoutInflater.from(bookmarkExpandableView.mContext);
-            this.mChildren = new ArrayList<>();
-            this.mGroups = new ArrayList<>();
-        }
-
-        public void clear() {
-            this.mGroups.clear();
-            this.mChildren.clear();
-            notifyDataSetChanged();
-        }
-
-        public BreadCrumbView getBreadCrumbView(int i) {
-            BreadCrumbView breadCrumbView = this.mBreadcrumbs.get(Integer.valueOf(i));
-            if (breadCrumbView != null) {
-                return breadCrumbView;
-            }
-            BreadCrumbView breadCrumbView2 = (BreadCrumbView) this.mInflater.inflate(2130968588, (ViewGroup) null);
-            breadCrumbView2.setController(this.this$0);
-            breadCrumbView2.setUseBackButton(true);
-            breadCrumbView2.setMaxVisible(2);
-            breadCrumbView2.pushView(this.this$0.mContext.getString(2131493026), false, BrowserContract.Bookmarks.CONTENT_URI_DEFAULT_FOLDER);
-            breadCrumbView2.setTag(2131558400, Integer.valueOf(i));
-            breadCrumbView2.setVisibility(8);
-            this.mBreadcrumbs.put(Integer.valueOf(i), breadCrumbView2);
-            return breadCrumbView2;
-        }
-
-        @Override
-        public Object getChild(int i, int i2) {
-            return this.mChildren.get(i).getItem(i2);
-        }
-
-        @Override
-        public long getChildId(int i, int i2) {
-            return i2;
-        }
-
-        @Override
-        public View getChildView(int i, int i2, boolean z, View view, ViewGroup viewGroup) {
-            View viewInflate = view == null ? this.mInflater.inflate(2130968580, viewGroup, false) : view;
-            BrowserBookmarksAdapter browserBookmarksAdapter = this.mChildren.get(i);
-            int i3 = this.mRowCount;
-            LinearLayout linearLayout = (LinearLayout) viewInflate;
-            if (linearLayout.getChildCount() > i3) {
-                linearLayout.removeViews(i3, linearLayout.getChildCount() - i3);
-            }
-            int i4 = 0;
-            while (i4 < i3) {
-                View childAt = linearLayout.getChildCount() > i4 ? linearLayout.getChildAt(i4) : null;
-                int i5 = (i2 * i3) + i4;
-                if (i5 < browserBookmarksAdapter.getCount()) {
-                    View view2 = browserBookmarksAdapter.getView(i5, childAt, linearLayout);
-                    view2.setTag(2131558400, Integer.valueOf(i));
-                    view2.setTag(2131558401, Integer.valueOf(i5));
-                    view2.setOnClickListener(this.this$0.mChildClickListener);
-                    view2.setLongClickable(this.this$0.mLongClickable);
-                    if (linearLayout.getChildCount() > 1) {
-                        view2.setPadding(linearLayout.getChildAt(0).getPaddingLeft(), linearLayout.getChildAt(0).getPaddingTop(), linearLayout.getChildAt(0).getPaddingRight(), linearLayout.getChildAt(0).getPaddingBottom());
-                    }
-                    if (childAt == null) {
-                        linearLayout.addView(view2);
-                    } else if (childAt != view2) {
-                        linearLayout.removeViewAt(i4);
-                        linearLayout.addView(view2, i4);
-                    } else {
-                        childAt.setVisibility(0);
-                    }
-                } else if (childAt != null) {
-                    childAt.setVisibility(8);
-                }
-                i4++;
-            }
-            return linearLayout;
-        }
-
-        @Override
-        public int getChildrenCount(int i) {
-            return (int) Math.ceil(this.mChildren.get(i).getCount() / this.mRowCount);
-        }
-
-        @Override
-        public Object getGroup(int i) {
-            return this.mChildren.get(i);
-        }
-
-        @Override
-        public int getGroupCount() {
-            return this.mGroups.size();
-        }
-
-        @Override
-        public long getGroupId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getGroupView(int i, boolean z, View view, ViewGroup viewGroup) {
-            if (view == null) {
-                view = this.mInflater.inflate(2130968581, viewGroup, false);
-                view.setOnClickListener(this.this$0.mGroupOnClickListener);
-            }
-            view.setTag(2131558400, Integer.valueOf(i));
-            FrameLayout frameLayout = (FrameLayout) view.findViewById(2131558422);
-            frameLayout.removeAllViews();
-            BreadCrumbView breadCrumbView = getBreadCrumbView(i);
-            if (breadCrumbView.getParent() != null) {
-                ((ViewGroup) breadCrumbView.getParent()).removeView(breadCrumbView);
-            }
-            frameLayout.addView(breadCrumbView);
-            TextView textView = (TextView) view.findViewById(2131558421);
-            String string = this.mGroups.get(i);
-            if (string == null) {
-                string = this.this$0.mContext.getString(2131493285);
-            }
-            textView.setText(string);
-            return view;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-        @Override
-        public boolean isChildSelectable(int i, int i2) {
-            return true;
-        }
-
-        public void measureChildren(int i) {
-            if (this.mLastViewWidth == i) {
-                return;
-            }
-            int iMin = i / this.this$0.mColumnWidth;
-            if (this.this$0.mMaxColumnCount > 0) {
-                iMin = Math.min(iMin, this.this$0.mMaxColumnCount);
-            }
-            int i2 = (i - (this.this$0.mColumnWidth * iMin)) / 2;
-            boolean z = (iMin == this.mRowCount && i2 == this.mRowPadding) ? false : true;
-            this.mRowCount = iMin;
-            this.mRowPadding = i2;
-            this.mLastViewWidth = i;
-            if (z) {
-                notifyDataSetChanged();
-            }
-        }
-    }
-
-    public static class BookmarkContextMenuInfo implements ContextMenu.ContextMenuInfo {
-        public int childPosition;
-        public int groupPosition;
-
-        private BookmarkContextMenuInfo(int i, int i2) {
-            this.childPosition = i;
-            this.groupPosition = i2;
-        }
-    }
-
     public BookmarkExpandableView(Context context) {
         super(context);
         this.mContextMenuInfo = null;
-        this.mChildClickListener = new View.OnClickListener(this) {
-            final BookmarkExpandableView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mChildClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (view.getVisibility() != 0) {
                     return;
                 }
-                int iIntValue = ((Integer) view.getTag(2131558400)).intValue();
-                int iIntValue2 = ((Integer) view.getTag(2131558401)).intValue();
-                if (this.this$0.mAdapter.getGroupCount() <= iIntValue || this.this$0.mAdapter.mChildren.get(iIntValue).getCount() <= iIntValue2) {
-                    return;
-                }
-                long itemId = this.this$0.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
-                if (this.this$0.mOnChildClickListener != null) {
-                    this.this$0.mOnChildClickListener.onChildClick(this.this$0, view, iIntValue, iIntValue2, itemId);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                int iIntValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
+                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > iIntValue && BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getCount() > iIntValue2) {
+                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
+                    if (BookmarkExpandableView.this.mOnChildClickListener != null) {
+                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, iIntValue, iIntValue2, itemId);
+                    }
                 }
             }
         };
-        this.mGroupOnClickListener = new View.OnClickListener(this) {
-            final BookmarkExpandableView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mGroupOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int iIntValue = ((Integer) view.getTag(2131558400)).intValue();
-                if (this.this$0.isGroupExpanded(iIntValue)) {
-                    this.this$0.collapseGroup(iIntValue);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                if (BookmarkExpandableView.this.isGroupExpanded(iIntValue)) {
+                    BookmarkExpandableView.this.collapseGroup(iIntValue);
                 } else {
-                    this.this$0.hideAllGroups();
-                    this.this$0.expandGroup(iIntValue, true);
+                    BookmarkExpandableView.this.hideAllGroups();
+                    BookmarkExpandableView.this.expandGroup(iIntValue, true);
                 }
             }
         };
@@ -272,44 +73,31 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
     public BookmarkExpandableView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         this.mContextMenuInfo = null;
-        this.mChildClickListener = new View.OnClickListener(this) {
-            final BookmarkExpandableView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mChildClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (view.getVisibility() != 0) {
                     return;
                 }
-                int iIntValue = ((Integer) view.getTag(2131558400)).intValue();
-                int iIntValue2 = ((Integer) view.getTag(2131558401)).intValue();
-                if (this.this$0.mAdapter.getGroupCount() <= iIntValue || this.this$0.mAdapter.mChildren.get(iIntValue).getCount() <= iIntValue2) {
-                    return;
-                }
-                long itemId = this.this$0.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
-                if (this.this$0.mOnChildClickListener != null) {
-                    this.this$0.mOnChildClickListener.onChildClick(this.this$0, view, iIntValue, iIntValue2, itemId);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                int iIntValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
+                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > iIntValue && BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getCount() > iIntValue2) {
+                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
+                    if (BookmarkExpandableView.this.mOnChildClickListener != null) {
+                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, iIntValue, iIntValue2, itemId);
+                    }
                 }
             }
         };
-        this.mGroupOnClickListener = new View.OnClickListener(this) {
-            final BookmarkExpandableView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mGroupOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int iIntValue = ((Integer) view.getTag(2131558400)).intValue();
-                if (this.this$0.isGroupExpanded(iIntValue)) {
-                    this.this$0.collapseGroup(iIntValue);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                if (BookmarkExpandableView.this.isGroupExpanded(iIntValue)) {
+                    BookmarkExpandableView.this.collapseGroup(iIntValue);
                 } else {
-                    this.this$0.hideAllGroups();
-                    this.this$0.expandGroup(iIntValue, true);
+                    BookmarkExpandableView.this.hideAllGroups();
+                    BookmarkExpandableView.this.expandGroup(iIntValue, true);
                 }
             }
         };
@@ -319,48 +107,75 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
     public BookmarkExpandableView(Context context, AttributeSet attributeSet, int i) {
         super(context, attributeSet, i);
         this.mContextMenuInfo = null;
-        this.mChildClickListener = new View.OnClickListener(this) {
-            final BookmarkExpandableView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mChildClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (view.getVisibility() != 0) {
                     return;
                 }
-                int iIntValue = ((Integer) view.getTag(2131558400)).intValue();
-                int iIntValue2 = ((Integer) view.getTag(2131558401)).intValue();
-                if (this.this$0.mAdapter.getGroupCount() <= iIntValue || this.this$0.mAdapter.mChildren.get(iIntValue).getCount() <= iIntValue2) {
-                    return;
-                }
-                long itemId = this.this$0.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
-                if (this.this$0.mOnChildClickListener != null) {
-                    this.this$0.mOnChildClickListener.onChildClick(this.this$0, view, iIntValue, iIntValue2, itemId);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                int iIntValue2 = ((Integer) view.getTag(R.id.child_position)).intValue();
+                if (BookmarkExpandableView.this.mAdapter.getGroupCount() > iIntValue && BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getCount() > iIntValue2) {
+                    long itemId = BookmarkExpandableView.this.mAdapter.mChildren.get(iIntValue).getItemId(iIntValue2);
+                    if (BookmarkExpandableView.this.mOnChildClickListener != null) {
+                        BookmarkExpandableView.this.mOnChildClickListener.onChildClick(BookmarkExpandableView.this, view, iIntValue, iIntValue2, itemId);
+                    }
                 }
             }
         };
-        this.mGroupOnClickListener = new View.OnClickListener(this) {
-            final BookmarkExpandableView this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mGroupOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int iIntValue = ((Integer) view.getTag(2131558400)).intValue();
-                if (this.this$0.isGroupExpanded(iIntValue)) {
-                    this.this$0.collapseGroup(iIntValue);
+                int iIntValue = ((Integer) view.getTag(R.id.group_position)).intValue();
+                if (BookmarkExpandableView.this.isGroupExpanded(iIntValue)) {
+                    BookmarkExpandableView.this.collapseGroup(iIntValue);
                 } else {
-                    this.this$0.hideAllGroups();
-                    this.this$0.expandGroup(iIntValue, true);
+                    BookmarkExpandableView.this.hideAllGroups();
+                    BookmarkExpandableView.this.expandGroup(iIntValue, true);
                 }
             }
         };
         init(context);
+    }
+
+    void init(Context context) {
+        this.mContext = context;
+        setItemsCanFocus(true);
+        setLongClickable(false);
+        this.mMaxColumnCount = this.mContext.getResources().getInteger(R.integer.max_bookmark_columns);
+        setScrollBarStyle(33554432);
+        this.mAdapter = new BookmarkAccountAdapter(this.mContext);
+        super.setAdapter(this.mAdapter);
+    }
+
+    @Override
+    protected void onMeasure(int i, int i2) {
+        int size = View.MeasureSpec.getSize(i);
+        int mode = View.MeasureSpec.getMode(i);
+        if (size > 0) {
+            this.mAdapter.measureChildren(size);
+            setPadding(this.mAdapter.mRowPadding, 0, this.mAdapter.mRowPadding, 0);
+            i = View.MeasureSpec.makeMeasureSpec(size, mode);
+        }
+        super.onMeasure(i, i2);
+        if (size != getMeasuredWidth()) {
+            this.mAdapter.measureChildren(getMeasuredWidth());
+        }
+    }
+
+    @Override
+    public void setAdapter(ExpandableListAdapter expandableListAdapter) {
+        throw new RuntimeException("Not supported");
+    }
+
+    public void setColumnWidthFromLayout(int i) {
+        View viewInflate = LayoutInflater.from(this.mContext).inflate(i, (ViewGroup) this, false);
+        viewInflate.measure(0, 0);
+        this.mColumnWidth = viewInflate.getMeasuredWidth();
+    }
+
+    public void clearAccounts() {
+        this.mAdapter.clear();
     }
 
     public void addAccount(String str, BrowserBookmarksAdapter browserBookmarksAdapter, boolean z) {
@@ -384,8 +199,26 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         }
     }
 
-    public void clearAccounts() {
-        this.mAdapter.clear();
+    public void hideAllGroups() {
+        for (int i = 0; i < this.mAdapter.getGroupCount(); i++) {
+            collapseGroup(i);
+        }
+    }
+
+    @Override
+    public void setOnChildClickListener(ExpandableListView.OnChildClickListener onChildClickListener) {
+        this.mOnChildClickListener = onChildClickListener;
+    }
+
+    @Override
+    public void setOnCreateContextMenuListener(View.OnCreateContextMenuListener onCreateContextMenuListener) {
+        this.mOnCreateContextMenuListener = onCreateContextMenuListener;
+        if (!this.mLongClickable) {
+            this.mLongClickable = true;
+            if (this.mAdapter != null) {
+                this.mAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
@@ -398,53 +231,24 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
             this.mOnCreateContextMenuListener.onCreateContextMenu(contextMenu, this, contextMenuInfo);
         }
         menuBuilder.setCurrentMenuInfo((ContextMenu.ContextMenuInfo) null);
-        if (this.mParent != null) {
-            this.mParent.createContextMenu(contextMenu);
+        if (((View) this).mParent != null) {
+            ((View) this).mParent.createContextMenu(contextMenu);
         }
-    }
-
-    public BreadCrumbView getBreadCrumbs(int i) {
-        return this.mAdapter.getBreadCrumbView(i);
-    }
-
-    public BrowserBookmarksAdapter getChildAdapter(int i) {
-        return this.mAdapter.mChildren.get(i);
     }
 
     @Override
-    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
-        return this.mContextMenuInfo;
-    }
-
-    public void hideAllGroups() {
-        for (int i = 0; i < this.mAdapter.getGroupCount(); i++) {
-            collapseGroup(i);
+    public boolean showContextMenuForChild(View view) {
+        Integer num = (Integer) view.getTag(R.id.group_position);
+        Integer num2 = (Integer) view.getTag(R.id.child_position);
+        if (num == null || num2 == null) {
+            return false;
         }
-    }
-
-    void init(Context context) {
-        this.mContext = context;
-        setItemsCanFocus(true);
-        setLongClickable(false);
-        this.mMaxColumnCount = this.mContext.getResources().getInteger(2131623943);
-        setScrollBarStyle(33554432);
-        this.mAdapter = new BookmarkAccountAdapter(this, this.mContext);
-        super.setAdapter(this.mAdapter);
-    }
-
-    @Override
-    protected void onMeasure(int i, int i2) {
-        int size = View.MeasureSpec.getSize(i);
-        int mode = View.MeasureSpec.getMode(i);
-        if (size > 0) {
-            this.mAdapter.measureChildren(size);
-            setPadding(this.mAdapter.mRowPadding, 0, this.mAdapter.mRowPadding, 0);
-            i = View.MeasureSpec.makeMeasureSpec(size, mode);
+        this.mContextMenuInfo = new BookmarkContextMenuInfo(num2.intValue(), num.intValue());
+        if (getParent() != null) {
+            getParent().showContextMenuForChild(this);
+            return true;
         }
-        super.onMeasure(i, i2);
-        if (size != getMeasuredWidth()) {
-            this.mAdapter.measureChildren(getMeasuredWidth());
-        }
+        return true;
     }
 
     @Override
@@ -452,6 +256,23 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         if (this.mBreadcrumbController != null) {
             this.mBreadcrumbController.onTop(breadCrumbView, i, obj);
         }
+    }
+
+    public void setBreadcrumbController(BreadCrumbView.Controller controller) {
+        this.mBreadcrumbController = controller;
+    }
+
+    @Override
+    protected ContextMenu.ContextMenuInfo getContextMenuInfo() {
+        return this.mContextMenuInfo;
+    }
+
+    public BrowserBookmarksAdapter getChildAdapter(int i) {
+        return this.mAdapter.mChildren.get(i);
+    }
+
+    public BreadCrumbView getBreadCrumbs(int i) {
+        return this.mAdapter.getBreadCrumbView(i);
     }
 
     public JSONObject saveGroupState() throws JSONException {
@@ -469,49 +290,185 @@ public class BookmarkExpandableView extends ExpandableListView implements BreadC
         return jSONObject;
     }
 
-    @Override
-    public void setAdapter(ExpandableListAdapter expandableListAdapter) {
-        throw new RuntimeException("Not supported");
-    }
+    class BookmarkAccountAdapter extends BaseExpandableListAdapter {
+        ArrayList<BrowserBookmarksAdapter> mChildren;
+        ArrayList<String> mGroups;
+        LayoutInflater mInflater;
+        HashMap<Integer, BreadCrumbView> mBreadcrumbs = new HashMap<>();
+        int mRowCount = 1;
+        int mLastViewWidth = -1;
+        int mRowPadding = -1;
+        DataSetObserver mObserver = new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                BookmarkAccountAdapter.this.notifyDataSetChanged();
+            }
 
-    public void setBreadcrumbController(BreadCrumbView.Controller controller) {
-        this.mBreadcrumbController = controller;
-    }
+            @Override
+            public void onInvalidated() {
+                BookmarkAccountAdapter.this.notifyDataSetInvalidated();
+            }
+        };
 
-    public void setColumnWidthFromLayout(int i) {
-        View viewInflate = LayoutInflater.from(this.mContext).inflate(i, (ViewGroup) this, false);
-        viewInflate.measure(0, 0);
-        this.mColumnWidth = viewInflate.getMeasuredWidth();
-    }
-
-    @Override
-    public void setOnChildClickListener(ExpandableListView.OnChildClickListener onChildClickListener) {
-        this.mOnChildClickListener = onChildClickListener;
-    }
-
-    @Override
-    public void setOnCreateContextMenuListener(View.OnCreateContextMenuListener onCreateContextMenuListener) {
-        this.mOnCreateContextMenuListener = onCreateContextMenuListener;
-        if (this.mLongClickable) {
-            return;
+        public BookmarkAccountAdapter(Context context) {
+            BookmarkExpandableView.this.mContext = context;
+            this.mInflater = LayoutInflater.from(BookmarkExpandableView.this.mContext);
+            this.mChildren = new ArrayList<>();
+            this.mGroups = new ArrayList<>();
         }
-        this.mLongClickable = true;
-        if (this.mAdapter != null) {
-            this.mAdapter.notifyDataSetChanged();
-        }
-    }
 
-    @Override
-    public boolean showContextMenuForChild(View view) {
-        Integer num = (Integer) view.getTag(2131558400);
-        Integer num2 = (Integer) view.getTag(2131558401);
-        if (num == null || num2 == null) {
+        public void clear() {
+            this.mGroups.clear();
+            this.mChildren.clear();
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public Object getChild(int i, int i2) {
+            return this.mChildren.get(i).getItem(i2);
+        }
+
+        @Override
+        public long getChildId(int i, int i2) {
+            return i2;
+        }
+
+        @Override
+        public View getChildView(int i, int i2, boolean z, View view, ViewGroup viewGroup) {
+            if (view == null) {
+                view = this.mInflater.inflate(R.layout.bookmark_grid_row, viewGroup, false);
+            }
+            BrowserBookmarksAdapter browserBookmarksAdapter = this.mChildren.get(i);
+            int i3 = this.mRowCount;
+            LinearLayout linearLayout = (LinearLayout) view;
+            if (linearLayout.getChildCount() > i3) {
+                linearLayout.removeViews(i3, linearLayout.getChildCount() - i3);
+            }
+            for (int i4 = 0; i4 < i3; i4++) {
+                View childAt = null;
+                if (linearLayout.getChildCount() > i4) {
+                    childAt = linearLayout.getChildAt(i4);
+                }
+                int i5 = (i2 * i3) + i4;
+                if (i5 < browserBookmarksAdapter.getCount()) {
+                    View view2 = browserBookmarksAdapter.getView(i5, childAt, linearLayout);
+                    view2.setTag(R.id.group_position, Integer.valueOf(i));
+                    view2.setTag(R.id.child_position, Integer.valueOf(i5));
+                    view2.setOnClickListener(BookmarkExpandableView.this.mChildClickListener);
+                    view2.setLongClickable(BookmarkExpandableView.this.mLongClickable);
+                    if (linearLayout.getChildCount() > 1) {
+                        view2.setPadding(linearLayout.getChildAt(0).getPaddingLeft(), linearLayout.getChildAt(0).getPaddingTop(), linearLayout.getChildAt(0).getPaddingRight(), linearLayout.getChildAt(0).getPaddingBottom());
+                    }
+                    if (childAt == null) {
+                        linearLayout.addView(view2);
+                    } else if (childAt != view2) {
+                        linearLayout.removeViewAt(i4);
+                        linearLayout.addView(view2, i4);
+                    } else {
+                        childAt.setVisibility(0);
+                    }
+                } else if (childAt != null) {
+                    childAt.setVisibility(8);
+                }
+            }
+            return linearLayout;
+        }
+
+        @Override
+        public int getChildrenCount(int i) {
+            return (int) Math.ceil(this.mChildren.get(i).getCount() / this.mRowCount);
+        }
+
+        @Override
+        public Object getGroup(int i) {
+            return this.mChildren.get(i);
+        }
+
+        @Override
+        public int getGroupCount() {
+            return this.mGroups.size();
+        }
+
+        public void measureChildren(int i) {
+            if (this.mLastViewWidth == i) {
+                return;
+            }
+            int iMin = i / BookmarkExpandableView.this.mColumnWidth;
+            if (BookmarkExpandableView.this.mMaxColumnCount > 0) {
+                iMin = Math.min(iMin, BookmarkExpandableView.this.mMaxColumnCount);
+            }
+            int i2 = (i - (BookmarkExpandableView.this.mColumnWidth * iMin)) / 2;
+            boolean z = (iMin == this.mRowCount && i2 == this.mRowPadding) ? false : true;
+            this.mRowCount = iMin;
+            this.mRowPadding = i2;
+            this.mLastViewWidth = i;
+            if (z) {
+                notifyDataSetChanged();
+            }
+        }
+
+        @Override
+        public long getGroupId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getGroupView(int i, boolean z, View view, ViewGroup viewGroup) {
+            if (view == null) {
+                view = this.mInflater.inflate(R.layout.bookmark_group_view, viewGroup, false);
+                view.setOnClickListener(BookmarkExpandableView.this.mGroupOnClickListener);
+            }
+            view.setTag(R.id.group_position, Integer.valueOf(i));
+            FrameLayout frameLayout = (FrameLayout) view.findViewById(R.id.crumb_holder);
+            frameLayout.removeAllViews();
+            BreadCrumbView breadCrumbView = getBreadCrumbView(i);
+            if (breadCrumbView.getParent() != null) {
+                ((ViewGroup) breadCrumbView.getParent()).removeView(breadCrumbView);
+            }
+            frameLayout.addView(breadCrumbView);
+            TextView textView = (TextView) view.findViewById(R.id.group_name);
+            String string = this.mGroups.get(i);
+            if (string == null) {
+                string = BookmarkExpandableView.this.mContext.getString(R.string.local_bookmarks);
+            }
+            textView.setText(string);
+            return view;
+        }
+
+        public BreadCrumbView getBreadCrumbView(int i) {
+            BreadCrumbView breadCrumbView = this.mBreadcrumbs.get(Integer.valueOf(i));
+            if (breadCrumbView == null) {
+                BreadCrumbView breadCrumbView2 = (BreadCrumbView) this.mInflater.inflate(R.layout.bookmarks_header, (ViewGroup) null);
+                breadCrumbView2.setController(BookmarkExpandableView.this);
+                breadCrumbView2.setUseBackButton(true);
+                breadCrumbView2.setMaxVisible(2);
+                breadCrumbView2.pushView(BookmarkExpandableView.this.mContext.getString(R.string.bookmarks), false, BrowserContract.Bookmarks.CONTENT_URI_DEFAULT_FOLDER);
+                breadCrumbView2.setTag(R.id.group_position, Integer.valueOf(i));
+                breadCrumbView2.setVisibility(8);
+                this.mBreadcrumbs.put(Integer.valueOf(i), breadCrumbView2);
+                return breadCrumbView2;
+            }
+            return breadCrumbView;
+        }
+
+        @Override
+        public boolean hasStableIds() {
             return false;
         }
-        this.mContextMenuInfo = new BookmarkContextMenuInfo(num2.intValue(), num.intValue());
-        if (getParent() != null) {
-            getParent().showContextMenuForChild(this);
+
+        @Override
+        public boolean isChildSelectable(int i, int i2) {
+            return true;
         }
-        return true;
+    }
+
+    public static class BookmarkContextMenuInfo implements ContextMenu.ContextMenuInfo {
+        public int childPosition;
+        public int groupPosition;
+
+        private BookmarkContextMenuInfo(int i, int i2) {
+            this.childPosition = i;
+            this.groupPosition = i2;
+        }
     }
 }

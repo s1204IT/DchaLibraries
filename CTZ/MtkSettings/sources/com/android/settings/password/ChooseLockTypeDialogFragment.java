@@ -51,7 +51,7 @@ public class ChooseLockTypeDialogFragment extends InstrumentedDialogFragment imp
         }
     }
 
-    public static void copyBooleanExtra(Intent intent, Intent intent2, String str, boolean z) {
+    private static void copyBooleanExtra(Intent intent, Intent intent2, String str, boolean z) {
         intent2.putExtra(str, intent.getBooleanExtra(str, z));
     }
 

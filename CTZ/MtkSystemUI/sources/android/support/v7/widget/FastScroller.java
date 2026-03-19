@@ -98,11 +98,11 @@ class FastScroller extends RecyclerView.ItemDecoration implements RecyclerView.O
         cancelHide();
     }
 
-    public void requestRedraw() {
+    private void requestRedraw() {
         this.mRecyclerView.invalidate();
     }
 
-    public void setState(int state) {
+    private void setState(int state) {
         if (state == 2 && this.mState != 2) {
             this.mVerticalThumbDrawable.setState(PRESSED_STATE_SET);
             cancelHide();

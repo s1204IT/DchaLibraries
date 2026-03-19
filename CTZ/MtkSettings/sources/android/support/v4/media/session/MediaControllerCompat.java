@@ -422,7 +422,7 @@ public final class MediaControllerCompat {
             MediaControllerCompatApi21.sendCommand(this.mControllerObj, command, params, cb);
         }
 
-        public void processPendingCallbacks() {
+        private void processPendingCallbacks() {
             if (this.mSessionToken.getExtraBinder() == null) {
                 return;
             }

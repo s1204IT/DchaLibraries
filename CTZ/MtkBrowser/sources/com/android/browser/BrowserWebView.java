@@ -31,25 +31,29 @@ public class BrowserWebView extends WebView {
     }
 
     @Override
-    public void destroy() {
-        BrowserSettings.getInstance().stopManagingSettings(getSettings());
-        super.destroy();
-        RenderNode renderNodeUpdateDisplayListIfDirty = updateDisplayListIfDirty();
-        if (renderNodeUpdateDisplayListIfDirty != null) {
-            renderNodeUpdateDisplayListIfDirty.discardDisplayList();
-        }
+    public void setWebChromeClient(WebChromeClient webChromeClient) {
+        this.mWebChromeClient = webChromeClient;
+        super.setWebChromeClient(webChromeClient);
     }
 
-    public void drawContent(Canvas canvas) {
-        onDraw(canvas);
+    @Override
+    public WebChromeClient getWebChromeClient() {
+        return this.mWebChromeClient;
     }
 
-    public String getSiteNavHitURL() {
-        String str;
-        synchronized (this) {
-            str = this.mSiteNavHitURL;
-        }
-        return str;
+    @Override
+    public void setWebViewClient(WebViewClient webViewClient) {
+        this.mWebViewClient = webViewClient;
+        super.setWebViewClient(webViewClient);
+    }
+
+    @Override
+    public WebViewClient getWebViewClient() {
+        return this.mWebViewClient;
+    }
+
+    public void setTitleBar(TitleBar titleBar) {
+        this.mTitleBar = titleBar;
     }
 
     public int getTitleHeight() {
@@ -60,42 +64,21 @@ public class BrowserWebView extends WebView {
     }
 
     @Override
-    public WebChromeClient getWebChromeClient() {
-        return this.mWebChromeClient;
-    }
-
-    @Override
-    public WebViewClient getWebViewClient() {
-        return this.mWebViewClient;
-    }
-
-    protected void onDetachedFromWindowInternal() {
-        super.onDetachedFromWindowInternal();
-        ViewRootImpl viewRootImpl = getViewRootImpl();
-        if (viewRootImpl != null) {
-            viewRootImpl.detachFunctor(0L);
-        }
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (this.mBackgroundRemoved || getRootView().getBackground() == null) {
-            return;
+        if (!this.mBackgroundRemoved && getRootView().getBackground() != null) {
+            this.mBackgroundRemoved = true;
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    BrowserWebView.this.getRootView().setBackgroundDrawable(null);
+                }
+            });
         }
-        this.mBackgroundRemoved = true;
-        post(new Runnable(this) {
-            final BrowserWebView this$0;
+    }
 
-            {
-                this.this$0 = this;
-            }
-
-            @Override
-            public void run() {
-                this.this$0.getRootView().setBackgroundDrawable(null);
-            }
-        });
+    public void drawContent(Canvas canvas) {
+        onDraw(canvas);
     }
 
     @Override
@@ -109,6 +92,33 @@ public class BrowserWebView extends WebView {
         }
     }
 
+    public void setOnScrollChangedListener(OnScrollChangedListener onScrollChangedListener) {
+        this.mOnScrollChangedListener = onScrollChangedListener;
+    }
+
+    @Override
+    public boolean showContextMenuForChild(View view) {
+        return false;
+    }
+
+    @Override
+    public void destroy() {
+        BrowserSettings.getInstance().stopManagingSettings(getSettings());
+        super.destroy();
+        RenderNode renderNodeUpdateDisplayListIfDirty = updateDisplayListIfDirty();
+        if (renderNodeUpdateDisplayListIfDirty != null) {
+            renderNodeUpdateDisplayListIfDirty.discardDisplayList();
+        }
+    }
+
+    protected void onDetachedFromWindowInternal() {
+        super.onDetachedFromWindowInternal();
+        ViewRootImpl viewRootImpl = getViewRootImpl();
+        if (viewRootImpl != null) {
+            viewRootImpl.detachFunctor(0L);
+        }
+    }
+
     @Override
     public void setLayerType(int i, Paint paint) {
         if (getWebViewProvider() == null) {
@@ -117,34 +127,11 @@ public class BrowserWebView extends WebView {
         super.setLayerType(i, paint);
     }
 
-    public void setOnScrollChangedListener(OnScrollChangedListener onScrollChangedListener) {
-        this.mOnScrollChangedListener = onScrollChangedListener;
+    public synchronized void setSiteNavHitURL(String str) {
+        this.mSiteNavHitURL = str;
     }
 
-    public void setSiteNavHitURL(String str) {
-        synchronized (this) {
-            this.mSiteNavHitURL = str;
-        }
-    }
-
-    public void setTitleBar(TitleBar titleBar) {
-        this.mTitleBar = titleBar;
-    }
-
-    @Override
-    public void setWebChromeClient(WebChromeClient webChromeClient) {
-        this.mWebChromeClient = webChromeClient;
-        super.setWebChromeClient(webChromeClient);
-    }
-
-    @Override
-    public void setWebViewClient(WebViewClient webViewClient) {
-        this.mWebViewClient = webViewClient;
-        super.setWebViewClient(webViewClient);
-    }
-
-    @Override
-    public boolean showContextMenuForChild(View view) {
-        return false;
+    public synchronized String getSiteNavHitURL() {
+        return this.mSiteNavHitURL;
     }
 }

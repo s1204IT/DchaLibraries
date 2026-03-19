@@ -87,7 +87,7 @@ public class ZenAccessSettings extends EmptyTextSettings {
         }
     }
 
-    public void reloadList() {
+    private void reloadList() {
         List<ApplicationInfo> installedApplications;
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         preferenceScreen.removeAll();
@@ -152,7 +152,7 @@ public class ZenAccessSettings extends EmptyTextSettings {
         return this.mNoMan.isNotificationPolicyAccessGrantedForPackage(str);
     }
 
-    public static void setAccess(final Context context, final String str, final boolean z) {
+    private static void setAccess(final Context context, final String str, final boolean z) {
         logSpecialPermissionChange(z, str, context);
         AsyncTask.execute(new Runnable() {
             @Override
@@ -167,7 +167,7 @@ public class ZenAccessSettings extends EmptyTextSettings {
         FeatureFactory.getFactory(context).getMetricsFeatureProvider().action(context, z ? 768 : 769, str, new Pair[0]);
     }
 
-    public static void deleteRules(final Context context, final String str) {
+    private static void deleteRules(final Context context, final String str) {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {

@@ -22,45 +22,12 @@ public class PreloadController implements WebViewController {
     }
 
     @Override
-    public void attachSubWindow(Tab tab) {
-    }
-
-    @Override
-    public void bookmarkedStatusHasChanged(Tab tab) {
-    }
-
-    @Override
-    public void closeTab(Tab tab) {
-    }
-
-    @Override
-    public void createSubWindow(Tab tab) {
-    }
-
-    @Override
-    public void dismissSubWindow(Tab tab) {
-    }
-
-    @Override
-    public void doUpdateVisitedHistory(Tab tab, boolean z) {
-    }
-
-    @Override
-    public void endActionMode() {
-    }
-
-    @Override
-    public Activity getActivity() {
-        return null;
-    }
-
-    @Override
     public Context getContext() {
         return this.mContext;
     }
 
     @Override
-    public Bitmap getDefaultVideoPoster() {
+    public Activity getActivity() {
         return null;
     }
 
@@ -70,37 +37,11 @@ public class PreloadController implements WebViewController {
     }
 
     @Override
-    public View getVideoLoadingProgressView() {
-        return null;
+    public void onSetWebView(Tab tab, WebView webView) {
     }
 
     @Override
-    public void getVisitedHistory(ValueCallback<String[]> valueCallback) {
-    }
-
-    @Override
-    public void hideAutoLogin(Tab tab) {
-    }
-
-    @Override
-    public void hideCustomView() {
-    }
-
-    @Override
-    public void onDownloadStart(Tab tab, String str, String str2, String str3, String str4, String str5, long j) {
-    }
-
-    @Override
-    public void onFavicon(Tab tab, WebView webView, Bitmap bitmap) {
-    }
-
-    @Override
-    public void onPageFinished(Tab tab) {
-        WebView webView;
-        if (tab == null || (webView = tab.getWebView()) == null) {
-            return;
-        }
-        webView.clearHistory();
+    public void createSubWindow(Tab tab) {
     }
 
     @Override
@@ -111,11 +52,15 @@ public class PreloadController implements WebViewController {
     }
 
     @Override
-    public void onProgressChanged(Tab tab) {
+    public void onPageFinished(Tab tab) {
+        WebView webView;
+        if (tab != null && (webView = tab.getWebView()) != null) {
+            webView.clearHistory();
+        }
     }
 
     @Override
-    public void onReceivedHttpAuthRequest(Tab tab, WebView webView, HttpAuthHandler httpAuthHandler, String str, String str2) {
+    public void onProgressChanged(Tab tab) {
     }
 
     @Override
@@ -123,43 +68,7 @@ public class PreloadController implements WebViewController {
     }
 
     @Override
-    public void onSetWebView(Tab tab, WebView webView) {
-    }
-
-    @Override
-    public void onShowPopupWindowAttempt(Tab tab, boolean z, Message message) {
-    }
-
-    @Override
-    public boolean onUnhandledKeyEvent(KeyEvent keyEvent) {
-        return false;
-    }
-
-    @Override
-    public void onUpdatedSecurityState(Tab tab) {
-    }
-
-    @Override
-    public void onUserCanceledSsl(Tab tab) {
-    }
-
-    @Override
-    public Tab openTab(String str, Tab tab, boolean z, boolean z2) {
-        return null;
-    }
-
-    @Override
-    public void sendErrorCode(int i, String str) {
-    }
-
-    @Override
-    public boolean shouldCaptureThumbnails() {
-        return false;
-    }
-
-    @Override
-    public boolean shouldOverrideKeyEvent(KeyEvent keyEvent) {
-        return false;
+    public void onFavicon(Tab tab, WebView webView, Bitmap bitmap) {
     }
 
     @Override
@@ -168,12 +77,33 @@ public class PreloadController implements WebViewController {
     }
 
     @Override
-    public boolean shouldShowErrorConsole() {
+    public void sendErrorCode(int i, String str) {
+    }
+
+    @Override
+    public boolean shouldOverrideKeyEvent(KeyEvent keyEvent) {
         return false;
     }
 
     @Override
-    public void showAutoLogin(Tab tab) {
+    public boolean onUnhandledKeyEvent(KeyEvent keyEvent) {
+        return false;
+    }
+
+    @Override
+    public void doUpdateVisitedHistory(Tab tab, boolean z) {
+    }
+
+    @Override
+    public void getVisitedHistory(ValueCallback<String[]> valueCallback) {
+    }
+
+    @Override
+    public void onReceivedHttpAuthRequest(Tab tab, WebView webView, HttpAuthHandler httpAuthHandler, String str, String str2) {
+    }
+
+    @Override
+    public void onDownloadStart(Tab tab, String str, String str2, String str3, String str4, String str5, long j) {
     }
 
     @Override
@@ -181,7 +111,17 @@ public class PreloadController implements WebViewController {
     }
 
     @Override
-    public void showFileChooser(ValueCallback<Uri[]> valueCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+    public void hideCustomView() {
+    }
+
+    @Override
+    public Bitmap getDefaultVideoPoster() {
+        return null;
+    }
+
+    @Override
+    public View getVideoLoadingProgressView() {
+        return null;
     }
 
     @Override
@@ -189,7 +129,66 @@ public class PreloadController implements WebViewController {
     }
 
     @Override
+    public void onUserCanceledSsl(Tab tab) {
+    }
+
+    @Override
+    public boolean shouldShowErrorConsole() {
+        return false;
+    }
+
+    @Override
+    public void onUpdatedSecurityState(Tab tab) {
+    }
+
+    @Override
+    public void showFileChooser(ValueCallback<Uri[]> valueCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+    }
+
+    @Override
+    public void endActionMode() {
+    }
+
+    @Override
+    public void attachSubWindow(Tab tab) {
+    }
+
+    @Override
+    public void dismissSubWindow(Tab tab) {
+    }
+
+    @Override
+    public Tab openTab(String str, Tab tab, boolean z, boolean z2) {
+        return null;
+    }
+
+    @Override
     public boolean switchToTab(Tab tab) {
         return false;
+    }
+
+    @Override
+    public void closeTab(Tab tab) {
+    }
+
+    @Override
+    public void bookmarkedStatusHasChanged(Tab tab) {
+    }
+
+    @Override
+    public void showAutoLogin(Tab tab) {
+    }
+
+    @Override
+    public void hideAutoLogin(Tab tab) {
+    }
+
+    @Override
+    public boolean shouldCaptureThumbnails() {
+        return false;
+    }
+
+    @Override
+    public void onShowPopupWindowAttempt(Tab tab, boolean z, Message message) {
     }
 }

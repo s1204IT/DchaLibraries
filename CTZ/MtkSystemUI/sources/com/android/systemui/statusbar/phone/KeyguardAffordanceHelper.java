@@ -266,7 +266,7 @@ public class KeyguardAffordanceHelper {
         this.mTargetedView = keyguardAffordanceView;
     }
 
-    public void startUnlockHintAnimationPhase2(boolean z, final Runnable runnable) {
+    private void startUnlockHintAnimationPhase2(boolean z, final Runnable runnable) {
         ValueAnimator animatorToRadius = getAnimatorToRadius(z, 0);
         animatorToRadius.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -394,7 +394,7 @@ public class KeyguardAffordanceHelper {
         }
     }
 
-    public void updateIconsFromTranslation(KeyguardAffordanceView keyguardAffordanceView) {
+    private void updateIconsFromTranslation(KeyguardAffordanceView keyguardAffordanceView) {
         float fAbs = Math.abs(this.mTranslation) / getMinTranslationAmount();
         float fMax = Math.max(0.0f, 1.0f - fAbs);
         KeyguardAffordanceView keyguardAffordanceView2 = keyguardAffordanceView == this.mRightIcon ? this.mLeftIcon : this.mRightIcon;
@@ -403,7 +403,7 @@ public class KeyguardAffordanceHelper {
         updateIconAlpha(this.mCenterIcon, fMax * this.mCenterIcon.getRestingAlpha(), false);
     }
 
-    public float getTranslationFromRadius(float f) {
+    private float getTranslationFromRadius(float f) {
         float f2 = (f - this.mMinBackgroundRadius) / 0.25f;
         if (f2 > 0.0f) {
             return this.mTouchSlop + f2;

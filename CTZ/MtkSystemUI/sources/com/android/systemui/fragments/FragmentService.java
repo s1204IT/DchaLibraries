@@ -54,7 +54,7 @@ public class FragmentService implements ConfigurationChangedReceiver, Dumpable {
         }
     }
 
-    class FragmentHostState {
+    private class FragmentHostState {
         private FragmentHostManager mFragmentHostManager;
         private final View mView;
 
@@ -76,7 +76,7 @@ public class FragmentService implements ConfigurationChangedReceiver, Dumpable {
             return this.mFragmentHostManager;
         }
 
-        public void handleSendConfigurationChange(Configuration configuration) {
+        private void handleSendConfigurationChange(Configuration configuration) {
             this.mFragmentHostManager.onConfigurationChanged(configuration);
         }
     }

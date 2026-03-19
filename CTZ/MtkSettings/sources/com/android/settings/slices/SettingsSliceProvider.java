@@ -166,7 +166,7 @@ public class SettingsSliceProvider extends SliceProvider {
         return arrayList;
     }
 
-    public void loadSlice(Uri uri) {
+    void loadSlice(Uri uri) {
         long jCurrentTimeMillis = System.currentTimeMillis();
         try {
             SliceData sliceDataFromUri = this.mSlicesDatabaseAccessor.getSliceDataFromUri(uri);

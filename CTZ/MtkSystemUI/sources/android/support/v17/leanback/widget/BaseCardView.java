@@ -385,7 +385,7 @@ public class BaseCardView extends FrameLayout {
         }
     }
 
-    public void cancelAnimations() {
+    private void cancelAnimations() {
         if (this.mAnim != null) {
             this.mAnim.cancel();
             this.mAnim = null;
@@ -509,12 +509,12 @@ public class BaseCardView extends FrameLayout {
     }
 
     @Override
-    public LayoutParams generateDefaultLayoutParams() {
+    protected LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(-2, -2);
     }
 
     @Override
-    public LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+    protected LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
         if (lp instanceof LayoutParams) {
             return new LayoutParams((LayoutParams) lp);
         }

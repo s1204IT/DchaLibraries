@@ -3,6 +3,7 @@ package com.android.quicksearchbox.google;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import com.android.quicksearchbox.R;
 import com.android.quicksearchbox.SearchSettings;
 import com.android.quicksearchbox.util.HttpHelper;
 import java.util.Locale;
@@ -20,51 +21,6 @@ public class SearchBaseUrlHelper implements SharedPreferences.OnSharedPreference
         maybeUpdateBaseUrlSetting(false);
     }
 
-    private void checkSearchDomain() {
-        new AsyncTask<Void, Void, Void>(this, new HttpHelper.GetRequest("https://www.google.com/searchdomaincheck?format=domain")) {
-            final SearchBaseUrlHelper this$0;
-            final HttpHelper.GetRequest val$request;
-
-            {
-                this.this$0 = this;
-                this.val$request = getRequest;
-            }
-
-            @Override
-            public Void doInBackground(Void... voidArr) {
-                try {
-                    this.this$0.setSearchBaseDomain(this.this$0.mHttpHelper.get(this.val$request));
-                } catch (Exception e) {
-                    this.this$0.getDefaultBaseDomain();
-                }
-                return null;
-            }
-        }.execute(new Void[0]);
-    }
-
-    public String getDefaultBaseDomain() {
-        return this.mContext.getResources().getString(2131296261);
-    }
-
-    public void setSearchBaseDomain(String str) {
-        this.mSearchSettings.setSearchBaseDomain(str);
-    }
-
-    public String getSearchBaseUrl() {
-        return this.mContext.getResources().getString(2131296260, getSearchDomain(), GoogleSearch.getLanguage(Locale.getDefault()));
-    }
-
-    public String getSearchDomain() {
-        String searchBaseDomain = this.mSearchSettings.getSearchBaseDomain();
-        if (searchBaseDomain == null) {
-            searchBaseDomain = getDefaultBaseDomain();
-        }
-        if (!searchBaseDomain.startsWith(".")) {
-            return searchBaseDomain;
-        }
-        return "www" + searchBaseDomain;
-    }
-
     public void maybeUpdateBaseUrlSetting(boolean z) {
         long searchBaseDomainApplyTime = this.mSearchSettings.getSearchBaseDomainApplyTime();
         long jCurrentTimeMillis = System.currentTimeMillis();
@@ -75,6 +31,45 @@ public class SearchBaseUrlHelper implements SharedPreferences.OnSharedPreference
                 checkSearchDomain();
             }
         }
+    }
+
+    public String getSearchBaseUrl() {
+        return this.mContext.getResources().getString(R.string.google_search_base_pattern, getSearchDomain(), GoogleSearch.getLanguage(Locale.getDefault()));
+    }
+
+    public String getSearchDomain() {
+        String searchBaseDomain = this.mSearchSettings.getSearchBaseDomain();
+        if (searchBaseDomain == null) {
+            searchBaseDomain = getDefaultBaseDomain();
+        }
+        if (searchBaseDomain.startsWith(".")) {
+            return "www" + searchBaseDomain;
+        }
+        return searchBaseDomain;
+    }
+
+    private void checkSearchDomain() {
+        final HttpHelper.GetRequest getRequest = new HttpHelper.GetRequest("https://www.google.com/searchdomaincheck?format=domain");
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voidArr) {
+                try {
+                    SearchBaseUrlHelper.this.setSearchBaseDomain(SearchBaseUrlHelper.this.mHttpHelper.get(getRequest));
+                    return null;
+                } catch (Exception e) {
+                    SearchBaseUrlHelper.this.getDefaultBaseDomain();
+                    return null;
+                }
+            }
+        }.execute(new Void[0]);
+    }
+
+    private String getDefaultBaseDomain() {
+        return this.mContext.getResources().getString(R.string.default_search_domain);
+    }
+
+    private void setSearchBaseDomain(String str) {
+        this.mSearchSettings.setSearchBaseDomain(str);
     }
 
     @Override

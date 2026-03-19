@@ -7,13 +7,13 @@ class ReflectiveGenericLifecycleObserver implements GenericLifecycleObserver {
     private final ClassesInfoCache.CallbackInfo mInfo;
     private final Object mWrapped;
 
-    ReflectiveGenericLifecycleObserver(Object obj) {
-        this.mWrapped = obj;
+    ReflectiveGenericLifecycleObserver(Object wrapped) {
+        this.mWrapped = wrapped;
         this.mInfo = ClassesInfoCache.sInstance.getInfo(this.mWrapped.getClass());
     }
 
     @Override
-    public void onStateChanged(LifecycleOwner lifecycleOwner, Lifecycle.Event event) {
-        this.mInfo.invokeCallbacks(lifecycleOwner, event, this.mWrapped);
+    public void onStateChanged(LifecycleOwner source, Lifecycle.Event event) {
+        this.mInfo.invokeCallbacks(source, event, this.mWrapped);
     }
 }

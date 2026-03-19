@@ -51,7 +51,7 @@ public class ResetNetwork extends InstrumentedFragment {
         getActivity().setTitle(R.string.reset_network_title);
     }
 
-    public boolean runKeyguardConfirmation(int i) {
+    private boolean runKeyguardConfirmation(int i) {
         return new ChooseLockSettingsHelper(getActivity(), this).launchConfirmationActivity(i, getActivity().getResources().getText(R.string.reset_network_title));
     }
 
@@ -68,7 +68,7 @@ public class ResetNetwork extends InstrumentedFragment {
         }
     }
 
-    public void showFinalConfirmation() {
+    private void showFinalConfirmation() {
         Bundle bundle = new Bundle();
         if (this.mSubscriptions != null && this.mSubscriptions.size() > 0) {
             bundle.putInt("subscription", this.mSubscriptions.get(this.mSubscriptionSpinner.getSelectedItemPosition()).getSubscriptionId());

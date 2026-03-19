@@ -49,7 +49,7 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
     }
 
     @Override
-    public WifiState cleanState() {
+    protected WifiState cleanState() {
         return new WifiState();
     }
 
@@ -76,7 +76,7 @@ public class WifiSignalController extends SignalController<WifiState, SignalCont
         notifyListenersIfNecessary();
     }
 
-    public void handleStatusUpdated() {
+    private void handleStatusUpdated() {
         ((WifiState) this.mCurrentState).statusLabel = this.mWifiTracker.statusLabel;
         notifyListenersIfNecessary();
     }

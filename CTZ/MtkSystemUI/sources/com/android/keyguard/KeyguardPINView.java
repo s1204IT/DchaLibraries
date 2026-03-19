@@ -109,7 +109,7 @@ public class KeyguardPINView extends KeyguardPinBasedInputView {
         return true;
     }
 
-    public void enableClipping(boolean z) {
+    private void enableClipping(boolean z) {
         this.mContainer.setClipToPadding(z);
         this.mContainer.setClipChildren(z);
         this.mRow1.setClipToPadding(z);

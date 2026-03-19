@@ -13,16 +13,8 @@ public class Config {
     public void close() {
     }
 
-    public Uri getHelpUrl(String str) {
-        return null;
-    }
-
-    public int getHttpConnectTimeout() {
-        return 4000;
-    }
-
     public int getMaxPromotedResults() {
-        return this.mContext.getResources().getInteger(2131361794);
+        return this.mContext.getResources().getInteger(R.integer.max_promoted_results);
     }
 
     public int getMaxResultsPerSource() {
@@ -37,15 +29,23 @@ public class Config {
         return 100L;
     }
 
-    public String getUserAgent() {
-        return "Android/1.0";
+    public boolean showSuggestionsForZeroQuery() {
+        return this.mContext.getResources().getBoolean(R.bool.show_zero_query_suggestions);
     }
 
     public boolean showScrollingResults() {
-        return this.mContext.getResources().getBoolean(2131427331);
+        return this.mContext.getResources().getBoolean(R.bool.show_scrolling_results);
     }
 
-    public boolean showSuggestionsForZeroQuery() {
-        return this.mContext.getResources().getBoolean(2131427328);
+    public Uri getHelpUrl(String str) {
+        return null;
+    }
+
+    public int getHttpConnectTimeout() {
+        return 4000;
+    }
+
+    public String getUserAgent() {
+        return "Android/1.0";
     }
 }

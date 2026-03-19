@@ -142,7 +142,7 @@ public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
+    protected void handleUpdateState(QSTile.BooleanState booleanState, Object obj) {
         if (this.mApnSettingsEnabled) {
             booleanState.icon = QsIconWrapper.get(this.mEnableApnStateIconWrapper.getIconId(), this.mEnableApnStateIconWrapper);
         } else {
@@ -152,7 +152,7 @@ public class ApnSettingsTile extends QSTileImpl<QSTile.BooleanState> {
         booleanState.contentDescription = this.mApnStateLabel;
     }
 
-    public final void updateState() {
+    private final void updateState() {
         boolean z = false;
         this.mIsAirplaneMode = Settings.Global.getInt(this.mContext.getContentResolver(), "airplane_mode_on", 0) != 0;
         boolean z2 = (UserHandle.myUserId() == 0 && ActivityManager.getCurrentUser() == 0) ? false : true;

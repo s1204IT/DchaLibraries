@@ -11,21 +11,29 @@ public class DelayingSuggestionsAdapter<A> implements SuggestionsAdapter<A> {
     private DataSetObserver mPendingDataSetObserver;
     private Suggestions mPendingSuggestions;
 
-    private class PendingSuggestionsObserver extends DataSetObserver {
-        final DelayingSuggestionsAdapter this$0;
+    public DelayingSuggestionsAdapter(SuggestionsAdapterBase<A> suggestionsAdapterBase) {
+        this.mDelayedAdapter = suggestionsAdapterBase;
+    }
 
-        private PendingSuggestionsObserver(DelayingSuggestionsAdapter delayingSuggestionsAdapter) {
-            this.this$0 = delayingSuggestionsAdapter;
-        }
-
-        @Override
-        public void onChanged() {
-            this.this$0.onPendingSuggestionsChanged();
+    @Override
+    public void setSuggestions(Suggestions suggestions) {
+        if (suggestions == null) {
+            this.mDelayedAdapter.setSuggestions(null);
+            setPendingSuggestions(null);
+        } else if (shouldPublish(suggestions)) {
+            this.mDelayedAdapter.setSuggestions(suggestions);
+            setPendingSuggestions(null);
+        } else {
+            setPendingSuggestions(suggestions);
         }
     }
 
-    public DelayingSuggestionsAdapter(SuggestionsAdapterBase<A> suggestionsAdapterBase) {
-        this.mDelayedAdapter = suggestionsAdapterBase;
+    private boolean shouldPublish(Suggestions suggestions) {
+        if (suggestions.isDone()) {
+            return true;
+        }
+        SourceResult result = suggestions.getResult();
+        return result != null && result.getCount() > 0;
     }
 
     private void setPendingSuggestions(Suggestions suggestions) {
@@ -54,12 +62,21 @@ public class DelayingSuggestionsAdapter<A> implements SuggestionsAdapter<A> {
         }
     }
 
-    private boolean shouldPublish(Suggestions suggestions) {
-        if (suggestions.isDone()) {
-            return true;
+    protected void onPendingSuggestionsChanged() {
+        if (shouldPublish(this.mPendingSuggestions)) {
+            this.mDelayedAdapter.setSuggestions(this.mPendingSuggestions);
+            setPendingSuggestions(null);
         }
-        SourceResult result = suggestions.getResult();
-        return result != null && result.getCount() > 0;
+    }
+
+    private class PendingSuggestionsObserver extends DataSetObserver {
+        private PendingSuggestionsObserver() {
+        }
+
+        @Override
+        public void onChanged() {
+            DelayingSuggestionsAdapter.this.onPendingSuggestionsChanged();
+        }
     }
 
     @Override
@@ -68,20 +85,13 @@ public class DelayingSuggestionsAdapter<A> implements SuggestionsAdapter<A> {
     }
 
     @Override
-    public SuggestionPosition getSuggestion(long j) {
-        return this.mDelayedAdapter.getSuggestion(j);
-    }
-
-    @Override
     public Suggestions getSuggestions() {
         return this.mDelayedAdapter.getSuggestions();
     }
 
-    protected void onPendingSuggestionsChanged() {
-        if (shouldPublish(this.mPendingSuggestions)) {
-            this.mDelayedAdapter.setSuggestions(this.mPendingSuggestions);
-            setPendingSuggestions(null);
-        }
+    @Override
+    public SuggestionPosition getSuggestion(long j) {
+        return this.mDelayedAdapter.getSuggestion(j);
     }
 
     @Override
@@ -102,18 +112,5 @@ public class DelayingSuggestionsAdapter<A> implements SuggestionsAdapter<A> {
     @Override
     public void setSuggestionClickListener(SuggestionClickListener suggestionClickListener) {
         this.mDelayedAdapter.setSuggestionClickListener(suggestionClickListener);
-    }
-
-    @Override
-    public void setSuggestions(Suggestions suggestions) {
-        if (suggestions == null) {
-            this.mDelayedAdapter.setSuggestions(null);
-            setPendingSuggestions(null);
-        } else if (!shouldPublish(suggestions)) {
-            setPendingSuggestions(suggestions);
-        } else {
-            this.mDelayedAdapter.setSuggestions(suggestions);
-            setPendingSuggestions(null);
-        }
     }
 }

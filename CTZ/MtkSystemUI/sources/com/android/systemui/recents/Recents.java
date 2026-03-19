@@ -624,7 +624,7 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         }
     }
 
-    public void registerWithSystemUser() {
+    private void registerWithSystemUser() {
         final int processUser = sSystemServicesProxy.getProcessUser();
         postToSystemUser(new Runnable() {
             @Override
@@ -659,7 +659,7 @@ public class Recents extends SystemUI implements RecentsComponent, CommandQueue.
         runAndFlushOnConnectRunnables();
     }
 
-    public void runAndFlushOnConnectRunnables() {
+    private void runAndFlushOnConnectRunnables() {
         Iterator<Runnable> it = this.mOnConnectRunnables.iterator();
         while (it.hasNext()) {
             it.next().run();

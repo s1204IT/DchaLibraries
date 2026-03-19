@@ -136,7 +136,7 @@ public class MediatekDigitalClock extends LinearLayout {
         }
     }
 
-    public void updateTime() {
+    private void updateTime() {
         if (this.mLive) {
             this.mCalendar.setTimeInMillis(System.currentTimeMillis());
         }
@@ -157,7 +157,7 @@ public class MediatekDigitalClock extends LinearLayout {
         setContentDescription(sb);
     }
 
-    public void setDateFormat() {
+    private void setDateFormat() {
         this.mHoursFormat = Alarms.get24HourMode(getContext()) ? "kk" : "h";
         this.mAmPm.setShowAmPm(!Alarms.get24HourMode(getContext()));
     }

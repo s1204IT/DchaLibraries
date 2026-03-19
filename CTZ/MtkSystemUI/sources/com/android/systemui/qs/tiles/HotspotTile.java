@@ -88,7 +88,7 @@ public class HotspotTile extends QSTileImpl<QSTile.AirplaneBooleanState> {
     }
 
     @Override
-    public void handleUpdateState(QSTile.AirplaneBooleanState airplaneBooleanState, Object obj) {
+    protected void handleUpdateState(QSTile.AirplaneBooleanState airplaneBooleanState, Object obj) {
         int numConnectedDevices;
         boolean zIsDataSaverEnabled;
         boolean z = obj == ARG_SHOW_TRANSIENT_ENABLING;

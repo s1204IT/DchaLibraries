@@ -7,6 +7,8 @@ import android.os.Handler;
 import com.android.quicksearchbox.util.NamedTaskExecutor;
 
 public abstract class AbstractInternalSource extends AbstractSource {
+    protected abstract int getSourceIconResource();
+
     public AbstractInternalSource(Context context, Handler handler, NamedTaskExecutor namedTaskExecutor) {
         super(context, handler, namedTaskExecutor);
     }
@@ -25,8 +27,6 @@ public abstract class AbstractInternalSource extends AbstractSource {
     public Drawable getSourceIcon() {
         return getContext().getResources().getDrawable(getSourceIconResource());
     }
-
-    protected abstract int getSourceIconResource();
 
     @Override
     public Uri getSourceIconUri() {

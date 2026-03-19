@@ -20,6 +20,41 @@ import java.io.InputStream;
 public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt {
     public static final boolean DEBUG;
 
+    static {
+        DEBUG = !Build.TYPE.equals("user") ? true : SystemProperties.getBoolean("ro.mtk_browser_debug_enablelog", false);
+    }
+
+    @Override
+    public String getSearchEngine(SharedPreferences sharedPreferences, Context context) {
+        Log.i("@M_DefaultBrowserRegionalPhoneExt", "Enter: updateSearchEngine --default implement");
+        return null;
+    }
+
+    @Override
+    public void updateBookmarks(Context context) {
+        if (!needUpdateBookmarks(context)) {
+            Log.i("@M_DefaultBrowserRegionalPhoneExt", "Enter: updateBookmarks --default implement");
+        } else {
+            new UpdateBookmarkTask(context).execute(new Void[0]);
+        }
+    }
+
+    private boolean needUpdateBookmarks(Context context) {
+        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String str = SystemProperties.get("persist.vendor.operator.optr");
+        Log.d("DefaultBrowserRegionalPhoneExt", "system property = " + str);
+        String string = defaultSharedPreferences.getString("operator_bookmarks", "OPNONE");
+        Log.d("DefaultBrowserRegionalPhoneExt", "currentOperator = " + string);
+        boolean zEquals = str.equals(string) ^ true;
+        if (zEquals) {
+            zEquals = string.equals("OP03");
+        }
+        SharedPreferences.Editor editorEdit = defaultSharedPreferences.edit();
+        editorEdit.putString("operator_bookmarks", str);
+        editorEdit.commit();
+        return zEquals;
+    }
+
     private static class UpdateBookmarkTask extends AsyncTask<Void, Void, Void> {
         Context mContext;
 
@@ -27,7 +62,77 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
             this.mContext = context;
         }
 
-        private int addDefaultBookmarks(Context context, CharSequence[] charSequenceArr, TypedArray typedArray, int i) {
+        @Override
+        protected Void doInBackground(Void... voidArr) throws IOException {
+            removeOperatorBookmarks(this.mContext);
+            addOMBookmarks(this.mContext);
+            return null;
+        }
+
+        private void removeOperatorBookmarks(Context context) {
+            Uri uri = BrowserContract.Bookmarks.CONTENT_URI;
+            try {
+                Resources resourcesForApplication = context.getPackageManager().getResourcesForApplication("com.android.browser");
+                int identifier = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks_for_op03", null, null);
+                Log.d("DefaultBrowserRegionalPhoneExt", "OP03 resourceId = " + identifier);
+                CharSequence[] textArray = identifier != 0 ? resourcesForApplication.getTextArray(identifier) : null;
+                if (textArray != null) {
+                    Log.d("DefaultBrowserRegionalPhoneExt", " OP03 bookmarks size = " + textArray.length);
+                    int length = textArray.length / 2;
+                    String[] strArr = new String[length];
+                    for (int i = 0; i < length; i++) {
+                        strArr[i] = textArray[(2 * i) + 1].toString();
+                    }
+                    Log.d("DefaultBrowserRegionalPhoneExt", "Delete count = " + context.getContentResolver().delete(uri, "url" + makeInQueryString(length), strArr));
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void addOMBookmarks(Context context) throws IOException {
+            CharSequence[] textArray;
+            TypedArray typedArrayObtainTypedArray;
+            CharSequence[] textArray2;
+            try {
+                Resources resourcesForApplication = context.getPackageManager().getResourcesForApplication("com.android.browser");
+                int identifier = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks_for_yahoo", null, null);
+                Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), first resourceId = " + identifier);
+                if (identifier != 0) {
+                    textArray = resourcesForApplication.getTextArray(identifier);
+                } else {
+                    textArray = null;
+                }
+                int identifier2 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmark_preloads_for_yahoo", null, null);
+                Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), first Preload resourceId = " + identifier2);
+                if (identifier2 != 0) {
+                    typedArrayObtainTypedArray = resourcesForApplication.obtainTypedArray(identifier2);
+                } else {
+                    typedArrayObtainTypedArray = null;
+                }
+                if (textArray != null && typedArrayObtainTypedArray != null) {
+                    int iAddDefaultBookmarks = addDefaultBookmarks(context, textArray, typedArrayObtainTypedArray, 2);
+                    int identifier3 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks", null, null);
+                    Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), Other resourceId = " + identifier3);
+                    if (identifier3 != 0) {
+                        textArray2 = resourcesForApplication.getTextArray(identifier3);
+                    } else {
+                        textArray2 = null;
+                    }
+                    int identifier4 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmark_preloads", null, null);
+                    Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), other Preload resourceId = " + identifier4);
+                    TypedArray typedArrayObtainTypedArray2 = identifier4 != 0 ? resourcesForApplication.obtainTypedArray(identifier4) : null;
+                    if (textArray2 != null && typedArrayObtainTypedArray2 != null) {
+                        addDefaultBookmarks(context, textArray2, typedArrayObtainTypedArray2, iAddDefaultBookmarks);
+                    }
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private int addDefaultBookmarks(Context context, CharSequence[] charSequenceArr, TypedArray typedArray, int i) throws IOException {
+            int i2;
             byte[] raw;
             Resources resources = context.getResources();
             int length = charSequenceArr.length;
@@ -38,12 +143,18 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
                 try {
                     String string = Long.toString(1L);
                     String string2 = Long.toString(System.currentTimeMillis());
-                    for (int i2 = 0; i2 < length; i2 += 2) {
-                        int i3 = i2 + 1;
-                        CharSequence charSequence = charSequenceArr[i3];
-                        int i4 = "http://www.google.com/".equals(charSequence.toString()) ? 1 : i + i2;
-                        int resourceId = typedArray.getResourceId(i3, 0);
-                        int resourceId2 = typedArray.getResourceId(i2, 0);
+                    int i3 = 0;
+                    int i4 = 0;
+                    while (i4 < length) {
+                        int i5 = i4 + 1;
+                        CharSequence charSequence = charSequenceArr[i5];
+                        if (!"http://www.google.com/".equals(charSequence.toString())) {
+                            i2 = i + i4;
+                        } else {
+                            i2 = 1;
+                        }
+                        int resourceId = typedArray.getResourceId(i5, i3);
+                        int resourceId2 = typedArray.getResourceId(i4, i3);
                         byte[] raw2 = null;
                         try {
                             raw = readRaw(resources, resourceId);
@@ -55,54 +166,29 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
                         } catch (IOException e2) {
                             Log.i("DefaultBrowserRegionalPhoneExt", "IOException for thumb");
                         }
+                        byte[] bArr = raw;
                         ContentValues contentValues = new ContentValues();
-                        contentValues.put("title", charSequenceArr[i2].toString());
+                        contentValues.put("title", charSequenceArr[i4].toString());
                         contentValues.put("url", charSequence.toString());
                         contentValues.put("folder", (Integer) 0);
-                        contentValues.put("thumbnail", raw);
+                        contentValues.put("thumbnail", bArr);
                         contentValues.put("favicon", raw2);
                         contentValues.put("parent", string);
-                        contentValues.put("position", Integer.toString(i4));
+                        contentValues.put("position", Integer.toString(i2));
                         contentValues.put("created", string2);
                         boolean z = context.getContentResolver().insert(BrowserContract.Bookmarks.CONTENT_URI, contentValues) != null;
                         if (DefaultBrowserRegionalPhoneExt.DEBUG) {
-                            Log.i("DefaultBrowserRegionalPhoneExt", "for " + i2 + "update result = " + z);
+                            Log.i("DefaultBrowserRegionalPhoneExt", "for " + i4 + "update result = " + z);
                         }
+                        i4 += 2;
+                        i3 = 0;
                     }
-                } finally {
-                    typedArray.recycle();
+                } catch (ArrayIndexOutOfBoundsException e3) {
+                    Log.i("DefaultBrowserRegionalPhoneExt", "ArrayIndexOutOfBoundsException is caught");
                 }
-            } catch (ArrayIndexOutOfBoundsException e3) {
-                Log.i("DefaultBrowserRegionalPhoneExt", "ArrayIndexOutOfBoundsException is caught");
-            }
-            return length;
-        }
-
-        private void addOMBookmarks(Context context) {
-            try {
-                Resources resourcesForApplication = context.getPackageManager().getResourcesForApplication("com.android.browser");
-                int identifier = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks_for_yahoo", null, null);
-                Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), first resourceId = " + identifier);
-                CharSequence[] textArray = identifier != 0 ? resourcesForApplication.getTextArray(identifier) : null;
-                int identifier2 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmark_preloads_for_yahoo", null, null);
-                Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), first Preload resourceId = " + identifier2);
-                TypedArray typedArrayObtainTypedArray = identifier2 != 0 ? resourcesForApplication.obtainTypedArray(identifier2) : null;
-                if (textArray == null || typedArrayObtainTypedArray == null) {
-                    return;
-                }
-                int iAddDefaultBookmarks = addDefaultBookmarks(context, textArray, typedArrayObtainTypedArray, 2);
-                int identifier3 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks", null, null);
-                Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), Other resourceId = " + identifier3);
-                CharSequence[] textArray2 = identifier3 != 0 ? resourcesForApplication.getTextArray(identifier3) : null;
-                int identifier4 = resourcesForApplication.getIdentifier("com.android.browser:array/bookmark_preloads", null, null);
-                Log.d("DefaultBrowserRegionalPhoneExt", "addOMBookmarks(), other Preload resourceId = " + identifier4);
-                TypedArray typedArrayObtainTypedArray2 = identifier4 != 0 ? resourcesForApplication.obtainTypedArray(identifier4) : null;
-                if (textArray2 == null || typedArrayObtainTypedArray2 == null) {
-                    return;
-                }
-                addDefaultBookmarks(context, textArray2, typedArrayObtainTypedArray2, iAddDefaultBookmarks);
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
+                return length;
+            } finally {
+                typedArray.recycle();
             }
         }
 
@@ -131,78 +217,16 @@ public class DefaultBrowserRegionalPhoneExt implements IBrowserRegionalPhoneExt 
                 byte[] bArr = new byte[4096];
                 while (true) {
                     int i2 = inputStreamOpenRawResource.read(bArr);
-                    if (i2 <= 0) {
+                    if (i2 > 0) {
+                        byteArrayOutputStream.write(bArr, 0, i2);
+                    } else {
                         byteArrayOutputStream.flush();
                         return byteArrayOutputStream.toByteArray();
                     }
-                    byteArrayOutputStream.write(bArr, 0, i2);
                 }
             } finally {
                 inputStreamOpenRawResource.close();
             }
-        }
-
-        private void removeOperatorBookmarks(Context context) {
-            Uri uri = BrowserContract.Bookmarks.CONTENT_URI;
-            try {
-                Resources resourcesForApplication = context.getPackageManager().getResourcesForApplication("com.android.browser");
-                int identifier = resourcesForApplication.getIdentifier("com.android.browser:array/bookmarks_for_op03", null, null);
-                Log.d("DefaultBrowserRegionalPhoneExt", "OP03 resourceId = " + identifier);
-                CharSequence[] textArray = identifier != 0 ? resourcesForApplication.getTextArray(identifier) : null;
-                if (textArray != null) {
-                    Log.d("DefaultBrowserRegionalPhoneExt", " OP03 bookmarks size = " + textArray.length);
-                    int length = textArray.length / 2;
-                    String[] strArr = new String[length];
-                    for (int i = 0; i < length; i++) {
-                        strArr[i] = textArray[(i * 2) + 1].toString();
-                    }
-                    Log.d("DefaultBrowserRegionalPhoneExt", "Delete count = " + context.getContentResolver().delete(uri, "url" + makeInQueryString(length), strArr));
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected Void doInBackground(Void... voidArr) {
-            removeOperatorBookmarks(this.mContext);
-            addOMBookmarks(this.mContext);
-            return null;
-        }
-    }
-
-    static {
-        DEBUG = !Build.TYPE.equals("user") ? true : SystemProperties.getBoolean("ro.mtk_browser_debug_enablelog", false);
-    }
-
-    private boolean needUpdateBookmarks(Context context) {
-        SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String str = SystemProperties.get("persist.vendor.operator.optr");
-        Log.d("DefaultBrowserRegionalPhoneExt", "system property = " + str);
-        String string = defaultSharedPreferences.getString("operator_bookmarks", "OPNONE");
-        Log.d("DefaultBrowserRegionalPhoneExt", "currentOperator = " + string);
-        boolean zEquals = str.equals(string) ^ true;
-        if (zEquals) {
-            zEquals = string.equals("OP03");
-        }
-        SharedPreferences.Editor editorEdit = defaultSharedPreferences.edit();
-        editorEdit.putString("operator_bookmarks", str);
-        editorEdit.commit();
-        return zEquals;
-    }
-
-    @Override
-    public String getSearchEngine(SharedPreferences sharedPreferences, Context context) {
-        Log.i("@M_DefaultBrowserRegionalPhoneExt", "Enter: updateSearchEngine --default implement");
-        return null;
-    }
-
-    @Override
-    public void updateBookmarks(Context context) {
-        if (needUpdateBookmarks(context)) {
-            new UpdateBookmarkTask(context).execute(new Void[0]);
-        } else {
-            Log.i("@M_DefaultBrowserRegionalPhoneExt", "Enter: updateBookmarks --default implement");
         }
     }
 }

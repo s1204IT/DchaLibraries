@@ -1,18 +1,18 @@
 package android.support.v4.util;
 
 public class DebugUtils {
-    public static void buildShortClassTag(Object obj, StringBuilder sb) {
-        int iLastIndexOf;
-        if (obj == null) {
-            sb.append("null");
+    public static void buildShortClassTag(Object cls, StringBuilder out) {
+        int end;
+        if (cls == null) {
+            out.append("null");
             return;
         }
-        String simpleName = obj.getClass().getSimpleName();
-        if ((simpleName == null || simpleName.length() <= 0) && (iLastIndexOf = (simpleName = obj.getClass().getName()).lastIndexOf(46)) > 0) {
-            simpleName = simpleName.substring(iLastIndexOf + 1);
+        String simpleName = cls.getClass().getSimpleName();
+        if ((simpleName == null || simpleName.length() <= 0) && (end = (simpleName = cls.getClass().getName()).lastIndexOf(46)) > 0) {
+            simpleName = simpleName.substring(end + 1);
         }
-        sb.append(simpleName);
-        sb.append('{');
-        sb.append(Integer.toHexString(System.identityHashCode(obj)));
+        out.append(simpleName);
+        out.append('{');
+        out.append(Integer.toHexString(System.identityHashCode(cls)));
     }
 }

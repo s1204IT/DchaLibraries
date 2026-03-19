@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.setupwizardlib.GlifLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/setup_wizard_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:suwFooter="@layout/accept_and_continue_footer">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="?attr/suwMarginSides"
+        android:layout_marginRight="?attr/suwMarginSides">
+        <TextView
+            android:id="@+id/device_owner_terms_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacer_24"
+            style="@style/SuwDescription.Glif"/>
+        <TextView
+            android:id="@+id/device_owner_provider_info"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacer_24"
+            style="@style/SuwDescription.Glif"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/intro_device_owner_app_info_container"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/device_owner_app_info_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacer_24"
+                android:layout_marginBottom="@dimen/spacer_12"
+                style="@style/SuwDescription.Glif"/>
+            <include layout="@layout/device_manager_icon_label"/>
+        </LinearLayout>
+    </LinearLayout>
+</com.android.setupwizardlib.GlifLayout>

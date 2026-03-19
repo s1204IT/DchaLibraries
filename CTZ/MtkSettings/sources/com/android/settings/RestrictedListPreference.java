@@ -125,7 +125,7 @@ public class RestrictedListPreference extends CustomListPreference {
         this.mRestrictedItems.clear();
     }
 
-    public RestrictedItem getRestrictedItemForEntryValue(CharSequence charSequence) {
+    private RestrictedItem getRestrictedItemForEntryValue(CharSequence charSequence) {
         if (charSequence == null) {
             return null;
         }
@@ -206,7 +206,7 @@ public class RestrictedListPreference extends CustomListPreference {
             return restrictedListPreferenceDialogFragment;
         }
 
-        public RestrictedListPreference getCustomizablePreference() {
+        private RestrictedListPreference getCustomizablePreference() {
             return (RestrictedListPreference) getPreference();
         }
 
@@ -233,7 +233,7 @@ public class RestrictedListPreference extends CustomListPreference {
             };
         }
 
-        public int getLastCheckedPosition() {
+        private int getLastCheckedPosition() {
             if (this.mLastCheckedPosition == -1) {
                 this.mLastCheckedPosition = getCustomizablePreference().getSelectedValuePos();
             }

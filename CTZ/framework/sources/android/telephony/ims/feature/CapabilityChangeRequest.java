@@ -1,0 +1,139 @@
+package android.telephony.ims.feature;
+
+import android.annotation.SystemApi;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.ArraySet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+@SystemApi
+public final class CapabilityChangeRequest implements Parcelable {
+    public static final Parcelable.Creator<CapabilityChangeRequest> CREATOR = new Parcelable.Creator<CapabilityChangeRequest>() {
+        @Override
+        public CapabilityChangeRequest createFromParcel(Parcel parcel) {
+            return new CapabilityChangeRequest(parcel);
+        }
+
+        @Override
+        public CapabilityChangeRequest[] newArray(int i) {
+            return new CapabilityChangeRequest[i];
+        }
+    };
+    private final Set<CapabilityPair> mCapabilitiesToDisable;
+    private final Set<CapabilityPair> mCapabilitiesToEnable;
+
+    public static class CapabilityPair {
+        private final int mCapability;
+        private final int radioTech;
+
+        public CapabilityPair(int i, int i2) {
+            this.mCapability = i;
+            this.radioTech = i2;
+        }
+
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof CapabilityPair)) {
+                return false;
+            }
+            CapabilityPair capabilityPair = (CapabilityPair) obj;
+            return getCapability() == capabilityPair.getCapability() && getRadioTech() == capabilityPair.getRadioTech();
+        }
+
+        public int hashCode() {
+            return (31 * getCapability()) + getRadioTech();
+        }
+
+        public int getCapability() {
+            return this.mCapability;
+        }
+
+        public int getRadioTech() {
+            return this.radioTech;
+        }
+    }
+
+    public CapabilityChangeRequest() {
+        this.mCapabilitiesToEnable = new ArraySet();
+        this.mCapabilitiesToDisable = new ArraySet();
+    }
+
+    public void addCapabilitiesToEnableForTech(int i, int i2) {
+        addAllCapabilities(this.mCapabilitiesToEnable, i, i2);
+    }
+
+    public void addCapabilitiesToDisableForTech(int i, int i2) {
+        addAllCapabilities(this.mCapabilitiesToDisable, i, i2);
+    }
+
+    public List<CapabilityPair> getCapabilitiesToEnable() {
+        return new ArrayList(this.mCapabilitiesToEnable);
+    }
+
+    public List<CapabilityPair> getCapabilitiesToDisable() {
+        return new ArrayList(this.mCapabilitiesToDisable);
+    }
+
+    private void addAllCapabilities(Set<CapabilityPair> set, int i, int i2) {
+        long jHighestOneBit = Long.highestOneBit(i);
+        for (int i3 = 1; i3 <= jHighestOneBit; i3 *= 2) {
+            if ((i3 & i) > 0) {
+                set.add(new CapabilityPair(i3, i2));
+            }
+        }
+    }
+
+    protected CapabilityChangeRequest(Parcel parcel) {
+        int i = parcel.readInt();
+        this.mCapabilitiesToEnable = new ArraySet(i);
+        for (int i2 = 0; i2 < i; i2++) {
+            this.mCapabilitiesToEnable.add(new CapabilityPair(parcel.readInt(), parcel.readInt()));
+        }
+        int i3 = parcel.readInt();
+        this.mCapabilitiesToDisable = new ArraySet(i3);
+        for (int i4 = 0; i4 < i3; i4++) {
+            this.mCapabilitiesToDisable.add(new CapabilityPair(parcel.readInt(), parcel.readInt()));
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(this.mCapabilitiesToEnable.size());
+        for (CapabilityPair capabilityPair : this.mCapabilitiesToEnable) {
+            parcel.writeInt(capabilityPair.getCapability());
+            parcel.writeInt(capabilityPair.getRadioTech());
+        }
+        parcel.writeInt(this.mCapabilitiesToDisable.size());
+        for (CapabilityPair capabilityPair2 : this.mCapabilitiesToDisable) {
+            parcel.writeInt(capabilityPair2.getCapability());
+            parcel.writeInt(capabilityPair2.getRadioTech());
+        }
+    }
+
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof CapabilityChangeRequest)) {
+            return false;
+        }
+        CapabilityChangeRequest capabilityChangeRequest = (CapabilityChangeRequest) obj;
+        if (this.mCapabilitiesToEnable.equals(capabilityChangeRequest.mCapabilitiesToEnable)) {
+            return this.mCapabilitiesToDisable.equals(capabilityChangeRequest.mCapabilitiesToDisable);
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return (31 * this.mCapabilitiesToEnable.hashCode()) + this.mCapabilitiesToDisable.hashCode();
+    }
+}

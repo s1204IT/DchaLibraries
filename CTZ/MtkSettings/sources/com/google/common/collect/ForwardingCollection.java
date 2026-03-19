@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 public abstract class ForwardingCollection<E> extends ForwardingObject implements Collection<E> {
     @Override
-    public abstract Collection<E> delegate();
+    protected abstract Collection<E> delegate();
 
     protected ForwardingCollection() {
     }

@@ -5,11 +5,11 @@ import android.support.compat.R;
 import android.view.ViewGroup;
 
 public final class ViewGroupCompat {
-    public static boolean isTransitionGroup(ViewGroup viewGroup) {
+    public static boolean isTransitionGroup(ViewGroup group) {
         if (Build.VERSION.SDK_INT >= 21) {
-            return viewGroup.isTransitionGroup();
+            return group.isTransitionGroup();
         }
-        Boolean bool = (Boolean) viewGroup.getTag(R.id.tag_transition_group);
-        return ((bool == null || !bool.booleanValue()) && viewGroup.getBackground() == null && ViewCompat.getTransitionName(viewGroup) == null) ? false : true;
+        Boolean explicit = (Boolean) group.getTag(R.id.tag_transition_group);
+        return ((explicit == null || !explicit.booleanValue()) && group.getBackground() == null && ViewCompat.getTransitionName(group) == null) ? false : true;
     }
 }

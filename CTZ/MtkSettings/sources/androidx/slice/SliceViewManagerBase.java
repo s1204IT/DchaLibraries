@@ -92,7 +92,7 @@ public abstract class SliceViewManagerBase extends SliceViewManager {
             tryPin();
         }
 
-        public void tryPin() {
+        private void tryPin() {
             if (!this.mPinned) {
                 try {
                     SliceViewManagerBase.this.pinSlice(this.mUri);

@@ -142,16 +142,16 @@ public class AssistOrbView extends FrameLayout {
         this.mCircleAnimationEndValue = f;
     }
 
-    public void applyCircleSize(float f) {
+    private void applyCircleSize(float f) {
         this.mCircleSize = f;
         updateLayout();
     }
 
-    public void updateElevation() {
+    private void updateElevation() {
         setElevation((1.0f - Math.max((this.mStaticOffset - this.mOffset) / this.mStaticOffset, 0.0f)) * this.mMaxElevation);
     }
 
-    public void animateOffset(float f, long j, long j2, Interpolator interpolator) {
+    private void animateOffset(float f, long j, long j2, Interpolator interpolator) {
         if (this.mOffsetAnimator != null) {
             this.mOffsetAnimator.removeAllListeners();
             this.mOffsetAnimator.cancel();
@@ -170,7 +170,7 @@ public class AssistOrbView extends FrameLayout {
         this.mOffsetAnimator.start();
     }
 
-    public void updateLayout() {
+    private void updateLayout() {
         updateCircleRect();
         updateLogo();
         invalidateOutline();

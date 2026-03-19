@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:id="@+id/disclaimer_content"
+        android:paddingTop="@dimen/spacer_16"
+        android:paddingBottom="@dimen/spacer_16"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/spacer_16"
+        android:paddingEnd="@dimen/spacer_16"
+        style="@style/Provisioning2Theme.Text.Secondary"/>
+    <View style="@style/Provisioning2Theme.Divider"/>
+</LinearLayout>

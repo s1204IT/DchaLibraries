@@ -16,13 +16,16 @@ public class NonformattingListPreference extends ListPreference {
     }
 
     @Override
-    public CharSequence getSummary() {
-        return this.mSummary != null ? this.mSummary : super.getSummary();
-    }
-
-    @Override
     public void setSummary(CharSequence charSequence) {
         this.mSummary = charSequence;
         super.setSummary(charSequence);
+    }
+
+    @Override
+    public CharSequence getSummary() {
+        if (this.mSummary != null) {
+            return this.mSummary;
+        }
+        return super.getSummary();
     }
 }

@@ -76,7 +76,7 @@ public class HvacController {
         }
     }
 
-    public void destroyHvacManager() {
+    private void destroyHvacManager() {
         if (this.mHvacManager != null) {
             this.mHvacManager.unregisterCallback(this.mHardwareCallback);
             this.mHvacManager = null;
@@ -112,7 +112,7 @@ public class HvacController {
         initComponent(temperatureView);
     }
 
-    public void initComponents() {
+    private void initComponents() {
         Iterator<Map.Entry<HvacKey, List<TemperatureView>>> it = this.mTempComponents.entrySet().iterator();
         while (it.hasNext()) {
             Iterator<TemperatureView> it2 = it.next().getValue().iterator();

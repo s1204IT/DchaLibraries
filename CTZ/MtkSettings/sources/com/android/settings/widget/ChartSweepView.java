@@ -136,7 +136,7 @@ public class ChartSweepView extends View {
         }
     }
 
-    public void dispatchRequestEdit() {
+    private void dispatchRequestEdit() {
         if (this.mListener != null) {
             this.mListener.requestEdit(this);
         }

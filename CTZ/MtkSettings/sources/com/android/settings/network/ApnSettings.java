@@ -111,7 +111,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         }
     }
 
-    public static PhoneConstants.DataState getMobileDataState(Intent intent) {
+    private static PhoneConstants.DataState getMobileDataState(Intent intent) {
         String stringExtra = intent.getStringExtra("state");
         if (stringExtra != null) {
             return Enum.valueOf(PhoneConstants.DataState.class, stringExtra);
@@ -439,7 +439,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         return true;
     }
 
-    public Uri getUriForCurrSubId(Uri uri) {
+    private Uri getUriForCurrSubId(Uri uri) {
         int subscriptionId = this.mSubscriptionInfo != null ? this.mSubscriptionInfo.getSubscriptionId() : -1;
         if (SubscriptionManager.isValidSubscriptionId(subscriptionId)) {
             return Uri.withAppendedPath(uri, "subId/" + String.valueOf(subscriptionId));
@@ -513,7 +513,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         return 0;
     }
 
-    public void updateScreenForDataStateChange(Context context, Intent intent) {
+    private void updateScreenForDataStateChange(Context context, Intent intent) {
         String stringExtra = intent.getStringExtra("apnType");
         Log.d("ApnSettings", "Receiver,send MMS status, get type = " + stringExtra);
         if ("mms".equals(stringExtra)) {
@@ -527,7 +527,7 @@ public class ApnSettings extends RestrictedSettingsFragment implements Preferenc
         }
     }
 
-    public void updateScreenEnableState(Context context) {
+    private void updateScreenEnableState(Context context) {
         int subscriptionId = this.mSubscriptionInfo.getSubscriptionId();
         boolean z = false;
         boolean z2 = 5 == TelephonyManager.getDefault().getSimState(SubscriptionManager.getSlotIndex(subscriptionId));

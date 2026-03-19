@@ -299,7 +299,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return this.mHasVibrator;
     }
 
-    public void onNotifyVisibleW(boolean z) {
+    private void onNotifyVisibleW(boolean z) {
         if (this.mDestroyed) {
             return;
         }
@@ -309,7 +309,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    public void onUserActivityW() {
+    private void onUserActivityW() {
         synchronized (this) {
             if (this.mUserActivityListener != null) {
                 this.mUserActivityListener.onUserActivity();
@@ -317,17 +317,17 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    public void onShowSafetyWarningW(int i) {
+    private void onShowSafetyWarningW(int i) {
         if (this.mShowSafetyWarning) {
             this.mCallbacks.onShowSafetyWarning(i);
         }
     }
 
-    public void onAccessibilityModeChanged(Boolean bool) {
+    private void onAccessibilityModeChanged(Boolean bool) {
         this.mCallbacks.onAccessibilityModeChanged(bool);
     }
 
-    public boolean checkRoutedToBluetoothW(int i) {
+    private boolean checkRoutedToBluetoothW(int i) {
         if (i == 3) {
             return false | updateStreamRoutedToBluetoothW(i, (this.mAudio.getDevicesForStream(3) & 896) != 0);
         }
@@ -340,7 +340,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    public boolean shouldShowUI(int i) {
+    private boolean shouldShowUI(int i) {
         updateStatusBar();
         if (this.mStatusBar != null) {
             if (this.mStatusBar.getWakefulnessState() == 0 || this.mStatusBar.getWakefulnessState() == 3 || !this.mStatusBar.isDeviceInteractive() || (i & 1) == 0 || !this.mShowVolumeDialog) {
@@ -383,7 +383,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return zUpdateStreamLevelW;
     }
 
-    public boolean updateActiveStreamW(int i) {
+    private boolean updateActiveStreamW(int i) {
         if (i == this.mState.activeStream) {
             return false;
         }
@@ -402,7 +402,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    public VolumeDialogController.StreamState streamStateW(int i) {
+    private VolumeDialogController.StreamState streamStateW(int i) {
         VolumeDialogController.StreamState streamState = this.mState.states.get(i);
         if (streamState == null) {
             VolumeDialogController.StreamState streamState2 = new VolumeDialogController.StreamState();
@@ -412,7 +412,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return streamState;
     }
 
-    public void onGetStateW() {
+    private void onGetStateW() {
         Iterator<Integer> it = STREAMS.keySet().iterator();
         while (it.hasNext()) {
             int iIntValue = it.next().intValue();
@@ -445,7 +445,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    public boolean updateStreamLevelW(int i, int i2) {
+    private boolean updateStreamLevelW(int i, int i2) {
         VolumeDialogController.StreamState streamStateStreamStateW = streamStateW(i);
         if (streamStateStreamStateW.level == i2) {
             return false;
@@ -473,7 +473,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    public boolean updateStreamMuteW(int i, boolean z) {
+    private boolean updateStreamMuteW(int i, boolean z) {
         VolumeDialogController.StreamState streamStateStreamStateW = streamStateW(i);
         if (streamStateStreamStateW.muted == z) {
             return false;
@@ -492,7 +492,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return i == 2 || i == 5;
     }
 
-    public boolean updateEffectsSuppressorW(ComponentName componentName) {
+    private boolean updateEffectsSuppressorW(ComponentName componentName) {
         if (Objects.equals(this.mState.effectsSuppressor, componentName)) {
             return false;
         }
@@ -519,7 +519,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return packageName;
     }
 
-    public boolean updateZenModeW() {
+    private boolean updateZenModeW() {
         int i = Settings.Global.getInt(this.mContext.getContentResolver(), "zen_mode", 0);
         if (this.mState.zenMode == i) {
             return false;
@@ -529,7 +529,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    public boolean updateZenConfig() {
+    private boolean updateZenConfig() {
         NotificationManager.Policy notificationPolicy = this.mNotificationManager.getNotificationPolicy();
         boolean z = (notificationPolicy.priorityCategories & 32) == 0;
         boolean z2 = (notificationPolicy.priorityCategories & 64) == 0;
@@ -546,7 +546,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    public boolean updateRingerModeExternalW(int i) {
+    private boolean updateRingerModeExternalW(int i) {
         if (i == this.mState.ringerModeExternal) {
             return false;
         }
@@ -555,7 +555,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    public boolean updateRingerModeInternalW(int i) {
+    private boolean updateRingerModeInternalW(int i) {
         if (i == this.mState.ringerModeInternal) {
             return false;
         }
@@ -567,7 +567,7 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         return true;
     }
 
-    public void onSetRingerModeW(int i, boolean z) {
+    private void onSetRingerModeW(int i, boolean z) {
         if (z) {
             this.mAudio.setRingerMode(i);
         } else {
@@ -575,11 +575,11 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    public void onSetStreamMuteW(int i, boolean z) {
+    private void onSetStreamMuteW(int i, boolean z) {
         this.mAudio.adjustStreamVolume(i, z ? -100 : 100, 0);
     }
 
-    public void onSetStreamVolumeW(int i, int i2) {
+    private void onSetStreamVolumeW(int i, int i2) {
         if (D.BUG) {
             Log.d(TAG, "onSetStreamVolume " + i + " level=" + i2);
         }
@@ -590,24 +590,24 @@ public class VolumeDialogControllerImpl implements Dumpable, VolumeDialogControl
         }
     }
 
-    public void onSetActiveStreamW(int i) {
+    private void onSetActiveStreamW(int i) {
         if (updateActiveStreamW(i)) {
             this.mCallbacks.onStateChanged(this.mState);
         }
     }
 
-    public void onSetExitConditionW(Condition condition) {
+    private void onSetExitConditionW(Condition condition) {
         this.mNoMan.setZenMode(this.mState.zenMode, condition != null ? condition.id : null, TAG);
     }
 
-    public void onSetZenModeW(int i) {
+    private void onSetZenModeW(int i) {
         if (D.BUG) {
             Log.d(TAG, "onSetZenModeW " + i);
         }
         this.mNoMan.setZenMode(i, null, TAG);
     }
 
-    public void onDismissRequestedW(int i) {
+    private void onDismissRequestedW(int i) {
         this.mCallbacks.onDismissRequested(i);
     }
 

@@ -15,34 +15,25 @@ public class CorpusView extends RelativeLayout implements Checkable {
     private ImageView mIcon;
     private TextView mLabel;
 
+    public CorpusView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+    }
+
     public CorpusView(Context context) {
         super(context);
     }
 
-    public CorpusView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        this.mIcon = (ImageView) findViewById(com.android.quicksearchbox.R.id.source_icon);
+        this.mLabel = (TextView) findViewById(com.android.quicksearchbox.R.id.source_label);
     }
 
     @Override
     @ViewDebug.ExportedProperty
     public boolean isChecked() {
         return this.mChecked;
-    }
-
-    @Override
-    protected int[] onCreateDrawableState(int i) {
-        int[] iArrOnCreateDrawableState = super.onCreateDrawableState(i + 1);
-        if (isChecked()) {
-            mergeDrawableStates(iArrOnCreateDrawableState, CHECKED_STATE_SET);
-        }
-        return iArrOnCreateDrawableState;
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        this.mIcon = (ImageView) findViewById(2131689472);
-        this.mLabel = (TextView) findViewById(2131689473);
     }
 
     @Override
@@ -56,5 +47,14 @@ public class CorpusView extends RelativeLayout implements Checkable {
     @Override
     public void toggle() {
         setChecked(!this.mChecked);
+    }
+
+    @Override
+    protected int[] onCreateDrawableState(int i) {
+        int[] iArrOnCreateDrawableState = super.onCreateDrawableState(i + 1);
+        if (isChecked()) {
+            mergeDrawableStates(iArrOnCreateDrawableState, CHECKED_STATE_SET);
+        }
+        return iArrOnCreateDrawableState;
     }
 }

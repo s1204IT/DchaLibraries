@@ -78,7 +78,7 @@ public class DozeScreenState implements DozeMachine.Part {
         applyScreenState(iScreenState);
     }
 
-    public void applyPendingScreenState() {
+    private void applyPendingScreenState() {
         applyScreenState(this.mPendingScreenState);
         this.mPendingScreenState = 0;
     }

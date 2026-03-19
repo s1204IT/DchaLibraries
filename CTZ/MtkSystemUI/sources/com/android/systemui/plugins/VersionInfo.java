@@ -124,7 +124,7 @@ public class VersionInfo {
         }
     }
 
-    static class Version {
+    private static class Version {
         private final boolean mRequired;
         private final int mVersion;
 

@@ -192,7 +192,7 @@ public class PasswordTextView extends View {
         return this.mText;
     }
 
-    public CharSequence getTransformedText() {
+    private CharSequence getTransformedText() {
         int size = this.mTextChars.size();
         StringBuilder sb = new StringBuilder(size);
         for (int i = 0; i < size; i++) {
@@ -465,7 +465,7 @@ public class PasswordTextView extends View {
             this.isDotSwapPending = true;
         }
 
-        public void removeDotSwapCallbacks() {
+        private void removeDotSwapCallbacks() {
             PasswordTextView.this.removeCallbacks(this.dotSwapperRunnable);
             this.isDotSwapPending = false;
         }
@@ -479,7 +479,7 @@ public class PasswordTextView extends View {
             }
         }
 
-        public void performSwap() {
+        private void performSwap() {
             startTextDisappearAnimation(0L);
             startDotAppearAnimation(30L);
         }
@@ -578,7 +578,7 @@ public class PasswordTextView extends View {
             this.dotAnimationIsGrowing = true;
         }
 
-        public void cancelAnimator(Animator animator) {
+        private void cancelAnimator(Animator animator) {
             if (animator != null) {
                 animator.cancel();
             }

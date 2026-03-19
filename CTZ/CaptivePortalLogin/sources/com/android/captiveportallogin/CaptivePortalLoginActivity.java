@@ -157,7 +157,7 @@ public class CaptivePortalLoginActivity extends Activity {
         captivePortalLoginActivity.mSwipeRefreshLayout.setRefreshing(true);
     }
 
-    public void setWebViewProxy() {
+    private void setWebViewProxy() {
         LoadedApk loadedApk = getApplication().mLoadedApk;
         try {
             Field declaredField = LoadedApk.class.getDeclaredField("mReceivers");
@@ -177,24 +177,43 @@ public class CaptivePortalLoginActivity extends Activity {
         }
     }
 
-    public void done(Result result) {
+    private void done(Result result) {
         if (this.isDone.getAndSet(true)) {
             return;
         }
         Log.d(TAG, String.format("Result %s for %s", result.name(), this.mUrl.toString()));
         logMetricsEvent(result.metricsEvent);
-        switch (result) {
-            case DISMISSED:
+        switch (AnonymousClass3.$SwitchMap$com$android$captiveportallogin$CaptivePortalLoginActivity$Result[result.ordinal()]) {
+            case 1:
                 this.mCaptivePortal.reportCaptivePortalDismissed();
                 break;
-            case UNWANTED:
+            case 2:
                 this.mCaptivePortal.ignoreNetwork();
                 break;
-            case WANTED_AS_IS:
+            case 3:
                 this.mCaptivePortal.useNetwork();
                 break;
         }
         finishAndRemoveTask();
+    }
+
+    static class AnonymousClass3 {
+        static final int[] $SwitchMap$com$android$captiveportallogin$CaptivePortalLoginActivity$Result = new int[Result.values().length];
+
+        static {
+            try {
+                $SwitchMap$com$android$captiveportallogin$CaptivePortalLoginActivity$Result[Result.DISMISSED.ordinal()] = 1;
+            } catch (NoSuchFieldError e) {
+            }
+            try {
+                $SwitchMap$com$android$captiveportallogin$CaptivePortalLoginActivity$Result[Result.UNWANTED.ordinal()] = 2;
+            } catch (NoSuchFieldError e2) {
+            }
+            try {
+                $SwitchMap$com$android$captiveportallogin$CaptivePortalLoginActivity$Result[Result.WANTED_AS_IS.ordinal()] = 3;
+            } catch (NoSuchFieldError e3) {
+            }
+        }
     }
 
     @Override
@@ -263,7 +282,7 @@ public class CaptivePortalLoginActivity extends Activity {
         return makeURL(stringExtra);
     }
 
-    public static URL makeURL(String str) {
+    private static URL makeURL(String str) {
         try {
             return new URL(str);
         } catch (MalformedURLException e) {
@@ -272,18 +291,18 @@ public class CaptivePortalLoginActivity extends Activity {
         }
     }
 
-    public static String host(URL url) {
+    private static String host(URL url) {
         if (url == null) {
             return null;
         }
         return url.getHost();
     }
 
-    public static String sanitizeURL(URL url) {
+    private static String sanitizeURL(URL url) {
         return Build.IS_DEBUGGABLE ? Objects.toString(url) : host(url);
     }
 
-    public void testForCaptivePortal() {
+    private void testForCaptivePortal() {
         new Thread(new Runnable() {
             @Override
             public void run() throws Throwable {
@@ -381,7 +400,7 @@ public class CaptivePortalLoginActivity extends Activity {
         }).start();
     }
 
-    public static boolean isDismissed(int i, String str, CaptivePortalProbeSpec captivePortalProbeSpec) {
+    private static boolean isDismissed(int i, String str, CaptivePortalProbeSpec captivePortalProbeSpec) {
         if (captivePortalProbeSpec != null) {
             return captivePortalProbeSpec.getResult(i, str).isSuccessful();
         }
@@ -483,7 +502,7 @@ public class CaptivePortalLoginActivity extends Activity {
         }
     }
 
-    public ProgressBar getProgressBar() {
+    private ProgressBar getProgressBar() {
         return (ProgressBar) findViewById(R.id.progress_bar);
     }
 
@@ -496,10 +515,10 @@ public class CaptivePortalLoginActivity extends Activity {
         if (networkCapabilities == null || TextUtils.isEmpty(networkCapabilities.getSSID()) || !networkCapabilities.hasTransport(1)) {
             return getString(R.string.action_bar_label);
         }
-        return getString(R.string.action_bar_title, new Object[]{WifiInfo.removeDoubleQuotes(networkCapabilities.getSSID())});
+        return getString(R.string.action_bar_title, WifiInfo.removeDoubleQuotes(networkCapabilities.getSSID()));
     }
 
-    public String getHeaderSubtitle(URL url) {
+    private String getHeaderSubtitle(URL url) {
         String strHost = host(url);
         if ("https".equals(url.getProtocol())) {
             return "https://" + strHost;
@@ -507,11 +526,11 @@ public class CaptivePortalLoginActivity extends Activity {
         return strHost;
     }
 
-    public void logMetricsEvent(int i) {
+    private void logMetricsEvent(int i) {
         MetricsLogger.action(this, i, getPackageName());
     }
 
-    public static String sslErrorName(SslError sslError) {
+    private static String sslErrorName(SslError sslError) {
         return SSL_ERRORS.get(sslError.getPrimaryError(), "UNKNOWN");
     }
 }

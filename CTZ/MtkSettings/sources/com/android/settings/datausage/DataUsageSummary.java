@@ -377,7 +377,7 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         this.mSummaryController.updateState(this.mSummaryPreference);
     }
 
-    static class SummaryProvider implements SummaryLoader.SummaryProvider {
+    private static class SummaryProvider implements SummaryLoader.SummaryProvider {
         private final Activity mActivity;
         private final DataUsageController mDataController;
         private final SummaryLoader mSummaryLoader;
@@ -507,12 +507,12 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         return this.mPhoneStateListener;
     }
 
-    public void showDataServiceDialog() {
+    private void showDataServiceDialog() {
         Log.d("DataUsageSummary", "showDataServiceDialog");
         startActivity(new Intent(getContext(), (Class<?>) TempDataServiceDialogActivity.class));
     }
 
-    public void updateScreenEnabled() {
+    private void updateScreenEnabled() {
         boolean zIsCapabilitySwitching = TelephonyUtils.isCapabilitySwitching();
         Log.d("DataUsageSummary", "updateScreenEnabled, mIsAirplaneModeOn = " + this.mIsAirplaneModeOn + ", isSwitching = " + zIsCapabilitySwitching + ", mTempPhoneid = " + this.mTempPhoneid);
         if (this.mEnableDataService != null) {
@@ -523,7 +523,7 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         }
     }
 
-    public boolean getDataService() {
+    private boolean getDataService() {
         int i;
         Context context = getContext();
         if (context != null) {
@@ -535,7 +535,7 @@ public class DataUsageSummary extends DataUsageBaseFragment implements DataUsage
         return i != 0;
     }
 
-    public void setDataService(int i) {
+    private void setDataService(int i) {
         Log.d("DataUsageSummary", "setDataService =" + i);
         Settings.Global.putInt(getContext().getContentResolver(), "data_service_enabled", i);
     }

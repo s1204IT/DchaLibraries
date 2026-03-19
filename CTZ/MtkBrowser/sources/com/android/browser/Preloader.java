@@ -14,51 +14,12 @@ public class Preloader {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     private volatile PreloaderSession mSession = null;
 
-    private class PreloaderSession {
-        private final String mId;
-        private final PreloadedTabControl mTabControl;
-        private final Runnable mTimeoutTask = new Runnable(this) {
-            final PreloaderSession this$1;
+    public static void initialize(Context context) {
+        sInstance = new Preloader(context);
+    }
 
-            {
-                this.this$1 = this;
-            }
-
-            @Override
-            public void run() {
-                Log.d("browser.preloader", "Preload session timeout " + this.this$1.mId);
-                this.this$1.this$0.discardPreload(this.this$1.mId);
-            }
-        };
-        final Preloader this$0;
-
-        public PreloaderSession(Preloader preloader, String str) {
-            this.this$0 = preloader;
-            this.mId = str;
-            this.mTabControl = new PreloadedTabControl(new Tab(new PreloadController(preloader.mContext), preloader.mFactory.createWebView(false)));
-            touch();
-        }
-
-        public void cancelTimeout() {
-            this.this$0.mHandler.removeCallbacks(this.mTimeoutTask);
-        }
-
-        public PreloadedTabControl getTabControl() {
-            return this.mTabControl;
-        }
-
-        public WebView getWebView() {
-            Tab tab = this.mTabControl.getTab();
-            if (tab == null) {
-                return null;
-            }
-            return tab.getWebView();
-        }
-
-        public void touch() {
-            cancelTimeout();
-            this.this$0.mHandler.postDelayed(this.mTimeoutTask, 30000L);
-        }
+    public static Preloader getInstance() {
+        return sInstance;
     }
 
     private Preloader(Context context) {
@@ -66,14 +27,10 @@ public class Preloader {
         this.mFactory = new BrowserWebViewFactory(context);
     }
 
-    public static Preloader getInstance() {
-        return sInstance;
-    }
-
     private PreloaderSession getSession(String str) {
         if (this.mSession == null) {
             Log.d("browser.preloader", "Create new preload session " + str);
-            this.mSession = new PreloaderSession(this, str);
+            this.mSession = new PreloaderSession(str);
             WebViewTimersControl.getInstance().onPrerenderStart(this.mSession.getWebView());
             return this.mSession;
         }
@@ -85,22 +42,34 @@ public class Preloader {
         return null;
     }
 
-    public static void initialize(Context context) {
-        sInstance = new Preloader(context);
-    }
-
     private PreloaderSession takeSession(String str) {
         PreloaderSession preloaderSession;
-        if (this.mSession == null || !this.mSession.mId.equals(str)) {
-            preloaderSession = null;
-        } else {
+        if (this.mSession != null && this.mSession.mId.equals(str)) {
             preloaderSession = this.mSession;
             this.mSession = null;
+        } else {
+            preloaderSession = null;
         }
         if (preloaderSession != null) {
             preloaderSession.cancelTimeout();
         }
         return preloaderSession;
+    }
+
+    public void handlePreloadRequest(String str, String str2, Map<String, String> map, String str3) {
+        PreloaderSession session = getSession(str);
+        if (session == null) {
+            Log.d("browser.preloader", "Discarding preload request, existing session in progress");
+            return;
+        }
+        session.touch();
+        PreloadedTabControl tabControl = session.getTabControl();
+        if (str3 != null) {
+            tabControl.loadUrlIfChanged(str2, map);
+            tabControl.setQuery(str3);
+        } else {
+            tabControl.loadUrl(str2, map);
+        }
     }
 
     public void cancelSearchBoxPreload(String str) {
@@ -113,13 +82,13 @@ public class Preloader {
 
     public void discardPreload(String str) {
         PreloaderSession preloaderSessionTakeSession = takeSession(str);
-        if (preloaderSessionTakeSession == null) {
-            Log.d("browser.preloader", "Ignored discard request " + str);
+        if (preloaderSessionTakeSession != null) {
+            Log.d("browser.preloader", "Discard preload session " + str);
+            WebViewTimersControl.getInstance().onPrerenderDone(preloaderSessionTakeSession == null ? null : preloaderSessionTakeSession.getWebView());
+            preloaderSessionTakeSession.getTabControl().destroy();
             return;
         }
-        Log.d("browser.preloader", "Discard preload session " + str);
-        WebViewTimersControl.getInstance().onPrerenderDone(preloaderSessionTakeSession == null ? null : preloaderSessionTakeSession.getWebView());
-        preloaderSessionTakeSession.getTabControl().destroy();
+        Log.d("browser.preloader", "Ignored discard request " + str);
     }
 
     public PreloadedTabControl getPreloadedTab(String str) {
@@ -131,19 +100,42 @@ public class Preloader {
         return preloaderSessionTakeSession.getTabControl();
     }
 
-    public void handlePreloadRequest(String str, String str2, Map<String, String> map, String str3) {
-        PreloaderSession session = getSession(str);
-        if (session == null) {
-            Log.d("browser.preloader", "Discarding preload request, existing session in progress");
-            return;
+    private class PreloaderSession {
+        private final String mId;
+        private final PreloadedTabControl mTabControl;
+        private final Runnable mTimeoutTask = new Runnable() {
+            @Override
+            public void run() {
+                Log.d("browser.preloader", "Preload session timeout " + PreloaderSession.this.mId);
+                Preloader.this.discardPreload(PreloaderSession.this.mId);
+            }
+        };
+
+        public PreloaderSession(String str) {
+            this.mId = str;
+            this.mTabControl = new PreloadedTabControl(new Tab(new PreloadController(Preloader.this.mContext), Preloader.this.mFactory.createWebView(false)));
+            touch();
         }
-        session.touch();
-        PreloadedTabControl tabControl = session.getTabControl();
-        if (str3 == null) {
-            tabControl.loadUrl(str2, map);
-        } else {
-            tabControl.loadUrlIfChanged(str2, map);
-            tabControl.setQuery(str3);
+
+        public void cancelTimeout() {
+            Preloader.this.mHandler.removeCallbacks(this.mTimeoutTask);
+        }
+
+        public void touch() {
+            cancelTimeout();
+            Preloader.this.mHandler.postDelayed(this.mTimeoutTask, 30000L);
+        }
+
+        public PreloadedTabControl getTabControl() {
+            return this.mTabControl;
+        }
+
+        public WebView getWebView() {
+            Tab tab = this.mTabControl.getTab();
+            if (tab == null) {
+                return null;
+            }
+            return tab.getWebView();
         }
     }
 }

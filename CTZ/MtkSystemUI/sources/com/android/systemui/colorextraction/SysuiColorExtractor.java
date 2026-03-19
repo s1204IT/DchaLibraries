@@ -108,7 +108,7 @@ public class SysuiColorExtractor extends ColorExtractor implements Dumpable {
     }
 
     @VisibleForTesting
-    public void setWallpaperVisible(boolean z) {
+    void setWallpaperVisible(boolean z) {
         if (this.mWallpaperVisible != z) {
             this.mWallpaperVisible = z;
             triggerColorsChanged(1);

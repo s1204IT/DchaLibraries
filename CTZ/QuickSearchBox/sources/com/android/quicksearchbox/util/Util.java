@@ -24,10 +24,10 @@ public class Util {
         builder.scheme("android.resource");
         builder.encodedAuthority(str);
         builder.appendEncodedPath(str3);
-        if (str.equals(str2)) {
-            builder.appendEncodedPath(str4);
-        } else {
+        if (!str.equals(str2)) {
             builder.appendEncodedPath(str2 + ":" + str4);
+        } else {
+            builder.appendEncodedPath(str4);
         }
         return builder.build();
     }

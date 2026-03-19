@@ -35,21 +35,9 @@ public class BottomBar extends LinearLayout {
 
     public BottomBar(Context context, UiController uiController, BaseUi baseUi, TabControl tabControl, FrameLayout frameLayout) {
         super(context, null);
-        this.mHideBottomBarAnimatorListener = new Animator.AnimatorListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mHideBottomBarAnimatorListener = new Animator.AnimatorListener() {
             @Override
-            public void onAnimationCancel(Animator animator) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-                this.this$0.onScrollChanged();
-                this.this$0.setLayerType(0, null);
+            public void onAnimationStart(Animator animator) {
             }
 
             @Override
@@ -57,7 +45,13 @@ public class BottomBar extends LinearLayout {
             }
 
             @Override
-            public void onAnimationStart(Animator animator) {
+            public void onAnimationEnd(Animator animator) {
+                BottomBar.this.onScrollChanged();
+                BottomBar.this.setLayerType(0, null);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
             }
         };
         this.mContext = context;
@@ -69,140 +63,75 @@ public class BottomBar extends LinearLayout {
         setupBottomBar();
     }
 
-    private int getVisibleBottomHeight() {
-        return this.mBottomBar.getHeight();
-    }
-
     private void initLayout(Context context) {
-        LayoutInflater.from(context).inflate(2130968593, this);
-        this.mBottomBar = (LinearLayout) findViewById(2131558440);
-        this.mBottomBarBack = (ImageView) findViewById(2131558441);
-        this.mBottomBarForward = (ImageView) findViewById(2131558442);
-        this.mBottomBarTabs = (ImageView) findViewById(2131558443);
-        this.mBottomBarBookmarks = (ImageView) findViewById(2131558445);
-        this.mBottomBarTabCount = (TextView) findViewById(2131558444);
-        this.mBottomBarBack.setOnClickListener(new View.OnClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        LayoutInflater.from(context).inflate(R.layout.bottom_bar, this);
+        this.mBottomBar = (LinearLayout) findViewById(R.id.bottombar);
+        this.mBottomBarBack = (ImageView) findViewById(R.id.back);
+        this.mBottomBarForward = (ImageView) findViewById(R.id.forward);
+        this.mBottomBarTabs = (ImageView) findViewById(R.id.tabs);
+        this.mBottomBarBookmarks = (ImageView) findViewById(R.id.bookmarks);
+        this.mBottomBarTabCount = (TextView) findViewById(R.id.tabcount);
+        this.mBottomBarBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((Controller) this.this$0.mUiController).onBackKey();
+                ((Controller) BottomBar.this.mUiController).onBackKey();
             }
         });
-        this.mBottomBarBack.setOnLongClickListener(new View.OnLongClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mBottomBarBack.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Toast.makeText(this.this$0.mUiController.getActivity(), this.this$0.mUiController.getActivity().getResources().getString(2131492984), 0).show();
+                Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.back), 0).show();
                 return false;
             }
         });
-        this.mBottomBarForward.setOnClickListener(new View.OnClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mBottomBarForward.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (this.this$0.mUiController == null || this.this$0.mUiController.getCurrentTab() == null) {
-                    return;
+                if (BottomBar.this.mUiController != null && BottomBar.this.mUiController.getCurrentTab() != null) {
+                    BottomBar.this.mUiController.getCurrentTab().goForward();
                 }
-                this.this$0.mUiController.getCurrentTab().goForward();
             }
         });
-        this.mBottomBarForward.setOnLongClickListener(new View.OnLongClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mBottomBarForward.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Toast.makeText(this.this$0.mUiController.getActivity(), this.this$0.mUiController.getActivity().getResources().getString(2131492985), 0).show();
+                Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.forward), 0).show();
                 return false;
             }
         });
-        this.mBottomBarTabs.setOnClickListener(new View.OnClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mBottomBarTabs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((PhoneUi) this.this$0.mBaseUi).toggleNavScreen();
+                ((PhoneUi) BottomBar.this.mBaseUi).toggleNavScreen();
             }
         });
-        this.mBottomBarTabs.setOnLongClickListener(new View.OnLongClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mBottomBarTabs.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Toast.makeText(this.this$0.mUiController.getActivity(), this.this$0.mUiController.getActivity().getResources().getString(2131492917), 0).show();
+                Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.tabs), 0).show();
                 return false;
             }
         });
-        this.mBottomBarBookmarks.setOnClickListener(new View.OnClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mBottomBarBookmarks.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                this.this$0.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
+                BottomBar.this.mUiController.bookmarksOrHistoryPicker(UI.ComboViews.Bookmarks);
             }
         });
-        this.mBottomBarBookmarks.setOnLongClickListener(new View.OnLongClickListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mBottomBarBookmarks.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                Toast.makeText(this.this$0.mUiController.getActivity(), this.this$0.mUiController.getActivity().getResources().getString(2131493026), 0).show();
+                Toast.makeText(BottomBar.this.mUiController.getActivity(), BottomBar.this.mUiController.getActivity().getResources().getString(R.string.bookmarks), 0).show();
                 return false;
             }
         });
         this.mBottomBarTabCount.setText(Integer.toString(this.mUiController.getTabControl().getTabCount()));
-        this.mTabControl.setOnTabCountChangedListener(new TabControl.OnTabCountChangedListener(this) {
-            final BottomBar this$0;
-
-            {
-                this.this$0 = this;
-            }
-
+        this.mTabControl.setOnTabCountChangedListener(new TabControl.OnTabCountChangedListener() {
             @Override
             public void onTabCountChanged() {
-                this.this$0.mBottomBarTabCount.setText(Integer.toString(this.this$0.mTabControl.getTabCount()));
+                BottomBar.this.mBottomBarTabCount.setText(Integer.toString(BottomBar.this.mTabControl.getTabCount()));
             }
         });
-    }
-
-    private ViewGroup.MarginLayoutParams makeLayoutParams() {
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-1, -2);
-        layoutParams.gravity = 80;
-        return layoutParams;
     }
 
     private void setupBottomBar() {
@@ -213,55 +142,6 @@ public class BottomBar extends LinearLayout {
         }
         this.mContentView.addView(this, makeLayoutParams());
         this.mBaseUi.setContentViewMarginBottom(0);
-    }
-
-    void cancelBottomBarAnimation() {
-        if (this.mBottomBarAnimator != null) {
-            this.mBottomBarAnimator.cancel();
-            this.mBottomBarAnimator = null;
-        }
-    }
-
-    public void changeBottomBarState(boolean z, boolean z2) {
-        this.mBottomBarBack.setEnabled(z);
-        this.mBottomBarForward.setEnabled(z2);
-    }
-
-    void hide() {
-        if (this.mUseQuickControls || this.mUseFullScreen) {
-            cancelBottomBarAnimation();
-            int visibleBottomHeight = getVisibleBottomHeight();
-            float translationY = getTranslationY();
-            setLayerType(2, null);
-            this.mBottomBarAnimator = ObjectAnimator.ofFloat(this, "translationY", translationY, visibleBottomHeight + translationY);
-            this.mBottomBarAnimator.addListener(this.mHideBottomBarAnimatorListener);
-            setupBottomBarAnimator(this.mBottomBarAnimator);
-            this.mBottomBarAnimator.start();
-            setVisibility(8);
-            this.mShowing = false;
-            return;
-        }
-        setVisibility(0);
-        cancelBottomBarAnimation();
-        int visibleBottomHeight2 = getVisibleBottomHeight();
-        float translationY2 = getTranslationY();
-        setLayerType(2, null);
-        this.mBottomBarAnimator = ObjectAnimator.ofFloat(this, "translationY", translationY2, visibleBottomHeight2 + translationY2);
-        this.mBottomBarAnimator.addListener(this.mHideBottomBarAnimatorListener);
-        setupBottomBarAnimator(this.mBottomBarAnimator);
-        this.mBottomBarAnimator.start();
-        this.mShowing = false;
-    }
-
-    boolean isShowing() {
-        return this.mShowing;
-    }
-
-    public void onScrollChanged() {
-        if (this.mShowing) {
-            return;
-        }
-        setTranslationY(getVisibleBottomHeight());
     }
 
     public void setFullScreen(boolean z) {
@@ -283,7 +163,7 @@ public class BottomBar extends LinearLayout {
     }
 
     void setupBottomBarAnimator(Animator animator) {
-        int integer = this.mContext.getResources().getInteger(2131623944);
+        int integer = this.mContext.getResources().getInteger(R.integer.titlebar_animation_duration);
         animator.setInterpolator(new DecelerateInterpolator(2.5f));
         animator.setDuration(integer);
     }
@@ -293,10 +173,7 @@ public class BottomBar extends LinearLayout {
         if (this.mUseQuickControls) {
             setVisibility(8);
             this.mShowing = false;
-        } else {
-            if (this.mShowing) {
-                return;
-            }
+        } else if (!this.mShowing) {
             setVisibility(0);
             int visibleBottomHeight = getVisibleBottomHeight();
             float translationY = getTranslationY();
@@ -306,5 +183,63 @@ public class BottomBar extends LinearLayout {
             this.mBottomBarAnimator.start();
             this.mShowing = true;
         }
+    }
+
+    void hide() {
+        if (this.mUseQuickControls || this.mUseFullScreen) {
+            cancelBottomBarAnimation();
+            int visibleBottomHeight = getVisibleBottomHeight();
+            float translationY = getTranslationY();
+            setLayerType(2, null);
+            this.mBottomBarAnimator = ObjectAnimator.ofFloat(this, "translationY", translationY, translationY + visibleBottomHeight);
+            this.mBottomBarAnimator.addListener(this.mHideBottomBarAnimatorListener);
+            setupBottomBarAnimator(this.mBottomBarAnimator);
+            this.mBottomBarAnimator.start();
+            setVisibility(8);
+            this.mShowing = false;
+            return;
+        }
+        setVisibility(0);
+        cancelBottomBarAnimation();
+        int visibleBottomHeight2 = getVisibleBottomHeight();
+        float translationY2 = getTranslationY();
+        setLayerType(2, null);
+        this.mBottomBarAnimator = ObjectAnimator.ofFloat(this, "translationY", translationY2, translationY2 + visibleBottomHeight2);
+        this.mBottomBarAnimator.addListener(this.mHideBottomBarAnimatorListener);
+        setupBottomBarAnimator(this.mBottomBarAnimator);
+        this.mBottomBarAnimator.start();
+        this.mShowing = false;
+    }
+
+    boolean isShowing() {
+        return this.mShowing;
+    }
+
+    void cancelBottomBarAnimation() {
+        if (this.mBottomBarAnimator != null) {
+            this.mBottomBarAnimator.cancel();
+            this.mBottomBarAnimator = null;
+        }
+    }
+
+    private int getVisibleBottomHeight() {
+        return this.mBottomBar.getHeight();
+    }
+
+    private ViewGroup.MarginLayoutParams makeLayoutParams() {
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(-1, -2);
+        layoutParams.gravity = 80;
+        return layoutParams;
+    }
+
+    public void onScrollChanged() {
+        if (!this.mShowing) {
+            setTranslationY(getVisibleBottomHeight());
+        }
+    }
+
+    public void changeBottomBarState(boolean z, boolean z2) {
+        this.mBottomBarBack.setEnabled(z);
+        this.mBottomBarForward.setEnabled(z2);
     }
 }

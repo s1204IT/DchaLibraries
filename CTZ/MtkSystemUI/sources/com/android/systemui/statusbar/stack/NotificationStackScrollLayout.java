@@ -511,7 +511,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         updateClipping();
     }
 
-    public void updateBackgroundDimming() {
+    private void updateBackgroundDimming() {
         if (!this.mShouldDrawNotificationBackground) {
             return;
         }
@@ -640,7 +640,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         this.mAmbientState.setLayoutMinHeight((this.mQsExpanded || isHeadsUpTransition()) ? getLayoutMinHeight() : 0);
     }
 
-    public void updateChildren() {
+    private void updateChildren() {
         float currVelocity;
         updateScrollStateForAddedChildren();
         AmbientState ambientState = this.mAmbientState;
@@ -659,7 +659,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         }
     }
 
-    public void onPreDrawDuringAnimation() {
+    private void onPreDrawDuringAnimation() {
         this.mShelf.updateAppearance();
         updateClippingToTopRoundedCorner();
         if (!this.mNeedsAnimation && !this.mChildrenUpdateRequested) {
@@ -708,7 +708,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         clampScrollPosition();
     }
 
-    public void updateForcedScroll() {
+    private void updateForcedScroll() {
         if (this.mForcedScroll != null && (!this.mForcedScroll.hasFocus() || !this.mForcedScroll.isAttachedToWindow())) {
             this.mForcedScroll = null;
         }
@@ -946,7 +946,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         }
     }
 
-    public void handleChildViewDismissed(View view) {
+    private void handleChildViewDismissed(View view) {
         if (this.mDismissAllInProgress) {
             return;
         }
@@ -1514,7 +1514,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         this.mFinishScrollingCallback = runnable;
     }
 
-    public void animateScroll() {
+    private void animateScroll() {
         if (this.mScroller.computeScrollOffset()) {
             int i = this.mOwnScrollY;
             int currY = this.mScroller.getCurrY();
@@ -1662,7 +1662,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         }
     }
 
-    public int getScrollRange() {
+    private int getScrollRange() {
         int iMax = Math.max(0, getContentHeight() - this.mMaxLayoutHeight);
         int imeInset = getImeInset();
         return iMax + Math.min(imeInset, Math.max(0, getContentHeight() - (getHeight() - imeInset)));
@@ -3142,7 +3142,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         return this.mAmbientState.isDimmed();
     }
 
-    public void setDimAmount(float f) {
+    private void setDimAmount(float f) {
         this.mDimAmount = f;
         updateBackgroundDimming();
     }
@@ -3204,7 +3204,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         updateClippingToTopRoundedCorner();
     }
 
-    public void updateViewShadows() {
+    private void updateViewShadows() {
         float translationZ;
         for (int i = 0; i < getChildCount(); i++) {
             ExpandableView expandableView = (ExpandableView) getChildAt(i);
@@ -3304,7 +3304,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         setWillNotDraw(!(this.mShouldDrawNotificationBackground));
     }
 
-    public void setDarkAmount(float f) {
+    private void setDarkAmount(float f) {
         this.mDarkAmount = f;
         boolean zIsFullyDark = this.mAmbientState.isFullyDark();
         this.mAmbientState.setDarkAmount(f);
@@ -4065,7 +4065,7 @@ public class NotificationStackScrollLayout extends ViewGroup implements ExpandHe
         }
     }
 
-    public boolean isTouchInView(MotionEvent motionEvent, View view) {
+    private boolean isTouchInView(MotionEvent motionEvent, View view) {
         int height;
         if (view == null) {
             return false;

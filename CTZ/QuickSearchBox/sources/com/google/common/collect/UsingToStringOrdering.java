@@ -6,19 +6,19 @@ final class UsingToStringOrdering extends Ordering<Object> implements Serializab
     static final UsingToStringOrdering INSTANCE = new UsingToStringOrdering();
     private static final long serialVersionUID = 0;
 
-    private UsingToStringOrdering() {
+    @Override
+    public int compare(Object obj, Object obj2) {
+        return obj.toString().compareTo(obj2.toString());
     }
 
     private Object readResolve() {
         return INSTANCE;
     }
 
-    @Override
-    public int compare(Object obj, Object obj2) {
-        return obj.toString().compareTo(obj2.toString());
-    }
-
     public String toString() {
         return "Ordering.usingToString()";
+    }
+
+    private UsingToStringOrdering() {
     }
 }

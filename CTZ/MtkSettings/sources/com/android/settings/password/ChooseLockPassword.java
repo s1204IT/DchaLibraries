@@ -693,7 +693,7 @@ public class ChooseLockPassword extends SettingsActivity {
             TextChangedHandler() {
             }
 
-            public void notifyAfterTextChanged() {
+            private void notifyAfterTextChanged() {
                 removeMessages(1);
                 sendEmptyMessageDelayed(1, 100L);
             }

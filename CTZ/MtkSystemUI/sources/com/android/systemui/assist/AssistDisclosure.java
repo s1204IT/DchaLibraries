@@ -39,7 +39,7 @@ public class AssistDisclosure {
         this.mHandler.post(this.mShowRunnable);
     }
 
-    public void show() {
+    private void show() {
         if (this.mView == null) {
             this.mView = new AssistDisclosureView(this.mContext);
         }
@@ -51,7 +51,7 @@ public class AssistDisclosure {
         }
     }
 
-    public void hide() {
+    private void hide() {
         if (this.mViewAdded) {
             this.mWm.removeView(this.mView);
             this.mViewAdded = false;
